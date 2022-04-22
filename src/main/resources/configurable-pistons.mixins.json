@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ca.fxco.configurablepistons.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractBlockState_pistonBehaviorMixin",
+    "Block_pistonBehaviorMixin",
+    "BlockTagProvider_registerMixin",
+    "PistonBlock_tagsMixin",
+    "PistonBlockAccessor",
+    "PistonHandler_isMovableMixin",
+    "PistonExtensionBlock_blockEntityMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

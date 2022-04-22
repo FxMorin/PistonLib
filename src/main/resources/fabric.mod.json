@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "configurable-pistons",
+  "version": "${version}",
+  "name": "Configurable Pistons",
+  "description": "A mod to add a new piston that can do all sorts of things",
+  "authors": [
+    "FX - PR0CESS"
+  ],
+
+  "license": "MIT",
+  "icon": "assets/configurable-pistons/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ca.fxco.configurablepistons.ConfigurablePistons"
+    ]
+  },
+  "accessWidener" : "configurable-pistons.accesswidener",
+  "mixins": [
+    "configurable-pistons.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.18.x",
+    "fabricloader": ">=0.11.3",
+    "java": ">=16"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/mezndgtD83"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+accessWidener	v1	named
+# Setup PistonBlockEntity Extending for custom classes
+accessible field net/minecraft/block/entity/PistonBlockEntity pushedBlock Lnet/minecraft/block/BlockState;
+accessible field net/minecraft/block/entity/PistonBlockEntity facing Lnet/minecraft/util/math/Direction;
+accessible field net/minecraft/block/entity/PistonBlockEntity extending Z
+accessible field net/minecraft/block/entity/PistonBlockEntity source Z
+accessible field net/minecraft/block/entity/PistonBlockEntity progress F
+accessible field net/minecraft/block/entity/PistonBlockEntity lastProgress F
+accessible field net/minecraft/block/entity/PistonBlockEntity savedWorldTime J
+accessible field net/minecraft/block/entity/PistonBlockEntity field_26705 I
+accessible field net/minecraft/block/entity/PistonBlockEntity field_12205 Ljava/lang/ThreadLocal;
+extendable method net/minecraft/block/entity/PistonBlockEntity getAmountExtended (F)F
+extendable method net/minecraft/block/entity/PistonBlockEntity getHeadBlockState ()Lnet/minecraft/block/BlockState;
+extendable method net/minecraft/block/entity/PistonBlockEntity isPushingHoneyBlock ()Z
