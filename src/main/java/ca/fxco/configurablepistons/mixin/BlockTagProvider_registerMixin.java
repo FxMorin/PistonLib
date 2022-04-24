@@ -1,6 +1,7 @@
 package ca.fxco.configurablepistons.mixin;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.Registerer;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -25,13 +26,20 @@ public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider
             at = @At("TAIL")
     )
     protected void configure(CallbackInfo ci) {
-        this.getOrCreateTagBuilder(ConfigurablePistons.PISTONS).add(
+        // TODO: Make all moving pistons dragon and wither immune
+        this.getOrCreateTagBuilder(Registerer.MOVING_PISTONS).add(
+                Blocks.MOVING_PISTON,
+                ConfigurablePistons.BASIC_MOVING_PISTON
+        );
+        this.getOrCreateTagBuilder(Registerer.PISTONS).add(
                 Blocks.PISTON,
                 Blocks.STICKY_PISTON,
                 ConfigurablePistons.BASIC_PISTON,
-                ConfigurablePistons.BASIC_STICKY_PISTON
+                ConfigurablePistons.BASIC_STICKY_PISTON,
+                ConfigurablePistons.STRONG_PISTON,
+                ConfigurablePistons.STRONG_STICKY_PISTON
         );
-        this.getOrCreateTagBuilder(ConfigurablePistons.UNPUSHABLE).add(
+        this.getOrCreateTagBuilder(Registerer.UNPUSHABLE).add(
                 Blocks.OBSIDIAN,
                 Blocks.CRYING_OBSIDIAN,
                 Blocks.RESPAWN_ANCHOR

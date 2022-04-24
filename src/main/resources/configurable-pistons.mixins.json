@@ -6,11 +6,15 @@
   "mixins": [
     "AbstractBlockState_pistonBehaviorMixin",
     "Block_pistonBehaviorMixin",
+    "BlockCollisionSpliterator_movingPistonMixin",
+    "BlockDustParticle$Factory_movingPistonMixin",
     "BlockTagProvider_registerMixin",
+    "FallingBlockEntity_movingPistonsMixin",
     "PistonBlock_tagsMixin",
-    "PistonBlockAccessor",
     "PistonHandler_isMovableMixin",
-    "PistonExtensionBlock_blockEntityMixin"
+    "ShulkerEntity_movingPistonMixin",
+    "accessors.BlockEntityAccessor",
+    "accessors.PistonBlockAccessor"
   ],
   "client": [
   ],

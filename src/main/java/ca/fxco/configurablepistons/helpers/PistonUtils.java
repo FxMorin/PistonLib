@@ -1,14 +1,10 @@
 package ca.fxco.configurablepistons.helpers;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.internal.AbstractBlockStatePistonBehavior;
+import ca.fxco.configurablepistons.Registerer;
 import net.minecraft.block.BlockState;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-
-import java.util.Arrays;
 
 import static net.minecraft.state.property.Properties.EXTENDED;
 import static net.minecraft.util.math.Direction.*;
@@ -38,8 +34,8 @@ public class PistonUtils {
                     }
                 }
             } else {
-                if (!state.isIn(ConfigurablePistons.UNPUSHABLE)) {
-                    if (!state.isIn(ConfigurablePistons.PISTONS)) {
+                if (!state.isIn(Registerer.UNPUSHABLE)) {
+                    if (!state.isIn(Registerer.PISTONS)) {
                         if (state.getHardness(wo, pos) == -1.0F)
                             return false;
                         switch (state.getPistonBehavior()) {

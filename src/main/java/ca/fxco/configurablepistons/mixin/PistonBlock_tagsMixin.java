@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.Registerer;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -47,7 +47,7 @@ public class PistonBlock_tagsMixin {
             )
     )
     public boolean ifItsAPiston(BlockState state, Block block) {
-        return state.isIn(ConfigurablePistons.PISTONS);
+        return state.isIn(Registerer.PISTONS);
     }
 
 

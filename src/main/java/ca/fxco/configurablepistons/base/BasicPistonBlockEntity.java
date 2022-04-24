@@ -1,9 +1,10 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.PistonBlockEntity;
-import net.minecraft.block.enums.PistonType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
@@ -23,17 +24,30 @@ import java.util.List;
 public class BasicPistonBlockEntity extends PistonBlockEntity {
 
     /*
-     * This class overrides all the non-static methods of PistonBlockEntity, and all static methods are
-     * redirected to this class.
-     * This class is used for all Piston Block Entities
+     * This class overrides all the non-static methods of PistonBlockEntity
      */
+
+    public final BasicPistonExtensionBlock EXTENSION_BLOCK;
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
+        ((BlockEntityAccessor)this).setType(ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY);
+        EXTENSION_BLOCK = ConfigurablePistons.BASIC_MOVING_PISTON;
     }
 
-    public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing, boolean extending, boolean source) {
+    public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
+                                  boolean extending, boolean source) {
+        this(pos, state, pushedBlock, facing, extending, source, ConfigurablePistons.BASIC_MOVING_PISTON);
+    }
+    public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
+                                  boolean extending, boolean source, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state, pushedBlock, facing, extending, source);
+        ((BlockEntityAccessor)this).setType(ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY);
+        EXTENSION_BLOCK = extensionBlock;
+    }
+
+    public BasicPistonExtensionBlock getExtensionBlock() {
+        return EXTENSION_BLOCK;
     }
 
     public NbtCompound toInitialChunkDataNbt() {
@@ -49,7 +63,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     public BlockState getHeadBlockState() {
         // Removed setting the type since this is currently only used for collision shape
         return !this.isExtending() && this.isSource() && this.pushedBlock.getBlock() instanceof PistonBlock ?
-                Blocks.PISTON_HEAD.getDefaultState()
+                ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
                         .with(PistonHeadBlock.SHORT, this.progress > 0.25F)
                         .with(PistonHeadBlock.FACING, this.pushedBlock.get(PistonBlock.FACING)) :
                 this.pushedBlock;
@@ -191,7 +205,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
             this.lastProgress = this.progress;
             this.world.removeBlockEntity(this.pos);
             this.markRemoved();
-            if (this.world.getBlockState(this.pos).isOf(Blocks.MOVING_PISTON)) {
+            //if (this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
                 BlockState blockState;
                 if (this.source) {
                     blockState = Blocks.AIR.getDefaultState();
@@ -200,7 +214,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
                 }
                 this.world.setBlockState(this.pos, blockState, Block.NOTIFY_ALL);
                 this.world.updateNeighbor(this.pos, blockState.getBlock(), this.pos);
-            }
+            //}
         }
     }
 
@@ -213,7 +227,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
             } else {
                 world.removeBlockEntity(pos);
                 blockEntity.markRemoved();
-                if (world.getBlockState(pos).isOf(Blocks.MOVING_PISTON)) {
+                if (world.getBlockState(pos).isOf(blockEntity.getExtensionBlock())) {
                     BlockState blockState = Block.postProcessState(blockEntity.pushedBlock, world, pos);
                     if (blockState.isAir()) {
                         world.setBlockState(pos, blockEntity.pushedBlock, Block.NO_REDRAW | Block.FORCE_STATE | Block.MOVED);

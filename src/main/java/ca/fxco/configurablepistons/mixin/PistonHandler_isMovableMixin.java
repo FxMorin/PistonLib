@@ -15,12 +15,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(PistonHandler.class)
 public abstract class PistonHandler_isMovableMixin {
 
+    @Shadow
+    @Final
+    private boolean retracted;
 
-    @Shadow @Final private boolean retracted;
+    @Shadow
+    protected abstract boolean tryMove(BlockPos pos, Direction dir);
 
-    @Shadow protected abstract boolean tryMove(BlockPos pos, Direction dir);
-
-    @Shadow @Final private Direction pistonDirection;
 
     @Redirect(
             method = "calculatePush()Z",

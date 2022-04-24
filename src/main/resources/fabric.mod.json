@@ -15,6 +15,9 @@
   "entrypoints": {
     "main": [
       "ca.fxco.configurablepistons.ConfigurablePistons"
+    ],
+    "client": [
+      "ca.fxco.configurablepistons.ConfigurablePistons"
     ]
   },
   "accessWidener" : "configurable-pistons.accesswidener",

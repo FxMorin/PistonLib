@@ -1,6 +1,8 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.Registerer;
+import ca.fxco.configurablepistons.helpers.PistonFamily;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.entity.ai.pathing.NavigationType;
@@ -20,6 +22,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.gen.feature.LakeFeature;
 
 import java.util.Arrays;
 
@@ -47,6 +50,8 @@ public class BasicPistonHeadBlock extends FacingBlock {
     private static final VoxelShape[] SHORT_HEAD_SHAPES;
     private static final VoxelShape[] HEAD_SHAPES;
 
+    private final String familyId;
+
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
         return Arrays.stream(Direction.values()).map((direction) -> getHeadShape(direction, shortHead)).toArray(VoxelShape[]::new);
     }
@@ -65,7 +70,18 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     public BasicPistonHeadBlock(AbstractBlock.Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(TYPE, PistonType.DEFAULT).with(SHORT, false));
+        this.setDefaultState(this.stateManager.getDefaultState()
+                .with(FACING, Direction.NORTH)
+                .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
+        this.familyId = "basic";
+    }
+
+    public BasicPistonHeadBlock(AbstractBlock.Settings settings, String familyId) {
+        super(settings);
+        this.setDefaultState(this.stateManager.getDefaultState()
+                .with(FACING, Direction.NORTH)
+                .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
+        this.familyId = familyId;
     }
 
     public boolean hasSidedTransparency(BlockState state) {
@@ -77,8 +93,9 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public boolean isAttached(BlockState headState, BlockState pistonState) {
-        Block block = headState.get(TYPE) == PistonType.DEFAULT ? ConfigurablePistons.BASIC_PISTON : ConfigurablePistons.BASIC_STICKY_PISTON;
-        return pistonState.isOf(block) && pistonState.get(PistonBlock.EXTENDED) && pistonState.get(FACING) == headState.get(FACING);
+        PistonFamily family = Registerer.pistonFamilies.get(familyId);
+        Block mustBe = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
+        return pistonState.isOf(mustBe) && pistonState.get(PistonBlock.EXTENDED) && pistonState.get(FACING) == headState.get(FACING);
     }
 
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
@@ -103,7 +120,7 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-        return this.isAttached(state, blockState) || blockState.isOf(Blocks.MOVING_PISTON) && blockState.get(FACING) == state.get(FACING);
+        return this.isAttached(state, blockState) || blockState.isIn(Registerer.MOVING_PISTONS) && blockState.get(FACING) == state.get(FACING);
     }
 
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
@@ -114,7 +131,8 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
-        return new ItemStack(state.get(TYPE) == PistonType.STICKY ? ConfigurablePistons.BASIC_STICKY_PISTON : ConfigurablePistons.BASIC_PISTON);
+        PistonFamily family = Registerer.pistonFamilies.get(familyId);
+        return new ItemStack(state.get(TYPE) == PistonType.STICKY ? family.getStickyPistonBlock() : family.getPistonBlock());
     }
 
     public BlockState rotate(BlockState state, BlockRotation rotation) {

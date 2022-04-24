@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.mixin;
+package ca.fxco.configurablepistons.mixin.accessors;
 
 import net.minecraft.block.PistonBlock;
 import org.spongepowered.asm.mixin.Mixin;
