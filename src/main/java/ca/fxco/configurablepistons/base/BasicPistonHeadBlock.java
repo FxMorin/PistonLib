@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.base;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.Registerer;
-import ca.fxco.configurablepistons.helpers.PistonFamily;
+import ca.fxco.configurablepistons.families.PistonFamilies;
+import ca.fxco.configurablepistons.families.PistonFamily;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.entity.ai.pathing.NavigationType;
@@ -22,7 +22,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-import net.minecraft.world.gen.feature.LakeFeature;
 
 import java.util.Arrays;
 
@@ -50,8 +49,6 @@ public class BasicPistonHeadBlock extends FacingBlock {
     private static final VoxelShape[] SHORT_HEAD_SHAPES;
     private static final VoxelShape[] HEAD_SHAPES;
 
-    private final String familyId;
-
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
         return Arrays.stream(Direction.values()).map((direction) -> getHeadShape(direction, shortHead)).toArray(VoxelShape[]::new);
     }
@@ -73,15 +70,6 @@ public class BasicPistonHeadBlock extends FacingBlock {
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
-        this.familyId = "basic";
-    }
-
-    public BasicPistonHeadBlock(AbstractBlock.Settings settings, String familyId) {
-        super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
-        this.familyId = familyId;
     }
 
     public boolean hasSidedTransparency(BlockState state) {
@@ -93,7 +81,7 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public boolean isAttached(BlockState headState, BlockState pistonState) {
-        PistonFamily family = Registerer.pistonFamilies.get(familyId);
+        PistonFamily family = PistonFamilies.getFamily(this);
         Block mustBe = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
         return pistonState.isOf(mustBe) && pistonState.get(PistonBlock.EXTENDED) && pistonState.get(FACING) == headState.get(FACING);
     }
@@ -131,7 +119,7 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
-        PistonFamily family = Registerer.pistonFamilies.get(familyId);
+        PistonFamily family = PistonFamilies.getFamily(this);
         return new ItemStack(state.get(TYPE) == PistonType.STICKY ? family.getStickyPistonBlock() : family.getPistonBlock());
     }
 

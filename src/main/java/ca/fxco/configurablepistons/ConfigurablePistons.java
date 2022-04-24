@@ -4,7 +4,6 @@ import ca.fxco.configurablepistons.base.BasicPistonBlock;
 import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.helpers.PistonFamily;
 import ca.fxco.configurablepistons.newBlocks.PullOnlyBlock;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonExtensionBlock;
@@ -25,7 +24,7 @@ import net.minecraft.util.registry.Registry;
 public class ConfigurablePistons implements ModInitializer, ClientModInitializer {
 
     //TODO: OMG Stop the jank
-    // Use your custom models instead od minecrafts
+    // Use your custom models instead of minecrafts
     // Move the client initializer out of here ffs
     // Move block & item intializer out of this class
     // Stop hurting yourself by writing initialization like that
@@ -76,9 +75,6 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         // Block Entities
         BASIC_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("basic_piston_entity"), FabricBlockEntityTypeBuilder.create(BasicPistonBlockEntity::new, BASIC_MOVING_PISTON).build(null));
         SPEED_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("speed_piston_entity"), FabricBlockEntityTypeBuilder.create(SpeedPistonBlockEntity::new, STRONG_MOVING_PISTON).build(null));
-
-        Registerer.pistonFamilies.put("basic",new PistonFamily(ConfigurablePistons.BASIC_PISTON, ConfigurablePistons.BASIC_STICKY_PISTON));
-        Registerer.pistonFamilies.put("strong",new PistonFamily(ConfigurablePistons.STRONG_PISTON, ConfigurablePistons.STRONG_STICKY_PISTON));
     }
 
     @Override
@@ -97,7 +93,7 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
 
         // Create Piston Heads
         BASIC_PISTON_HEAD = new BasicPistonHeadBlock(FabricBlockSettings.of(Material.PISTON).strength(1.5F).dropsNothing());
-        STRONG_PISTON_HEAD = new BasicPistonHeadBlock(FabricBlockSettings.of(Material.PISTON).strength(1.5F).dropsNothing(), "strong");
+        STRONG_PISTON_HEAD = new BasicPistonHeadBlock(FabricBlockSettings.of(Material.PISTON).strength(1.5F).dropsNothing());
 
         // Create Pistons
         BASIC_PISTON = new BasicPistonBlock(false,FabricBlockSettings.of(Material.PISTON).strength(1.5F).solidBlock((a,b,c) -> false).suffocates((state, world, pos) -> !(Boolean)state.get(PistonBlock.EXTENDED)).blockVision((state, world, pos) -> !(Boolean)state.get(PistonBlock.EXTENDED)));
