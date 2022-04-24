@@ -21,15 +21,8 @@ public class PistonUtils {
             if (customBehavior.usesConfigurablePistonBehavior(state)) { // This is where stuff gets fun
                 if (customBehavior.isMovable(state)) {
                     if (dir == pistonDir) { // Is Pushing
-                        if (!wo.isClient) {
-                            System.out.println("Pushing Block - Dir: " + dir + " - pistonDir: " + pistonDir);
-                            //Arrays.asList(Thread.currentThread().getStackTrace()).forEach(System.out::println);
-                        }
                         return customBehavior.canPistonPush(state) && (!customBehavior.canDestroy(state) || canBreak);
                     } else {                // Is Pulling
-                        if (!wo.isClient) {
-                            System.out.println("Pulling Block");
-                        }
                         return customBehavior.canPistonPull(state);
                     }
                 }
