@@ -56,22 +56,22 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     //Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
     public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
-        switch (direction) {
-            default:
-            case DOWN: return VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
-            case UP: return VoxelShapes.union(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
-            case NORTH: return VoxelShapes.union(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
-            case SOUTH: return VoxelShapes.union(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
-            case WEST: return VoxelShapes.union(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
-            case EAST: return VoxelShapes.union(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
-        }
+        return switch (direction) {
+            default -> VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
+            case UP -> VoxelShapes.union(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
+            case NORTH -> VoxelShapes.union(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
+            case SOUTH -> VoxelShapes.union(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
+            case WEST -> VoxelShapes.union(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
+            case EAST -> VoxelShapes.union(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
+        };
     }
 
     public BasicPistonHeadBlock() {
         super(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(FACING, Direction.NORTH)
-                .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
+                .with(TYPE, PistonType.DEFAULT)
+                .with(SHORT, false));
     }
 
     public boolean hasSidedTransparency(BlockState state) {
@@ -85,7 +85,8 @@ public class BasicPistonHeadBlock extends FacingBlock {
     public boolean isAttached(BlockState headState, BlockState pistonState) {
         PistonFamily family = PistonFamilies.getFamily(this);
         Block mustBe = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
-        return pistonState.isOf(mustBe) && pistonState.get(PistonBlock.EXTENDED) && pistonState.get(FACING) == headState.get(FACING);
+        return pistonState.isOf(mustBe) && pistonState.get(BasicPistonBlock.EXTENDED) &&
+                pistonState.get(FACING) == headState.get(FACING);
     }
 
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
@@ -97,19 +98,20 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
-            super.onStateReplaced(state, world, pos, newState, moved);
-            BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-            if (this.isAttached(state, world.getBlockState(blockPos))) world.breakBlock(blockPos, true);
-        }
+        if (state.isOf(newState.getBlock())) return;
+        super.onStateReplaced(state, world, pos, newState, moved);
+        BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
+        if (this.isAttached(state, world.getBlockState(blockPos))) world.breakBlock(blockPos, true);
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        return direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos) ? Blocks.AIR.getDefaultState() : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos) ?
+                Blocks.AIR.getDefaultState() :
+                super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
+        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite())); // TODO: Change MOVING_PISTONS here to just check if its the current moving piston
         return this.isAttached(state, blockState) || blockState.isIn(Registerer.MOVING_PISTONS) && blockState.get(FACING) == state.get(FACING);
     }
 

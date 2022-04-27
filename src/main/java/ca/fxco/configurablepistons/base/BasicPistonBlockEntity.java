@@ -1,10 +1,8 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.helpers.Utils;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
@@ -33,9 +31,13 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     public final BasicPistonExtensionBlock EXTENSION_BLOCK;
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state) {
+        this(pos, state, ConfigurablePistons.BASIC_MOVING_PISTON);
+    }
+
+    public BasicPistonBlockEntity(BlockPos pos, BlockState state, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state);
         ((BlockEntityAccessor)this).setType(ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY);
-        EXTENSION_BLOCK = ConfigurablePistons.BASIC_MOVING_PISTON;
+        EXTENSION_BLOCK = extensionBlock;
     }
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
@@ -67,8 +69,8 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         // Removed setting the type since this is currently only used for collision shape
         return !this.isExtending() && this.isSource() && this.pushedBlock.getBlock() instanceof BasicPistonBlock ?
                 ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
-                        .with(PistonHeadBlock.SHORT, this.progress > 0.25F)
-                        .with(PistonHeadBlock.FACING, this.pushedBlock.get(PistonBlock.FACING)) :
+                        .with(BasicPistonHeadBlock.SHORT, this.progress > 0.25F)
+                        .with(BasicPistonHeadBlock.FACING, this.pushedBlock.get(BasicPistonBlock.FACING)) :
                 this.pushedBlock;
     }
 
@@ -80,44 +82,31 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         Box box = offsetHeadBox(pos, voxelShape.getBoundingBox(), blockEntity);
         List<Entity> list = world.getOtherEntities(null, Boxes.stretch(box, dir, d).union(box));
         if (list.isEmpty()) return;
-        List<Box> list2 = voxelShape.getBoundingBoxes();
+        List<Box> voxelBounds = voxelShape.getBoundingBoxes();
         boolean bl = blockEntity.pushedBlock.isOf(Blocks.SLIME_BLOCK);
-        Iterator<Entity> entityIterator = list.iterator();
-        while(true) {
-            Entity entity;
-            while(true) {
-                do {
-                    if (!entityIterator.hasNext()) return;
-                    entity = entityIterator.next();
-                } while(entity.getPistonBehavior() == PistonBehavior.IGNORE);
-                if (!bl) break;
-                if (!(entity instanceof ServerPlayerEntity)) {
-                    Vec3d vec3d = entity.getVelocity();
-                    double e = vec3d.x;
-                    double g = vec3d.y;
-                    double h = vec3d.z;
-                    switch (dir.getAxis()) {
-                        case X -> e = dir.getOffsetX();
-                        case Y -> g = dir.getOffsetY();
-                        case Z -> h = dir.getOffsetZ();
-                    }
-                    entity.setVelocity(e, g, h);
-                    break;
+        for (Entity entity : list) {
+            if (entity.getPistonBehavior() == PistonBehavior.IGNORE) continue;
+            if (bl) {
+                if (entity instanceof ServerPlayerEntity) continue;
+                Vec3d vec3d = entity.getVelocity();
+                double e = vec3d.x;
+                double g = vec3d.y;
+                double h = vec3d.z;
+                switch (dir.getAxis()) {
+                    case X -> e = dir.getOffsetX();
+                    case Y -> g = dir.getOffsetY();
+                    case Z -> h = dir.getOffsetZ();
                 }
+                entity.setVelocity(e, g, h);
             }
             double i = 0.0;
-            for (Box box2 : list2) {
-                Box box3 = Boxes.stretch(offsetHeadBox(pos, box2, blockEntity), dir, d);
+            for (Box boxes : voxelBounds) {
+                Box box3 = Boxes.stretch(offsetHeadBox(pos, boxes, blockEntity), dir, d);
                 Box box4 = entity.getBoundingBox();
-                if (box3.intersects(box4)) {
-                    i = Math.max(i, getIntersectionSize(box3, dir, box4));
-                    if (i >= d) break;
-                }
+                if (box3.intersects(box4) && (i = Math.max(i, getIntersectionSize(box3, dir, box4))) >= d) break;
             }
             if (i <= 0.0) continue;
-            i = Math.min(i, d) + 0.01;
-            moveEntity(dir, entity, i, dir);
-            //Push entities out of piston base. Always required!
+            moveEntity(dir, entity, Math.min(i, d) + 0.01, dir);
             if (!blockEntity.extending && blockEntity.source) push(pos, entity, dir, d);
         }
     }
@@ -135,7 +124,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
                 double d = blockEntity.pushedBlock.getCollisionShape(world, pos).getMax(Direction.Axis.Y);
                 Box box = offsetHeadBox(pos, new Box(0.0, d, 0.0, 1.0, 1.5000000999999998, 1.0), blockEntity);
                 double e = f - blockEntity.progress;
-                List<Entity> list = world.getOtherEntities(null, box, (entityx) -> canMoveEntity(box, entityx));
+                List<Entity> list = world.getOtherEntities(null, box, entity -> canMoveEntity(box, entity));
                 for (Entity entity : list) {
                     moveEntity(direction, entity, e, direction);
                 }
@@ -158,15 +147,14 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     }
 
     public static double getIntersectionSize(Box box, Direction direction, Box box2) {
-        switch (direction) {
-            default:
-            case UP: return box.maxY - box2.minY;
-            case EAST: return box.maxX - box2.minX;
-            case WEST: return box2.maxX - box.minX;
-            case DOWN: return box2.maxY - box.minY;
-            case SOUTH: return box.maxZ - box2.minZ;
-            case NORTH: return box2.maxZ - box.minZ;
-        }
+        return switch (direction) {
+            default -> box.maxY - box2.minY;
+            case EAST -> box.maxX - box2.minX;
+            case WEST -> box2.maxX - box.minX;
+            case DOWN -> box2.maxY - box.minY;
+            case SOUTH -> box.maxZ - box2.minZ;
+            case NORTH -> box2.maxZ - box.minZ;
+        };
     }
 
     public static Box offsetHeadBox(BlockPos pos, Box box, BasicPistonBlockEntity blockEntity) {
@@ -178,13 +166,10 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         Box box = entity.getBoundingBox();
         Box box2 = VoxelShapes.fullCube().getBoundingBox().offset(pos);
         if (box.intersects(box2)) {
-            Direction direction2 = direction.getOpposite();
-            double d = getIntersectionSize(box2, direction2, box) + 0.01;
-            double e = getIntersectionSize(box2, direction2, box.intersection(box2)) + 0.01;
-            if (Math.abs(d - e) < 0.01) {
-                d = Math.min(d, amount) + 0.01;
-                moveEntity(direction, entity, d, direction2);
-            }
+            Direction dir = direction.getOpposite();
+            double d = getIntersectionSize(box2, dir, box) + 0.01;
+            double e = getIntersectionSize(box2, dir, box.intersection(box2)) + 0.01;
+            if (Math.abs(d - e) < 0.01) moveEntity(direction, entity, Math.min(d, amount) + 0.01, dir);
         }
     }
 
@@ -201,12 +186,8 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
             this.world.removeBlockEntity(this.pos);
             this.markRemoved();
             if (this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
-                BlockState blockState;
-                if (this.source) {
-                    blockState = Blocks.AIR.getDefaultState();
-                } else {
-                    blockState = Block.postProcessState(this.pushedBlock, this.world, this.pos);
-                }
+                BlockState blockState = this.source ?
+                        Blocks.AIR.getDefaultState() : Block.postProcessState(this.pushedBlock, this.world, this.pos);
                 this.world.setBlockState(this.pos, blockState, Block.NOTIFY_ALL);
                 this.world.updateNeighbor(this.pos, blockState.getBlock(), this.pos);
             }
@@ -219,21 +200,21 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         if (blockEntity.lastProgress >= 1.0F) {
             if (world.isClient && blockEntity.field_26705 < 5) {
                 ++blockEntity.field_26705;
-            } else {
-                world.removeBlockEntity(pos);
-                blockEntity.markRemoved();
-                if (world.getBlockState(pos).isOf(blockEntity.getExtensionBlock())) {
-                    BlockState blockState = Block.postProcessState(blockEntity.pushedBlock, world, pos);
-                    if (blockState.isAir()) {
-                        world.setBlockState(pos, blockEntity.pushedBlock, Block.NO_REDRAW | Block.FORCE_STATE | Block.MOVED);
-                        Block.replace(blockEntity.pushedBlock, blockState, world, pos, 3);
-                    } else {
-                        if (blockState.contains(Properties.WATERLOGGED) && blockState.get(Properties.WATERLOGGED)) {
-                            blockState = blockState.with(Properties.WATERLOGGED, false);
-                        }
-                        world.setBlockState(pos, blockState, Block.NOTIFY_ALL | Block.MOVED);
-                        world.updateNeighbor(pos, blockState.getBlock(), pos);
+                return;
+            }
+            world.removeBlockEntity(pos);
+            blockEntity.markRemoved();
+            if (world.getBlockState(pos).isOf(blockEntity.getExtensionBlock())) {
+                BlockState blockState = Block.postProcessState(blockEntity.pushedBlock, world, pos);
+                if (blockState.isAir()) {
+                    world.setBlockState(pos, blockEntity.pushedBlock, Block.NO_REDRAW | Block.FORCE_STATE | Block.MOVED);
+                    Block.replace(blockEntity.pushedBlock, blockState, world, pos, 3);
+                } else {
+                    if (blockState.contains(Properties.WATERLOGGED) && blockState.get(Properties.WATERLOGGED)) {
+                        blockState = blockState.with(Properties.WATERLOGGED, false);
                     }
+                    world.setBlockState(pos, blockState, Block.NOTIFY_ALL | Block.MOVED);
+                    world.updateNeighbor(pos, blockState.getBlock(), pos);
                 }
             }
         } else {
@@ -247,7 +228,6 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
         this.pushedBlock = NbtHelper.toBlockState(nbt.getCompound("blockState"));
         this.facing = Direction.byId(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
@@ -262,7 +242,6 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
         nbt.put("blockState", NbtHelper.fromBlockState(this.pushedBlock));
         nbt.putInt("facing", this.facing.getId());
         if (ConfigurablePistons.PISTON_PROGRESS_FIX) {
@@ -278,29 +257,28 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     @Override
     public VoxelShape getCollisionShape(BlockView world, BlockPos pos) {
         VoxelShape voxelShape;
-        if (!this.extending && this.source && this.pushedBlock.getBlock() instanceof PistonBlock) {
-            voxelShape = this.pushedBlock.with(PistonBlock.EXTENDED, true).getCollisionShape(world, pos);
+        if (!this.extending && this.source && this.pushedBlock.getBlock() instanceof BasicPistonBlock) {
+            voxelShape = this.pushedBlock.with(BasicPistonBlock.EXTENDED, true).getCollisionShape(world, pos);
         } else {
             voxelShape = VoxelShapes.empty();
         }
         Direction direction = field_12205.get();
         if ((double)this.progress < 1.0 && direction == this.getMovementDirection()) {
             return voxelShape;
-        } else {
-            BlockState blockState;
-            if (this.isSource()) {
-                blockState = ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
-                        .with(PistonHeadBlock.FACING, this.facing)
-                        .with(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
-            } else {
-                blockState = this.pushedBlock;
-            }
-            float f = this.getAmountExtended(this.progress);
-            double d = (float)this.facing.getOffsetX() * f;
-            double e = (float)this.facing.getOffsetY() * f;
-            double g = (float)this.facing.getOffsetZ() * f;
-            return VoxelShapes.union(voxelShape, blockState.getCollisionShape(world, pos).offset(d, e, g));
         }
+        BlockState blockState;
+        if (this.isSource()) {
+            blockState = ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
+                    .with(PistonHeadBlock.FACING, this.facing)
+                    .with(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
+        } else {
+            blockState = this.pushedBlock;
+        }
+        float f = this.getAmountExtended(this.progress);
+        double d = (float)this.facing.getOffsetX() * f;
+        double e = (float)this.facing.getOffsetY() * f;
+        double g = (float)this.facing.getOffsetZ() * f;
+        return VoxelShapes.union(voxelShape, blockState.getCollisionShape(world, pos).offset(d, e, g));
     }
 
     @Override

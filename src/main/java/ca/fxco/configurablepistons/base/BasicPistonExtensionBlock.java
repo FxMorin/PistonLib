@@ -1,6 +1,7 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -30,8 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class BasicPistonExtensionBlock extends PistonExtensionBlock {
-    public BasicPistonExtensionBlock(Settings settings) {
-        super(settings);
+    public BasicPistonExtensionBlock() {
+        super(FabricBlockSettings.of(Material.PISTON).strength(-1.0f).dynamicBounds().dropsNothing().nonOpaque().solidBlock((a, b, c) -> false).suffocates((a, b, c) -> false).blockVision((a, b, c) -> false));
     }
 
     public BlockEntity createPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock,
@@ -48,14 +49,14 @@ public class BasicPistonExtensionBlock extends PistonExtensionBlock {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.isOf(newState.getBlock())) return;
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof BasicPistonBlockEntity pbe) pbe.finish();
+        if (blockEntity instanceof BasicPistonBlockEntity bpbe) bpbe.finish();
     }
 
     @Override
     public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
         BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
         BlockState blockState = world.getBlockState(blockPos);
-        if (blockState.getBlock() instanceof BasicPistonBlock && blockState.get(PistonBlock.EXTENDED))
+        if (blockState.getBlock() instanceof BasicPistonBlock && blockState.get(BasicPistonBlock.EXTENDED))
             world.removeBlock(blockPos, false);
     }
 
@@ -85,12 +86,12 @@ public class BasicPistonExtensionBlock extends PistonExtensionBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        PistonBlockEntity pistonBlockEntity = this.getPistonBlockEntity(world, pos);
+        BasicPistonBlockEntity pistonBlockEntity = this.getPistonBlockEntity(world, pos);
         return pistonBlockEntity != null ? pistonBlockEntity.getCollisionShape(world, pos) : VoxelShapes.empty();
     }
 
     @Nullable
-    private PistonBlockEntity getPistonBlockEntity(BlockView world, BlockPos pos) {
+    private BasicPistonBlockEntity getPistonBlockEntity(BlockView world, BlockPos pos) {
         return world.getBlockEntity(pos) instanceof BasicPistonBlockEntity bpbe ? bpbe : null;
     }
 

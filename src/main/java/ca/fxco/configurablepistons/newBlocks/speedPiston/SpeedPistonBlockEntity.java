@@ -22,10 +22,7 @@ import java.util.List;
 public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
 
     /*
-    TODO: Fix piston head visually being behind the piston
-          Fix very slow pistons not having a hitbox, cause turns out pistons retracting in vanilla don't either they
-          just do it so fast that you won't notice. Gosh I hate this game sometimes
-          Remove speed & only use pistonOffset
+    TODO: Fix slow piston heads visually being behind the piston
      */
 
     private float speed;
@@ -34,9 +31,14 @@ public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
     public SpeedPistonBlockEntity(BlockPos blockPos, BlockState blockState) {
         this(1.0F, blockPos, blockState);
     }
-
     public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state) {
         super(pos, state);
+        ((BlockEntityAccessor)this).setType(ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY);
+        this.speed = speed;
+        this.pistonOffset = 0.01 * speed;
+    }
+    public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state, BasicPistonExtensionBlock extensionBlock) {
+        super(pos, state, extensionBlock);
         ((BlockEntityAccessor)this).setType(ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY);
         this.speed = speed;
         this.pistonOffset = 0.01 * speed;

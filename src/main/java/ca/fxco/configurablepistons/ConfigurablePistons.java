@@ -6,6 +6,8 @@ import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.newBlocks.PullOnlyBlock;
 import ca.fxco.configurablepistons.newBlocks.PushLimitPistonBlock;
+import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonBlockEntity;
+import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonExtensionBlock;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonExtensionBlock;
 import ca.fxco.configurablepistons.renderers.BasicPistonBlockEntityRenderer;
@@ -52,10 +54,11 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
     public static final BasicPistonBlock FAST_PISTON;
     public static final BasicPistonBlock FAST_STICKY_PISTON;
     public static final BasicPistonHeadBlock FAST_PISTON_HEAD;
-    public static final SpeedPistonExtensionBlock FAST_MOVING_PISTON;
+    public static final FastPistonExtensionBlock FAST_MOVING_PISTON;
 
     public static BlockEntityType<BasicPistonBlockEntity> BASIC_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<SpeedPistonBlockEntity> SPEED_PISTON_BLOCK_ENTITY;
+    public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
 
     public static Identifier id(String str) {
         return new Identifier(MOD_ID, str);
@@ -95,7 +98,8 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         Registry.register(Registry.ITEM, id("fast_sticky_piston"), new BlockItem(FAST_STICKY_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
         // Block Entities
         BASIC_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("basic_piston_entity"), FabricBlockEntityTypeBuilder.create(BasicPistonBlockEntity::new, BASIC_MOVING_PISTON).build(null));
-        SPEED_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("speed_piston_entity"), FabricBlockEntityTypeBuilder.create(SpeedPistonBlockEntity::new, FAST_MOVING_PISTON, STRONG_MOVING_PISTON).build(null));
+        SPEED_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("speed_piston_entity"), FabricBlockEntityTypeBuilder.create(SpeedPistonBlockEntity::new, STRONG_MOVING_PISTON).build(null));
+        FAST_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("fast_piston_entity"), FabricBlockEntityTypeBuilder.create(FastPistonBlockEntity::new, FAST_MOVING_PISTON).build(null));
     }
 
     @Override
@@ -103,6 +107,7 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         // TODO: Stop using the deprecated method!
         BlockEntityRendererRegistry.INSTANCE.register(BASIC_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         BlockEntityRendererRegistry.INSTANCE.register(SPEED_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.INSTANCE.register(FAST_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
     }
 
     static {
@@ -111,21 +116,21 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
 
         // Basic Piston
         // Acts exactly like a normal vanilla piston
-        BASIC_MOVING_PISTON = new BasicPistonExtensionBlock(FabricBlockSettings.of(Material.PISTON).strength(-1.0f).dynamicBounds().dropsNothing().nonOpaque().solidBlock((a,b,c) -> false).suffocates((a,b,c) -> false).blockVision((a,b,c) -> false));
+        BASIC_MOVING_PISTON = new BasicPistonExtensionBlock();
         BASIC_PISTON_HEAD = new BasicPistonHeadBlock();
         BASIC_PISTON = new BasicPistonBlock(false);
         BASIC_STICKY_PISTON = new BasicPistonBlock(true);
 
         // Strong Piston
         // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
-        STRONG_MOVING_PISTON = new SpeedPistonExtensionBlock(FabricBlockSettings.of(Material.PISTON).strength(-1.0f).dynamicBounds().dropsNothing().nonOpaque().solidBlock((a, b, c) -> false).suffocates((a, b, c) -> false).blockVision((a, b, c) -> false),0.05F);
+        STRONG_MOVING_PISTON = new SpeedPistonExtensionBlock(0.05F);
         STRONG_PISTON_HEAD = new BasicPistonHeadBlock();
         STRONG_PISTON = new PushLimitPistonBlock(false,24, STRONG_MOVING_PISTON, STRONG_PISTON_HEAD);
         STRONG_STICKY_PISTON = new PushLimitPistonBlock(true,24, STRONG_MOVING_PISTON, STRONG_PISTON_HEAD);
 
         // Fast Piston
         // Can only push 2 block, although it's very fast (2x faster)
-        FAST_MOVING_PISTON = new SpeedPistonExtensionBlock(FabricBlockSettings.of(Material.PISTON).strength(-1.0f).dynamicBounds().dropsNothing().nonOpaque().solidBlock((a, b, c) -> false).suffocates((a, b, c) -> false).blockVision((a, b, c) -> false),2.0F); //Piston go brrrr
+        FAST_MOVING_PISTON = new FastPistonExtensionBlock();
         FAST_PISTON_HEAD = new BasicPistonHeadBlock();
         FAST_PISTON = new PushLimitPistonBlock(false,2, FAST_MOVING_PISTON, FAST_PISTON_HEAD);
         FAST_STICKY_PISTON = new PushLimitPistonBlock(true,2, FAST_MOVING_PISTON, FAST_PISTON_HEAD);

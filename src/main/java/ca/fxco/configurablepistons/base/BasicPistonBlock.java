@@ -38,13 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 public class BasicPistonBlock extends FacingBlock {
-    public static final BooleanProperty EXTENDED;
-    protected static final VoxelShape EXTENDED_EAST_SHAPE;
-    protected static final VoxelShape EXTENDED_WEST_SHAPE;
-    protected static final VoxelShape EXTENDED_SOUTH_SHAPE;
-    protected static final VoxelShape EXTENDED_NORTH_SHAPE;
-    protected static final VoxelShape EXTENDED_UP_SHAPE;
-    protected static final VoxelShape EXTENDED_DOWN_SHAPE;
+    public static final BooleanProperty EXTENDED = Properties.EXTENDED;
+    protected static final VoxelShape EXTENDED_EAST_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 12.0, 16.0, 16.0);
+    protected static final VoxelShape EXTENDED_WEST_SHAPE = Block.createCuboidShape(4.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+    protected static final VoxelShape EXTENDED_SOUTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 12.0);
+    protected static final VoxelShape EXTENDED_NORTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 4.0, 16.0, 16.0, 16.0);
+    protected static final VoxelShape EXTENDED_UP_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
+    protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.createCuboidShape(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
     protected final boolean sticky;
 
     public final BasicPistonExtensionBlock EXTENSION_BLOCK;
@@ -64,18 +64,16 @@ public class BasicPistonBlock extends FacingBlock {
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         if (state.get(EXTENDED)) {
-            switch (state.get(FACING)) {
-                default:
-                case UP: return EXTENDED_UP_SHAPE;
-                case DOWN: return EXTENDED_DOWN_SHAPE;
-                case NORTH: return EXTENDED_NORTH_SHAPE;
-                case SOUTH: return EXTENDED_SOUTH_SHAPE;
-                case EAST: return EXTENDED_EAST_SHAPE;
-                case WEST: return EXTENDED_WEST_SHAPE;
-            }
-        } else {
-            return VoxelShapes.fullCube();
+            return switch (state.get(FACING)) {
+                default -> EXTENDED_UP_SHAPE;
+                case DOWN -> EXTENDED_DOWN_SHAPE;
+                case NORTH -> EXTENDED_NORTH_SHAPE;
+                case SOUTH -> EXTENDED_SOUTH_SHAPE;
+                case EAST -> EXTENDED_EAST_SHAPE;
+                case WEST -> EXTENDED_WEST_SHAPE;
+            };
         }
+        return VoxelShapes.fullCube();
     }
 
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
@@ -87,13 +85,18 @@ public class BasicPistonBlock extends FacingBlock {
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!oldState.isOf(state.getBlock())) {
-            if (!world.isClient && world.getBlockEntity(pos) == null) this.tryMove(world, pos, state);
-        }
+        if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
+            this.tryMove(world, pos, state);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite()).with(EXTENDED, false);
+        return this.getDefaultState()
+                .with(FACING, ctx.getPlayerLookDirection().getOpposite())
+                .with(EXTENDED, false);
+    }
+
+    public ConfigurablePistonHandler getPistonHandler(World world, BlockPos pos, Direction dir, boolean retract) {
+        return new ConfigurablePistonHandler(world, pos, dir, retract);
     }
 
     public void tryMove(World world, BlockPos pos, BlockState state) {
@@ -108,12 +111,12 @@ public class BasicPistonBlock extends FacingBlock {
             int i = 1;
             if (blockState.isOf(EXTENSION_BLOCK) && blockState.get(FACING) == direction) {
                 BlockEntity blockEntity = world.getBlockEntity(blockPos);
-                if (blockEntity instanceof PistonBlockEntity pistonBlockEntity) {
-                    if (pistonBlockEntity.isExtending() &&
-                            (pistonBlockEntity.getProgress(0.0F) < 0.5F ||
-                            world.getTime() == pistonBlockEntity.getSavedWorldTime() ||
-                            ((ServerWorld)world).isInBlockTick()))
-                        i = 2;
+                if (blockEntity instanceof PistonBlockEntity pistonBlockEntity &&
+                        pistonBlockEntity.isExtending() && (
+                                pistonBlockEntity.getProgress(0.0F) < 0.5F ||
+                                world.getTime() == pistonBlockEntity.getSavedWorldTime() ||
+                                ((ServerWorld)world).isInBlockTick())) {
+                    i = 2;
                 }
             }
             world.addSyncedBlockEvent(pos, this, i, direction.getId());
@@ -121,20 +124,15 @@ public class BasicPistonBlock extends FacingBlock {
     }
 
     public boolean shouldExtend(World world, BlockPos pos, Direction pistonFace) {
-        for(Direction direction : Direction.values()) {
-            if (direction != pistonFace && world.isEmittingRedstonePower(pos.offset(direction), direction))
-                return true;
+        for(Direction dir : Direction.values()) {
+            if (dir != pistonFace && world.isEmittingRedstonePower(pos.offset(dir), dir)) return true;
         }
-        if (world.isEmittingRedstonePower(pos, Direction.DOWN)) {
-            return true;
-        } else {
-            BlockPos blockPos = pos.up();
-            for(Direction direction : Direction.values()) {
-                if (direction != Direction.DOWN && world.isEmittingRedstonePower(blockPos.offset(direction), direction))
-                    return true;
-            }
-            return false;
+        if (world.isEmittingRedstonePower(pos, Direction.DOWN)) return true;
+        BlockPos blockPos = pos.up();
+        for(Direction dir : Direction.values()) {
+            if (dir != Direction.DOWN && world.isEmittingRedstonePower(blockPos.offset(dir), dir)) return true;
         }
+        return false;
     }
 
     public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
@@ -154,7 +152,7 @@ public class BasicPistonBlock extends FacingBlock {
             world.emitGameEvent(GameEvent.PISTON_EXTEND, pos);
         } else if (type == 1 || type == 2) {
             BlockEntity blockEntity = world.getBlockEntity(pos.offset(direction));
-            if (blockEntity instanceof PistonBlockEntity) ((PistonBlockEntity)blockEntity).finish();
+            if (blockEntity instanceof BasicPistonBlockEntity bpbe) bpbe.finish();
             BlockState blockState = EXTENSION_BLOCK.getDefaultState()
                     .with(PistonExtensionBlock.FACING, direction)
                     .with(PistonExtensionBlock.TYPE, this.sticky ? PistonType.STICKY : PistonType.DEFAULT);
@@ -168,11 +166,10 @@ public class BasicPistonBlock extends FacingBlock {
                 boolean bl2 = false;
                 if (state2.isOf(EXTENSION_BLOCK)) {
                     BlockEntity blockEntity2 = world.getBlockEntity(blockPos);
-                    if (blockEntity2 instanceof PistonBlockEntity pistonBlockEntity) {
-                        if (pistonBlockEntity.getFacing() == direction && pistonBlockEntity.isExtending()) {
-                            pistonBlockEntity.finish();
-                            bl2 = true;
-                        }
+                    if (blockEntity2 instanceof PistonBlockEntity pistonBlockEntity &&
+                            pistonBlockEntity.getFacing() == direction && pistonBlockEntity.isExtending()) {
+                        pistonBlockEntity.finish();
+                        bl2 = true;
                     }
                 }
                 if (!bl2) {
@@ -189,10 +186,6 @@ public class BasicPistonBlock extends FacingBlock {
             world.emitGameEvent(GameEvent.PISTON_CONTRACT, pos);
         }
         return true;
-    }
-
-    public ConfigurablePistonHandler getPistonHandler(World world, BlockPos pos, Direction dir, boolean retract) {
-        return new ConfigurablePistonHandler(world, pos, dir, retract);
     }
 
     public boolean move(World world, BlockPos pos, Direction dir, boolean retract) {
@@ -282,15 +275,5 @@ public class BasicPistonBlock extends FacingBlock {
 
     public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
         return false;
-    }
-
-    static {
-        EXTENDED = Properties.EXTENDED;
-        EXTENDED_EAST_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 12.0, 16.0, 16.0);
-        EXTENDED_WEST_SHAPE = Block.createCuboidShape(4.0, 0.0, 0.0, 16.0, 16.0, 16.0);
-        EXTENDED_SOUTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 12.0);
-        EXTENDED_NORTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 4.0, 16.0, 16.0, 16.0);
-        EXTENDED_UP_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
-        EXTENDED_DOWN_SHAPE = Block.createCuboidShape(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
     }
 }
