@@ -3,7 +3,6 @@ package ca.fxco.configurablepistons.helpers;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.PistonBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -12,7 +11,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class ConfigurablePistonHandler {
-    public static final int MAX_MOVABLE_BLOCKS = 12;
+    public static final int DEFAULT_MAX_MOVABLE_BLOCKS = 12;
     private final World world;
     private final BlockPos posFrom;
     private final boolean retracted;
@@ -21,8 +20,13 @@ public class ConfigurablePistonHandler {
     private final List<BlockPos> movedBlocks = Lists.newArrayList();
     private final List<BlockPos> brokenBlocks = Lists.newArrayList();
     private final Direction pistonDirection;
+    private final int maxMovableBlocks;
 
     public ConfigurablePistonHandler(World world, BlockPos pos, Direction dir, boolean retracted) {
+        this(world, pos, dir, retracted, DEFAULT_MAX_MOVABLE_BLOCKS);
+    }
+
+    public ConfigurablePistonHandler(World world, BlockPos pos, Direction dir, boolean retracted, int maxMovableBlocks) {
         this.world = world;
         this.posFrom = pos;
         this.pistonDirection = dir;
@@ -34,7 +38,7 @@ public class ConfigurablePistonHandler {
             this.motionDirection = dir.getOpposite();
             this.posTo = pos.offset(dir, 2);
         }
-
+        this.maxMovableBlocks = maxMovableBlocks;
     }
 
     public boolean calculatePullPush(boolean isPull) {
@@ -48,14 +52,13 @@ public class ConfigurablePistonHandler {
             } else {
                 return false;
             }
-        } else if (!this.tryMove(this.posTo, isPull ? this.motionDirection.getOpposite() : this.motionDirection)) {
+        } else if (this.cantMove(this.posTo, isPull ? this.motionDirection.getOpposite() : this.motionDirection)) {
             return false;
         } else {
             for (int i = 0; i < this.movedBlocks.size(); ++i) {
                 BlockPos blockPos = this.movedBlocks.get(i);
-                if (isBlockSticky(this.world.getBlockState(blockPos)) && !this.tryMoveAdjacentBlock(blockPos)) {
+                if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlock(blockPos))
                     return false;
-                }
             }
             return true;
         }
@@ -75,45 +78,36 @@ public class ConfigurablePistonHandler {
         }
     }
 
-    private boolean tryMove(BlockPos pos, Direction dir) {
+    private boolean cantMove(BlockPos pos, Direction dir) {
         BlockState blockState = this.world.getBlockState(pos);
         if (blockState.isAir()) {
-            return true;
+            return false;
         } else if (!PistonUtils.isMovable(blockState, this.world, pos, this.motionDirection, false, dir)) {
-            return true;
+            return false;
         } else if (pos.equals(this.posFrom)) {
-            return true;
+            return false;
         } else if (this.movedBlocks.contains(pos)) {
-            return true;
+            return false;
         } else {
             int i = 1;
-            if (i + this.movedBlocks.size() > MAX_MOVABLE_BLOCKS) {
-                return false;
+            if (i + this.movedBlocks.size() > this.maxMovableBlocks) {
+                return true;
             } else {
                 while(isBlockSticky(blockState)) {
                     BlockPos blockPos = pos.offset(this.motionDirection.getOpposite(), i);
                     BlockState blockState2 = blockState;
                     blockState = this.world.getBlockState(blockPos);
-                    if (blockState.isAir() || !isAdjacentBlockStuck(blockState2, blockState) || !PistonUtils.isMovable(blockState, this.world, blockPos, this.motionDirection, false, this.motionDirection.getOpposite()) || blockPos.equals(this.posFrom)) {
+                    if (blockState.isAir() || !isAdjacentBlockStuck(blockState2, blockState) || !PistonUtils.isMovable(blockState, this.world, blockPos, this.motionDirection, false, this.motionDirection.getOpposite()) || blockPos.equals(this.posFrom))
                         break;
-                    }
-
                     ++i;
-                    if (i + this.movedBlocks.size() > MAX_MOVABLE_BLOCKS) {
-                        return false;
-                    }
+                    if (i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
                 }
-
-                int j = 0;
-
-                int k;
+                int j = 0, k;
                 for(k = i - 1; k >= 0; --k) {
                     this.movedBlocks.add(pos.offset(this.motionDirection.getOpposite(), k));
                     ++j;
                 }
-
                 k = 1;
-
                 while(true) {
                     BlockPos blockPos2 = pos.offset(this.motionDirection, k);
                     int l = this.movedBlocks.indexOf(blockPos2);
@@ -121,21 +115,20 @@ public class ConfigurablePistonHandler {
                         this.setMovedBlocks(j, l);
                         for(int m = 0; m <= l + j; ++m) {
                             BlockPos blockPos3 = this.movedBlocks.get(m);
-                            if (isBlockSticky(this.world.getBlockState(blockPos3)) && !this.tryMoveAdjacentBlock(blockPos3))
-                                return false;
+                            if (isBlockSticky(this.world.getBlockState(blockPos3)) && this.cantMoveAdjacentBlock(blockPos3))
+                                return true;
                         }
-                        return true;
-                    }
-
-                    blockState = this.world.getBlockState(blockPos2);
-                    if (blockState.isAir()) return true;
-                    if (!PistonUtils.isMovable(blockState, this.world, blockPos2, this.motionDirection, true, this.motionDirection) || blockPos2.equals(this.posFrom))
                         return false;
+                    }
+                    blockState = this.world.getBlockState(blockPos2);
+                    if (blockState.isAir()) return false;
+                    if (!PistonUtils.isMovable(blockState, this.world, blockPos2, this.motionDirection, true, this.motionDirection) || blockPos2.equals(this.posFrom))
+                        return true;
                     if (blockState.getPistonBehavior() == PistonBehavior.DESTROY) {
                         this.brokenBlocks.add(blockPos2);
-                        return true;
+                        return false;
                     }
-                    if (this.movedBlocks.size() >= MAX_MOVABLE_BLOCKS) return false;
+                    if (this.movedBlocks.size() >= this.maxMovableBlocks) return true;
                     this.movedBlocks.add(blockPos2);
                     ++j;
                     ++k;
@@ -157,16 +150,16 @@ public class ConfigurablePistonHandler {
         this.movedBlocks.addAll(list3);
     }
 
-    private boolean tryMoveAdjacentBlock(BlockPos pos) {
+    private boolean cantMoveAdjacentBlock(BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
         for (Direction direction : Direction.values()) {
             if (direction.getAxis() != this.motionDirection.getAxis()) {
                 BlockPos blockPos = pos.offset(direction);
                 BlockState blockState2 = this.world.getBlockState(blockPos);
-                if (isAdjacentBlockStuck(blockState2, blockState) && !this.tryMove(blockPos, direction)) return false;
+                if (isAdjacentBlockStuck(blockState2, blockState) && this.cantMove(blockPos, direction)) return true;
             }
         }
-        return true;
+        return false;
     }
 
     public Direction getMotionDirection() {
@@ -179,5 +172,9 @@ public class ConfigurablePistonHandler {
 
     public List<BlockPos> getBrokenBlocks() {
         return this.brokenBlocks;
+    }
+
+    public int getMaxMovableBlocks() {
+        return this.maxMovableBlocks;
     }
 }

@@ -27,9 +27,12 @@ public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider
     )
     protected void configure(CallbackInfo ci) {
         // TODO: Make all moving pistons dragon and wither immune
+        //       Make the families handle this
         this.getOrCreateTagBuilder(Registerer.MOVING_PISTONS).add(
                 Blocks.MOVING_PISTON,
-                ConfigurablePistons.BASIC_MOVING_PISTON
+                ConfigurablePistons.BASIC_MOVING_PISTON,
+                ConfigurablePistons.STRONG_MOVING_PISTON,
+                ConfigurablePistons.FAST_MOVING_PISTON
         );
         this.getOrCreateTagBuilder(Registerer.PISTONS).add(
                 Blocks.PISTON,
@@ -37,7 +40,9 @@ public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider
                 ConfigurablePistons.BASIC_PISTON,
                 ConfigurablePistons.BASIC_STICKY_PISTON,
                 ConfigurablePistons.STRONG_PISTON,
-                ConfigurablePistons.STRONG_STICKY_PISTON
+                ConfigurablePistons.STRONG_STICKY_PISTON,
+                ConfigurablePistons.FAST_PISTON,
+                ConfigurablePistons.FAST_STICKY_PISTON
         );
         this.getOrCreateTagBuilder(Registerer.UNPUSHABLE).add(
                 Blocks.OBSIDIAN,

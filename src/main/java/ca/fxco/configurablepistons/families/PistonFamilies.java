@@ -14,6 +14,7 @@ public class PistonFamilies {
 
     public static final PistonFamily BASIC;
     public static final PistonFamily STRONG;
+    public static final PistonFamily FAST;
 
     public static PistonFamily.Builder register(BasicPistonHeadBlock headBlock) {
         PistonFamily.Builder builder = new PistonFamily.Builder(headBlock);
@@ -36,5 +37,6 @@ public class PistonFamilies {
     static {
         BASIC = register(ConfigurablePistons.BASIC_PISTON_HEAD).piston(ConfigurablePistons.BASIC_PISTON).sticky(ConfigurablePistons.BASIC_STICKY_PISTON).extension(ConfigurablePistons.BASIC_MOVING_PISTON).build();
         STRONG = register(ConfigurablePistons.STRONG_PISTON_HEAD).piston(ConfigurablePistons.STRONG_PISTON).sticky(ConfigurablePistons.STRONG_STICKY_PISTON).extension(ConfigurablePistons.STRONG_MOVING_PISTON).build();
+        FAST = register(ConfigurablePistons.FAST_PISTON_HEAD).piston(ConfigurablePistons.FAST_PISTON).sticky(ConfigurablePistons.FAST_STICKY_PISTON).extension(ConfigurablePistons.FAST_MOVING_PISTON).build();
     }
 }

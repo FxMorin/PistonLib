@@ -91,7 +91,7 @@ public class BasicPistonExtensionBlock extends PistonExtensionBlock {
 
     @Nullable
     private PistonBlockEntity getPistonBlockEntity(BlockView world, BlockPos pos) {
-        return world.getBlockEntity(pos) instanceof PistonBlockEntity pbe ? pbe : null;
+        return world.getBlockEntity(pos) instanceof BasicPistonBlockEntity bpbe ? bpbe : null;
     }
 
     @Override

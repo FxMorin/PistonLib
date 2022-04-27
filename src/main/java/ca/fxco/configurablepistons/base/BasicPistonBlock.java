@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
@@ -49,16 +50,12 @@ public class BasicPistonBlock extends FacingBlock {
     public final BasicPistonExtensionBlock EXTENSION_BLOCK;
     public final BasicPistonHeadBlock HEAD_BLOCK;
 
-    public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings) {
-        this(sticky, settings, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
+    public BasicPistonBlock(boolean sticky) {
+        this(sticky, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
     }
 
-    public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings, BasicPistonExtensionBlock extensionBlock) {
-        this(sticky, settings, extensionBlock, ConfigurablePistons.BASIC_PISTON_HEAD);
-    }
-
-    public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
-        super(settings);
+    public BasicPistonBlock(boolean sticky, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
+        super(FabricBlockSettings.copyOf(Blocks.PISTON));
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(EXTENDED, false));
         this.sticky = sticky;
         EXTENSION_BLOCK = extensionBlock;
@@ -67,15 +64,15 @@ public class BasicPistonBlock extends FacingBlock {
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         if (state.get(EXTENDED)) {
-            VoxelShape value = switch (state.get(FACING)) {
-                case UP -> EXTENDED_UP_SHAPE;
-                case DOWN -> EXTENDED_DOWN_SHAPE;
-                case NORTH -> EXTENDED_NORTH_SHAPE;
-                case SOUTH -> EXTENDED_SOUTH_SHAPE;
-                case WEST -> EXTENDED_WEST_SHAPE;
-                case EAST -> EXTENDED_EAST_SHAPE;
-            };
-            return value == null || value.isEmpty() ? EXTENDED_UP_SHAPE : value;
+            switch (state.get(FACING)) {
+                default:
+                case UP: return EXTENDED_UP_SHAPE;
+                case DOWN: return EXTENDED_DOWN_SHAPE;
+                case NORTH: return EXTENDED_NORTH_SHAPE;
+                case SOUTH: return EXTENDED_SOUTH_SHAPE;
+                case EAST: return EXTENDED_EAST_SHAPE;
+                case WEST: return EXTENDED_WEST_SHAPE;
+            }
         } else {
             return VoxelShapes.fullCube();
         }
@@ -191,15 +188,18 @@ public class BasicPistonBlock extends FacingBlock {
             world.playSound(null, pos, SoundEvents.BLOCK_PISTON_CONTRACT, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.15F + 0.6F);
             world.emitGameEvent(GameEvent.PISTON_CONTRACT, pos);
         }
-
         return true;
+    }
+
+    public ConfigurablePistonHandler getPistonHandler(World world, BlockPos pos, Direction dir, boolean retract) {
+        return new ConfigurablePistonHandler(world, pos, dir, retract);
     }
 
     public boolean move(World world, BlockPos pos, Direction dir, boolean retract) {
         BlockPos blockPos = pos.offset(dir);
         if (!retract && world.getBlockState(blockPos).isOf(HEAD_BLOCK))
             world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), Block.NO_REDRAW | Block.FORCE_STATE);
-        ConfigurablePistonHandler pistonHandler = new ConfigurablePistonHandler(world, pos, dir, retract);
+        ConfigurablePistonHandler pistonHandler = getPistonHandler(world, pos, dir, retract);
         if (!pistonHandler.calculatePullPush(!retract)) return false;
         Map<BlockPos, BlockState> map = Maps.newHashMap();
         List<BlockPos> list = pistonHandler.getMovedBlocks();
@@ -221,8 +221,7 @@ public class BasicPistonBlock extends FacingBlock {
             BlockEntity blockEntity = blockState2.hasBlockEntity() ? world.getBlockEntity(blockPos3) : null;
             dropStacks(blockState2, world, blockPos3, blockEntity);
             world.setBlockState(blockPos3, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-            if (!blockState2.isIn(BlockTags.FIRE))
-                world.addBlockBreakParticles(blockPos3, blockState2);
+            if (!blockState2.isIn(BlockTags.FIRE)) world.addBlockBreakParticles(blockPos3, blockState2);
             blockStates[j++] = blockState2;
         }
         for(k = list.size() - 1; k >= 0; --k) {
@@ -244,9 +243,8 @@ public class BasicPistonBlock extends FacingBlock {
             world.addBlockEntity(EXTENSION_BLOCK.createPistonBlockEntity(blockPos, blockState2, blockState4, dir, true, true));
         }
         BlockState blockState5 = Blocks.AIR.getDefaultState();
-        for (BlockPos blockPos4 : map.keySet()) {
+        for (BlockPos blockPos4 : map.keySet())
             world.setBlockState(blockPos4, blockState5, Block.NOTIFY_LISTENERS | Block.FORCE_STATE | Block.MOVED);
-        }
         BlockPos blockPos5;
         for (Map.Entry<BlockPos, BlockState> entry : map.entrySet()) {
             blockPos5 = entry.getKey();
@@ -261,9 +259,7 @@ public class BasicPistonBlock extends FacingBlock {
             blockState2.prepare(world, blockPos5, 2);
             world.updateNeighborsAlways(blockPos5, blockState2.getBlock());
         }
-        for(k = list.size() - 1; k >= 0; --k) {
-            world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
-        }
+        for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
         if (retract) world.updateNeighborsAlways(blockPos, HEAD_BLOCK);
         return true;
     }

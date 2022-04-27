@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/template_piston",
   "textures": {
-    "platform": "minecraft:block/piston_top",
+    "platform": "minecraft:block/piston_top_sticky",
     "bottom": "minecraft:block/piston_bottom",
     "side": "minecraft:block/piston_side"
   }

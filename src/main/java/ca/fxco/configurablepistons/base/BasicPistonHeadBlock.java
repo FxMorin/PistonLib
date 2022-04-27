@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.base;
 import ca.fxco.configurablepistons.Registerer;
 import ca.fxco.configurablepistons.families.PistonFamilies;
 import ca.fxco.configurablepistons.families.PistonFamily;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.entity.ai.pathing.NavigationType;
@@ -53,20 +54,21 @@ public class BasicPistonHeadBlock extends FacingBlock {
         return Arrays.stream(Direction.values()).map((direction) -> getHeadShape(direction, shortHead)).toArray(VoxelShape[]::new);
     }
 
+    //Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
     public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
-        VoxelShape shape = switch (direction) {
-            case DOWN -> VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
-            case UP -> VoxelShapes.union(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
-            case NORTH -> VoxelShapes.union(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
-            case SOUTH -> VoxelShapes.union(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
-            case WEST -> VoxelShapes.union(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
-            case EAST -> VoxelShapes.union(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
-        };
-        return shape == null || shape.isEmpty() ? VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE) : shape;
+        switch (direction) {
+            default:
+            case DOWN: return VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
+            case UP: return VoxelShapes.union(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
+            case NORTH: return VoxelShapes.union(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
+            case SOUTH: return VoxelShapes.union(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
+            case WEST: return VoxelShapes.union(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
+            case EAST: return VoxelShapes.union(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
+        }
     }
 
-    public BasicPistonHeadBlock(AbstractBlock.Settings settings) {
-        super(settings);
+    public BasicPistonHeadBlock() {
+        super(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(TYPE, PistonType.DEFAULT).with(SHORT, false));
