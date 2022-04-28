@@ -54,8 +54,16 @@ public class BasicPistonBlock extends FacingBlock {
         this(sticky, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
     }
 
+    public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings) {
+        this(sticky, settings, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
+    }
+
     public BasicPistonBlock(boolean sticky, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
-        super(FabricBlockSettings.copyOf(Blocks.PISTON));
+        this(sticky, FabricBlockSettings.copyOf(Blocks.PISTON), extensionBlock, headBlock);
+    }
+
+    public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
+        super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(EXTENDED, false));
         this.sticky = sticky;
         EXTENSION_BLOCK = extensionBlock;
