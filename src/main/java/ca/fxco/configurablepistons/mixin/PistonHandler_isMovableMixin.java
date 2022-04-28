@@ -62,4 +62,13 @@ public abstract class PistonHandler_isMovableMixin {
     private boolean useCustomIsMovable1(PistonHandler instance, BlockPos pos, Direction dir) {
         return this.tryMove(pos,this.retracted ? dir : dir.getOpposite());
     }
+
+
+    @Redirect(
+            method = "isBlockSticky(Lnet/minecraft/block/BlockState;)Z",
+            at = @At("HEAD")
+    )
+    private static boolean isBlockSticky(BlockState state) {
+        return state.isIn(ModTags.STICKY_BLOCKS);
+    }
 }

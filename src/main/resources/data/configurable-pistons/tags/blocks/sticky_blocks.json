@@ -1,0 +1,8 @@
+{
+  "_comment": "This should only be used for blocks that are sticky on all sides!",
+  "replace": false,
+  "values": [
+    "minecraft:slime_block",
+    "minecraft:honey_block"
+  ]
+}

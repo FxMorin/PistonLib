@@ -63,7 +63,7 @@ public class ConfigurablePistonHandler {
     }
 
     private static boolean isBlockSticky(BlockState state) {
-        return state.isOf(Blocks.SLIME_BLOCK) || state.isOf(Blocks.HONEY_BLOCK);
+        return state.isIn(ModTags.STICKY_BLOCKS);
     }
 
     private static boolean isAdjacentBlockStuck(BlockState state, BlockState adjacentState) {

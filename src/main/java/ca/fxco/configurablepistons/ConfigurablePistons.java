@@ -129,7 +129,7 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         STRONG_STICKY_PISTON = new PushLimitPistonBlock(true,24, STRONG_MOVING_PISTON, STRONG_PISTON_HEAD);
 
         // Fast Piston
-        // Can only push 2 block, although it's very fast (2x faster)
+        // Can only push 2 block, although it's very fast
         FAST_MOVING_PISTON = new FastPistonExtensionBlock();
         FAST_PISTON_HEAD = new BasicPistonHeadBlock();
         FAST_PISTON = new PushLimitPistonBlock(false,2, FAST_MOVING_PISTON, FAST_PISTON_HEAD);

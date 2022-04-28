@@ -6,12 +6,8 @@ import net.minecraft.util.registry.Registry;
 
 public class ModTags {
     // Tags
-    public static final TagKey<Block> PISTONS = TagKey.of(Registry.BLOCK_KEY,
-            ConfigurablePistons.id("pistons"));
-    public static final TagKey<Block> MOVING_PISTONS = TagKey.of(Registry.BLOCK_KEY,
-            ConfigurablePistons.id("moving_pistons"));
-    public static final TagKey<Block> UNPUSHABLE = TagKey.of(Registry.BLOCK_KEY,
-            ConfigurablePistons.id("unpushable"));
-
-
+    public static final TagKey<Block> PISTONS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("pistons"));
+    public static final TagKey<Block> MOVING_PISTONS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("moving_pistons"));
+    public static final TagKey<Block> UNPUSHABLE = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("unpushable"));
+    public static final TagKey<Block> STICKY_BLOCKS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("sticky_blocks"));
 }

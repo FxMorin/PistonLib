@@ -28,9 +28,7 @@ public class PistonUtils {
                 }
             } else {
                 if (state.isIn(ModTags.UNPUSHABLE) || state.getHardness(wo, pos) == -1.0F) return false;
-                System.out.println("LOL GOTTEM");
                 if (state.isIn(ModTags.PISTONS)) return !state.get(EXTENDED) && !state.hasBlockEntity();
-                System.out.println("Not Piston? - "+state);
                 return switch (state.getPistonBehavior()) {
                     case BLOCK -> false;
                     case DESTROY -> canBreak;
