@@ -1,0 +1,10 @@
+{
+  "item.configurable-pistons.drag_block": "Drag Block",
+  "block.configurable-pistons.drag_block": "Drag Block",
+  "block.configurable-pistons.basic_piston": "Basic Piston",
+  "block.configurable-pistons.basic_sticky_piston": "Basic Sticky Piston",
+  "block.configurable-pistons.strong_piston": "Strong Piston",
+  "block.configurable-pistons.strong_sticky_piston": "Strong Sticky Piston",
+  "block.configurable-pistons.fast_piston": "Fast Piston",
+  "block.configurable-pistons.fast_sticky_piston": "Fast Sticky Piston"
+}
