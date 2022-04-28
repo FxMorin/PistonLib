@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.Registerer;
+import ca.fxco.configurablepistons.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.mob.ShulkerEntity;
@@ -20,6 +20,6 @@ public class ShulkerEntity_movingPistonMixin {
             )
     )
     public boolean allMovingPistons(BlockState instance, Block block) {
-        return instance.isIn(Registerer.MOVING_PISTONS);
+        return instance.isIn(ModTags.MOVING_PISTONS);
     }
 }

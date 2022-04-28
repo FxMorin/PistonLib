@@ -6,7 +6,9 @@
   "mixins": [
     "AbstractBlockState_pistonBehaviorMixin",
     "Block_pistonBehaviorMixin",
+    "BlockCollisionSpliterator_movingPistonMixin",
     "BlockTagProvider_registerMixin",
+    "Factory_movingPistonMixin",
     "FallingBlockEntity_movingPistonsMixin",
     "PistonBlock_tagsMixin",
     "PistonHandler_isMovableMixin",

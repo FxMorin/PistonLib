@@ -3,17 +3,17 @@ package ca.fxco.configurablepistons.mixin;
 import ca.fxco.configurablepistons.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.world.BlockCollisionSpliterator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(FallingBlockEntity.class)
-public class FallingBlockEntity_movingPistonsMixin {
+@Mixin(BlockCollisionSpliterator.class)
+public class BlockCollisionSpliterator_movingPistonMixin {
 
 
     @Redirect(
-            method = "tick",
+            method = "computeNext()Lnet/minecraft/util/shape/VoxelShape;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"

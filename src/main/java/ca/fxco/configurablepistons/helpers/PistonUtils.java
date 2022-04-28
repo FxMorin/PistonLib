@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.helpers;
 
-import ca.fxco.configurablepistons.Registerer;
+import ca.fxco.configurablepistons.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -27,23 +27,16 @@ public class PistonUtils {
                     }
                 }
             } else {
-                if (!state.isIn(Registerer.UNPUSHABLE)) {
-                    if (!state.isIn(Registerer.PISTONS)) {
-                        if (state.getHardness(wo, pos) == -1.0F)
-                            return false;
-                        switch (state.getPistonBehavior()) {
-                            case BLOCK:
-                                return false;
-                            case DESTROY:
-                                return canBreak;
-                            case PUSH_ONLY:
-                                return dir == pistonDir;
-                        }
-                    } else if (state.get(EXTENDED)) {
-                        return false;
-                    }
-                    return !state.hasBlockEntity();
-                }
+                if (state.isIn(ModTags.UNPUSHABLE) || state.getHardness(wo, pos) == -1.0F) return false;
+                System.out.println("LOL GOTTEM");
+                if (state.isIn(ModTags.PISTONS)) return !state.get(EXTENDED) && !state.hasBlockEntity();
+                System.out.println("Not Piston? - "+state);
+                return switch (state.getPistonBehavior()) {
+                    case BLOCK -> false;
+                    case DESTROY -> canBreak;
+                    case PUSH_ONLY -> dir == pistonDir;
+                    default -> !state.hasBlockEntity();
+                };
             }
         }
         return false;

@@ -1,17 +1,11 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.Registerer;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.server.AbstractTagProvider;
 import net.minecraft.data.server.BlockTagProvider;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockTagProvider.class)
 public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider<Block> {
@@ -21,7 +15,7 @@ public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider
     }
 
 
-    @Inject(
+    /*@Inject(
             method = "configure()V",
             at = @At("TAIL")
     )
@@ -49,5 +43,5 @@ public abstract class BlockTagProvider_registerMixin extends AbstractTagProvider
                 Blocks.CRYING_OBSIDIAN,
                 Blocks.RESPAWN_ANCHOR
         );
-    }
+    }*/
 }

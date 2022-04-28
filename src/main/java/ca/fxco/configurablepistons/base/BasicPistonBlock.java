@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.Registerer;
+import ca.fxco.configurablepistons.ModTags;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
 import com.google.common.collect.Lists;
@@ -173,7 +173,7 @@ public class BasicPistonBlock extends FacingBlock {
                     }
                 }
                 if (!bl2) {
-                    if (type != 1 || state2.isAir() || !PistonUtils.isMovable(state2, world, blockPos, direction.getOpposite(), false, direction) || state2.getPistonBehavior() != PistonBehavior.NORMAL && !state2.isIn(Registerer.PISTONS)) {
+                    if (type != 1 || state2.isAir() || !PistonUtils.isMovable(state2, world, blockPos, direction.getOpposite(), false, direction) || state2.getPistonBehavior() != PistonBehavior.NORMAL && !state2.isIn(ModTags.PISTONS)) {
                         world.removeBlock(pos.offset(direction), false);
                     } else {
                         this.move(world, pos, direction, false);

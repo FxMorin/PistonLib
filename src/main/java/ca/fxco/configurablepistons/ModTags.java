@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.Registry;
 
-public class Registerer {
+public class ModTags {
     // Tags
     public static final TagKey<Block> PISTONS = TagKey.of(Registry.BLOCK_KEY,
             ConfigurablePistons.id("pistons"));

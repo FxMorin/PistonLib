@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:piston",
+    "minecraft:sticky_piston",
+    "configurable-pistons:basic_piston",
+    "configurable-pistons:basic_sticky_piston",
+    "configurable-pistons:strong_piston",
+    "configurable-pistons:strong_sticky_piston",
+    "configurable-pistons:fast_piston",
+    "configurable-pistons:fast_sticky_piston"
+  ]
+}
