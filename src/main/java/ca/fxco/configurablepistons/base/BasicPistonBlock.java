@@ -12,7 +12,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
@@ -111,7 +110,7 @@ public class BasicPistonBlock extends FacingBlock {
         Direction direction = state.get(FACING);
         boolean bl = this.shouldExtend(world, pos, direction);
         if (bl && !(Boolean)state.get(EXTENDED)) {
-            if ((new PistonHandler(world, pos, direction, true)).calculatePush())
+            if ((getPistonHandler(world, pos, direction, true)).calculatePullPush(false))
                 world.addSyncedBlockEvent(pos, this, 0, direction.getId());
         } else if (!bl && state.get(EXTENDED)) {
             BlockPos blockPos = pos.offset(direction, 2);
