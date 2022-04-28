@@ -16,6 +16,8 @@ public class PistonFamilies {
     public static final PistonFamily STRONG;
     public static final PistonFamily FAST;
 
+    // TODO: Make all moving pistons dragon and wither immune
+
     public static PistonFamily.Builder register(BasicPistonHeadBlock headBlock) {
         PistonFamily.Builder builder = new PistonFamily.Builder(headBlock);
         PistonFamily blockFamily = PISTON_HEADS_TO_FAMILIES.put(headBlock, builder.build());
