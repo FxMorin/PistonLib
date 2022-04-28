@@ -26,8 +26,6 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
      * This class overrides all the non-static methods of PistonBlockEntity
      */
 
-    //TODO: Fix piston collisions not working (Phasing through pistons that are retracting instead of being moved up)
-
     public final BasicPistonExtensionBlock EXTENSION_BLOCK;
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state) {

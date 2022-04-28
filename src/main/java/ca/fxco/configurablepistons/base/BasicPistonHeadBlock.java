@@ -51,10 +51,10 @@ public class BasicPistonHeadBlock extends FacingBlock {
     private static final VoxelShape[] HEAD_SHAPES;
 
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
-        return Arrays.stream(Direction.values()).map((direction) -> getHeadShape(direction, shortHead)).toArray(VoxelShape[]::new);
+        return Arrays.stream(Direction.values()).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
     }
 
-    //Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
+    //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
     public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
         return switch (direction) {
             default -> VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
@@ -84,8 +84,8 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     public boolean isAttached(BlockState headState, BlockState pistonState) {
         PistonFamily family = PistonFamilies.getFamily(this);
-        Block mustBe = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
-        return pistonState.isOf(mustBe) && pistonState.get(BasicPistonBlock.EXTENDED) &&
+        Block of = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
+        return pistonState.isOf(of) && pistonState.get(BasicPistonBlock.EXTENDED) &&
                 pistonState.get(FACING) == headState.get(FACING);
     }
 
@@ -104,18 +104,21 @@ public class BasicPistonHeadBlock extends FacingBlock {
         if (this.isAttached(state, world.getBlockState(blockPos))) world.breakBlock(blockPos, true);
     }
 
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         return direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos) ?
                 Blocks.AIR.getDefaultState() :
                 super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite())); // TODO: Change MOVING_PISTONS here to just check if its the current moving piston
-        return this.isAttached(state, blockState) || blockState.isIn(Registerer.MOVING_PISTONS) && blockState.get(FACING) == state.get(FACING);
+        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
+        // TODO: Change MOVING_PISTONS here to just check if its the current moving piston
+        return this.isAttached(state, blockState) || blockState.isIn(Registerer.MOVING_PISTONS) &&
+                blockState.get(FACING) == state.get(FACING);
     }
 
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean n) {
         if (state.canPlaceAt(world, pos)) {
             BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
             world.getBlockState(blockPos).neighborUpdate(world, blockPos, block, fromPos, false);
@@ -124,7 +127,8 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         PistonFamily family = PistonFamilies.getFamily(this);
-        return new ItemStack(state.get(TYPE) == PistonType.STICKY ? family.getStickyPistonBlock() : family.getPistonBlock());
+        return new ItemStack(state.get(TYPE) == PistonType.STICKY ?
+                family.getStickyPistonBlock() : family.getPistonBlock());
     }
 
     public BlockState rotate(BlockState state, BlockRotation rotation) {

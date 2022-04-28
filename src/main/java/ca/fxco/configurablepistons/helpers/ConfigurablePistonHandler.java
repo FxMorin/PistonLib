@@ -49,19 +49,17 @@ public class ConfigurablePistonHandler {
             if (this.retracted && blockState.getPistonBehavior() == PistonBehavior.DESTROY) {
                 this.brokenBlocks.add(this.posTo);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } else if (this.cantMove(this.posTo, isPull ? this.motionDirection.getOpposite() : this.motionDirection)) {
             return false;
-        } else {
-            for (int i = 0; i < this.movedBlocks.size(); ++i) {
-                BlockPos blockPos = this.movedBlocks.get(i);
-                if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlock(blockPos))
-                    return false;
-            }
-            return true;
         }
+        for (int i = 0; i < this.movedBlocks.size(); ++i) {
+            BlockPos blockPos = this.movedBlocks.get(i);
+            if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlock(blockPos))
+                return false;
+        }
+        return true;
     }
 
     private static boolean isBlockSticky(BlockState state) {
@@ -69,13 +67,11 @@ public class ConfigurablePistonHandler {
     }
 
     private static boolean isAdjacentBlockStuck(BlockState state, BlockState adjacentState) {
-        if (state.isOf(Blocks.HONEY_BLOCK) && adjacentState.isOf(Blocks.SLIME_BLOCK)) {
+        if ((state.isOf(Blocks.HONEY_BLOCK) && adjacentState.isOf(Blocks.SLIME_BLOCK)) ||
+                (state.isOf(Blocks.SLIME_BLOCK) && adjacentState.isOf(Blocks.HONEY_BLOCK))) {
             return false;
-        } else if (state.isOf(Blocks.SLIME_BLOCK) && adjacentState.isOf(Blocks.HONEY_BLOCK)) {
-            return false;
-        } else {
-            return isBlockSticky(state) || isBlockSticky(adjacentState);
         }
+        return isBlockSticky(state) || isBlockSticky(adjacentState);
     }
 
     private boolean cantMove(BlockPos pos, Direction dir) {
