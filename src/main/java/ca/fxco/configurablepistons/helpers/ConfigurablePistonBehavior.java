@@ -5,17 +5,12 @@ import net.minecraft.block.BlockState;
 public interface ConfigurablePistonBehavior {
 
     /*
-     * This only applies to blocks that are registered in the `configurable_piston_behavior` tagkey, all other
-     * blocks will use the default minecraft checks if they are not in this group!
-     * Only use this system if the default piston behavior is unable to achieve the results you want!
+     * These methods are only used if `usesConfigurablePistonBehavior` returns true
+     * This allows for more configurable & conditional piston behavior
      */
 
-    // These methods are only used if `usesConfigurablePistonBehavior` return true
-    // This allows for more configurable & conditional piston behavior
-    // I plan to pass more info through these methods later
-
     // This must return true in order for the configurable piston behavior to be used!
-    default boolean usesConfigurablePistonBehavior(BlockState state) {
+    default boolean usesConfigurablePistonBehavior() {
         return false;
     }
 
@@ -30,6 +25,10 @@ public interface ConfigurablePistonBehavior {
 
     default boolean canPistonPull(BlockState state) {
         return true;
+    }
+
+    default boolean canBypassFused(BlockState state) {
+        return false;
     }
 
     // Only called on pushing, may add pulling later

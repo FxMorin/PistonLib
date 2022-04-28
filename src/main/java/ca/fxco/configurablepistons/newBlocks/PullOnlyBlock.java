@@ -10,7 +10,7 @@ public class PullOnlyBlock extends Block implements ConfigurablePistonBehavior {
     }
 
     @Override
-    public boolean usesConfigurablePistonBehavior(BlockState state) {
+    public boolean usesConfigurablePistonBehavior() {
         return true;
     }
 

@@ -1,6 +1,8 @@
 package ca.fxco.configurablepistons.mixin;
 
+import ca.fxco.configurablepistons.ModTags;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +35,7 @@ public abstract class PistonHandler_isMovableMixin {
             )
     )
     private boolean useCustomIsMovable1(BlockState state, World world, BlockPos pos, Direction direction, boolean canBreak, Direction pistonDir) {
-        return PistonUtils.isMovable(state,world,pos,direction,canBreak,pistonDir);
+        return PistonUtils.isMovable(state, world, pos, direction, canBreak, pistonDir);
     }
 
 
@@ -47,7 +49,7 @@ public abstract class PistonHandler_isMovableMixin {
             )
     )
     private boolean useCustomIsMovable2(BlockState state, World world, BlockPos pos, Direction direction, boolean canBreak, Direction pistonDir) {
-        return PistonUtils.isMovable(state,world,pos,direction,canBreak,pistonDir);
+        return PistonUtils.isMovable(state, world, pos, direction, canBreak, pistonDir);
     }
 
 
@@ -66,9 +68,26 @@ public abstract class PistonHandler_isMovableMixin {
 
     @Redirect(
             method = "isBlockSticky(Lnet/minecraft/block/BlockState;)Z",
-            at = @At("HEAD")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z",
+                    ordinal = 0
+            )
     )
-    private static boolean isBlockSticky(BlockState state) {
+    private static boolean isBlockSticky(BlockState state, Block block) {
         return state.isIn(ModTags.STICKY_BLOCKS);
+    }
+
+
+    @Redirect(
+            method = "isBlockSticky(Lnet/minecraft/block/BlockState;)Z",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z",
+                    ordinal = 1
+            )
+    )
+    private static boolean ignoreSecondCheck(BlockState state, Block block) {
+        return false;
     }
 }

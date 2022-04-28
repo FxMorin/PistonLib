@@ -12,5 +12,6 @@ public interface AbstractBlockStatePistonBehavior {
     boolean isMovable();
     boolean canPistonPush();
     boolean canPistonPull();
+    boolean canBypassFused();
     boolean canDestroy();
 }

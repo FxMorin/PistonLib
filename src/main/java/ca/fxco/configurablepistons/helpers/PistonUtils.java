@@ -18,7 +18,7 @@ public class PistonUtils {
             if ((dir == DOWN && pos.getY() == wo.getBottomY()) || (dir == UP && pos.getY() == wo.getTopY() - 1))
                 return false; // Make sure it's a valid push like normally
             ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
-            if (customBehavior.usesConfigurablePistonBehavior(state)) { // This is where stuff gets fun
+            if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
                 if (customBehavior.isMovable(state)) {
                     if (dir == pistonDir) { // Is Pushing
                         return customBehavior.canPistonPush(state) && (!customBehavior.canDestroy(state) || canBreak);

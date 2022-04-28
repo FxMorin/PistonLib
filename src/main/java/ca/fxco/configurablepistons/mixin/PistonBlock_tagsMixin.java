@@ -33,7 +33,7 @@ public class PistonBlock_tagsMixin {
     )
     private boolean modifyIsMovable(BlockState state, World world, BlockPos pos,
                                     Direction direction, boolean canBreak, Direction pistonDir) {
-        return PistonUtils.isMovable(state, world, pos,direction,canBreak,pistonDir);
+        return PistonUtils.isMovable(state, world, pos, direction, canBreak, pistonDir);
     }
 
 
