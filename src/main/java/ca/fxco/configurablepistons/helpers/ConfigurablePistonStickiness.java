@@ -1,10 +1,9 @@
 package ca.fxco.configurablepistons.helpers;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 
-import java.util.List;
+import java.util.Map;
 
 public interface ConfigurablePistonStickiness {
 
@@ -25,8 +24,8 @@ public interface ConfigurablePistonStickiness {
     }
 
     // Returns a list of directions that are sticky, and the stickyType.
-    default List<Pair<Direction, StickyType>> stickySides(BlockState state) {
-        return List.of();
+    default Map<Direction, StickyType> stickySides(BlockState state) {
+        return Map.of();
     }
 
     default StickyType sideStickiness(BlockState state, Direction direction) {

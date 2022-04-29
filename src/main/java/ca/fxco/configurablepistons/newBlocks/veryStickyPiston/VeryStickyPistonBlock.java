@@ -6,10 +6,9 @@ import ca.fxco.configurablepistons.helpers.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonStickiness;
 import ca.fxco.configurablepistons.helpers.StickyType;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 
-import java.util.List;
+import java.util.Map;
 
 public class VeryStickyPistonBlock extends BasicPistonBlock implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
 
@@ -33,7 +32,7 @@ public class VeryStickyPistonBlock extends BasicPistonBlock implements Configura
     }
 
     // Returns a list of directions that are sticky, and the stickyType.
-    public List<Pair<Direction, StickyType>> stickySides(BlockState state) {
-        return List.of(new Pair<>(state.get(FACING),StickyType.DEFAULT));
+    public Map<Direction, StickyType> stickySides(BlockState state) {
+        return Map.of(state.get(FACING),StickyType.DEFAULT);
     }
 }

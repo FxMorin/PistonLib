@@ -1,10 +1,9 @@
 package ca.fxco.configurablepistons.internal;
 
 import ca.fxco.configurablepistons.helpers.StickyType;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 
-import java.util.List;
+import java.util.Map;
 
 public interface AbstractBlockStateDirectionalSticky {
 
@@ -16,6 +15,6 @@ public interface AbstractBlockStateDirectionalSticky {
     // This allows for more configurable & conditional sticky block logic
     boolean usesConfigurablePistonStickiness();
     boolean isSticky();
-    List<Pair<Direction, StickyType>> stickySides();
+    Map<Direction, StickyType> stickySides();
     StickyType sideStickiness(Direction direction);
 }

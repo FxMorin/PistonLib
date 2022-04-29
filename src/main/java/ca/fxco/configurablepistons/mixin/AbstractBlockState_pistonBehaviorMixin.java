@@ -8,12 +8,11 @@ import ca.fxco.configurablepistons.internal.AbstractBlockStatePistonBehavior;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.List;
+import java.util.Map;
 
 @Mixin(AbstractBlock.AbstractBlockState.class)
 public abstract class AbstractBlockState_pistonBehaviorMixin implements AbstractBlockStatePistonBehavior, AbstractBlockStateDirectionalSticky {
@@ -60,7 +59,7 @@ public abstract class AbstractBlockState_pistonBehaviorMixin implements Abstract
     }
 
     @Override
-    public List<Pair<Direction, StickyType>> stickySides() {
+    public Map<Direction, StickyType> stickySides() {
         return ((ConfigurablePistonStickiness)this.getBlock()).stickySides(this.asBlockState());
     }
 

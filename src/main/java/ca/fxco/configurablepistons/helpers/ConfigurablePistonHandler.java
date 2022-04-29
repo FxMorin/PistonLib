@@ -5,12 +5,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Map;
 
 public class ConfigurablePistonHandler {
     public static final int DEFAULT_MAX_MOVABLE_BLOCKS = 12;
@@ -95,12 +95,12 @@ public class ConfigurablePistonHandler {
         return false;
     }
 
-    private boolean cantMovesAdjacentBlockSticky(List<Pair<Direction,StickyType>> sides, BlockPos pos) {
+    private boolean cantMovesAdjacentBlockSticky(Map<Direction,StickyType> sides, BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
-        for (Pair<Direction,StickyType> sideData : sides) {
-            StickyType stickyType = sideData.getRight();
+        for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
+            StickyType stickyType = sideData.getValue();
             if (stickyType == StickyType.NO_STICK) continue;
-            Direction direction = sideData.getLeft();
+            Direction direction = sideData.getKey();
             if (direction.getAxis() != this.motionDirection.getAxis()) {
                 BlockPos blockPos = pos.offset(direction);
                 BlockState blockState2 = this.world.getBlockState(blockPos);
