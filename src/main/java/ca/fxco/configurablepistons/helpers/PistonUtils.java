@@ -15,17 +15,13 @@ public class PistonUtils {
                                     Direction dir, boolean canBreak, Direction pistonDir) {
         if (pos.getY() >= wo.getBottomY() && pos.getY() <= wo.getTopY() - 1 && wo.getWorldBorder().contains(pos)) {
             if (state.isAir()) return true;
-            if ((dir == DOWN && pos.getY() == wo.getBottomY()) || (dir == UP && pos.getY() == wo.getTopY() - 1))
-                return false; // Make sure it's a valid push like normally
+            if (dir == DOWN && pos.getY() == wo.getBottomY()) return false;
+            if (dir == UP && pos.getY() == wo.getTopY() - 1) return false;
             ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
-                if (customBehavior.isMovable(state)) {
-                    if (dir == pistonDir) { // Is Pushing
-                        return customBehavior.canPistonPush(state) && (!customBehavior.canDestroy(state) || canBreak);
-                    } else {                // Is Pulling
-                        return customBehavior.canPistonPull(state);
-                    }
-                }
+                if (customBehavior.isMovable(state))
+                    return dir != pistonDir ? customBehavior.canPistonPull(state) :
+                            customBehavior.canPistonPush(state) && (!customBehavior.canDestroy(state) || canBreak);
             } else {
                 if (state.isIn(ModTags.UNPUSHABLE) || state.getHardness(wo, pos) == -1.0F) return false;
                 if (state.isIn(ModTags.PISTONS)) return !state.get(EXTENDED) && !state.hasBlockEntity();

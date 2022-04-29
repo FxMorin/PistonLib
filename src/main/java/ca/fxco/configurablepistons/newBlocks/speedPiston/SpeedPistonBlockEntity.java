@@ -21,10 +21,6 @@ import java.util.List;
 
 public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
 
-    /*
-    TODO: Fix slow piston heads visually being behind the piston
-     */
-
     private float speed;
     private double pistonOffset;
 
@@ -77,16 +73,18 @@ public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
                 } while(entity.getPistonBehavior() == PistonBehavior.IGNORE);
                 if (!bl) break;
                 if (!(entity instanceof ServerPlayerEntity)) {
-                    Vec3d vec3d = entity.getVelocity();
-                    double e = vec3d.x;
-                    double g = vec3d.y;
-                    double h = vec3d.z;
-                    switch (dir.getAxis()) {
-                        case X -> e = dir.getOffsetX();
-                        case Y -> g = dir.getOffsetY();
-                        case Z -> h = dir.getOffsetZ();
+                    if (blockEntity.speed < 0.1F) { // Just looks like you are floating if not limited
+                        Vec3d vec3d = entity.getVelocity();
+                        double e = vec3d.x;
+                        double g = vec3d.y;
+                        double h = vec3d.z;
+                        switch (dir.getAxis()) {
+                            case X -> e = dir.getOffsetX() * blockEntity.speed;
+                            case Y -> g = dir.getOffsetY() * blockEntity.speed;
+                            case Z -> h = dir.getOffsetZ() * blockEntity.speed;
+                        }
+                        entity.setVelocity(e, g, h);
                     }
-                    entity.setVelocity(e, g, h);
                     break;
                 }
             }
