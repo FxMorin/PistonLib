@@ -8,6 +8,7 @@
     "configurable-pistons:strong_piston",
     "configurable-pistons:strong_sticky_piston",
     "configurable-pistons:fast_piston",
-    "configurable-pistons:fast_sticky_piston"
+    "configurable-pistons:fast_sticky_piston",
+    "configurable-pistons:very_sticky_piston"
   ]
 }
