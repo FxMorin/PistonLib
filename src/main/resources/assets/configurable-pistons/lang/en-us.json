@@ -7,5 +7,7 @@
   "block.configurable-pistons.strong_sticky_piston": "Strong Sticky Piston",
   "block.configurable-pistons.fast_piston": "Fast Piston",
   "block.configurable-pistons.fast_sticky_piston": "Fast Sticky Piston",
-  "block.configurable-pistons.very_sticky_piston": "Very Sticky Piston"
+  "block.configurable-pistons.very_sticky_piston": "Very Sticky Piston",
+  "block.configurable-pistons.front_powered_piston": "Front Powered Piston",
+  "block.configurable-pistons.front_powered_sticky_piston": "Front Powered Sticky Piston"
 }

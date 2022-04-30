@@ -5,10 +5,7 @@ import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.helpers.StickyType;
-import ca.fxco.configurablepistons.newBlocks.PullOnlyBlock;
-import ca.fxco.configurablepistons.newBlocks.PushLimitPistonBlock;
-import ca.fxco.configurablepistons.newBlocks.StickySidesBlock;
-import ca.fxco.configurablepistons.newBlocks.StickylessBlock;
+import ca.fxco.configurablepistons.newBlocks.*;
 import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonExtensionBlock;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonBlockEntity;
@@ -71,6 +68,10 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
     public static final BasicPistonHeadBlock STICKY_PISTON_HEAD;
     public static final StickyPistonExtensionBlock STICKY_MOVING_PISTON;
 
+    public static final BasicPistonBlock FRONT_POWERED_PISTON;
+    public static final BasicPistonBlock FRONT_POWERED_STICKY_PISTON;
+    public static final BasicPistonHeadBlock FRONT_POWERED_PISTON_HEAD;
+
     public static BlockEntityType<BasicPistonBlockEntity> BASIC_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<SpeedPistonBlockEntity> SPEED_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
@@ -106,6 +107,11 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         Registry.register(Registry.BLOCK, id("very_sticky_piston"), VERY_STICKY_PISTON);
         Registry.register(Registry.BLOCK, id("sticky_piston_head"), STICKY_PISTON_HEAD);
         Registry.register(Registry.BLOCK, id("sticky_moving_piston"), STICKY_MOVING_PISTON);
+
+        Registry.register(Registry.BLOCK, id("front_powered_piston"), FRONT_POWERED_PISTON);
+        Registry.register(Registry.BLOCK, id("front_powered_sticky_piston"), FRONT_POWERED_STICKY_PISTON);
+        Registry.register(Registry.BLOCK, id("front_powered_piston_head"), FRONT_POWERED_PISTON_HEAD);
+
         // Items
         // TODO: Make your own creative tab / item settings group
         Registry.register(Registry.ITEM, id("drag_block"), new BlockItem(DRAG_BLOCK, new Item.Settings().group(ItemGroup.REDSTONE)));
@@ -122,6 +128,10 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         Registry.register(Registry.ITEM, id("fast_sticky_piston"), new BlockItem(FAST_STICKY_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
 
         Registry.register(Registry.ITEM, id("very_sticky_piston"), new BlockItem(VERY_STICKY_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
+
+        Registry.register(Registry.ITEM, id("front_powered_piston"), new BlockItem(FRONT_POWERED_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
+        Registry.register(Registry.ITEM, id("front_powered_sticky_piston"), new BlockItem(FRONT_POWERED_STICKY_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
+
         // Block Entities
         BASIC_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("basic_piston_entity"), FabricBlockEntityTypeBuilder.create(BasicPistonBlockEntity::new, BASIC_MOVING_PISTON).build(null));
         SPEED_PISTON_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("speed_piston_entity"), FabricBlockEntityTypeBuilder.create(SpeedPistonBlockEntity::new, STRONG_MOVING_PISTON).build(null));
@@ -170,6 +180,12 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         STICKY_PISTON_HEAD = new BasicPistonHeadBlock();
         VERY_STICKY_PISTON = new VeryStickyPistonBlock(STICKY_MOVING_PISTON, STICKY_PISTON_HEAD);
 
+
+        // Front Powered Piston
+        // Normal piston but can be powered through the front
+        FRONT_POWERED_PISTON_HEAD = new BasicPistonHeadBlock();
+        FRONT_POWERED_PISTON = new FrontPoweredPistonBlock(false, BASIC_MOVING_PISTON, FRONT_POWERED_PISTON_HEAD);
+        FRONT_POWERED_STICKY_PISTON = new FrontPoweredPistonBlock(true, BASIC_MOVING_PISTON, FRONT_POWERED_PISTON_HEAD);
 
         // Create Custom Blocks
         DRAG_BLOCK = new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f));

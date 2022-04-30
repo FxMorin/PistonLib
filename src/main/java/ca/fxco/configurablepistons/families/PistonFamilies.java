@@ -16,6 +16,7 @@ public class PistonFamilies {
     public static final PistonFamily STRONG;
     public static final PistonFamily FAST;
     public static final PistonFamily STICKY;
+    public static final PistonFamily FRONT_POWERED;
 
     // TODO: Make all moving pistons dragon and wither immune
 
@@ -42,5 +43,6 @@ public class PistonFamilies {
         STRONG = register(ConfigurablePistons.STRONG_PISTON_HEAD).piston(ConfigurablePistons.STRONG_PISTON).sticky(ConfigurablePistons.STRONG_STICKY_PISTON).extension(ConfigurablePistons.STRONG_MOVING_PISTON).build();
         FAST = register(ConfigurablePistons.FAST_PISTON_HEAD).piston(ConfigurablePistons.FAST_PISTON).sticky(ConfigurablePistons.FAST_STICKY_PISTON).extension(ConfigurablePistons.FAST_MOVING_PISTON).build();
         STICKY = register(ConfigurablePistons.STICKY_PISTON_HEAD).sticky(ConfigurablePistons.VERY_STICKY_PISTON).extension(ConfigurablePistons.STICKY_MOVING_PISTON).build();
+        FRONT_POWERED = register(ConfigurablePistons.FRONT_POWERED_PISTON_HEAD).piston(ConfigurablePistons.FRONT_POWERED_PISTON).sticky(ConfigurablePistons.FRONT_POWERED_STICKY_PISTON).extension(ConfigurablePistons.BASIC_MOVING_PISTON).build();
     }
 }
