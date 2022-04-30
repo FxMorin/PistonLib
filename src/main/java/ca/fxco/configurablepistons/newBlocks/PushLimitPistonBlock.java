@@ -1,8 +1,6 @@
 package ca.fxco.configurablepistons.newBlocks;
 
 import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -14,11 +12,6 @@ public class PushLimitPistonBlock extends BasicPistonBlock {
 
     public PushLimitPistonBlock(boolean sticky, int pushLimit) {
         super(sticky);
-        this.pushLimit = pushLimit;
-    }
-
-    public PushLimitPistonBlock(boolean sticky, int pushLimit, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
-        super(sticky, extensionBlock, headBlock);
         this.pushLimit = pushLimit;
     }
 

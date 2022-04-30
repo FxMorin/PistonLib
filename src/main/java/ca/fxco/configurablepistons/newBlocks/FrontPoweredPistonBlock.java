@@ -1,8 +1,6 @@
 package ca.fxco.configurablepistons.newBlocks;
 
 import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -10,12 +8,6 @@ import net.minecraft.world.World;
 public class FrontPoweredPistonBlock extends BasicPistonBlock {
     public FrontPoweredPistonBlock(boolean sticky) {
         super(sticky);
-    }
-    public FrontPoweredPistonBlock(boolean sticky, Settings settings) {
-        super(sticky, settings);
-    }
-    public FrontPoweredPistonBlock(boolean sticky, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
-        super(sticky, extensionBlock, headBlock);
     }
 
     @Override

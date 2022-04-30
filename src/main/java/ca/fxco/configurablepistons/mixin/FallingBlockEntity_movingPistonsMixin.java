@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.ModTags;
+import ca.fxco.configurablepistons.datagen.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.FallingBlockEntity;

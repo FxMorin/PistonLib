@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.newBlocks.fastPiston;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,16 +17,16 @@ public class FastPistonBlockEntity extends BasicPistonBlockEntity {
 
     public FastPistonBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(blockPos, blockState);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.FAST_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.FAST_PISTON_BLOCK_ENTITY);
     }
     public FastPistonBlockEntity(BlockPos pos, BlockState state, FastPistonExtensionBlock extensionBlock) {
         super(pos, state, extensionBlock);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.FAST_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.FAST_PISTON_BLOCK_ENTITY);
     }
     public FastPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
                                   boolean extending, boolean source, FastPistonExtensionBlock extensionBlock) {
         super(pos, state, pushedBlock, facing, extending, source, extensionBlock);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.FAST_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.FAST_PISTON_BLOCK_ENTITY);
     }
 
     @Override

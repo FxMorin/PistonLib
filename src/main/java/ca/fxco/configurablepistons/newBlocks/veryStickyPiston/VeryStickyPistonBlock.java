@@ -1,7 +1,6 @@
 package ca.fxco.configurablepistons.newBlocks.veryStickyPiston;
 
 import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonStickiness;
 import ca.fxco.configurablepistons.helpers.StickyType;
@@ -14,10 +13,6 @@ public class VeryStickyPistonBlock extends BasicPistonBlock implements Configura
 
     public VeryStickyPistonBlock() {
         super(true);
-    }
-
-    public VeryStickyPistonBlock(StickyPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
-        super(true, extensionBlock, headBlock);
     }
 
     // Automatically makes it movable even when extended

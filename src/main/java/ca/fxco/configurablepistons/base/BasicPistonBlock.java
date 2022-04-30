@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.base;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.ModTags;
+import ca.fxco.configurablepistons.datagen.ModTags;
+import ca.fxco.configurablepistons.datagen.ModBlocks;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
 import com.google.common.collect.Lists;
@@ -44,17 +44,17 @@ public class BasicPistonBlock extends FacingBlock {
     protected static final VoxelShape EXTENDED_NORTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 4.0, 16.0, 16.0, 16.0);
     protected static final VoxelShape EXTENDED_UP_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.createCuboidShape(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
-    protected final boolean sticky;
+    public final boolean sticky;
 
-    public final BasicPistonExtensionBlock EXTENSION_BLOCK;
-    public final BasicPistonHeadBlock HEAD_BLOCK;
+    private BasicPistonExtensionBlock EXTENSION_BLOCK;
+    private BasicPistonHeadBlock HEAD_BLOCK;
 
     public BasicPistonBlock(boolean sticky) {
-        this(sticky, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
+        this(sticky, ModBlocks.BASIC_MOVING_PISTON, ModBlocks.BASIC_PISTON_HEAD);
     }
 
     public BasicPistonBlock(boolean sticky, AbstractBlock.Settings settings) {
-        this(sticky, settings, ConfigurablePistons.BASIC_MOVING_PISTON, ConfigurablePistons.BASIC_PISTON_HEAD);
+        this(sticky, settings, ModBlocks.BASIC_MOVING_PISTON, ModBlocks.BASIC_PISTON_HEAD);
     }
 
     public BasicPistonBlock(boolean sticky, BasicPistonExtensionBlock extensionBlock, BasicPistonHeadBlock headBlock) {
@@ -66,6 +66,22 @@ public class BasicPistonBlock extends FacingBlock {
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(EXTENDED, false));
         this.sticky = sticky;
         EXTENSION_BLOCK = extensionBlock;
+        HEAD_BLOCK = headBlock;
+    }
+
+    public BasicPistonExtensionBlock getExtensionBlock() {
+        return EXTENSION_BLOCK;
+    }
+
+    public BasicPistonHeadBlock getHeadBlock() {
+        return HEAD_BLOCK;
+    }
+
+    public void setExtensionBlock(BasicPistonExtensionBlock extensionBlock) {
+        EXTENSION_BLOCK = extensionBlock;
+    }
+
+    public void setHeadBlock(BasicPistonHeadBlock headBlock) {
         HEAD_BLOCK = headBlock;
     }
 

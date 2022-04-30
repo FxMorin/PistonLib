@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.newBlocks.speedPiston;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -28,6 +28,6 @@ public class SpeedPistonExtensionBlock extends BasicPistonExtensionBlock {
 
     @Override @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState state, BlockEntityType<T> t) {
-        return BasicPistonExtensionBlock.checkType(t, ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY, SpeedPistonBlockEntity::tick);
+        return BasicPistonExtensionBlock.checkType(t, ModBlockEntities.SPEED_PISTON_BLOCK_ENTITY, SpeedPistonBlockEntity::tick);
     }
 }

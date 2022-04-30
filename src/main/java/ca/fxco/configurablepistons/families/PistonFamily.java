@@ -1,9 +1,9 @@
 package ca.fxco.configurablepistons.families;
 
+import ca.fxco.configurablepistons.base.BasicPistonArmBlock;
 import ca.fxco.configurablepistons.base.BasicPistonBlock;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
-import net.minecraft.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 public class PistonFamily {
@@ -15,7 +15,7 @@ public class PistonFamily {
     @Nullable
     private BasicPistonExtensionBlock extensionBlock = null;
     @Nullable
-    private Block armBlock = null;
+    private BasicPistonArmBlock armBlock = null;
 
     PistonFamily(BasicPistonHeadBlock headBlock) {
         this.headBlock = headBlock;
@@ -37,7 +37,7 @@ public class PistonFamily {
         return this.extensionBlock;
     }
 
-    public @Nullable Block getArmBlock() {
+    public @Nullable BasicPistonArmBlock getArmBlock() {
         return this.armBlock;
     }
 
@@ -48,7 +48,7 @@ public class PistonFamily {
             this.family = new PistonFamily(headBlock);
         }
 
-        public PistonFamily build() {
+        public PistonFamily getFamily() {
             return this.family;
         }
 
@@ -63,12 +63,13 @@ public class PistonFamily {
         }
 
         public PistonFamily.Builder extension(BasicPistonExtensionBlock block) {
+
             this.family.extensionBlock = block;
             return this;
         }
 
         // For modded pistons that extend further than one block
-        public PistonFamily.Builder arm(BasicPistonExtensionBlock block) {
+        public PistonFamily.Builder arm(BasicPistonArmBlock block) {
             this.family.armBlock = block;
             return this;
         }

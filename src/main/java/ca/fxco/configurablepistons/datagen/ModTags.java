@@ -1,5 +1,6 @@
-package ca.fxco.configurablepistons;
+package ca.fxco.configurablepistons.datagen;
 
+import ca.fxco.configurablepistons.ConfigurablePistons;
 import net.minecraft.block.Block;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.Registry;

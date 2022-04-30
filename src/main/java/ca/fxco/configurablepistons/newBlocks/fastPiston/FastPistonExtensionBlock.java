@@ -1,7 +1,8 @@
 package ca.fxco.configurablepistons.newBlocks.fastPiston;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.datagen.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -20,11 +21,11 @@ public class FastPistonExtensionBlock extends BasicPistonExtensionBlock {
     @Override
     public BlockEntity createPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock,
                                                Direction facing, boolean extending, boolean source) {
-        return new FastPistonBlockEntity(pos, state, pushedBlock, facing, extending, source, ConfigurablePistons.FAST_MOVING_PISTON);
+        return new FastPistonBlockEntity(pos, state, pushedBlock, facing, extending, source, ModBlocks.FAST_MOVING_PISTON);
     }
 
     @Override @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState state, BlockEntityType<T> t) {
-        return BasicPistonExtensionBlock.checkType(t, ConfigurablePistons.FAST_PISTON_BLOCK_ENTITY, FastPistonBlockEntity::tick);
+        return BasicPistonExtensionBlock.checkType(t, ModBlockEntities.FAST_PISTON_BLOCK_ENTITY, FastPistonBlockEntity::tick);
     }
 }

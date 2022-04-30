@@ -3,6 +3,8 @@ package ca.fxco.configurablepistons.newBlocks.speedPiston;
 import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.datagen.ModBlocks;
 import ca.fxco.configurablepistons.helpers.Utils;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.*;
@@ -29,24 +31,17 @@ public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
     }
     public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state) {
         super(pos, state);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY);
-        this.speed = speed;
-        this.pistonOffset = 0.01 * speed;
-    }
-    public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state, BasicPistonExtensionBlock extensionBlock) {
-        super(pos, state, extensionBlock);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.SPEED_PISTON_BLOCK_ENTITY);
         this.speed = speed;
         this.pistonOffset = 0.01 * speed;
     }
     public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing, boolean extending, boolean source) {
-        this(speed, pos, state, pushedBlock, facing, extending, source, ConfigurablePistons.STRONG_MOVING_PISTON);
+        this(speed, pos, state, pushedBlock, facing, extending, source, ModBlocks.STRONG_MOVING_PISTON);
     }
-
     public SpeedPistonBlockEntity(float speed, BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
                                   boolean extending, boolean source, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state, pushedBlock, facing, extending, source, extensionBlock);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.SPEED_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.SPEED_PISTON_BLOCK_ENTITY);
         this.speed = speed;
         this.pistonOffset = 0.01 * speed;
     }

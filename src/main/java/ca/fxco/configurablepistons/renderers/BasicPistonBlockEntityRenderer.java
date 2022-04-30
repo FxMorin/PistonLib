@@ -1,9 +1,9 @@
 package ca.fxco.configurablepistons.renderers;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.BasicPistonBlock;
 import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.datagen.ModBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -44,8 +44,9 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
             blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBlockEntity.getProgress(f) <= 0.5f);
             this.renderModel(blockPos, blockState, matrixStack, vertexConsumerProvider, world, false, j);
         } else if (pistonBlockEntity.isSource() && !pistonBlockEntity.isExtending()) { // TODO: Fix this hacky mess, need a call to piston family here
+            System.out.println(blockState);
             PistonType pistonType = blockState.getBlock().getName().toString().toLowerCase().contains("sticky") ? PistonType.STICKY : PistonType.DEFAULT;
-            BlockState blockState2 = ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
+            BlockState blockState2 = ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
                     .with(BasicPistonHeadBlock.TYPE, pistonType)
                     .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
             blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBlockEntity.getProgress(f) >= 0.5f);

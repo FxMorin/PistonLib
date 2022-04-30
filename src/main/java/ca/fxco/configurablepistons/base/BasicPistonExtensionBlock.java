@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.base;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -42,7 +42,7 @@ public class BasicPistonExtensionBlock extends PistonExtensionBlock {
 
     @Override @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState state, BlockEntityType<T> t) {
-        return checkType(t, ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY, BasicPistonBlockEntity::tick);
+        return checkType(t, ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY, BasicPistonBlockEntity::tick);
     }
 
     @Override

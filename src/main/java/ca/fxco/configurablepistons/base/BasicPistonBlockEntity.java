@@ -1,6 +1,8 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
+import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.datagen.ModBlocks;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.PistonBlockEntity;
@@ -29,23 +31,23 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     public final BasicPistonExtensionBlock EXTENSION_BLOCK;
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ConfigurablePistons.BASIC_MOVING_PISTON);
+        this(pos, state, ModBlocks.BASIC_MOVING_PISTON);
     }
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY);
         EXTENSION_BLOCK = extensionBlock;
     }
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
                                   boolean extending, boolean source) {
-        this(pos, state, pushedBlock, facing, extending, source, ConfigurablePistons.BASIC_MOVING_PISTON);
+        this(pos, state, pushedBlock, facing, extending, source, ModBlocks.BASIC_MOVING_PISTON);
     }
     public BasicPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
                                   boolean extending, boolean source, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state, pushedBlock, facing, extending, source);
-        ((BlockEntityAccessor)this).setType(ConfigurablePistons.BASIC_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY);
         EXTENSION_BLOCK = extensionBlock;
     }
 
@@ -66,7 +68,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     public BlockState getHeadBlockState() {
         // Removed setting the type since this is currently only used for collision shape
         return !this.isExtending() && this.isSource() && this.pushedBlock.getBlock() instanceof BasicPistonBlock ?
-                ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
+                ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
                         .with(BasicPistonHeadBlock.SHORT, this.progress > 0.25F)
                         .with(BasicPistonHeadBlock.FACING, this.pushedBlock.get(BasicPistonBlock.FACING)) :
                 this.pushedBlock;
@@ -266,7 +268,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         }
         BlockState blockState;
         if (this.isSource()) {
-            blockState = ConfigurablePistons.BASIC_PISTON_HEAD.getDefaultState()
+            blockState = ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
                     .with(PistonHeadBlock.FACING, this.facing)
                     .with(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
         } else {
