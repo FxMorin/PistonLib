@@ -18,8 +18,15 @@ public class PistonFamily {
     private BasicPistonArmBlock armBlock = null;
 
     PistonFamily(BasicPistonHeadBlock headBlock) {
-        this.headBlock = headBlock;
+        this(headBlock, true);
     }
+
+    PistonFamily(BasicPistonHeadBlock headBlock, boolean shouldGenerateAutomatically) {
+        this.headBlock = headBlock;
+        this.shouldGenerateAutomatically = shouldGenerateAutomatically;
+    }
+
+    private final boolean shouldGenerateAutomatically;
 
     public BasicPistonHeadBlock getHeadBlock() {
         return this.headBlock;
@@ -39,6 +46,10 @@ public class PistonFamily {
 
     public @Nullable BasicPistonArmBlock getArmBlock() {
         return this.armBlock;
+    }
+
+    public boolean shouldGenerateAutomatically() {
+        return this.shouldGenerateAutomatically;
     }
 
     public static class Builder {

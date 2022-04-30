@@ -12,7 +12,9 @@ import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonExtensionBlock
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonExtensionBlock;
 import ca.fxco.configurablepistons.newBlocks.veryStickyPiston.StickyPistonExtensionBlock;
 import ca.fxco.configurablepistons.newBlocks.veryStickyPiston.VeryStickyPistonBlock;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.impl.datagen.FabricDataGenHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
@@ -23,12 +25,15 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 import static ca.fxco.configurablepistons.ConfigurablePistons.CUSTOM_CREATIVE_GROUP;
 import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 
 public class ModBlocks {
+
+    private static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
 
     private static PistonFamily.Builder currentBuilder = null;
 
@@ -77,6 +82,7 @@ public class ModBlocks {
 
 
     public static <T extends Block> T registerBlock(String blockId, T block) {
+        if (DATAGEN_ACTIVE) PistonTagDatagen.datagenBlockList.add(block);
         Identifier identifier = id(blockId);
         Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().group(CUSTOM_CREATIVE_GROUP)));
         return Registry.register(Registry.BLOCK, identifier, block);
