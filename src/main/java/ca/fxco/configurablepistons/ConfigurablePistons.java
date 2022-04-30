@@ -4,8 +4,11 @@ import ca.fxco.configurablepistons.base.BasicPistonBlock;
 import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.helpers.StickyType;
 import ca.fxco.configurablepistons.newBlocks.PullOnlyBlock;
 import ca.fxco.configurablepistons.newBlocks.PushLimitPistonBlock;
+import ca.fxco.configurablepistons.newBlocks.StickySidesBlock;
+import ca.fxco.configurablepistons.newBlocks.StickylessBlock;
 import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonExtensionBlock;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonBlockEntity;
@@ -25,7 +28,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+
+import java.util.*;
 
 public class ConfigurablePistons implements ModInitializer, ClientModInitializer {
 
@@ -43,6 +49,8 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
     public static final boolean PISTON_PROGRESS_FIX = true;
 
     public static final Block DRAG_BLOCK;
+    public static final Block STICKYLESS_BLOCK;
+    public static final Block STICKY_TOP_BLOCK;
 
     public static final BasicPistonBlock BASIC_PISTON;
     public static final BasicPistonBlock BASIC_STICKY_PISTON;
@@ -76,6 +84,8 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
     public void onInitialize() {
         // Blocks
         Registry.register(Registry.BLOCK, id("drag_block"), DRAG_BLOCK);
+        Registry.register(Registry.BLOCK, id("stickyless_block"), STICKYLESS_BLOCK);
+        Registry.register(Registry.BLOCK, id("sticky_top_block"), STICKY_TOP_BLOCK);
 
         //TODO: Either generate these using the families or make a quick and simple method
         Registry.register(Registry.BLOCK, id("basic_piston"), BASIC_PISTON);
@@ -99,6 +109,8 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
         // Items
         // TODO: Make your own creative tab / item settings group
         Registry.register(Registry.ITEM, id("drag_block"), new BlockItem(DRAG_BLOCK, new Item.Settings().group(ItemGroup.REDSTONE)));
+        Registry.register(Registry.ITEM, id("stickyless_block"), new BlockItem(STICKYLESS_BLOCK, new Item.Settings().group(ItemGroup.REDSTONE)));
+        Registry.register(Registry.ITEM, id("sticky_top_block"), new BlockItem(STICKY_TOP_BLOCK, new Item.Settings().group(ItemGroup.REDSTONE)));
 
         Registry.register(Registry.ITEM, id("basic_piston"), new BlockItem(BASIC_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
         Registry.register(Registry.ITEM, id("basic_sticky_piston"), new BlockItem(BASIC_STICKY_PISTON, new Item.Settings().group(ItemGroup.REDSTONE)));
@@ -161,5 +173,7 @@ public class ConfigurablePistons implements ModInitializer, ClientModInitializer
 
         // Create Custom Blocks
         DRAG_BLOCK = new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f));
+        STICKYLESS_BLOCK = new StickylessBlock(FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f));
+        STICKY_TOP_BLOCK = new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY));
     }
 }
