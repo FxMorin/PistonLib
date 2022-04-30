@@ -1,6 +1,6 @@
-package ca.fxco.configurablepistons.base;
+package ca.fxco.configurablepistons.basePistons;
 
-import ca.fxco.configurablepistons.datagen.ModTags;
+import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.families.PistonFamilies;
 import ca.fxco.configurablepistons.families.PistonFamily;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;

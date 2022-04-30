@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.newBlocks;
 
-import ca.fxco.configurablepistons.base.BasicPistonBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;

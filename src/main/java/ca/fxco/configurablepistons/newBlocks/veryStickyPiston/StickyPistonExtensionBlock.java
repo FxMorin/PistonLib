@@ -1,9 +1,8 @@
 package ca.fxco.configurablepistons.newBlocks.veryStickyPiston;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.datagen.ModBlockEntities;
-import ca.fxco.configurablepistons.datagen.ModBlocks;
+import ca.fxco.configurablepistons.basePistons.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.base.ModBlockEntities;
+import ca.fxco.configurablepistons.base.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;

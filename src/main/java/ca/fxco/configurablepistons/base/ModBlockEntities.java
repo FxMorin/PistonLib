@@ -1,6 +1,6 @@
-package ca.fxco.configurablepistons.datagen;
+package ca.fxco.configurablepistons.base;
 
-import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.fastPiston.FastPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.newBlocks.veryStickyPiston.StickyPistonBlockEntity;

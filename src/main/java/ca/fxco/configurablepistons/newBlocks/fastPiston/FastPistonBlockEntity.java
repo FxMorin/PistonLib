@@ -1,8 +1,7 @@
 package ca.fxco.configurablepistons.newBlocks.fastPiston;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
-import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

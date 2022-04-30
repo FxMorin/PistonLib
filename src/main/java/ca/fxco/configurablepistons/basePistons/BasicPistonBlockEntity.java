@@ -1,8 +1,8 @@
-package ca.fxco.configurablepistons.base;
+package ca.fxco.configurablepistons.basePistons;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
-import ca.fxco.configurablepistons.datagen.ModBlockEntities;
-import ca.fxco.configurablepistons.datagen.ModBlocks;
+import ca.fxco.configurablepistons.base.ModBlockEntities;
+import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.PistonBlockEntity;
@@ -19,7 +19,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class BasicPistonBlockEntity extends PistonBlockEntity {

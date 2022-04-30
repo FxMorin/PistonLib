@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons;
 
-import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.renderers.BasicPistonBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;

@@ -1,9 +1,9 @@
 package ca.fxco.configurablepistons.renderers;
 
-import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonBlockEntity;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.datagen.ModBlocks;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.basePistons.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.base.ModBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;

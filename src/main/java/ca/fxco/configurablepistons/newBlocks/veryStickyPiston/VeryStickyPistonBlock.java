@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.newBlocks.veryStickyPiston;
 
-import ca.fxco.configurablepistons.base.BasicPistonBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonStickiness;
 import ca.fxco.configurablepistons.helpers.StickyType;

@@ -1,13 +1,12 @@
 package ca.fxco.configurablepistons.families;
 
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonHeadBlock;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class PistonFamilies {
     private static final Map<Block, PistonFamily> PISTON_HEADS_TO_FAMILIES = Maps.newHashMap();

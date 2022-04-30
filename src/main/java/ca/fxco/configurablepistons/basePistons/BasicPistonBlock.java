@@ -1,7 +1,7 @@
-package ca.fxco.configurablepistons.base;
+package ca.fxco.configurablepistons.basePistons;
 
-import ca.fxco.configurablepistons.datagen.ModTags;
-import ca.fxco.configurablepistons.datagen.ModBlocks;
+import ca.fxco.configurablepistons.base.ModTags;
+import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.helpers.PistonUtils;
 import com.google.common.collect.Lists;

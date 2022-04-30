@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.datagen.ModTags;
+import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.BlockCollisionSpliterator;

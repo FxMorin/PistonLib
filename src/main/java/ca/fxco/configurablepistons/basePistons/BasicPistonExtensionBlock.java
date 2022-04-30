@@ -1,6 +1,6 @@
-package ca.fxco.configurablepistons.base;
+package ca.fxco.configurablepistons.basePistons;
 
-import ca.fxco.configurablepistons.datagen.ModBlockEntities;
+import ca.fxco.configurablepistons.base.ModBlockEntities;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;

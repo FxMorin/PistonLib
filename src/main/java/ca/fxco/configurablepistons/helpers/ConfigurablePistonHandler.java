@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.helpers;
 
-import ca.fxco.configurablepistons.datagen.ModTags;
+import ca.fxco.configurablepistons.base.ModTags;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

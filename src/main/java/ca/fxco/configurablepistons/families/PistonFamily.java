@@ -1,9 +1,9 @@
 package ca.fxco.configurablepistons.families;
 
-import ca.fxco.configurablepistons.base.BasicPistonArmBlock;
-import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonArmBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonHeadBlock;
 import org.jetbrains.annotations.Nullable;
 
 public class PistonFamily {

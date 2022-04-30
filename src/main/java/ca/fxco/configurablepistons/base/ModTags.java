@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.datagen;
+package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
 import net.minecraft.block.Block;

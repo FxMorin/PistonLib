@@ -1,9 +1,10 @@
 package ca.fxco.configurablepistons.datagen;
 
-import ca.fxco.configurablepistons.base.BasicPistonArmBlock;
-import ca.fxco.configurablepistons.base.BasicPistonBlock;
-import ca.fxco.configurablepistons.base.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.base.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.basePistons.BasicPistonArmBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.basePistons.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.families.PistonFamilies;
 import ca.fxco.configurablepistons.families.PistonFamily;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -20,7 +21,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static net.minecraft.data.client.BlockStateModelGenerator.createNorthDefaultRotationStates;
