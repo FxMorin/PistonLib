@@ -33,6 +33,10 @@ public class VeryStickyPistonBlock extends BasicPistonBlock implements Configura
 
     // Returns a list of directions that are sticky, and the stickyType.
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(state.get(FACING),StickyType.DEFAULT);
+        return Map.of(state.get(FACING),StickyType.STICKY); // Sticky Front
+    }
+
+    public StickyType sideStickiness(BlockState state, Direction direction) {
+        return state.get(FACING) == direction ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }

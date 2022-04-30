@@ -70,10 +70,13 @@ public class ConfigurablePistonHandler {
             BlockPos blockPos = this.movedBlocks.get(i);
             blockState = this.world.getBlockState(blockPos);
             ConfigurablePistonStickiness stickiness = (ConfigurablePistonStickiness)blockState.getBlock();
-            if (stickiness.usesConfigurablePistonStickiness())
-                return stickiness.isSticky(blockState) && cantMovesAdjacentBlockSticky(stickiness.stickySides(blockState), blockPos);
-            if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlocks(blockPos))
-                return false;
+            if (stickiness.usesConfigurablePistonStickiness()) {
+                if (stickiness.isSticky(blockState) && cantMoveAdjacentStickyBlocks(stickiness.stickySides(blockState), blockPos))
+                    return false;
+            } else {
+                if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlocks(blockPos))
+                    return false;
+            }
         }
         return true;
     }
@@ -95,7 +98,7 @@ public class ConfigurablePistonHandler {
         return false;
     }
 
-    private boolean cantMovesAdjacentBlockSticky(Map<Direction,StickyType> sides, BlockPos pos) {
+    private boolean cantMoveAdjacentStickyBlocks(Map<Direction, StickyType> sides, BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
         for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
@@ -111,11 +114,12 @@ public class ConfigurablePistonHandler {
         return false;
     }
 
+
     // Stickiness checks
     private static boolean canAdjacentBlockStick(Direction direction, BlockState state, BlockState adjacentState) {
         ConfigurablePistonStickiness stickiness = (ConfigurablePistonStickiness)adjacentState.getBlock();
-        if (stickiness.usesConfigurablePistonStickiness() && stickiness.isSticky(adjacentState))
-            return stickiness.sideStickiness(adjacentState, direction.getOpposite()) != StickyType.NO_STICK;
+        if (stickiness.usesConfigurablePistonStickiness())
+            return !stickiness.isSticky(adjacentState) || stickiness.sideStickiness(adjacentState, direction.getOpposite()) != StickyType.NO_STICK;
         // TODO: Make this configurable
         return (!state.isOf(Blocks.HONEY_BLOCK) || !adjacentState.isOf(Blocks.SLIME_BLOCK)) &&
                 (!state.isOf(Blocks.SLIME_BLOCK) || !adjacentState.isOf(Blocks.HONEY_BLOCK));
@@ -134,22 +138,37 @@ public class ConfigurablePistonHandler {
         }
         int i = 1;
         if (i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
+        Direction direction = this.motionDirection.getOpposite();
         ConfigurablePistonStickiness stickiness = (ConfigurablePistonStickiness)state.getBlock();
-        boolean isSticky = stickiness.usesConfigurablePistonStickiness() ? stickiness.isSticky(state) : isBlockSticky(state);
+        boolean isSticky;
+        if (stickiness.usesConfigurablePistonStickiness()) {
+            if (stickiness.sideStickiness(state, direction).ordinal() < StickyType.STICKY.ordinal()) {
+                isSticky = false;
+            } else {
+                isSticky = stickiness.isSticky(state);
+            }
+        } else {
+            isSticky = isBlockSticky(state);
+        }
         while (isSticky) {
-            Direction direction = this.motionDirection.getOpposite();
             BlockPos blockPos = pos.offset(direction, i);
             BlockState blockState2 = state;
             state = this.world.getBlockState(blockPos);
             stickiness = (ConfigurablePistonStickiness)state.getBlock();
-            isSticky = stickiness.usesConfigurablePistonStickiness() ? stickiness.isSticky(state) : isBlockSticky(state);
-            if (state.isAir() || !canAdjacentBlockStick(direction, state, blockState2) || blockPos.equals(this.posFrom) || !PistonUtils.isMovable(state, this.world, blockPos, this.motionDirection, false, this.motionDirection.getOpposite()))
+            if (state.isAir() || !canAdjacentBlockStick(direction, blockState2, state) || blockPos.equals(this.posFrom) || !PistonUtils.isMovable(state, this.world, blockPos, this.motionDirection, false, direction))
                 break;
             if (++i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
+            if (stickiness.usesConfigurablePistonStickiness()) {
+                if (stickiness.sideStickiness(state, direction).ordinal() < StickyType.STICKY.ordinal())
+                    break;
+                isSticky = stickiness.isSticky(state);
+            } else {
+                isSticky = isBlockSticky(state);
+            }
         }
         int j = 0, k;
         for(k = i - 1; k >= 0; --k) {
-            this.movedBlocks.add(pos.offset(this.motionDirection.getOpposite(), k));
+            this.movedBlocks.add(pos.offset(direction, k));
             ++j;
         }
         k = 1;
@@ -163,7 +182,7 @@ public class ConfigurablePistonHandler {
                     state = this.world.getBlockState(blockPos3);
                     stickiness = (ConfigurablePistonStickiness)state.getBlock();
                     if (stickiness.usesConfigurablePistonStickiness()) {
-                        if (stickiness.isSticky(state) && this.cantMovesAdjacentBlockSticky(stickiness.stickySides(state),blockPos3))
+                        if (stickiness.isSticky(state) && this.cantMoveAdjacentStickyBlocks(stickiness.stickySides(state),blockPos3))
                             return true;
                     } else {
                         if (isBlockSticky(state) && this.cantMoveAdjacentBlocks(blockPos3))
