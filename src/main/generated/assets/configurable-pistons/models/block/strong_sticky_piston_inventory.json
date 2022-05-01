@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "configurable-pistons:block/strong_piston_top_sticky",
-    "bottom": "configurable-pistons:block/strong_piston_bottom",
-    "side": "configurable-pistons:block/strong_piston_side"
-  }
-}

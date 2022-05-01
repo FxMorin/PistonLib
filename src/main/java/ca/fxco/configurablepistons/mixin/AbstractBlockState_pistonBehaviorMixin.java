@@ -1,10 +1,10 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.helpers.ConfigurablePistonBehavior;
-import ca.fxco.configurablepistons.helpers.ConfigurablePistonStickiness;
-import ca.fxco.configurablepistons.helpers.StickyType;
-import ca.fxco.configurablepistons.internal.AbstractBlockStateDirectionalSticky;
-import ca.fxco.configurablepistons.internal.AbstractBlockStatePistonBehavior;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateDirectionalSticky;
+import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStatePistonBehavior;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Map;
 
 @Mixin(AbstractBlock.AbstractBlockState.class)
-public abstract class AbstractBlockState_pistonBehaviorMixin implements AbstractBlockStatePistonBehavior, AbstractBlockStateDirectionalSticky {
+public abstract class AbstractBlockState_pistonBehaviorMixin
+        implements AbstractBlockStatePistonBehavior, AbstractBlockStateDirectionalSticky {
 
     @Shadow
     public abstract Block getBlock();

@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.mixin;
 
 import ca.fxco.configurablepistons.base.ModTags;
-import ca.fxco.configurablepistons.helpers.ConfigurablePistonHandler;
-import ca.fxco.configurablepistons.helpers.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.ConfigurablePistonHandler;
+import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.*;
@@ -103,42 +103,48 @@ public class PistonBlock_tagsMixin {
         List<BlockPos> list = pistonHandler.getMovedBlocks();
         List<BlockState> list2 = Lists.newArrayList();
         for (BlockPos value : list) {
-            BlockState blockState = world.getBlockState(value);
-            list2.add(blockState);
-            map.put(value, blockState);
+            BlockState state = world.getBlockState(value);
+            list2.add(state);
+            map.put(value, state);
         }
         List<BlockPos> list3 = pistonHandler.getBrokenBlocks();
         BlockState[] blockStates = new BlockState[list.size() + list3.size()];
         Direction direction = retract ? dir : dir.getOpposite();
         int j = 0, k;
-        BlockPos blockPos3;
-        BlockState blockState2;
+        BlockPos pos3;
+        BlockState state2;
         for(k = list3.size() - 1; k >= 0; --k) {
-            blockPos3 = list3.get(k);
-            blockState2 = world.getBlockState(blockPos3);
-            BlockEntity blockEntity = blockState2.hasBlockEntity() ? world.getBlockEntity(blockPos3) : null;
-            dropStacks(blockState2, world, blockPos3, blockEntity);
-            world.setBlockState(blockPos3, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-            if (!blockState2.isIn(BlockTags.FIRE)) world.addBlockBreakParticles(blockPos3, blockState2);
-            blockStates[j++] = blockState2;
+            pos3 = list3.get(k);
+            state2 = world.getBlockState(pos3);
+            BlockEntity blockEntity = state2.hasBlockEntity() ? world.getBlockEntity(pos3) : null;
+            dropStacks(state2, world, pos3, blockEntity);
+            world.setBlockState(pos3, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
+            if (!state2.isIn(BlockTags.FIRE)) world.addBlockBreakParticles(pos3, state2);
+            blockStates[j++] = state2;
         }
         for(k = list.size() - 1; k >= 0; --k) {
-            blockPos3 = list.get(k);
-            blockState2 = world.getBlockState(blockPos3);
-            blockPos3 = blockPos3.offset(direction);
-            map.remove(blockPos3);
-            BlockState blockState3 = Blocks.MOVING_PISTON.getDefaultState().with(FACING, dir);
-            world.setBlockState(blockPos3, blockState3, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(PistonExtensionBlock.createBlockEntityPiston(blockPos3, blockState3, list2.get(k), dir, retract, false));
-            blockStates[j++] = blockState2;
+            pos3 = list.get(k);
+            state2 = world.getBlockState(pos3);
+            pos3 = pos3.offset(direction);
+            map.remove(pos3);
+            BlockState state3 = Blocks.MOVING_PISTON.getDefaultState().with(FACING, dir);
+            world.setBlockState(pos3, state3, Block.NO_REDRAW | Block.MOVED);
+            world.addBlockEntity(PistonExtensionBlock.createBlockEntityPiston(
+                    pos3, state3, list2.get(k), dir, retract, false));
+            blockStates[j++] = state2;
         }
         if (retract) {
             PistonType pistonType = this.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-            BlockState blockState4 = Blocks.PISTON_HEAD.getDefaultState().with(PistonHeadBlock.FACING, dir).with(PistonHeadBlock.TYPE, pistonType);
-            blockState2 = Blocks.MOVING_PISTON.getDefaultState().with(PistonExtensionBlock.FACING, dir).with(PistonExtensionBlock.TYPE, this.sticky ? PistonType.STICKY : PistonType.DEFAULT);
+            BlockState state4 = Blocks.PISTON_HEAD.getDefaultState()
+                    .with(PistonHeadBlock.FACING, dir)
+                    .with(PistonHeadBlock.TYPE, pistonType);
+            state2 = Blocks.MOVING_PISTON.getDefaultState()
+                    .with(PistonExtensionBlock.FACING, dir)
+                    .with(PistonExtensionBlock.TYPE, this.sticky ? PistonType.STICKY : PistonType.DEFAULT);
             map.remove(blockPos);
-            world.setBlockState(blockPos, blockState2, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(PistonExtensionBlock.createBlockEntityPiston(blockPos, blockState2, blockState4, dir, true, true));
+            world.setBlockState(blockPos, state2, Block.NO_REDRAW | Block.MOVED);
+            world.addBlockEntity(PistonExtensionBlock.createBlockEntityPiston(
+                    blockPos, state2, state4, dir, true, true));
         }
         BlockState blockState5 = Blocks.AIR.getDefaultState();
         for (BlockPos blockPos4 : map.keySet())
@@ -152,10 +158,10 @@ public class PistonBlock_tagsMixin {
         }
         j = 0;
         for(k = list3.size() - 1; k >= 0; --k) {
-            blockState2 = blockStates[j++];
+            state2 = blockStates[j++];
             blockPos5 = list3.get(k);
-            blockState2.prepare(world, blockPos5, 2);
-            world.updateNeighborsAlways(blockPos5, blockState2.getBlock());
+            state2.prepare(world, blockPos5, 2);
+            world.updateNeighborsAlways(blockPos5, state2.getBlock());
         }
         for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
         if (retract) world.updateNeighborsAlways(blockPos, Blocks.PISTON_HEAD);

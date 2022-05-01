@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.mixin;
 
 import ca.fxco.configurablepistons.base.ModTags;
-import ca.fxco.configurablepistons.helpers.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonHandler;
@@ -34,8 +34,9 @@ public abstract class PistonHandler_isMovableMixin {
                             "Lnet/minecraft/util/math/Direction;ZLnet/minecraft/util/math/Direction;)Z"
             )
     )
-    private boolean useCustomIsMovable1(BlockState state, World world, BlockPos pos, Direction direction, boolean canBreak, Direction pistonDir) {
-        return PistonUtils.isMovable(state, world, pos, direction, canBreak, pistonDir);
+    private boolean useCustomIsMovable1(BlockState state, World world, BlockPos pos,
+                                        Direction dir, boolean canBreak, Direction pistonDir) {
+        return PistonUtils.isMovable(state, world, pos, dir, canBreak, pistonDir);
     }
 
 
@@ -48,8 +49,9 @@ public abstract class PistonHandler_isMovableMixin {
                             "Lnet/minecraft/util/math/Direction;ZLnet/minecraft/util/math/Direction;)Z"
             )
     )
-    private boolean useCustomIsMovable2(BlockState state, World world, BlockPos pos, Direction direction, boolean canBreak, Direction pistonDir) {
-        return PistonUtils.isMovable(state, world, pos, direction, canBreak, pistonDir);
+    private boolean useCustomIsMovable2(BlockState state, World world, BlockPos pos,
+                                        Direction dir, boolean canBreak, Direction pistonDir) {
+        return PistonUtils.isMovable(state, world, pos, dir, canBreak, pistonDir);
     }
 
 

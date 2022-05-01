@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.renderers;
 
-import ca.fxco.configurablepistons.basePistons.BasicPistonBlock;
-import ca.fxco.configurablepistons.basePistons.BasicPistonBlockEntity;
-import ca.fxco.configurablepistons.basePistons.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -31,42 +31,46 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
     }
 
     @Override
-    public void render(T pistonBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {
-        World world = pistonBlockEntity.getWorld();
+    public void render(T pistonBE, float f, MatrixStack matrix, VertexConsumerProvider vertexConsumers, int i, int j) {
+        World world = pistonBE.getWorld();
         if (world == null) return;
-        BlockPos blockPos = pistonBlockEntity.getPos().offset(pistonBlockEntity.getMovementDirection().getOpposite());
-        BlockState blockState = pistonBlockEntity.getPushedBlock();
+        BlockPos blockPos = pistonBE.getPos().offset(pistonBE.getMovementDirection().getOpposite());
+        BlockState blockState = pistonBE.getPushedBlock();
         if (blockState.isAir()) return;
         BlockModelRenderer.enableBrightnessCache();
-        matrixStack.push();
-        matrixStack.translate(pistonBlockEntity.getRenderOffsetX(f), pistonBlockEntity.getRenderOffsetY(f), pistonBlockEntity.getRenderOffsetZ(f));
-        if (blockState.getBlock() instanceof BasicPistonHeadBlock && pistonBlockEntity.getProgress(f) <= 4.0f) {
-            blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBlockEntity.getProgress(f) <= 0.5f);
-            this.renderModel(blockPos, blockState, matrixStack, vertexConsumerProvider, world, false, j);
-        } else if (pistonBlockEntity.isSource() && !pistonBlockEntity.isExtending()) { // TODO: Fix this hacky mess, need a call to piston family here
-            System.out.println(blockState);
-            PistonType pistonType = blockState.getBlock().getName().toString().toLowerCase().contains("sticky") ? PistonType.STICKY : PistonType.DEFAULT;
-            BlockState blockState2 = ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
-                    .with(BasicPistonHeadBlock.TYPE, pistonType)
-                    .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
-            blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBlockEntity.getProgress(f) >= 0.5f);
-            this.renderModel(blockPos, blockState2, matrixStack, vertexConsumerProvider, world, false, j);
-            BlockPos blockPos2 = blockPos.offset(pistonBlockEntity.getMovementDirection());
-            matrixStack.pop();
-            matrixStack.push();
-            blockState = blockState.with(BasicPistonBlock.EXTENDED, true);
-            this.renderModel(blockPos2, blockState, matrixStack, vertexConsumerProvider, world, true, j);
+        matrix.push();
+        matrix.translate(pistonBE.getRenderOffsetX(f), pistonBE.getRenderOffsetY(f), pistonBE.getRenderOffsetZ(f));
+        if (blockState.getBlock() instanceof BasicPistonHeadBlock && pistonBE.getProgress(f) <= 4.0f) {
+            blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) <= 0.5f);
+            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
+        } else if (pistonBE.isSource() && !pistonBE.isExtending()) {
+            if (blockState.getBlock() instanceof BasicPistonBlock pbe) {
+                PistonType pistonType = pbe.sticky ? PistonType.STICKY : PistonType.DEFAULT;
+                // TODO: Add support for custom piston head rendering (Eventually)
+                BlockState blockState2 = ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
+                        .with(BasicPistonHeadBlock.TYPE, pistonType)
+                        .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
+                blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) >= 0.5f);
+                this.renderModel(blockPos, blockState2, matrix, vertexConsumers, world, false, j);
+                BlockPos blockPos2 = blockPos.offset(pistonBE.getMovementDirection());
+                matrix.pop();
+                matrix.push();
+                blockState = blockState.with(BasicPistonBlock.EXTENDED, true);
+                this.renderModel(blockPos2, blockState, matrix, vertexConsumers, world, true, j);
+            }
         } else {
-            this.renderModel(blockPos, blockState, matrixStack, vertexConsumerProvider, world, false, j);
+            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
         }
-        matrixStack.pop();
+        matrix.pop();
         BlockModelRenderer.disableBrightnessCache();
     }
 
-    private void renderModel(BlockPos pos, BlockState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, boolean cull, int overlay) {
+    private void renderModel(BlockPos pos, BlockState state, MatrixStack matrix,
+                             VertexConsumerProvider vertexConsumers, World world, boolean cull, int overlay) {
         RenderLayer renderLayer = RenderLayers.getMovingBlockLayer(state);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrices, vertexConsumer, cull, new Random(), state.getRenderingSeed(pos), overlay);
+        this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrix, vertexConsumer,
+                cull, new Random(), state.getRenderingSeed(pos), overlay);
     }
 
     @Override

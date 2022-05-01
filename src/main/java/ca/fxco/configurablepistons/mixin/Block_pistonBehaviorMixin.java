@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.helpers.ConfigurablePistonBehavior;
-import ca.fxco.configurablepistons.helpers.ConfigurablePistonStickiness;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 
