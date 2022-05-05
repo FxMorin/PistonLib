@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "configurable-pistons:block/translocation_moving_piston"
+    }
+  }
+}

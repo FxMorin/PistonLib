@@ -30,6 +30,11 @@ public class PistonTagDatagen implements DataGeneratorEntrypoint {
     public static List<Block> datagenBlockList = new ArrayList<>();
 
     // TODO: Add every single block tag to the datagen, don't do anything manually
+    // Missing:
+    //  - configurable-pistons.tags.block.moving_pistons
+    //  - configurable-pistons.tags.block.pistons
+    //  - configurable-pistons.tags.block.sticky_blocks
+    //  - configurable-pistons.tags.block.unpushable
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
@@ -91,6 +96,7 @@ public class PistonTagDatagen implements DataGeneratorEntrypoint {
                 BasicPistonArmBlock basicPistonArmBlock = family.getArmBlock();
                 if (basicPistonArmBlock != null) {}
             }
+            System.out.println("Amount of Custom Blocks: "+datagenBlockList.size());
             for (Block block : datagenBlockList) {
                 modelGenerator.registerSimpleCubeAll(block);
             }

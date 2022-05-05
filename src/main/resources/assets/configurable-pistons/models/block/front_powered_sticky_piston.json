@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_piston",
+  "textures": {
+    "platform": "configurable-pistons:block/front_powered_piston_top_sticky",
+    "bottom": "configurable-pistons:block/front_powered_piston_bottom",
+    "side": "configurable-pistons:block/front_powered_piston_side"
+  }
+}

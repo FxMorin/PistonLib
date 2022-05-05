@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_piston_head",
+  "textures": {
+    "platform": "configurable-pistons:block/very_sticky_piston_top_sticky",
+    "side": "configurable-pistons:block/very_sticky_piston_side",
+    "unsticky": "configurable-pistons:block/very_sticky_piston_top"
+  }
+}
