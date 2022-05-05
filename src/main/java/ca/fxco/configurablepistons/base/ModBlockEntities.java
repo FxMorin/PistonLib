@@ -4,6 +4,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEnt
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,6 +19,7 @@ public class ModBlockEntities {
     public static BlockEntityType<SpeedPistonBlockEntity> SPEED_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<StickyPistonBlockEntity> STICKY_PISTON_BLOCK_ENTITY;
+    public static BlockEntityType<TranslocationPistonBlockEntity> TRANSLOCATION_PISTON_BLOCK_ENTITY;
 
     static {
         BASIC_PISTON_BLOCK_ENTITY = register(
@@ -39,6 +41,11 @@ public class ModBlockEntities {
                 "sticky_piston_entity",
                 StickyPistonBlockEntity::new,
                 ModBlocks.STICKY_MOVING_PISTON
+        );
+        TRANSLOCATION_PISTON_BLOCK_ENTITY = register(
+                "translocation_piston_entity",
+                TranslocationPistonBlockEntity::new,
+                ModBlocks.TRANSLOCATION_MOVING_PISTON
         );
     }
 

@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
 import ca.fxco.configurablepistons.datagen.PistonTagDatagen;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
@@ -17,10 +18,7 @@ import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonExtensi
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.VeryStickyPistonBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
-import net.minecraft.block.RedstoneBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -124,6 +122,22 @@ public class ModBlocks {
     );
     public static final BasicPistonBlock FRONT_POWERED_STICKY_PISTON = register(
             "front_powered_sticky_piston", PistonFamilies.FRONT_POWERED, new FrontPoweredPistonBlock(true), true
+    );
+
+
+    // Translocation Piston
+    // Normal piston but has 1.10 translocation
+    public static final BasicPistonHeadBlock TRANSLOCATION_PISTON_HEAD = register(
+            "translocation_piston_head", PistonFamilies.TRANSLOCATION, new BasicPistonHeadBlock()
+    );
+    public static final TranslocationPistonExtensionBlock TRANSLOCATION_MOVING_PISTON = register(
+            "translocation_moving_piston", PistonFamilies.TRANSLOCATION, new TranslocationPistonExtensionBlock()
+    );
+    public static final BasicPistonBlock TRANSLOCATION_PISTON = register(
+            "translocation_piston", PistonFamilies.TRANSLOCATION, new FrontPoweredPistonBlock(false)
+    );
+    public static final BasicPistonBlock TRANSLOCATION_STICKY_PISTON = register(
+            "translocation_sticky_piston", PistonFamilies.TRANSLOCATION, new BasicPistonBlock(true), true
     );
 
 

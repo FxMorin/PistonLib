@@ -16,6 +16,7 @@ public class PistonFamilies {
     public static PistonFamily FAST;
     public static PistonFamily STICKY;
     public static PistonFamily FRONT_POWERED;
+    public static PistonFamily TRANSLOCATION;
 
     // TODO: Make all moving pistons dragon and wither immune
 

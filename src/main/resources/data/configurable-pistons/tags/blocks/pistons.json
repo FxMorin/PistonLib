@@ -11,6 +11,8 @@
     "configurable-pistons:fast_sticky_piston",
     "configurable-pistons:very_sticky_piston",
     "configurable-pistons:front_powered_piston",
-    "configurable-pistons:front_powered_sticky_piston"
+    "configurable-pistons:front_powered_sticky_piston",
+    "configurable-pistons:translocation_piston",
+    "configurable-pistons:translocation_sticky_piston"
   ]
 }
