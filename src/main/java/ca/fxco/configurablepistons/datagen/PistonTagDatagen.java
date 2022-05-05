@@ -29,6 +29,8 @@ public class PistonTagDatagen implements DataGeneratorEntrypoint {
 
     public static List<Block> datagenBlockList = new ArrayList<>();
 
+    // TODO: Add every single block tag to the datagen, don't do anything manually
+
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         fabricDataGenerator.addProvider(new PistonBlockTagProvider(fabricDataGenerator));

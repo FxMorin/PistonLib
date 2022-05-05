@@ -11,7 +11,6 @@ public class ConfigurablePistons implements ModInitializer {
 
     //TODO:
     // Add custom textures
-    // Fix non-sticky piston animations
 
     public static final String MOD_ID = "configurable-pistons";
 
