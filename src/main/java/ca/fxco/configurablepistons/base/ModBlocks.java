@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
+import net.minecraft.block.RedstoneBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -46,6 +47,9 @@ public class ModBlocks {
     );
     public static final Block STICKY_TOP_BLOCK = registerBlock("sticky_top_block",new StickySidesBlock(
             FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY))
+    );
+    public static final Block SLIMY_REDSTONE_BLOCK = registerBlock("slimy_redstone_block",
+            new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
 
     // Piston Blocks should always be initialized in the following order:
