@@ -4,14 +4,14 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.block.*;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class ConfigurablePistons implements ModInitializer {
 
     //TODO:
-    // Implement custom textures
+    // Add custom textures
+    // Fix non-sticky piston animations
 
     public static final String MOD_ID = "configurable-pistons";
 

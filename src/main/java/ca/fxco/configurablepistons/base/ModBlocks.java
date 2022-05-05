@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
 import ca.fxco.configurablepistons.datagen.PistonTagDatagen;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
@@ -100,7 +101,7 @@ public class ModBlocks {
     // It's face acts like a slime block, it can be pulled while extended.
     // Doing so will pull the moving piston with it as it retracts
     public static final BasicPistonHeadBlock STICKY_PISTON_HEAD = register(
-            "sticky_piston_head", PistonFamilies.STICKY, new BasicPistonHeadBlock()
+            "sticky_piston_head", PistonFamilies.STICKY, new StickyPistonHeadBlock()
     );
     public static final StickyPistonExtensionBlock STICKY_MOVING_PISTON = register(
             "sticky_moving_piston", PistonFamilies.STICKY, new StickyPistonExtensionBlock()
