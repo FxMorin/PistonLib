@@ -48,7 +48,7 @@ public class FastPistonBlockEntity extends BasicPistonBlockEntity {
 
     public static void tick(World world, BlockPos pos, BlockState state, BasicPistonBlockEntity blockEntity) {
         blockEntity.savedWorldTime = world.getTime();
-        pushEntities(world, pos, 1.0F, blockEntity);
+        blockEntity.pushEntities(world, pos, 1.0F);
         moveEntitiesInHoneyBlock(world, pos, 1.0F, blockEntity);
         blockEntity.progress = 1.0F;
         world.removeBlockEntity(pos);

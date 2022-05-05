@@ -73,16 +73,16 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
                 this.pushedBlock;
     }
 
-    public static void pushEntities(World world, BlockPos pos, float f, BasicPistonBlockEntity blockEntity) {
-        Direction dir = blockEntity.getMovementDirection();
-        double d = f - blockEntity.progress;
-        VoxelShape voxelShape = blockEntity.getHeadBlockState().getCollisionShape(world, pos);
+    public void pushEntities(World world, BlockPos pos, float f) {
+        Direction dir = this.getMovementDirection();
+        double d = f - this.progress;
+        VoxelShape voxelShape = this.getHeadBlockState().getCollisionShape(world, pos);
         if (voxelShape.isEmpty()) return;
-        Box box = offsetHeadBox(pos, voxelShape.getBoundingBox(), blockEntity);
+        Box box = offsetHeadBox(pos, voxelShape.getBoundingBox(), this);
         List<Entity> list = world.getOtherEntities(null, Boxes.stretch(box, dir, d).union(box));
         if (list.isEmpty()) return;
         List<Box> voxelBounds = voxelShape.getBoundingBoxes();
-        boolean bl = blockEntity.pushedBlock.isOf(Blocks.SLIME_BLOCK);
+        boolean bl = this.pushedBlock.isOf(Blocks.SLIME_BLOCK);
         for (Entity entity : list) {
             if (entity.getPistonBehavior() == PistonBehavior.IGNORE) continue;
             if (bl) {
@@ -100,13 +100,13 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
             }
             double i = 0.0;
             for (Box boxes : voxelBounds) {
-                Box box3 = Boxes.stretch(offsetHeadBox(pos, boxes, blockEntity), dir, d);
+                Box box3 = Boxes.stretch(offsetHeadBox(pos, boxes, this), dir, d);
                 Box box4 = entity.getBoundingBox();
                 if (box3.intersects(box4) && (i = Math.max(i, getIntersectionSize(box3, dir, box4))) >= d) break;
             }
             if (i <= 0.0) continue;
             moveEntity(dir, entity, Math.min(i, d) + 0.01, dir);
-            if (!blockEntity.extending && blockEntity.source) push(pos, entity, dir, d);
+            if (!this.extending && this.source) push(pos, entity, dir, d);
         }
     }
 
@@ -231,7 +231,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
             }
         } else {
             float f = blockEntity.progress + 0.5F;
-            pushEntities(world, pos, f, blockEntity);
+            blockEntity.pushEntities(world, pos, f);
             moveEntitiesInHoneyBlock(world, pos, f, blockEntity);
             blockEntity.progress = f;
             if (blockEntity.progress >= 1.0F) blockEntity.progress = 1.0F;
