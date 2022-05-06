@@ -1,10 +1,6 @@
 {
   "replace": false,
   "values": [
-    "configurable-pistons:translocation_moving_piston",
-    "configurable-pistons:fast_moving_piston",
-    "configurable-pistons:sticky_moving_piston",
-    "configurable-pistons:basic_moving_piston",
-    "configurable-pistons:strong_moving_piston"
+    "#configurable-pistons:moving_pistons"
   ]
 }

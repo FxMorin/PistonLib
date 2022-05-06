@@ -1,5 +1,4 @@
 {
-  "_comment": "This should only be used for blocks that are sticky on all sides! Will not cause them to not stick to each other!",
   "replace": false,
   "values": [
     "minecraft:slime_block",
