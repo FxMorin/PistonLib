@@ -24,26 +24,26 @@
       "y": 270
     },
     "extended=true,facing=down": {
-      "model": "configurable-pistons:block/basic_piston_base",
+      "model": "minecraft:block/piston_base",
       "x": 90
     },
     "extended=true,facing=east": {
-      "model": "configurable-pistons:block/basic_piston_base",
+      "model": "minecraft:block/piston_base",
       "y": 90
     },
     "extended=true,facing=north": {
-      "model": "configurable-pistons:block/basic_piston_base"
+      "model": "minecraft:block/piston_base"
     },
     "extended=true,facing=south": {
-      "model": "configurable-pistons:block/basic_piston_base",
+      "model": "minecraft:block/piston_base",
       "y": 180
     },
     "extended=true,facing=up": {
-      "model": "configurable-pistons:block/basic_piston_base",
+      "model": "minecraft:block/piston_base",
       "x": 270
     },
     "extended=true,facing=west": {
-      "model": "configurable-pistons:block/basic_piston_base",
+      "model": "minecraft:block/piston_base",
       "y": 270
     }
   }

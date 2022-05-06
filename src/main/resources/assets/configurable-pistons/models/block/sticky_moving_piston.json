@@ -1,5 +1,5 @@
 {
   "textures": {
-    "particle": "configurable-pistons:block/very_sticky_piston_side"
+    "particle": "minecraft:block/piston_side"
   }
 }
