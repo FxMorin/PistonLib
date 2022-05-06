@@ -130,15 +130,8 @@ public class ConfigurablePistonHandler {
 
     private boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.world.getBlockState(pos);
-        if (state.isAir()) {
-            return false;
-        } else if (!PistonUtils.isMovable(state, this.world, pos, this.motionDirection, false, dir)) {
-            return false;
-        } else if (pos.equals(this.posFrom)) {
-            return false;
-        } else if (this.movedBlocks.contains(pos)) {
-            return false;
-        }
+        if (state.isAir() || pos.equals(this.posFrom) || this.movedBlocks.contains(pos)) return false;
+        if (!PistonUtils.isMovable(state, this.world, pos, this.motionDirection, false, dir)) return false;
         int i = 1;
         if (i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
         Direction direction = this.motionDirection.getOpposite();

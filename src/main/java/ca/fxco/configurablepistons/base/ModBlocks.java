@@ -131,7 +131,7 @@ public class ModBlocks {
             PistonFamilies.TRANSLOCATION, new TranslocationPistonExtensionBlock()
     );
     public static final BasicPistonBlock TRANSLOCATION_PISTON = register(
-            PistonFamilies.TRANSLOCATION, new FrontPoweredPistonBlock(false)
+            PistonFamilies.TRANSLOCATION, new BasicPistonBlock(false)
     );
     public static final BasicPistonBlock TRANSLOCATION_STICKY_PISTON = register(
             PistonFamilies.TRANSLOCATION, new BasicPistonBlock(true)
