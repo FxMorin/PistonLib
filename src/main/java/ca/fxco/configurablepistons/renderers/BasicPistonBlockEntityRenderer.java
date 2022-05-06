@@ -44,10 +44,9 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
             blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) <= 0.5f);
             this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
         } else if (pistonBE.isSource() && !pistonBE.isExtending()) {
-            if (blockState.getBlock() instanceof BasicPistonBlock pbe) {
-                PistonType pistonType = pbe.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-                // TODO: Add support for custom piston head rendering (Eventually)
-                BlockState blockState2 = ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
+            if (blockState.getBlock() instanceof BasicPistonBlock bpb) {
+                PistonType pistonType = bpb.sticky ? PistonType.STICKY : PistonType.DEFAULT;
+                BlockState blockState2 = bpb.getHeadBlock().getDefaultState()
                         .with(BasicPistonHeadBlock.TYPE, pistonType)
                         .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
                 blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) >= 0.5f);

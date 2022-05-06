@@ -8,7 +8,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensio
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
-import ca.fxco.configurablepistons.datagen.PistonTagDatagen;
+import ca.fxco.configurablepistons.datagen.DatagenInitializer;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
@@ -23,7 +23,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -33,8 +32,6 @@ import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 public class ModBlocks {
 
     private static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
-
-    private static PistonFamily.Builder currentBuilder = null;
 
     // Create Custom Blocks
     public static final Block DRAG_BLOCK = registerBlock("drag_block", new PullOnlyBlock(
@@ -56,134 +53,148 @@ public class ModBlocks {
     // Basic Piston
     // Acts exactly like a normal vanilla piston
     public static final BasicPistonHeadBlock BASIC_PISTON_HEAD = register(
-            "basic_piston_head", PistonFamilies.BASIC, new BasicPistonHeadBlock()
+            PistonFamilies.BASIC, new BasicPistonHeadBlock()
     );
     public static final BasicPistonExtensionBlock BASIC_MOVING_PISTON = register(
-            "basic_moving_piston", PistonFamilies.BASIC, new BasicPistonExtensionBlock()
+            PistonFamilies.BASIC, new BasicPistonExtensionBlock()
     );
     public static final BasicPistonBlock BASIC_PISTON = register(
-            "basic_piston", PistonFamilies.BASIC, new BasicPistonBlock(false)
+            PistonFamilies.BASIC, new BasicPistonBlock(false)
     );
     public static final BasicPistonBlock BASIC_STICKY_PISTON = register(
-            "basic_sticky_piston", PistonFamilies.BASIC, new BasicPistonBlock(true), true
+            PistonFamilies.BASIC, new BasicPistonBlock(true)
     );
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
     public static final BasicPistonHeadBlock STRONG_PISTON_HEAD = register(
-            "strong_piston_head", PistonFamilies.STRONG, new BasicPistonHeadBlock()
+            PistonFamilies.STRONG, new BasicPistonHeadBlock()
     );
     public static final SpeedPistonExtensionBlock STRONG_MOVING_PISTON = register(
-            "strong_moving_piston", PistonFamilies.STRONG, new SpeedPistonExtensionBlock(0.05F)
+            PistonFamilies.STRONG, new SpeedPistonExtensionBlock(0.05F)
     );
     public static final BasicPistonBlock STRONG_PISTON = register(
-            "strong_piston", PistonFamilies.STRONG, new PushLimitPistonBlock(false,24)
+            PistonFamilies.STRONG, new PushLimitPistonBlock(false,24)
     );
     public static final BasicPistonBlock STRONG_STICKY_PISTON = register(
-            "strong_sticky_piston", PistonFamilies.STRONG, new PushLimitPistonBlock(true,24), true
+            PistonFamilies.STRONG, new PushLimitPistonBlock(true,24)
     );
 
     // Fast Piston
     // Can only push 2 block, although it's very fast
     public static final BasicPistonHeadBlock FAST_PISTON_HEAD = register(
-            "fast_piston_head", PistonFamilies.FAST, new BasicPistonHeadBlock()
+            PistonFamilies.FAST, new BasicPistonHeadBlock()
     );
     public static final FastPistonExtensionBlock FAST_MOVING_PISTON = register(
-            "fast_moving_piston", PistonFamilies.FAST, new FastPistonExtensionBlock()
+            PistonFamilies.FAST, new FastPistonExtensionBlock()
     );
     public static final BasicPistonBlock FAST_PISTON = register(
-            "fast_piston", PistonFamilies.FAST, new PushLimitPistonBlock(false,2)
+            PistonFamilies.FAST, new PushLimitPistonBlock(false,2)
     );
     public static final BasicPistonBlock FAST_STICKY_PISTON = register(
-            "fast_sticky_piston", PistonFamilies.FAST, new PushLimitPistonBlock(true,2), true
+            PistonFamilies.FAST, new PushLimitPistonBlock(true,2)
     );
 
     // Very Sticky Piston
     // It's face acts like a slime block, it can be pulled while extended.
     // Doing so will pull the moving piston with it as it retracts
     public static final BasicPistonHeadBlock STICKY_PISTON_HEAD = register(
-            "sticky_piston_head", PistonFamilies.STICKY, new StickyPistonHeadBlock()
+            PistonFamilies.STICKY, new StickyPistonHeadBlock()
     );
     public static final StickyPistonExtensionBlock STICKY_MOVING_PISTON = register(
-            "sticky_moving_piston", PistonFamilies.STICKY, new StickyPistonExtensionBlock()
+            PistonFamilies.STICKY, new StickyPistonExtensionBlock()
     );
     public static final BasicPistonBlock VERY_STICKY_PISTON = register(
-            "very_sticky_piston", PistonFamilies.STICKY, new VeryStickyPistonBlock(), true
+            PistonFamilies.STICKY, new VeryStickyPistonBlock()
     );
 
 
     // Front Powered Piston
     // Normal piston but can be powered through the front
     public static final BasicPistonHeadBlock FRONT_POWERED_PISTON_HEAD = register(
-            "front_powered_piston_head", PistonFamilies.FRONT_POWERED, new BasicPistonHeadBlock()
+            PistonFamilies.FRONT_POWERED, new BasicPistonHeadBlock()
     );
     public static final BasicPistonBlock FRONT_POWERED_PISTON = register(
-            "front_powered_piston", PistonFamilies.FRONT_POWERED, new FrontPoweredPistonBlock(false)
+            PistonFamilies.FRONT_POWERED, new FrontPoweredPistonBlock(false)
     );
     public static final BasicPistonBlock FRONT_POWERED_STICKY_PISTON = register(
-            "front_powered_sticky_piston", PistonFamilies.FRONT_POWERED, new FrontPoweredPistonBlock(true), true
+            PistonFamilies.FRONT_POWERED, new FrontPoweredPistonBlock(true)
     );
 
 
     // Translocation Piston
     // Normal piston but has 1.10 translocation
     public static final BasicPistonHeadBlock TRANSLOCATION_PISTON_HEAD = register(
-            "translocation_piston_head", PistonFamilies.TRANSLOCATION, new BasicPistonHeadBlock()
+            PistonFamilies.TRANSLOCATION, new BasicPistonHeadBlock()
     );
     public static final TranslocationPistonExtensionBlock TRANSLOCATION_MOVING_PISTON = register(
-            "translocation_moving_piston", PistonFamilies.TRANSLOCATION, new TranslocationPistonExtensionBlock()
+            PistonFamilies.TRANSLOCATION, new TranslocationPistonExtensionBlock()
     );
     public static final BasicPistonBlock TRANSLOCATION_PISTON = register(
-            "translocation_piston", PistonFamilies.TRANSLOCATION, new FrontPoweredPistonBlock(false)
+            PistonFamilies.TRANSLOCATION, new FrontPoweredPistonBlock(false)
     );
     public static final BasicPistonBlock TRANSLOCATION_STICKY_PISTON = register(
-            "translocation_sticky_piston", PistonFamilies.TRANSLOCATION, new BasicPistonBlock(true), true
+            PistonFamilies.TRANSLOCATION, new BasicPistonBlock(true)
     );
 
 
     public static <T extends Block> T registerBlock(String blockId, T block) {
-        if (DATAGEN_ACTIVE) PistonTagDatagen.datagenBlockList.add(block);
+        if (DATAGEN_ACTIVE) DatagenInitializer.datagenBlockList.add(block);
         Identifier identifier = id(blockId);
         Registry.register(Registry.ITEM, identifier, new BlockItem(block, CUSTOM_CREATIVE_GROUP));
         return Registry.register(Registry.BLOCK, identifier, block);
     }
 
-    public static <T extends Block> T register(String blockId, @Nullable PistonFamily family, T block) {
-        return register(blockId, family, block, false);
-    }
-
-    public static <T extends Block> T register(String blockId, @Nullable PistonFamily family, T block, boolean last) {
-        Identifier identifier = id(blockId);
-        Registry.register(Registry.BLOCK, identifier, block); // Add block to registry
-        if (family == null && currentBuilder == null) { // FIRST BLOCK INITIALIZED SHOULD ALWAYS BE THE HEAD!!!
-            if (block instanceof BasicPistonHeadBlock pistonHeadBlock) {
-                currentBuilder = PistonFamilies.register(pistonHeadBlock);
+    public static <T extends Block> T register(PistonFamily family, T block) {
+        if (family == null)
+            throw new IllegalStateException("Valid Piston Family must be used! - " + Registry.BLOCK.getId(block));
+        String familyId = family.getId();
+        if (family.mustSetupHead()) { // FIRST BLOCK INITIALIZED SHOULD ALWAYS BE THE HEAD!!!
+            if (block instanceof BasicPistonHeadBlock headBlock) {
+                Registry.register(Registry.BLOCK, id(familyId+"_piston_head"), block);
+                family.head(headBlock);
             } else {
                 throw new IllegalStateException(
-                        "First Piston Block should be a basic piston head! - " + Registry.BLOCK.getId(block)
+                        "First Piston Family block must be a basic piston head block! - Block: " +
+                                block + " - Family: " + family.getId()
                 );
             }
         } else {
-            if (block instanceof BasicPistonBlock basicPistonBlock) {
-                Registry.register(Registry.ITEM, identifier, new BlockItem(basicPistonBlock, CUSTOM_CREATIVE_GROUP));
-                PistonFamily pistonFamily = currentBuilder.getFamily();
-                BasicPistonExtensionBlock extensionBlock = pistonFamily.getExtensionBlock();
-                basicPistonBlock.setExtensionBlock(extensionBlock != null ?
-                        extensionBlock : ModBlocks.BASIC_MOVING_PISTON);
-                BasicPistonHeadBlock headBlock = pistonFamily.getHeadBlock();
-                basicPistonBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
-                if (basicPistonBlock.sticky) {
-                    currentBuilder.sticky(basicPistonBlock);
+            if (block instanceof BasicPistonBlock pistonBlock) {
+                BasicPistonExtensionBlock extensionBlock = family.getExtensionBlock();
+                pistonBlock.setExtensionBlock(extensionBlock != null ? extensionBlock : ModBlocks.BASIC_MOVING_PISTON);
+                BasicPistonHeadBlock headBlock = family.getHeadBlock();
+                pistonBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
+                Identifier identifier;
+                if (pistonBlock.sticky) {
+                    identifier = id(familyId+"_sticky_piston");
+                    Registry.register(Registry.BLOCK, identifier, pistonBlock);
+                    family.sticky(pistonBlock);
                 } else {
-                    currentBuilder.piston(basicPistonBlock);
+                    identifier = id(familyId+"_piston");
+                    Registry.register(Registry.BLOCK, identifier, pistonBlock);
+                    family.piston(pistonBlock);
                 }
+                Registry.register(Registry.ITEM, identifier, new BlockItem(pistonBlock, CUSTOM_CREATIVE_GROUP));
             } else if (block instanceof BasicPistonExtensionBlock basicPistonExtensionBlock) {
-                currentBuilder.extension(basicPistonExtensionBlock);
+                Registry.register(Registry.BLOCK, id(familyId+"_moving_piston"), basicPistonExtensionBlock);
+                if (family.getPistonBlock() != null || family.getStickyPistonBlock() != null) {
+                    throw new IllegalStateException(
+                            "Extension blocks must always be initialized before base piston blocks! - Block: " +
+                                    Registry.BLOCK.getId(basicPistonExtensionBlock) + " - Family: " + family.getId()
+                    );
+                }
+                family.extension(basicPistonExtensionBlock);
             } else if (block instanceof BasicPistonArmBlock basicPistonArmBlock) {
-                currentBuilder.arm(basicPistonArmBlock);
+                Registry.register(Registry.BLOCK, id(familyId+"_piston_arm"), basicPistonArmBlock);
+                family.arm(basicPistonArmBlock); // Add checks once we actually add this to the game
+            } else {
+                throw new IllegalStateException(
+                        "This block cannot be initialized as part of a piston family! - Block: " +
+                                block + " - Family: " + family.getId()
+                );
             }
         }
-        if (last) currentBuilder = null;
         return block;
     }
 }

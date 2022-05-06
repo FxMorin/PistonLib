@@ -20,7 +20,7 @@
       "ca.fxco.configurablepistons.ConfigurablePistonsClient"
     ],
     "fabric-datagen": [
-      "ca.fxco.configurablepistons.datagen.PistonTagDatagen"
+      "ca.fxco.configurablepistons.datagen.DatagenInitializer"
     ]
   },
   "accessWidener" : "configurable-pistons.accesswidener",
