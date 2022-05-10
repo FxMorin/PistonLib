@@ -47,7 +47,7 @@ public class ModBlocks {
             new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
     public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block.json",
-            new SlipperyBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK).nonOpaque()), false
+            new SlipperyBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK)), false
     );
 
     // Piston Blocks should always be initialized in the following order:

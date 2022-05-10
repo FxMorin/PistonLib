@@ -25,13 +25,20 @@ public class SlipperyBlock extends SlimeBlock {
     public static final int MAX_DISTANCE = 12;
     public static final IntProperty DISTANCE = IntProperty.of("distance", 0, MAX_DISTANCE);
 
+    private final boolean doesBreakOnFail;
+
     /**
      * A block so slippery that it just keeps falling apart unless it's connected to other blocks
      */
 
     public SlipperyBlock(Settings settings) {
+        this(settings, false);
+    }
+
+    public SlipperyBlock(Settings settings, boolean breakOnFail) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, MAX_DISTANCE));
+        doesBreakOnFail = breakOnFail;
     }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -63,11 +70,19 @@ public class SlipperyBlock extends SlimeBlock {
         return state;
     }
 
+    protected BlockState getFallBlockState(BlockState state) {
+        return state;
+    }
+
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         int i = calculateDistance(world, pos);
         BlockState blockState = state.with(DISTANCE, i);
         if (blockState.get(DISTANCE) == MAX_DISTANCE) {
-            FallingBlockEntity.spawnFromBlock(world, pos, blockState);
+            if (doesBreakOnFail) {
+                world.breakBlock(pos, true);
+            } else {
+                FallingBlockEntity.spawnFromBlock(world, pos, getFallBlockState(blockState));
+            }
         } else if (state != blockState) {
             world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
         }
