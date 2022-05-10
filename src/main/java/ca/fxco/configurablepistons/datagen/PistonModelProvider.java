@@ -1,5 +1,6 @@
 package ca.fxco.configurablepistons.datagen;
 
+import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
@@ -55,6 +56,7 @@ class PistonModelProvider extends FabricModelProvider {
         System.out.println("Amount of Custom Blocks: "+DatagenInitializer.datagenBlockList.size());
         for (Block block : DatagenInitializer.datagenBlockList)
             modelGenerator.registerSimpleCubeAll(block);
+        modelGenerator.registerSimpleState(ModBlocks.SLIPPERY_SLIME_BLOCK);
     }
 
     private void registerPiston(BlockStateModelGenerator modelGenerator, @Nullable Block basePiston,

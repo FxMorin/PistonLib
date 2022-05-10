@@ -46,6 +46,9 @@ public class ModBlocks {
     public static final Block SLIMY_REDSTONE_BLOCK = registerBlock("slimy_redstone_block",
             new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
+    public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block.json",
+            new SlipperyBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK).nonOpaque()), false
+    );
 
     // Piston Blocks should always be initialized in the following order:
     // Piston heads, Moving Pistons, base piston blocks
@@ -139,7 +142,11 @@ public class ModBlocks {
 
 
     public static <T extends Block> T registerBlock(String blockId, T block) {
-        if (DATAGEN_ACTIVE) DatagenInitializer.datagenBlockList.add(block);
+        return registerBlock(blockId, block, true);
+    }
+
+    public static <T extends Block> T registerBlock(String blockId, T block, boolean autoDatagen) {
+        if (autoDatagen && DATAGEN_ACTIVE) DatagenInitializer.datagenBlockList.add(block);
         Identifier identifier = id(blockId);
         Registry.register(Registry.ITEM, identifier, new BlockItem(block, CUSTOM_CREATIVE_GROUP));
         return Registry.register(Registry.BLOCK, identifier, block);

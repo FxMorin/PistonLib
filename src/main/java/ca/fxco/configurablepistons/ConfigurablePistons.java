@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 public class ConfigurablePistons implements ModInitializer {
 
     //TODO:
-    // Add custom textures
+    // Add custom textures - Like: Strong Piston
 
     public static final String MOD_ID = "configurable-pistons";
 

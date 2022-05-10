@@ -3,6 +3,7 @@
   "values": [
     "minecraft:slime_block",
     "minecraft:honey_block",
-    "configurable-pistons:slimy_redstone_block"
+    "configurable-pistons:slimy_redstone_block",
+    "configurable-pistons:slippery_slime_block"
   ]
 }
