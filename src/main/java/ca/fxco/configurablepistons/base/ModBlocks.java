@@ -61,6 +61,9 @@ public class ModBlocks {
     public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
             new AbstractSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
     );
+    public static final Block ALL_SIDED_OBSERVER_BLOCK = registerBlock("all_sided_observer_block",
+            new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))
+    );
 
     // Piston Blocks should always be initialized in the following order:
     // Piston heads, Moving Pistons, base piston blocks
