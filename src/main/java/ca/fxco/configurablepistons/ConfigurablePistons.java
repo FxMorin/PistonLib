@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons;
 
+import ca.fxco.configurablepistons.base.ModBlocks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.block.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -23,7 +23,7 @@ public class ConfigurablePistons implements ModInitializer {
 
     public static final Item.Settings CUSTOM_CREATIVE_GROUP = new Item.Settings().group(FabricItemGroupBuilder.build(
             new Identifier("configurable-pistons", "general"),
-            () -> new ItemStack(Blocks.STICKY_PISTON)));
+            () -> new ItemStack(ModBlocks.STRONG_STICKY_PISTON)));
 
     @Override
     public void onInitialize() {}
