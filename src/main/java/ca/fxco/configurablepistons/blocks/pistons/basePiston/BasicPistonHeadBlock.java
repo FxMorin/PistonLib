@@ -113,7 +113,6 @@ public class BasicPistonHeadBlock extends FacingBlock {
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-        // TODO: Change MOVING_PISTONS here to just check if its the current moving piston
         return this.isAttached(state, blockState) || blockState.isIn(ModTags.MOVING_PISTONS) &&
                 blockState.get(FACING) == state.get(FACING);
     }

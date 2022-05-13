@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.blocks;
+package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
 import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.*;
@@ -6,11 +6,8 @@ import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -18,39 +15,25 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-public class SlipperyBlock extends SlimeBlock {
+import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
 
-    private static final int DELAY = 6;
-    private static final int SLIP_DELAY = 3;
+public class AbstractSlipperyBlock extends Block {
+
+    public static final int DELAY = 6;
+    public static final int SLIP_DELAY = 3;
     public static final int MAX_DISTANCE = 12;
-    public static final IntProperty DISTANCE = IntProperty.of("distance", 0, MAX_DISTANCE);
-
-    private final boolean doesBreakOnFail;
 
     /**
      * A block so slippery that it just keeps falling apart unless it's connected to other blocks
      */
 
-    public SlipperyBlock(Settings settings) {
-        this(settings, false);
-    }
-
-    public SlipperyBlock(Settings settings, boolean breakOnFail) {
+    public AbstractSlipperyBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, MAX_DISTANCE));
-        doesBreakOnFail = breakOnFail;
-    }
-
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
-    }
-
-    public VoxelShape getRaycastShape(BlockState state, BlockView world, BlockPos pos) {
-        return VoxelShapes.fullCube();
+        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, MAX_DISTANCE));
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(DISTANCE, calculateDistance(ctx.getWorld(), ctx.getBlockPos()));
+        return this.getDefaultState().with(SLIPPERY_DISTANCE, calculateDistance(ctx.getWorld(), ctx.getBlockPos()));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
@@ -61,7 +44,7 @@ public class SlipperyBlock extends SlimeBlock {
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient()) {
-            if (neighborState.getBlock() instanceof SlipperyBlock) {
+            if (neighborState.isIn(ModTags.SLIPPERY_BLOCKS)) {
                 world.createAndScheduleBlockTick(pos, this, SLIP_DELAY);
             } else {
                 world.createAndScheduleBlockTick(pos, this, DELAY);
@@ -70,19 +53,11 @@ public class SlipperyBlock extends SlimeBlock {
         return state;
     }
 
-    protected BlockState getFallBlockState(BlockState state) {
-        return state;
-    }
-
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         int i = calculateDistance(world, pos);
-        BlockState blockState = state.with(DISTANCE, i);
-        if (blockState.get(DISTANCE) == MAX_DISTANCE) {
-            if (doesBreakOnFail) {
-                world.breakBlock(pos, true);
-            } else {
-                FallingBlockEntity.spawnFromBlock(world, pos, getFallBlockState(blockState));
-            }
+        BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
+        if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
+            FallingBlockEntity.spawnFromBlock(world, pos, blockState);
         } else if (state != blockState) {
             world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
         }
@@ -96,16 +71,16 @@ public class SlipperyBlock extends SlimeBlock {
         BlockPos.Mutable mutable = pos.mutableCopy().move(Direction.DOWN);
         BlockState blockState = world.getBlockState(mutable);
         int currentDistance = MAX_DISTANCE;
-        if (blockState.getBlock() instanceof SlipperyBlock) {
-            currentDistance = blockState.get(DISTANCE);
+        if (blockState.isIn(ModTags.SLIPPERY_BLOCKS)) {
+            currentDistance = blockState.get(SLIPPERY_DISTANCE);
         } else if (!blockState.isIn(ModTags.SLIPPERY_IGNORE_BLOCKS) &&
                 blockState.isSideSolidFullSquare(world, mutable, Direction.UP)) {
             return 0;
         }
         for (Direction direction : Direction.Type.HORIZONTAL) {
             BlockState blockState2 = world.getBlockState(mutable.set(pos, direction));
-            if (blockState2.getBlock() instanceof SlipperyBlock) {
-                currentDistance = Math.min(currentDistance, blockState2.get(DISTANCE) + 1);
+            if (blockState2.isIn(ModTags.SLIPPERY_BLOCKS)) {
+                currentDistance = Math.min(currentDistance, blockState2.get(SLIPPERY_DISTANCE) + 1);
                 if (currentDistance == 1) break;
             }
         }
@@ -113,6 +88,6 @@ public class SlipperyBlock extends SlimeBlock {
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(DISTANCE);
+        builder.add(SLIPPERY_DISTANCE);
     }
 }

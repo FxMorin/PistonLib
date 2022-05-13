@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "item": "minecraft:potion{Potion:water}"
+            "item": "minecraft:potion"
         },
         {
             "item": "minecraft:slime_block"
