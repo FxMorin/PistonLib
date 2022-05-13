@@ -64,6 +64,9 @@ public class ModBlocks {
     public static final Block ALL_SIDED_OBSERVER_BLOCK = registerBlock("all_sided_observer_block",
             new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))
     );
+    public static final Block GLUE_BLOCK = registerBlock("glue_block",
+            new GlueBlock(FabricBlockSettings.copyOf(Blocks.END_STONE))
+    );
 
     // Piston Blocks should always be initialized in the following order:
     // Piston heads, Moving Pistons, base piston blocks
