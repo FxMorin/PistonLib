@@ -6,8 +6,14 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonBlock;
+import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonExtensionBlock;
+import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.SlipperyRedstoneBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.SlipperySlimeBlock;
 import ca.fxco.configurablepistons.datagen.DatagenInitializer;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
@@ -34,20 +40,26 @@ public class ModBlocks {
     private static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
 
     // Create Custom Blocks
-    public static final Block DRAG_BLOCK = registerBlock("drag_block", new PullOnlyBlock(
-            FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f))
+    public static final Block DRAG_BLOCK = registerBlock("drag_block",
+            new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f))
     );
-    public static final Block STICKYLESS_BLOCK = registerBlock("stickyless_block",new StickylessBlock(
-            FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f))
+    public static final Block STICKYLESS_BLOCK = registerBlock("stickyless_block",
+            new StickylessBlock(FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f))
     );
-    public static final Block STICKY_TOP_BLOCK = registerBlock("sticky_top_block",new StickySidesBlock(
-            FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY))
+    public static final Block STICKY_TOP_BLOCK = registerBlock("sticky_top_block",
+            new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY))
     );
     public static final Block SLIMY_REDSTONE_BLOCK = registerBlock("slimy_redstone_block",
             new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
-    public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block.json",
-            new SlipperyBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK)), false
+    public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block",
+            new SlipperySlimeBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK)), false
+    );
+    public static final Block SLIPPERY_REDSTONE_BLOCK = registerBlock("slippery_redstone_block",
+            new SlipperyRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
+    );
+    public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
+            new AbstractSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
     );
 
     // Piston Blocks should always be initialized in the following order:
@@ -138,6 +150,21 @@ public class ModBlocks {
     );
     public static final BasicPistonBlock TRANSLOCATION_STICKY_PISTON = register(
             PistonFamilies.TRANSLOCATION, new BasicPistonBlock(true)
+    );
+
+    // Slippery Piston
+    // It's just a normal piston except its slippery
+    public static final BasicPistonHeadBlock SLIPPERY_PISTON_HEAD = register(
+            PistonFamilies.SLIPPERY, new SlipperyPistonHeadBlock()
+    );
+    public static final SlipperyPistonExtensionBlock SLIPPERY_MOVING_PISTON = register(
+            PistonFamilies.SLIPPERY, new SlipperyPistonExtensionBlock()
+    );
+    public static final BasicPistonBlock SLIPPERY_PISTON = register(
+            PistonFamilies.SLIPPERY, new SlipperyPistonBlock(false)
+    );
+    public static final BasicPistonBlock SLIPPERY_STICKY_PISTON = register(
+            PistonFamilies.SLIPPERY, new SlipperyPistonBlock(true)
     );
 
 

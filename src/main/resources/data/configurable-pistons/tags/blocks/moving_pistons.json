@@ -6,6 +6,7 @@
     "configurable-pistons:translocation_moving_piston",
     "configurable-pistons:sticky_moving_piston",
     "configurable-pistons:basic_moving_piston",
+    "configurable-pistons:slippery_moving_piston",
     "minecraft:moving_piston"
   ]
 }

@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.base;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
@@ -20,6 +21,7 @@ public class ModBlockEntities {
     public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<StickyPistonBlockEntity> STICKY_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<TranslocationPistonBlockEntity> TRANSLOCATION_PISTON_BLOCK_ENTITY;
+    public static BlockEntityType<SlipperyPistonBlockEntity> SLIPPERY_PISTON_BLOCK_ENTITY;
 
     static {
         BASIC_PISTON_BLOCK_ENTITY = register(
@@ -46,6 +48,11 @@ public class ModBlockEntities {
                 "translocation_piston_entity",
                 TranslocationPistonBlockEntity::new,
                 ModBlocks.TRANSLOCATION_MOVING_PISTON
+        );
+        SLIPPERY_PISTON_BLOCK_ENTITY = register(
+                "slippery_piston_entity",
+                SlipperyPistonBlockEntity::new,
+                ModBlocks.SLIPPERY_MOVING_PISTON
         );
     }
 
