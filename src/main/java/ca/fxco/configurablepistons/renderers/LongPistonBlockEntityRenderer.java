@@ -1,34 +1,25 @@
 package ca.fxco.configurablepistons.renderers;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonBlockEntity;
+import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.PistonType;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockModelRenderer;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 @Environment(value=EnvType.CLIENT)
-public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
-    private final BlockRenderManager manager;
+public class LongPistonBlockEntityRenderer<T extends LongPistonBlockEntity> extends BasicPistonBlockEntityRenderer<T> {
 
-    public BasicPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.manager = ctx.getRenderManager();
+    public LongPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+        super(ctx);
     }
 
     @Override
@@ -46,10 +37,16 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
             this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
         } else if (pistonBE.isSource() && !pistonBE.isExtending()) {
             if (blockState.getBlock() instanceof BasicPistonBlock bpb) {
-                PistonType pistonType = bpb.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-                BlockState blockState2 = bpb.getHeadBlock().getDefaultState()
-                        .with(BasicPistonHeadBlock.TYPE, pistonType)
-                        .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
+                BlockState blockState2;
+                if (pistonBE.isArm()) {
+                    blockState2 = PistonFamilies.LONG.getArmBlock().getDefaultState()
+                            .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
+                } else {
+                    PistonType pistonType = bpb.sticky ? PistonType.STICKY : PistonType.DEFAULT;
+                    blockState2 = bpb.getHeadBlock().getDefaultState()
+                            .with(BasicPistonHeadBlock.TYPE, pistonType)
+                            .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
+                }
                 blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) >= 0.5f);
                 this.renderModel(blockPos, blockState2, matrix, vertexConsumers, world, false, j);
                 BlockPos blockPos2 = blockPos.offset(pistonBE.getMovementDirection());
@@ -62,22 +59,6 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
             this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
         }
         matrix.pop();
-        matrix.push();
-        this.manager.renderBlock(Blocks.LIME_STAINED_GLASS.getDefaultState(),pistonBE.getPos(),world,matrix, vertexConsumers.getBuffer(RenderLayer.getTranslucentMovingBlock()), false, new Random());
-        matrix.pop();
         BlockModelRenderer.disableBrightnessCache();
-    }
-
-    protected void renderModel(BlockPos pos, BlockState state, MatrixStack matrix,
-                             VertexConsumerProvider vertexConsumers, World world, boolean cull, int overlay) {
-        RenderLayer renderLayer = RenderLayers.getMovingBlockLayer(state);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrix, vertexConsumer,
-                cull, new Random(), state.getRenderingSeed(pos), overlay);
-    }
-
-    @Override
-    public int getRenderDistance() {
-        return 68;
     }
 }

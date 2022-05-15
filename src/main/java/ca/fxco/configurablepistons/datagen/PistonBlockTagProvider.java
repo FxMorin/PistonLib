@@ -22,7 +22,7 @@ public class PistonBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void generateTags() {
         FabricTagBuilder<Block> dragonImmuneBuilder = getOrCreateTagBuilder(BlockTags.DRAGON_IMMUNE);
         FabricTagBuilder<Block> witherImmuneBuilder = getOrCreateTagBuilder(BlockTags.WITHER_IMMUNE);
-        FabricTagBuilder<Block> slipperyIngnoreBuilder = getOrCreateTagBuilder(ModTags.SLIPPERY_IGNORE_BLOCKS);
+        FabricTagBuilder<Block> slipperyIgnoreBuilder = getOrCreateTagBuilder(ModTags.SLIPPERY_IGNORE_BLOCKS);
         FabricTagBuilder<Block> slipperyBuilder = getOrCreateTagBuilder(ModTags.SLIPPERY_BLOCKS);
         FabricTagBuilder<Block> movingPistonBuilder = getOrCreateTagBuilder(ModTags.MOVING_PISTONS);
         FabricTagBuilder<Block> stickyBlocksBuilder = getOrCreateTagBuilder(ModTags.STICKY_BLOCKS);
@@ -43,7 +43,7 @@ public class PistonBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         movingPistonBuilder.add(Blocks.MOVING_PISTON);
         stickyBlocksBuilder.add(Blocks.SLIME_BLOCK, Blocks.HONEY_BLOCK, ModBlocks.SLIMY_REDSTONE_BLOCK, ModBlocks.SLIPPERY_SLIME_BLOCK);
         unpushableBuilder.add(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR);
-        slipperyIngnoreBuilder.addTag(ModTags.MOVING_PISTONS).addTag(ModTags.PISTONS).add(Blocks.OBSERVER, Blocks.REDSTONE_BLOCK);
+        slipperyIgnoreBuilder.addTag(ModTags.MOVING_PISTONS).addTag(ModTags.PISTONS).add(Blocks.OBSERVER, Blocks.REDSTONE_BLOCK);
         slipperyBuilder.add(
                 ModBlocks.SLIPPERY_SLIME_BLOCK, ModBlocks.SLIPPERY_REDSTONE_BLOCK, ModBlocks.SLIPPERY_STONE_BLOCK,
                 ModBlocks.SLIPPERY_PISTON, ModBlocks.SLIPPERY_STICKY_PISTON, ModBlocks.SLIPPERY_PISTON_HEAD,

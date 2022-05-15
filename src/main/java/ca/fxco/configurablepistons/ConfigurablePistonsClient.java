@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.renderers.BasicPistonBlockEntityRenderer;
+import ca.fxco.configurablepistons.renderers.LongPistonBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
@@ -15,6 +16,7 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         register(ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
+        register(ModBlockEntities.LONG_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.SPEED_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.FAST_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.STICKY_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);

@@ -1,6 +1,6 @@
 package ca.fxco.configurablepistons.pistonLogic.families;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -17,7 +17,7 @@ public class PistonFamily {
     @Nullable
     private BasicPistonExtensionBlock extensionBlock = null;
     @Nullable
-    private BasicPistonArmBlock armBlock = null;
+    private LongPistonArmBlock armBlock = null;
 
     private final boolean generateAutomatically;
     private final boolean customTextures;
@@ -54,7 +54,7 @@ public class PistonFamily {
         return this.extensionBlock;
     }
 
-    public @Nullable BasicPistonArmBlock getArmBlock() {
+    public @Nullable LongPistonArmBlock getArmBlock() {
         return this.armBlock;
     }
 
@@ -96,7 +96,7 @@ public class PistonFamily {
     }
 
     // For modded pistons that extend further than one block
-    public void arm(BasicPistonArmBlock block) {
+    public void arm(LongPistonArmBlock block) {
         this.armBlock = block;
     }
 }

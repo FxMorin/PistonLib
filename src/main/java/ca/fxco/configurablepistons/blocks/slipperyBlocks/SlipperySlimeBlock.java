@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +38,7 @@ public class SlipperySlimeBlock extends AbstractSlipperyBlock {
 
     private void bounce(Entity entity) {
         Vec3d vec3d = entity.getVelocity();
-        if (vec3d.y < 0.0) {
+        if (vec3d.y < 0.0 && !(entity instanceof FallingBlockEntity)) {
             double d = entity instanceof LivingEntity ? 1.0 : 0.8;
             entity.setVelocity(vec3d.x, -vec3d.y * d, vec3d.z);
         }

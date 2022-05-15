@@ -67,7 +67,11 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public BasicPistonHeadBlock() {
-        super(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
+        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
+    }
+
+    public BasicPistonHeadBlock(Settings settings) {
+        super(settings);
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(TYPE, PistonType.DEFAULT)

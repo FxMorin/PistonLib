@@ -3,13 +3,18 @@ package ca.fxco.configurablepistons.base;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
+import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
+import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.PistonBlockEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import static ca.fxco.configurablepistons.ConfigurablePistons.id;
@@ -17,6 +22,7 @@ import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 public class ModBlockEntities {
 
     public static BlockEntityType<BasicPistonBlockEntity> BASIC_PISTON_BLOCK_ENTITY;
+    public static BlockEntityType<LongPistonBlockEntity> LONG_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<SpeedPistonBlockEntity> SPEED_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
     public static BlockEntityType<StickyPistonBlockEntity> STICKY_PISTON_BLOCK_ENTITY;
@@ -25,48 +31,57 @@ public class ModBlockEntities {
 
     static {
         BASIC_PISTON_BLOCK_ENTITY = register(
-                "basic_piston_entity",
+                "basic",
                 BasicPistonBlockEntity::new,
                 ModBlocks.BASIC_MOVING_PISTON
         );
+        LONG_PISTON_BLOCK_ENTITY = register(
+                "long",
+                LongPistonBlockEntity::new,
+                ModBlocks.LONG_MOVING_PISTON
+        );
         SPEED_PISTON_BLOCK_ENTITY = register(
-                "speed_piston_entity",
+                "speed",
                 SpeedPistonBlockEntity::new,
                 ModBlocks.STRONG_MOVING_PISTON
         );
         FAST_PISTON_BLOCK_ENTITY = register(
-                "fast_piston_entity",
+                "fast",
                 FastPistonBlockEntity::new,
                 ModBlocks.FAST_MOVING_PISTON
         );
         STICKY_PISTON_BLOCK_ENTITY = register(
-                "sticky_piston_entity",
+                "sticky",
                 StickyPistonBlockEntity::new,
                 ModBlocks.STICKY_MOVING_PISTON
         );
         TRANSLOCATION_PISTON_BLOCK_ENTITY = register(
-                "translocation_piston_entity",
+                "translocation",
                 TranslocationPistonBlockEntity::new,
                 ModBlocks.TRANSLOCATION_MOVING_PISTON
         );
         SLIPPERY_PISTON_BLOCK_ENTITY = register(
-                "slippery_piston_entity",
+                "slippery",
                 SlipperyPistonBlockEntity::new,
                 ModBlocks.SLIPPERY_MOVING_PISTON
         );
     }
 
-    public static <T extends BlockEntity> BlockEntityType<T> register(
-            String identifier,
+    public static <T extends BasicPistonBlockEntity> BlockEntityType<T> register(
+            String id,
             FabricBlockEntityTypeBuilder.Factory<T> blockEntityFactory,
-            BasicPistonExtensionBlock basicPistonExtensionBlock
+            BasicPistonExtensionBlock extensionBlock
     ) {
+        Identifier identifier = id(id+"_piston_entity");
         return Registry.register(
                 Registry.BLOCK_ENTITY_TYPE,
-                id(identifier),
+                identifier,
                 FabricBlockEntityTypeBuilder.create(
                         blockEntityFactory,
-                        basicPistonExtensionBlock
-                ).build(null));
+                        extensionBlock
+                ).build(null)
+        );
     }
+
+    public static void order() {}
 }

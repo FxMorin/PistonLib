@@ -1,7 +1,8 @@
 package ca.fxco.configurablepistons.datagen;
 
+import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonArmBlock;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -27,9 +28,15 @@ class PistonModelProvider extends FabricModelProvider {
     }
 
     private static final Model PISTON_EXTENDED = block("piston_extended", TextureKey.BOTTOM, TextureKey.SIDE, TextureKey.INSIDE);
+    private static final Model PISTON_ARM = block("piston_arm", TextureKey.PLATFORM, TextureKey.SIDE);
+    private static final Model PISTON_ARM_SHORT = block("piston_arm_short", TextureKey.PLATFORM, TextureKey.SIDE);
 
     private static Model block(String parent, TextureKey... requiredTextureKeys) {
-        return new Model(Optional.of(new Identifier("minecraft", "block/" + parent)), Optional.empty(), requiredTextureKeys);
+        return new Model(
+                Optional.of(new Identifier(ConfigurablePistons.MOD_ID, "block/" + parent)),
+                Optional.empty(),
+                requiredTextureKeys
+        );
     }
 
     @Override
@@ -50,8 +57,10 @@ class PistonModelProvider extends FabricModelProvider {
                 registerPistonHead(modelGenerator, basicPistonHeadBlock, baseBlock);
             }
             // TODO: Add an actual piston arm to the game
-            BasicPistonArmBlock basicPistonArmBlock = family.getArmBlock();
-            if (basicPistonArmBlock != null) {}
+            LongPistonArmBlock longPistonArmBlock = family.getArmBlock();
+            if (longPistonArmBlock != null) {
+                registerPistonArm(modelGenerator, longPistonArmBlock, baseBlock);
+            }
         }
         System.out.println("Amount of Custom Blocks: "+DatagenInitializer.datagenBlockList.size());
         for (Block block : DatagenInitializer.datagenBlockList)
@@ -88,9 +97,7 @@ class PistonModelProvider extends FabricModelProvider {
         }
     }
 
-    private void registerPistonHead(BlockStateModelGenerator modelGen,
-                                    BasicPistonHeadBlock head, Block base) {
-        //System.out.println(base);
+    private void registerPistonHead(BlockStateModelGenerator modelGen, BasicPistonHeadBlock head, Block base) {
         TextureMap texMap = new TextureMap().put(TextureKey.UNSTICKY, TextureMap.getSubId(base, "_top"))
                 .put(TextureKey.SIDE, TextureMap.getSubId(base, "_side"));
         TextureMap texMap2 = texMap.copyAndAdd(TextureKey.PLATFORM, TextureMap.getSubId(base, "_top_sticky"));
@@ -148,6 +155,36 @@ class PistonModelProvider extends FabricModelProvider {
                                                             "_head_short_sticky",
                                                             texMap2, modelGen.modelCollector
                                                     ))))
+                            .coordinate(createNorthDefaultRotationStates()));
+        }
+    }
+
+    private void registerPistonArm(BlockStateModelGenerator modelGen, LongPistonArmBlock arm, Block base) {
+        TextureMap texMap = new TextureMap().put(TextureKey.SIDE, TextureMap.getSubId(base, "_side"))
+                .copyAndAdd(TextureKey.PLATFORM, TextureMap.getSubId(base, "_top"));
+        if (base == Blocks.PISTON) {
+            modelGen.blockStateCollector.accept(
+                    VariantsBlockStateSupplier.create(arm)
+                            .coordinate(BlockStateVariantMap.create(Properties.SHORT)
+                                    .register(false, BlockStateVariant.create()
+                                            .put(VariantSettings.MODEL,
+                                                    new Identifier("configurable-pistons:block/piston_arm")
+                                            ))
+                                    .register(true, BlockStateVariant.create()
+                                            .put(VariantSettings.MODEL,
+                                                    new Identifier("configurable-pistons:block/piston_arm_short")
+                                            )))
+                            .coordinate(createNorthDefaultRotationStates()));
+        } else {
+            modelGen.blockStateCollector.accept(
+                    VariantsBlockStateSupplier.create(arm)
+                            .coordinate(BlockStateVariantMap.create(Properties.SHORT)
+                                    .register(false, BlockStateVariant.create()
+                                            .put(VariantSettings.MODEL, PISTON_ARM
+                                                    .upload(base, "_arm", texMap, modelGen.modelCollector)))
+                                    .register(true, BlockStateVariant.create()
+                                            .put(VariantSettings.MODEL, PISTON_ARM_SHORT
+                                                    .upload(base, "_arm_short", texMap, modelGen.modelCollector))))
                             .coordinate(createNorthDefaultRotationStates()));
         }
     }

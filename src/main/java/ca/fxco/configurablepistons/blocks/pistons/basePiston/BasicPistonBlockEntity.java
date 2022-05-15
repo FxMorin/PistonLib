@@ -3,8 +3,12 @@ package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
@@ -20,6 +24,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Map;
 
 public class BasicPistonBlockEntity extends PistonBlockEntity {
 
@@ -35,7 +40,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
 
     public BasicPistonBlockEntity(BlockPos pos, BlockState state, BasicPistonExtensionBlock extensionBlock) {
         super(pos, state);
-        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_PISTON_BLOCK_ENTITY); // TODO: Automate this using piston family
         EXTENSION_BLOCK = extensionBlock;
     }
 
@@ -63,8 +68,21 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         return this.extending ? progress - 1.0F : 1.0F - progress;
     }
 
+    /**
+     * Replaced by {@link #getCollisionState()}
+     */
     @Override
+    @Deprecated
     public BlockState getHeadBlockState() {
+        // Removed setting the type since this is currently only used for collision shape
+        return !this.isExtending() && this.isSource() && this.pushedBlock.getBlock() instanceof BasicPistonBlock ?
+                ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
+                        .with(BasicPistonHeadBlock.SHORT, this.progress > 0.25F)
+                        .with(BasicPistonHeadBlock.FACING, this.pushedBlock.get(BasicPistonBlock.FACING)) :
+                this.pushedBlock;
+    }
+
+    public BlockState getCollisionState() {
         // Removed setting the type since this is currently only used for collision shape
         return !this.isExtending() && this.isSource() && this.pushedBlock.getBlock() instanceof BasicPistonBlock ?
                 ModBlocks.BASIC_PISTON_HEAD.getDefaultState()
@@ -76,7 +94,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     public void pushEntities(World world, BlockPos pos, float f) {
         Direction dir = this.getMovementDirection();
         double d = f - this.progress;
-        VoxelShape voxelShape = this.getHeadBlockState().getCollisionShape(world, pos);
+        VoxelShape voxelShape = this.getCollisionState().getCollisionShape(world, pos);
         if (voxelShape.isEmpty()) return;
         Box box = offsetHeadBox(pos, voxelShape.getBoundingBox(), this);
         List<Entity> list = world.getOtherEntities(null, Boxes.stretch(box, dir, d).union(box));
@@ -189,19 +207,45 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
         return this.pushedBlock;
     }
 
+    private boolean stronglyMoveBlockEntitiesTogether(Map<Direction, StickyType> sides) {
+        Direction movement = this.getMovementDirection();
+        boolean success = false;
+        for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
+            StickyType stickyType = sideData.getValue();
+            if (stickyType.ordinal() < StickyType.STRONG.ordinal()) continue; // Only strong or fused
+            success = true;
+            Direction direction = sideData.getKey();
+            BlockPos blockPos = this.pos.offset(direction);
+            BlockState blockState2 = this.world.getBlockState(blockPos);
+            if (blockState2.isOf(EXTENSION_BLOCK)) {
+                BlockEntity be = this.world.getBlockEntity(blockPos);
+                if (be instanceof BasicPistonBlockEntity bpbe) {
+                    if (bpbe.getMovementDirection() == movement && bpbe.progress == this.progress) {
+                        // Maybe do a stick test?
+                        bpbe.finish();
+                    }
+                }
+            }
+        }
+        return success;
+    }
+
     @Override
     public void finish() {
         if (this.world != null && (this.lastProgress < 1.0F || this.world.isClient)) {
-            this.progress = 1.0F;
-            this.lastProgress = this.progress;
-            this.world.removeBlockEntity(this.pos);
-            this.markRemoved();
-            if (this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
+            if ( this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
                 BlockState blockState = this.source ?
                         Blocks.AIR.getDefaultState() : Block.postProcessState(this.pushedBlock, this.world, this.pos);
                 this.world.setBlockState(this.pos, blockState, Block.NOTIFY_ALL);
                 this.world.updateNeighbor(this.pos, blockState.getBlock(), this.pos);
+                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)blockState.getBlock();
+                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(blockState))
+                    stronglyMoveBlockEntitiesTogether(stick.stickySides(blockState));
             }
+            this.progress = 1.0F;
+            this.lastProgress = this.progress;
+            this.world.removeBlockEntity(this.pos);
+            this.markRemoved();
         }
     }
 

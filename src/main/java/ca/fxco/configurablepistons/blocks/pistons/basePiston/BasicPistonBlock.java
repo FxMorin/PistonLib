@@ -2,7 +2,7 @@ package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.pistonLogic.ConfigurablePistonHandler;
+import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,6 +12,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
@@ -47,8 +48,8 @@ public class BasicPistonBlock extends FacingBlock {
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.createCuboidShape(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
     public final boolean sticky;
 
-    private BasicPistonExtensionBlock EXTENSION_BLOCK;
-    private BasicPistonHeadBlock HEAD_BLOCK;
+    public BasicPistonExtensionBlock EXTENSION_BLOCK;
+    public BasicPistonHeadBlock HEAD_BLOCK;
 
     public BasicPistonBlock(boolean sticky) {
         this(sticky, ModBlocks.BASIC_MOVING_PISTON, ModBlocks.BASIC_PISTON_HEAD);
@@ -172,10 +173,10 @@ public class BasicPistonBlock extends FacingBlock {
             if (!bl && type == 0) return false;
         }
         if (type == 0) {
-            if (!this.move(world, pos, dir, true)) return false;
+            if (!PistonUtils.move(world, pos, this, dir, true, ConfigurablePistonHandler::calculatePullPush))
+                return false;
             world.setBlockState(pos, state.with(EXTENDED, true), Block.NOTIFY_ALL | Block.MOVED);
-            playSound(world, SoundEvents.BLOCK_PISTON_EXTEND, pos);
-            world.emitGameEvent(GameEvent.PISTON_EXTEND, pos);
+            playEvents(world, GameEvent.PISTON_EXTEND, pos);
         } else if (type == 1 || type == 2) {
             BlockEntity blockEntity = world.getBlockEntity(pos.offset(dir));
             if (blockEntity instanceof BasicPistonBlockEntity bpbe) bpbe.finish();
@@ -211,101 +212,14 @@ public class BasicPistonBlock extends FacingBlock {
                             !PistonUtils.isMovable(state2, world, blockPos, dir.getOpposite(), false, dir)) {
                         world.removeBlock(pos.offset(dir), false);
                     } else {
-                        this.move(world, pos, dir, false);
+                        PistonUtils.move(world, pos, this, dir, false, ConfigurablePistonHandler::calculatePullPush);
                     }
                 }
             } else {
                 world.removeBlock(pos.offset(dir), false);
             }
-            playSound(world, SoundEvents.BLOCK_PISTON_CONTRACT, pos);
-            world.emitGameEvent(GameEvent.PISTON_CONTRACT, pos);
+            playEvents(world, GameEvent.PISTON_CONTRACT, pos);
         }
-        return true;
-    }
-
-    public boolean move(World world, BlockPos blockPos, Direction dir, boolean retract) {
-        BlockPos pos = blockPos.offset(dir);
-        if (!retract && world.getBlockState(pos).isOf(HEAD_BLOCK))
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NO_REDRAW | Block.FORCE_STATE);
-        ConfigurablePistonHandler pistonHandler = getPistonHandler(world, blockPos, dir, retract);
-        if (!pistonHandler.calculatePullPush(!retract))
-            return false;
-        Map<BlockPos, BlockState> map = Maps.newHashMap();
-        List<BlockPos> list = pistonHandler.getMovedBlocks();
-        List<BlockState> list2 = Lists.newArrayList();
-        for (BlockPos value : list) {
-            BlockState blockState = world.getBlockState(value);
-            list2.add(blockState);
-            map.put(value, blockState);
-        }
-        List<BlockPos> list3 = pistonHandler.getBrokenBlocks();
-        BlockState[] blockStates = new BlockState[list.size() + list3.size()];
-        Direction direction = retract ? dir : dir.getOpposite();
-        int j = 0, k;
-        BlockPos pos3;
-        BlockState state2;
-        for(k = list3.size() - 1; k >= 0; --k) {
-            pos3 = list3.get(k);
-            state2 = world.getBlockState(pos3);
-            BlockEntity blockEntity = state2.hasBlockEntity() ? world.getBlockEntity(pos3) : null;
-            dropStacks(state2, world, pos3, blockEntity);
-            world.setBlockState(pos3, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-            if (!state2.isIn(BlockTags.FIRE)) world.addBlockBreakParticles(pos3, state2);
-            blockStates[j++] = state2;
-        }
-        for(k = list.size() - 1; k >= 0; --k) {
-            pos3 = list.get(k);
-            state2 = world.getBlockState(pos3);
-            pos3 = pos3.offset(direction);
-            map.remove(pos3);
-            BlockState state3 = EXTENSION_BLOCK.getDefaultState().with(FACING, dir);
-            world.setBlockState(pos3, state3, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(EXTENSION_BLOCK.createPistonBlockEntity(
-                    pos3,
-                    state3,
-                    list2.get(k),
-                    dir,
-                    retract,
-                    false
-            ));
-            blockStates[j++] = state2;
-        }
-        if (retract) {
-            PistonType pistonType = this.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-            BlockState state4 = HEAD_BLOCK.getDefaultState().with(PistonHeadBlock.FACING, dir)
-                    .with(PistonHeadBlock.TYPE, pistonType);
-            state2 = EXTENSION_BLOCK.getDefaultState().with(PistonExtensionBlock.FACING, dir)
-                    .with(PistonExtensionBlock.TYPE, this.sticky ? PistonType.STICKY : PistonType.DEFAULT);
-            map.remove(pos);
-            world.setBlockState(pos, state2, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(EXTENSION_BLOCK.createPistonBlockEntity(
-                    pos,
-                    state2,
-                    state4,
-                    dir,
-                    true,
-                    true
-            ));
-        }
-        BlockState blockState5 = Blocks.AIR.getDefaultState();
-        for (BlockPos pos4 : map.keySet())
-            world.setBlockState(pos4, blockState5, Block.NOTIFY_LISTENERS | Block.FORCE_STATE | Block.MOVED);
-        BlockPos pos5;
-        for (Map.Entry<BlockPos, BlockState> entry : map.entrySet()) {
-            pos5 = entry.getKey();
-            entry.getValue().prepare(world, pos5, 2);
-            blockState5.updateNeighbors(world, pos5, Block.NOTIFY_LISTENERS);
-            blockState5.prepare(world, pos5, 2);
-        }
-        j = 0;
-        for(k = list3.size() - 1; k >= 0; --k) {
-            state2 = blockStates[j++];
-            pos5 = list3.get(k);
-            state2.prepare(world, pos5, 2);
-            world.updateNeighborsAlways(pos5, state2.getBlock());
-        }
-        for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
-        if (retract) world.updateNeighborsAlways(pos, HEAD_BLOCK);
         return true;
     }
 
@@ -329,14 +243,16 @@ public class BasicPistonBlock extends FacingBlock {
         return false;
     }
 
-    public void playSound(World world, SoundEvent event, BlockPos pos) {
+    public void playEvents(World world, GameEvent event, BlockPos pos) {
         world.playSound(
                 null,
                 pos,
-                event,
+                event == GameEvent.PISTON_CONTRACT ?
+                        SoundEvents.BLOCK_PISTON_CONTRACT : SoundEvents.BLOCK_PISTON_EXTEND,
                 SoundCategory.BLOCKS,
                 0.5F,
                 world.random.nextFloat() * 0.25F + 0.6F
         );
+        world.emitGameEvent(event, pos);
     }
 }

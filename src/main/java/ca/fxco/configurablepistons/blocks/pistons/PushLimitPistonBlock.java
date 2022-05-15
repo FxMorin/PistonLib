@@ -1,14 +1,14 @@
 package ca.fxco.configurablepistons.blocks.pistons;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.pistonLogic.ConfigurablePistonHandler;
+import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class PushLimitPistonBlock extends BasicPistonBlock {
 
-    private final int pushLimit;
+    protected final int pushLimit;
 
     public PushLimitPistonBlock(boolean sticky, int pushLimit) {
         super(sticky);

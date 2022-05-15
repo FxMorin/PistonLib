@@ -12,6 +12,7 @@ public class PistonFamilies {
     private static final Map<BasicPistonHeadBlock, PistonFamily> PISTON_HEAD_TO_FAMILY = Maps.newHashMap();
 
     public static final PistonFamily BASIC = new PistonFamily("basic", false);
+    public static final PistonFamily LONG = new PistonFamily("long", false);
     public static final PistonFamily STRONG = new PistonFamily("strong");
     public static final PistonFamily FAST = new PistonFamily("fast", false);
     public static final PistonFamily STICKY = new PistonFamily("sticky", false);

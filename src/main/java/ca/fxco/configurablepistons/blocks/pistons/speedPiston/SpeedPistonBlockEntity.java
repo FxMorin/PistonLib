@@ -49,7 +49,7 @@ public class SpeedPistonBlockEntity extends BasicPistonBlockEntity {
     public static void pushEntities(World world, BlockPos pos, float f, SpeedPistonBlockEntity blockEntity) {
         Direction dir = blockEntity.getMovementDirection();
         double d = f - blockEntity.progress;
-        VoxelShape voxelShape = blockEntity.getHeadBlockState().getCollisionShape(world, pos);
+        VoxelShape voxelShape = blockEntity.getCollisionState().getCollisionShape(world, pos);
         if (voxelShape.isEmpty()) return;
         Box box = offsetHeadBox(pos, voxelShape.getBoundingBox(), blockEntity);
         // Here we use `Utils.stretchBlockBound()` in order to prevent the item frame dupe bug. We simply prevent the

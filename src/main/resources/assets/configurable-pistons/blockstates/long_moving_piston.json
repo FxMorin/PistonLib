@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "configurable-pistons:block/long_moving_piston"
+    }
+  }
+}

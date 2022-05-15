@@ -1,5 +1,6 @@
 package ca.fxco.configurablepistons;
 
+import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -12,6 +13,7 @@ public class ConfigurablePistons implements ModInitializer {
     //TODO:
     // Add custom textures - Like: Strong Piston
     // Fix slippery pistons
+    // Add support for Carpet & Carpet-Fixes so I can check if carpet-fixes are enabled in order to remove hackfixes
 
     public static final String MOD_ID = "configurable-pistons";
 
@@ -26,5 +28,9 @@ public class ConfigurablePistons implements ModInitializer {
             () -> new ItemStack(ModBlocks.STRONG_STICKY_PISTON)));
 
     @Override
-    public void onInitialize() {}
+    public void onInitialize() {
+        // Don't mind these, they just make sure the classes are called at the right time
+        ModBlocks.order();
+        ModBlockEntities.order();
+    }
 }

@@ -1,6 +1,8 @@
-package ca.fxco.configurablepistons.pistonLogic;
+package ca.fxco.configurablepistons.pistonLogic.pistonHandlers;
 
 import ca.fxco.configurablepistons.base.ModTags;
+import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import com.google.common.collect.Lists;
@@ -10,21 +12,22 @@ import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 
 public class ConfigurablePistonHandler {
     public static final int DEFAULT_MAX_MOVABLE_BLOCKS = 12;
-    private final World world;
-    private final BlockPos posFrom;
-    private final boolean retracted;
-    private final BlockPos posTo;
-    private final Direction motionDirection;
-    private final List<BlockPos> movedBlocks = Lists.newArrayList();
-    private final List<BlockPos> brokenBlocks = Lists.newArrayList();
-    private final Direction pistonDirection;
-    private final int maxMovableBlocks;
+    protected final World world;
+    protected final BlockPos posFrom;
+    protected final boolean retracted;
+    protected final BlockPos posTo;
+    protected final Direction motionDirection;
+    protected final List<BlockPos> movedBlocks = Lists.newArrayList();
+    protected final List<BlockPos> brokenBlocks = Lists.newArrayList();
+    protected final Direction pistonDirection;
+    protected final int maxMovableBlocks;
 
     public ConfigurablePistonHandler(World world, BlockPos pos, Direction dir, boolean retracted) {
         this(world, pos, dir, retracted, DEFAULT_MAX_MOVABLE_BLOCKS);
@@ -83,11 +86,11 @@ public class ConfigurablePistonHandler {
         return true;
     }
 
-    private static boolean isBlockSticky(BlockState state) {
+    protected static boolean isBlockSticky(BlockState state) {
         return state.isIn(ModTags.STICKY_BLOCKS);
     }
 
-    private boolean cantMoveAdjacentBlocks(BlockPos pos) {
+    protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
         for (Direction direction : Direction.values()) {
             if (direction.getAxis() != this.motionDirection.getAxis()) {
@@ -100,7 +103,7 @@ public class ConfigurablePistonHandler {
         return false;
     }
 
-    private boolean cantMoveAdjacentStickyBlocks(Map<Direction, StickyType> sides, BlockPos pos) {
+    protected boolean cantMoveAdjacentStickyBlocks(Map<Direction, StickyType> sides, BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
         for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
@@ -118,7 +121,7 @@ public class ConfigurablePistonHandler {
 
 
     // Stickiness checks
-    private static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
+    protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)adjState.getBlock();
         if (stick.usesConfigurablePistonStickiness())
             return !stick.isSticky(adjState) ||
@@ -128,37 +131,30 @@ public class ConfigurablePistonHandler {
                 (!state.isOf(Blocks.SLIME_BLOCK) || !adjState.isOf(Blocks.HONEY_BLOCK));
     }
 
-    private boolean cantMove(BlockPos pos, Direction dir) {
+    protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.world.getBlockState(pos);
         if (state.isAir() || pos.equals(this.posFrom) || this.movedBlocks.contains(pos)) return false;
         if (!PistonUtils.isMovable(state, this.world, pos, this.motionDirection, false, dir)) return false;
         int i = 1;
         if (i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
-        Direction direction = this.motionDirection.getOpposite();
+        Direction dir2 = this.motionDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
-        boolean isSticky;
-        if (stick.usesConfigurablePistonStickiness()) {
-            if (stick.sideStickiness(state, direction).ordinal() < StickyType.STICKY.ordinal()) {
-                isSticky = false;
-            } else {
-                isSticky = stick.isSticky(state);
-            }
-        } else {
-            isSticky = isBlockSticky(state);
-        }
+        boolean isSticky = stick.usesConfigurablePistonStickiness() ?
+                (stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal() && stick.isSticky(state)) :
+                isBlockSticky(state);
         while (isSticky) {
-            BlockPos blockPos = pos.offset(direction, i);
+            BlockPos blockPos = pos.offset(dir2, i);
             BlockState blockState2 = state;
             state = this.world.getBlockState(blockPos);
             stick = (ConfigurablePistonStickiness)state.getBlock();
             if (state.isAir() ||
-                    !canAdjacentBlockStick(direction, blockState2, state) ||
+                    !canAdjacentBlockStick(dir2, blockState2, state) ||
                     blockPos.equals(this.posFrom) ||
-                    !PistonUtils.isMovable(state, this.world, blockPos, this.motionDirection, false, direction))
+                    !PistonUtils.isMovable(state, this.world, blockPos, this.motionDirection, false, dir2))
                 break;
             if (++i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
             if (stick.usesConfigurablePistonStickiness()) {
-                if (stick.sideStickiness(state, direction).ordinal() < StickyType.STICKY.ordinal())
+                if (stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal())
                     break;
                 isSticky = stick.isSticky(state);
             } else {
@@ -167,7 +163,7 @@ public class ConfigurablePistonHandler {
         }
         int j = 0, k;
         for(k = i - 1; k >= 0; --k) {
-            this.movedBlocks.add(pos.offset(direction, k));
+            this.movedBlocks.add(pos.offset(dir2, k));
             ++j;
         }
         k = 1;
@@ -214,7 +210,7 @@ public class ConfigurablePistonHandler {
         }
     }
 
-    private void setMovedBlocks(int from, int to) {
+    protected void setMovedBlocks(int from, int to) {
         List<BlockPos> list = Lists.newArrayList();
         List<BlockPos> list2 = Lists.newArrayList();
         List<BlockPos> list3 = Lists.newArrayList();

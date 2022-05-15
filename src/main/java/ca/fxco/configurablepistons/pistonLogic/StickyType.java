@@ -27,17 +27,12 @@ public enum StickyType {
     STICKY,
 
     /**
-     * Will be perfectly fused together, no separation - W.I.P.
+     * Will be perfectly fused together, no separation
      */
     STRONG,
 
     /**
      * Strong except it bypasses the ConfigurablePistonBehavior checks, use `canBypassFused()` to prevent this - W.I.P.
      */
-    FUSED,
-
-    /**
-     * Sticks to all blocks no matter what type they are. E.x. Honey & Slime - W.I.P.
-     */
-    ALL
+    FUSED
 }
