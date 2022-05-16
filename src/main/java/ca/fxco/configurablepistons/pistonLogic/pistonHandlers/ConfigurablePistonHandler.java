@@ -140,7 +140,7 @@ public class ConfigurablePistonHandler {
         Direction dir2 = this.motionDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
-                (stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal() && stick.isSticky(state)) :
+                (stick.isSticky(state) && stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal()) :
                 isBlockSticky(state);
         while (isSticky) {
             BlockPos blockPos = pos.offset(dir2, i);
@@ -154,9 +154,10 @@ public class ConfigurablePistonHandler {
                 break;
             if (++i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
             if (stick.usesConfigurablePistonStickiness()) {
-                if (stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal())
+                boolean StickyStick = stick.isSticky(state);
+                if (StickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal())
                     break;
-                isSticky = stick.isSticky(state);
+                isSticky = StickyStick;
             } else {
                 isSticky = isBlockSticky(state);
             }

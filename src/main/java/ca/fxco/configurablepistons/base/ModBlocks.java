@@ -70,6 +70,9 @@ public class ModBlocks {
     public static final Block GLUE_BLOCK = registerBlock("glue_block",
             new GlueBlock(FabricBlockSettings.copyOf(Blocks.END_STONE))
     );
+    public static final Block POWERED_STICKY_BLOCK = registerBlock("powered_sticky_block",
+            new PoweredStickyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS))
+    );
 
     // Piston Blocks should always be initialized in the following order:
     // Piston heads, Moving Pistons, base piston blocks, Piston Arms

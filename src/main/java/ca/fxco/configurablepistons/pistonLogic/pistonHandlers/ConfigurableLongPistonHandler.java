@@ -133,7 +133,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)(isExtensionBlock ?
                 blockEntity.getPushedBlock().getBlock() : state.getBlock());
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
-                (stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal() && stick.isSticky(state)) :
+                (stick.isSticky(state) && stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal()) :
                 isBlockSticky(state);
         BlockPos blockPos = pos.offset(dir2, 0);
         while (isSticky) {
@@ -164,8 +164,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 break;
             if (++i + this.movedBlocks.size() > this.maxMovableBlocks) return true;
             if (stick.usesConfigurablePistonStickiness()) {
-                if (stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal()) break;
-                isSticky = stick.isSticky(state);
+                boolean stickyStick = stick.isSticky(state);
+                if (stickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal()) break;
+                isSticky = stickyStick;
             } else {
                 isSticky = isBlockSticky(state);
             }
