@@ -15,7 +15,6 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
@@ -35,15 +34,7 @@ public class SlipperySlimeBlock extends SlimeBlock {
     }
 
     @Override
-    public void onEntityLand(BlockView world, Entity entity) {
-        if (entity.bypassesLandingEffects()) {
-            super.onEntityLand(world, entity);
-        } else {
-            this.bounce(entity);
-        }
-    }
-
-    private void bounce(Entity entity) {
+    public void bounce(Entity entity) {
         Vec3d vec3d = entity.getVelocity();
         if (vec3d.y < 0.0) {
             if (!(entity instanceof FallingBlockEntity fallingBlockEntity &&
