@@ -14,6 +14,7 @@ public class ConfigurablePistons implements ModInitializer {
 
     //TODO:
     // Add custom textures - Like: Strong Piston
+    // Fix Long Pistons & Piston Arms
     // Add support for Carpet & Carpet-Fixes so I can check if carpet-fixes are enabled in order to remove hackfixes
     // Add actual logger support
 
