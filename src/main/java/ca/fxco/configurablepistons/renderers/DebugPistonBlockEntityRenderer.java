@@ -3,7 +3,6 @@ package ca.fxco.configurablepistons.renderers;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.base.ModBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -24,10 +23,10 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 @Environment(value=EnvType.CLIENT)
-public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
+public class DebugPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
     private final BlockRenderManager manager;
 
-    public BasicPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public DebugPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         this.manager = ctx.getRenderManager();
     }
 
@@ -61,6 +60,9 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
         } else {
             this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
         }
+        matrix.pop();
+        matrix.push();
+        this.manager.renderBlock(Blocks.LIME_STAINED_GLASS.getDefaultState(),pistonBE.getPos(),world,matrix, vertexConsumers.getBuffer(RenderLayer.getTranslucentMovingBlock()), false, new Random());
         matrix.pop();
         BlockModelRenderer.disableBrightnessCache();
     }
