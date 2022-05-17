@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurablePistons implements ModInitializer {
 
@@ -14,8 +16,10 @@ public class ConfigurablePistons implements ModInitializer {
     // Add custom textures - Like: Strong Piston
     // Fix slippery pistons
     // Add support for Carpet & Carpet-Fixes so I can check if carpet-fixes are enabled in order to remove hackfixes
+    // Add actual logger support
 
     public static final String MOD_ID = "configurable-pistons";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static Identifier id(String str) {
         return new Identifier(MOD_ID, str);
