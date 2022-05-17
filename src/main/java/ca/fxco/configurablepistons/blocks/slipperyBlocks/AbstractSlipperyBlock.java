@@ -63,11 +63,16 @@ public class AbstractSlipperyBlock extends Block {
     }
 
     public static int calculateDistance(BlockView world, BlockPos pos) {
+        return calculateDistance(world, pos, 0);
+    }
+    public static int calculateDistance(BlockView world, BlockPos pos, int iteration) {
         BlockPos.Mutable mutable = pos.mutableCopy().move(Direction.DOWN);
         BlockState blockState = world.getBlockState(mutable);
         int currentDistance = MAX_DISTANCE;
         if (blockState.isIn(ModTags.SLIPPERY_BLOCKS)) {
             currentDistance = blockState.get(SLIPPERY_DISTANCE);
+        } else if (blockState.isIn(ModTags.SLIPPERY_TRANSPARENT_BLOCKS)) {
+            return iteration < MAX_DISTANCE ? calculateDistance(world, mutable, ++iteration) : MAX_DISTANCE;
         } else if (!blockState.isIn(ModTags.SLIPPERY_IGNORE_BLOCKS) &&
                 blockState.isSideSolidFullSquare(world, mutable, Direction.UP)) {
             return 0;

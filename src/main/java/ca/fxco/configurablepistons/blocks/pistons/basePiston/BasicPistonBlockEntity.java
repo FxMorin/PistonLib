@@ -233,7 +233,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
     @Override
     public void finish() {
         if (this.world != null && (this.lastProgress < 1.0F || this.world.isClient)) {
-            if ( this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
+            if (this.world.getBlockState(this.pos).isOf(EXTENSION_BLOCK)) {
                 BlockState blockState = this.source ?
                         Blocks.AIR.getDefaultState() : Block.postProcessState(this.pushedBlock, this.world, this.pos);
                 this.world.setBlockState(this.pos, blockState, Block.NOTIFY_ALL);

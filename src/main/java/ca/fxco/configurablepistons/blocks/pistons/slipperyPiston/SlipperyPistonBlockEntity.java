@@ -13,6 +13,7 @@ public class SlipperyPistonBlockEntity extends BasicPistonBlockEntity {
         super(blockPos, blockState);
         ((BlockEntityAccessor)this).setType(ModBlockEntities.SLIPPERY_PISTON_BLOCK_ENTITY);
     }
+
     public SlipperyPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock, Direction facing,
                                      boolean extending, boolean source, SlipperyPistonExtensionBlock extensionBlock) {
         super(pos, state, pushedBlock, facing, extending, source, extensionBlock);

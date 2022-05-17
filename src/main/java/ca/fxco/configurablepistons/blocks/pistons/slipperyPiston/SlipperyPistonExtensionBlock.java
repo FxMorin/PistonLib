@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -41,11 +42,13 @@ public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
         return checkType(t, ModBlockEntities.SLIPPERY_PISTON_BLOCK_ENTITY, SlipperyPistonBlockEntity::tick);
     }
 
+    @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
             world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
     }
 
+    @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient()) {
             world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
@@ -53,20 +56,22 @@ public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
         return state;
     }
 
+    @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         int i = AbstractSlipperyBlock.calculateDistance(world, pos);
         BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
         if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
             FallingBlockEntity.spawnFromBlock(world, pos, blockState);
         } else if (state != blockState) {
-            //world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
+            world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
         }
     }
 
-    //public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-    //    return AbstractSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
-    //}
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        return AbstractSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
+    }
 
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE, SLIPPERY_DISTANCE);
     }

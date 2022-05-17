@@ -127,11 +127,11 @@ public class BasicPistonBlock extends FacingBlock {
 
     public void tryMove(World world, BlockPos pos, BlockState state) {
         Direction direction = state.get(FACING);
-        boolean bl = this.shouldExtend(world, pos, direction);
-        if (bl && !(Boolean)state.get(EXTENDED)) {
+        boolean shouldExtend = this.shouldExtend(world, pos, direction);
+        if (shouldExtend && !state.get(EXTENDED)) {
             if ((getPistonHandler(world, pos, direction, true)).calculatePullPush(false))
                 world.addSyncedBlockEvent(pos, this, 0, direction.getId());
-        } else if (!bl && state.get(EXTENDED)) {
+        } else if (!shouldExtend && state.get(EXTENDED)) {
             BlockPos blockPos = pos.offset(direction, 2);
             BlockState blockState = world.getBlockState(blockPos);
             int i = 1;
