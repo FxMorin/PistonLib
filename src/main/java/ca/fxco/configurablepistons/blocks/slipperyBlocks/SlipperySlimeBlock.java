@@ -1,55 +1,63 @@
 package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
+import ca.fxco.configurablepistons.base.ModProperties;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.block.SlimeBlock;
 import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 
-public class SlipperySlimeBlock extends AbstractSlipperyBlock {
+import java.util.Random;
+
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
+
+// Inherits from SlimeBlock instead of AbstractSlipperyBlock so that it won't stick to honey
+public class SlipperySlimeBlock extends SlimeBlock {
+
+    public static final IntProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
+
     public SlipperySlimeBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, 0));
     }
 
-    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
-        return stateFrom.isOf(this) || super.isSideInvisible(state, stateFrom, direction);
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState().with(SLIPPERY_DISTANCE, calculateDistance(ctx.getWorld(), ctx.getBlockPos()));
     }
 
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (entity.bypassesLandingEffects()) {
-            super.onLandedUpon(world, state, pos, entity, fallDistance);
-        } else {
-            entity.handleFallDamage(fallDistance, 0.0F, DamageSource.FALL);
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        if (!world.isClient) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+    }
+
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (!world.isClient()) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+        return state;
+    }
+
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        int i = calculateDistance(world, pos);
+        BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
+        if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
+            FallingBlockEntity.spawnFromBlock(world, pos, blockState);
+        } else if (state != blockState) {
+            world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
         }
     }
 
-    public void onEntityLand(BlockView world, Entity entity) {
-        if (entity.bypassesLandingEffects()) {
-            super.onEntityLand(world, entity);
-        } else {
-            this.bounce(entity);
-        }
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        return calculateDistance(world, pos) < MAX_DISTANCE;
     }
 
-    private void bounce(Entity entity) {
-        Vec3d vec3d = entity.getVelocity();
-        if (vec3d.y < 0.0 && !(entity instanceof FallingBlockEntity)) {
-            double d = entity instanceof LivingEntity ? 1.0 : 0.8;
-            entity.setVelocity(vec3d.x, -vec3d.y * d, vec3d.z);
-        }
-    }
-
-    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
-        double d = Math.abs(entity.getVelocity().y);
-        if (d < 0.1 && !entity.bypassesSteppingEffects()) {
-            double e = 0.4 + d * 0.2;
-            entity.setVelocity(entity.getVelocity().multiply(e, 1.0, e));
-        }
-        super.onSteppedOn(world, pos, state, entity);
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(SLIPPERY_DISTANCE);
     }
 }

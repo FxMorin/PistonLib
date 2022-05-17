@@ -1,5 +1,6 @@
 package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
+import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
 import net.minecraft.block.Block;
@@ -8,6 +9,7 @@ import net.minecraft.block.enums.PistonType;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -16,11 +18,12 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
 
 public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
+
+    public static final IntProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
     public SlipperyPistonHeadBlock() {
         super();

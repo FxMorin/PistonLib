@@ -8,6 +8,8 @@ import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStic
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HoneyBlock;
+import net.minecraft.block.SlimeBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -127,8 +129,8 @@ public class ConfigurablePistonHandler {
             return !stick.isSticky(adjState) ||
                     stick.sideStickiness(adjState, dir.getOpposite()) != StickyType.NO_STICK;
         // TODO: Make this configurable
-        return (!state.isOf(Blocks.HONEY_BLOCK) || !adjState.isOf(Blocks.SLIME_BLOCK)) &&
-                (!state.isOf(Blocks.SLIME_BLOCK) || !adjState.isOf(Blocks.HONEY_BLOCK));
+        return (!(state.getBlock() instanceof HoneyBlock) || !(adjState.getBlock() instanceof SlimeBlock)) &&
+                (!(state.getBlock() instanceof SlimeBlock) || !(adjState.getBlock() instanceof HoneyBlock));
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {

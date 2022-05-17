@@ -1,11 +1,13 @@
 package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
+import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.*;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -15,12 +17,12 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
-
 public class AbstractSlipperyBlock extends Block {
 
     public static final int SLIPPERY_DELAY = 6;
     public static final int MAX_DISTANCE = 12;
+
+    public static final IntProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
     /**
      * A block so slippery that it just keeps falling apart unless it's connected to other blocks
@@ -36,15 +38,12 @@ public class AbstractSlipperyBlock extends Block {
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient) {
-            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
-        }
+        if (!world.isClient) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
     }
 
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!world.isClient()) {
-            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
-        }
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (!world.isClient()) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
         return state;
     }
 
