@@ -20,6 +20,7 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
         register(ModBlockEntities.SPEED_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.FAST_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.STICKY_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
+        register(ModBlockEntities.TRANSLOCATION_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.SLIPPERY_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, RenderLayer.getTranslucent());
