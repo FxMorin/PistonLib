@@ -1,11 +1,9 @@
 package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
-import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -28,21 +26,17 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
                 .with(FACING, Direction.NORTH)
                 .with(TYPE, PistonType.DEFAULT)
                 .with(SHORT, false)
-                .with(SLIPPERY_DISTANCE, MAX_DISTANCE));
+                .with(SLIPPERY_DISTANCE, 0));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
-            world.createAndScheduleBlockTick(pos, this, DELAY);
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient()) {
-            if (neighborState.isIn(ModTags.SLIPPERY_BLOCKS)) {
-                world.createAndScheduleBlockTick(pos, this, SLIP_DELAY);
-            } else {
-                world.createAndScheduleBlockTick(pos, this, DELAY);
-            }
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }

@@ -2,7 +2,6 @@ package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
 import net.minecraft.block.Block;
@@ -27,7 +26,7 @@ import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlippery
 public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
     public SlipperyPistonExtensionBlock() {
         super();
-        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, MAX_DISTANCE));
+        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, 0));
     }
 
     @Override
@@ -44,16 +43,12 @@ public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
-            world.createAndScheduleBlockTick(pos, this, DELAY);
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient()) {
-            if (neighborState.isIn(ModTags.SLIPPERY_BLOCKS)) {
-                world.createAndScheduleBlockTick(pos, this, SLIP_DELAY);
-            } else {
-                world.createAndScheduleBlockTick(pos, this, DELAY);
-            }
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
     }

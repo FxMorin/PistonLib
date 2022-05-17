@@ -19,8 +19,7 @@ import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
 
 public class AbstractSlipperyBlock extends Block {
 
-    public static final int DELAY = 6;
-    public static final int SLIP_DELAY = 3;
+    public static final int SLIPPERY_DELAY = 6;
     public static final int MAX_DISTANCE = 12;
 
     /**
@@ -29,7 +28,7 @@ public class AbstractSlipperyBlock extends Block {
 
     public AbstractSlipperyBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, MAX_DISTANCE));
+        this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, 0));
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
@@ -38,17 +37,13 @@ public class AbstractSlipperyBlock extends Block {
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!world.isClient) {
-            world.createAndScheduleBlockTick(pos, this, DELAY);
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
         }
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient()) {
-            if (neighborState.isIn(ModTags.SLIPPERY_BLOCKS)) {
-                world.createAndScheduleBlockTick(pos, this, SLIP_DELAY);
-            } else {
-                world.createAndScheduleBlockTick(pos, this, DELAY);
-            }
+            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
     }
