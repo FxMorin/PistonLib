@@ -32,7 +32,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
         this.extensionBlock = extensionBlock;
     }
 
-    public boolean calculatePullPushWithBE(boolean isPull, Consumer<LongPistonBlockEntity> applySkip) {
+    public boolean calculateLongPullPush(boolean isPull, Consumer<LongPistonBlockEntity> applySkip) {
         this.movedBlocks.clear();
         this.brokenBlocks.clear();
         BlockState state = this.world.getBlockState(this.posTo);

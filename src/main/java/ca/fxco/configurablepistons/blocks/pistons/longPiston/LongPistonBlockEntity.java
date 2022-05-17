@@ -6,9 +6,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
-import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurableLongPistonHandler;
-import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PistonHeadBlock;
@@ -143,7 +141,7 @@ public class LongPistonBlockEntity extends BasicPistonBlockEntity {
         }*/
         // TODO: Make more configurable          V
         PistonUtils.move(be.world, be.pos, ModBlocks.LONG_PISTON, be.facing, be.extending, (pistonHandler, pull) ->
-                ((ConfigurableLongPistonHandler)pistonHandler).calculatePullPushWithBE(pull,LongPistonBlockEntity::skipCheck));
+                ((ConfigurableLongPistonHandler)pistonHandler).calculateLongPullPush(pull,LongPistonBlockEntity::skipCheck));
         return true;
     }
 

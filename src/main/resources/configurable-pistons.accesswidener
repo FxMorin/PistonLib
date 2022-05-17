@@ -12,3 +12,4 @@ accessible field net/minecraft/block/entity/PistonBlockEntity field_12205 Ljava/
 extendable method net/minecraft/block/entity/PistonBlockEntity getAmountExtended (F)F
 extendable method net/minecraft/block/entity/PistonBlockEntity getHeadBlockState ()Lnet/minecraft/block/BlockState;
 extendable method net/minecraft/block/entity/PistonBlockEntity isPushingHoneyBlock ()Z
+extendable method net/minecraft/block/SlimeBlock bounce (Lnet/minecraft/entity/Entity;)V

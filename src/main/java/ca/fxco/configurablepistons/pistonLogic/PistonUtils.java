@@ -56,7 +56,7 @@ public class PistonUtils {
     public static boolean move(World world, BlockPos pos1, BasicPistonBlock piston, Direction dir,
                                boolean retract, BiPredicate<ConfigurablePistonHandler,Boolean> pistonHandlerAction) {
         BlockPos pos2 = pos1.offset(dir);
-        if (!retract && world.getBlockState(pos2).isOf(piston.HEAD_BLOCK))
+        if (!retract && world.getBlockState(pos2).isOf(piston.getHeadBlock()))
             world.setBlockState(pos2, Blocks.AIR.getDefaultState(), Block.NO_REDRAW | Block.FORCE_STATE);
         ConfigurablePistonHandler pistonHandler = piston.getPistonHandler(world, pos1, dir, retract);
         if (!pistonHandlerAction.test(pistonHandler,!retract)) return false;
@@ -89,9 +89,9 @@ public class PistonUtils {
             state2 = world.getBlockState(pos3);
             pos3 = pos3.offset(direction);
             map.remove(pos3);
-            BlockState state3 = piston.EXTENSION_BLOCK.getDefaultState().with(Properties.FACING, dir);
+            BlockState state3 = piston.getExtensionBlock().getDefaultState().with(Properties.FACING, dir);
             world.setBlockState(pos3, state3, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(piston.EXTENSION_BLOCK.createPistonBlockEntity(
+            world.addBlockEntity(piston.getExtensionBlock().createPistonBlockEntity(
                     pos3,
                     state3,
                     list2.get(k),
@@ -103,13 +103,13 @@ public class PistonUtils {
         }
         if (retract) {
             PistonType pistonType = piston.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-            BlockState state4 = piston.HEAD_BLOCK.getDefaultState().with(PistonHeadBlock.FACING, dir)
+            BlockState state4 = piston.getHeadBlock().getDefaultState().with(PistonHeadBlock.FACING, dir)
                     .with(PistonHeadBlock.TYPE, pistonType);
-            state2 = piston.EXTENSION_BLOCK.getDefaultState().with(PistonExtensionBlock.FACING, dir)
+            state2 = piston.getExtensionBlock().getDefaultState().with(PistonExtensionBlock.FACING, dir)
                     .with(PistonExtensionBlock.TYPE, piston.sticky ? PistonType.STICKY : PistonType.DEFAULT);
             map.remove(pos2);
             world.setBlockState(pos2, state2, Block.NO_REDRAW | Block.MOVED);
-            world.addBlockEntity(piston.EXTENSION_BLOCK.createPistonBlockEntity(
+            world.addBlockEntity(piston.getExtensionBlock().createPistonBlockEntity(
                     pos2,
                     state2,
                     state4,
@@ -136,7 +136,7 @@ public class PistonUtils {
             world.updateNeighborsAlways(pos5, state2.getBlock());
         }
         for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
-        if (retract) world.updateNeighborsAlways(pos2, piston.HEAD_BLOCK);
+        if (retract) world.updateNeighborsAlways(pos2, piston.getHeadBlock());
         return true;
     }
 

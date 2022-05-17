@@ -1,16 +1,21 @@
 package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
 import ca.fxco.configurablepistons.base.ModProperties;
+import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlimeBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
@@ -27,6 +32,26 @@ public class SlipperySlimeBlock extends SlimeBlock {
     public SlipperySlimeBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, 0));
+    }
+
+    @Override
+    public void onEntityLand(BlockView world, Entity entity) {
+        if (entity.bypassesLandingEffects()) {
+            super.onEntityLand(world, entity);
+        } else {
+            this.bounce(entity);
+        }
+    }
+
+    private void bounce(Entity entity) {
+        Vec3d vec3d = entity.getVelocity();
+        if (vec3d.y < 0.0) {
+            if (!(entity instanceof FallingBlockEntity fallingBlockEntity &&
+                    fallingBlockEntity.getBlockState().isIn(ModTags.SLIPPERY_BLOCKS))) {
+                double d = entity instanceof LivingEntity ? 1.0 : 0.8;
+                entity.setVelocity(vec3d.x, -vec3d.y * d, vec3d.z);
+            }
+        }
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {

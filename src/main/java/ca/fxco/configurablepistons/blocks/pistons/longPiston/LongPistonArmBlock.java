@@ -124,7 +124,7 @@ public class LongPistonArmBlock extends FacingBlock {
     }
 
     public void isAttachedOrBreak(World world, BlockState armState, BlockPos backPos, BlockPos frontPos) {
-        boolean validFront = false, validBack = false;
+        boolean validFront, validBack;
         BlockState frontState = world.getBlockState(frontPos);
         // Must be BasicPistonArmBlock or BasicPistonHeadBlock in front
         validFront = (frontState.isOf(HEAD_BLOCK) || frontState.isOf(this)) &&

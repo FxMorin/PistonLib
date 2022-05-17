@@ -48,8 +48,8 @@ public class BasicPistonBlock extends FacingBlock {
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.createCuboidShape(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
     public final boolean sticky;
 
-    public BasicPistonExtensionBlock EXTENSION_BLOCK;
-    public BasicPistonHeadBlock HEAD_BLOCK;
+    protected BasicPistonExtensionBlock EXTENSION_BLOCK;
+    protected BasicPistonHeadBlock HEAD_BLOCK;
 
     public BasicPistonBlock(boolean sticky) {
         this(sticky, ModBlocks.BASIC_MOVING_PISTON, ModBlocks.BASIC_PISTON_HEAD);
