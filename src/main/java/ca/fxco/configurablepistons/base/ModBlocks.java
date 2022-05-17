@@ -134,10 +134,10 @@ public class ModBlocks {
             PistonFamilies.FAST, new FastPistonExtensionBlock()
     );
     public static final BasicPistonBlock FAST_PISTON = registerPiston(
-            PistonFamilies.FAST, new PushLimitPistonBlock(false,2)
+            PistonFamilies.FAST, new PushLimitPistonBlock(false,8)
     );
     public static final BasicPistonBlock FAST_STICKY_PISTON = registerPiston(
-            PistonFamilies.FAST, new PushLimitPistonBlock(true,2)
+            PistonFamilies.FAST, new PushLimitPistonBlock(true,8)
     );
 
     // Very Sticky Piston
