@@ -266,9 +266,8 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
                             Block.NO_REDRAW | Block.FORCE_STATE | Block.MOVED);
                     Block.replace(blockEntity.pushedBlock, blockState, world, pos, 3);
                 } else {
-                    if (blockState.contains(Properties.WATERLOGGED) && blockState.get(Properties.WATERLOGGED)) {
+                    if (blockState.contains(Properties.WATERLOGGED) && blockState.get(Properties.WATERLOGGED))
                         blockState = blockState.with(Properties.WATERLOGGED, false);
-                    }
                     world.setBlockState(pos, blockState, Block.NOTIFY_ALL | Block.MOVED);
                     world.updateNeighbor(pos, blockState.getBlock(), pos);
                 }

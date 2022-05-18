@@ -1,5 +1,6 @@
 package ca.fxco.configurablepistons.pistonLogic;
 
+import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
@@ -20,7 +21,6 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import static net.minecraft.block.Block.dropStacks;
 import static net.minecraft.state.property.Properties.EXTENDED;
@@ -54,13 +54,12 @@ public class PistonUtils {
     }
 
     public static boolean move(World world, BlockPos pos1, BasicPistonBlock piston, Direction dir,
-                               boolean retract, BiPredicate<ConfigurablePistonHandler,Boolean> pistonHandlerAction) {
+                               boolean push, BiPredicate<ConfigurablePistonHandler,Boolean> pistonHandlerAction) {
         BlockPos pos2 = pos1.offset(dir);
-        if (!retract && world.getBlockState(pos2).isOf(piston.getHeadBlock()))
+        if (!push && world.getBlockState(pos2).isOf(piston.getHeadBlock()))
             world.setBlockState(pos2, Blocks.AIR.getDefaultState(), Block.NO_REDRAW | Block.FORCE_STATE);
-        ConfigurablePistonHandler pistonHandler = piston.getPistonHandler(world, pos1, dir, retract);
-        if (!pistonHandlerAction.test(pistonHandler,!retract)) return false;
-        //if (!pistonHandler.calculatePullPush(!retract)) return false;
+        ConfigurablePistonHandler pistonHandler = piston.getPistonHandler(world, pos1, dir, push);
+        if (!pistonHandlerAction.test(pistonHandler,!push)) return false;
         Map<BlockPos, BlockState> map = Maps.newHashMap();
         List<BlockPos> list = pistonHandler.getMovedBlocks();
         List<BlockState> list2 = Lists.newArrayList();
@@ -71,7 +70,7 @@ public class PistonUtils {
         }
         List<BlockPos> list3 = pistonHandler.getBrokenBlocks();
         BlockState[] blockStates = new BlockState[list.size() + list3.size()];
-        Direction direction = retract ? dir : dir.getOpposite();
+        Direction direction = push ? dir : dir.getOpposite();
         int j = 0, k;
         BlockPos pos3;
         BlockState state2;
@@ -96,12 +95,12 @@ public class PistonUtils {
                     state3,
                     list2.get(k),
                     dir,
-                    retract,
+                    push,
                     false
             ));
             blockStates[j++] = state2;
         }
-        if (retract) {
+        if (push) {
             PistonType pistonType = piston.sticky ? PistonType.STICKY : PistonType.DEFAULT;
             BlockState state4 = piston.getHeadBlock().getDefaultState().with(PistonHeadBlock.FACING, dir)
                     .with(PistonHeadBlock.TYPE, pistonType);
@@ -136,7 +135,7 @@ public class PistonUtils {
             world.updateNeighborsAlways(pos5, state2.getBlock());
         }
         for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAlways(list.get(k), blockStates[j++].getBlock());
-        if (retract) world.updateNeighborsAlways(pos2, piston.getHeadBlock());
+        if (push) world.updateNeighborsAlways(pos2, piston.getHeadBlock());
         return true;
     }
 
