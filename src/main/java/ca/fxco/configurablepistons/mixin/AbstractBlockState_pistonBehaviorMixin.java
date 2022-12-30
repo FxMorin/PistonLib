@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.mixin;
 
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateDirectionalSticky;
 import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStatePistonBehavior;
 import net.minecraft.block.AbstractBlock;

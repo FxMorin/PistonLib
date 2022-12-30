@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

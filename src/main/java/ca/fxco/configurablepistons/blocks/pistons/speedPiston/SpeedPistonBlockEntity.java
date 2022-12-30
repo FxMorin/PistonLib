@@ -1,12 +1,14 @@
 package ca.fxco.configurablepistons.blocks.pistons.speedPiston;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.helpers.Utils;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;

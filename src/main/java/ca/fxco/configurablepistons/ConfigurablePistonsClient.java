@@ -3,7 +3,6 @@ package ca.fxco.configurablepistons;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.renderers.BasicPistonBlockEntityRenderer;
-import ca.fxco.configurablepistons.renderers.LongPistonBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;

@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.longPiston;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
 
 public class LongPistonHeadBlock extends BasicPistonHeadBlock {
 

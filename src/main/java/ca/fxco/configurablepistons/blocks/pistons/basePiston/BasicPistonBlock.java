@@ -1,30 +1,25 @@
 package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 
-import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
+import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.block.enums.PistonType;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
@@ -34,9 +29,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-
-import java.util.List;
-import java.util.Map;
 
 public class BasicPistonBlock extends FacingBlock {
     public static final BooleanProperty EXTENDED = Properties.EXTENDED;

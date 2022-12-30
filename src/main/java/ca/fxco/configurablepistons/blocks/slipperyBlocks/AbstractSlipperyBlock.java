@@ -2,7 +2,8 @@ package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
 import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.base.ModTags;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;

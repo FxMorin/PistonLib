@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks;
 
-import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Direction;

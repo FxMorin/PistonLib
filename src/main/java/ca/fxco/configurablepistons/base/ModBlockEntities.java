@@ -8,12 +8,8 @@ import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonB
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
-import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
-import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.PistonBlockEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 

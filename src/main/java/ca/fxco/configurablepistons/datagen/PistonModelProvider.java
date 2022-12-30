@@ -2,10 +2,10 @@ package ca.fxco.configurablepistons.datagen;
 
 import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;

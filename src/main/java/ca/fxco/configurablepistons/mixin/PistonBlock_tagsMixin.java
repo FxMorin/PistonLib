@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.mixin;
 
 import ca.fxco.configurablepistons.base.ModTags;
-import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.*;

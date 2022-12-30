@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-@Environment(value=EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class DebugPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
     private final BlockRenderManager manager;
 

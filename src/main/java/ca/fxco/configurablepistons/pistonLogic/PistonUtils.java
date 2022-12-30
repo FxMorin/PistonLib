@@ -1,6 +1,5 @@
 package ca.fxco.configurablepistons.pistonLogic;
 
-import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
@@ -24,7 +23,8 @@ import java.util.function.BiPredicate;
 
 import static net.minecraft.block.Block.dropStacks;
 import static net.minecraft.state.property.Properties.EXTENDED;
-import static net.minecraft.util.math.Direction.*;
+import static net.minecraft.util.math.Direction.DOWN;
+import static net.minecraft.util.math.Direction.UP;
 
 public class PistonUtils {
 

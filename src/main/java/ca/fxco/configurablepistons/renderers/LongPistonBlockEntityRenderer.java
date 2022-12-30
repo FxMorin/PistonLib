@@ -15,7 +15,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-@Environment(value=EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class LongPistonBlockEntityRenderer<T extends LongPistonBlockEntity> extends BasicPistonBlockEntityRenderer<T> {
 
     public LongPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {

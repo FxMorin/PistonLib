@@ -23,7 +23,7 @@ import java.util.Random;
 
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
 
-// Inherits from SlimeBlock instead of AbstractSlipperyBlock so that it won't stick to honey
+// Inherits from SlimeBlock instead of AbstractSlipperyBlock so that it won't stick to honey - TODO: Fix this
 public class SlipperySlimeBlock extends SlimeBlock {
 
     public static final IntProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;

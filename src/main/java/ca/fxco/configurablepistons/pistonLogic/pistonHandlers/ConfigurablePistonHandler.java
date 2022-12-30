@@ -7,14 +7,12 @@ import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBeha
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.HoneyBlock;
 import net.minecraft.block.SlimeBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -73,10 +71,9 @@ public class ConfigurablePistonHandler {
             if (this.cantMove(this.posTo, isPull ? this.motionDirection.getOpposite() : this.motionDirection))
                 return false;
         }
-        for (int i = 0; i < this.movedBlocks.size(); ++i) {
-            BlockPos blockPos = this.movedBlocks.get(i);
+        for (BlockPos blockPos : this.movedBlocks) {
             state = this.world.getBlockState(blockPos);
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
+            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
             if (stick.usesConfigurablePistonStickiness()) {
                 if (stick.isSticky(state) && cantMoveAdjacentStickyBlocks(stick.stickySides(state), blockPos))
                     return false;

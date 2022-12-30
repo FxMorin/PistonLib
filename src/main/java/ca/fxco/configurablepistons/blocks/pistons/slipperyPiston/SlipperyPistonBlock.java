@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
-import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -13,7 +13,8 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonBlock extends BasicPistonBlock {
 

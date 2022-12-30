@@ -23,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
 

@@ -56,15 +56,14 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 return false;
         }
         List<LongPistonBlockEntity> blockEntities = new ArrayList<>();
-        for (int i = 0; i < this.movedBlocks.size(); ++i) {
-            BlockPos pos = this.movedBlocks.get(i);
+        for (BlockPos pos : this.movedBlocks) {
             state = this.world.getBlockState(pos);
             if (state.isOf(this.extensionBlock) &&
                     this.world.getBlockEntity(pos) instanceof LongPistonBlockEntity bpbe) {
                 blockEntities.add(bpbe);
                 state = bpbe.getPushedBlock();
             }
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
+            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
             if (stick.usesConfigurablePistonStickiness()) {
                 if (stick.isSticky(state) && cantMoveAdjacentStickyBlocksWithBE(stick.stickySides(state), pos))
                     return false;

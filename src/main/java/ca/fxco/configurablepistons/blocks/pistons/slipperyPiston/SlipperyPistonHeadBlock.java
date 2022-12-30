@@ -19,7 +19,8 @@ import net.minecraft.world.WorldView;
 import java.util.Random;
 
 import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
