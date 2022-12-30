@@ -9,9 +9,11 @@
     "BlockCollisionSpliterator_movingPistonMixin",
     "Factory_movingPistonMixin",
     "FallingBlockEntity_movingPistonsMixin",
+    "HoneyBlock_slimeMixin",
     "PistonBlock_tagsMixin",
     "PistonHandler_isMovableMixin",
     "ShulkerEntity_movingPistonMixin",
+    "SlimeBlock_honeyMixin",
     "accessors.BlockEntityAccessor",
     "accessors.PistonBlockAccessor"
   ],

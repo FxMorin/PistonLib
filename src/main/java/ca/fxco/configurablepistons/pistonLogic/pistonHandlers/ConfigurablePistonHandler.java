@@ -5,6 +5,7 @@ import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateExpandedSticky;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HoneyBlock;
@@ -122,13 +123,12 @@ public class ConfigurablePistonHandler {
 
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
-        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)adjState.getBlock();
+        AbstractBlockStateExpandedSticky stick = (AbstractBlockStateExpandedSticky)adjState;
         if (stick.usesConfigurablePistonStickiness())
-            return !stick.isSticky(adjState) ||
-                    stick.sideStickiness(adjState, dir.getOpposite()) != StickyType.NO_STICK;
-        // TODO: Make this configurable
-        return (!(state.getBlock() instanceof HoneyBlock) || !(adjState.getBlock() instanceof SlimeBlock)) &&
-                (!(state.getBlock() instanceof SlimeBlock) || !(adjState.getBlock() instanceof HoneyBlock));
+            return !stick.isSticky() ||
+                    stick.sideStickiness(dir.getOpposite()) != StickyType.NO_STICK;
+        return stick.canStick(state.getBlock()) &&
+                ((AbstractBlockStateExpandedSticky)state).canStick(adjState.getBlock());
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {

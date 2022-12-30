@@ -1,12 +1,18 @@
 package ca.fxco.configurablepistons.pistonLogic.accessible;
 
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Direction;
 
 import java.util.Map;
 
 public interface ConfigurablePistonStickiness {
+
+    // Defines if this block can stick to the adjacent block
+    default boolean canStick(BlockState state, Block adjBlock) {
+        return true;
+    }
 
     /*
      * These methods are only used if `usesConfigurablePistonStickiness` returns true

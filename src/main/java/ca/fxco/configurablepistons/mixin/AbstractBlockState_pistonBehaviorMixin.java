@@ -3,7 +3,7 @@ package ca.fxco.configurablepistons.mixin;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateDirectionalSticky;
+import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateExpandedSticky;
 import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStatePistonBehavior;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Mixin(AbstractBlock.AbstractBlockState.class)
 public abstract class AbstractBlockState_pistonBehaviorMixin
-        implements AbstractBlockStatePistonBehavior, AbstractBlockStateDirectionalSticky {
+        implements AbstractBlockStatePistonBehavior, AbstractBlockStateExpandedSticky {
 
     @Shadow
     public abstract Block getBlock();
@@ -47,6 +47,11 @@ public abstract class AbstractBlockState_pistonBehaviorMixin
     @Override
     public boolean canDestroy() {
         return ((ConfigurablePistonBehavior)this.getBlock()).canDestroy(this.asBlockState());
+    }
+
+    @Override
+    public boolean canStick(Block adjBlock) {
+        return ((ConfigurablePistonStickiness)this.getBlock()).canStick(this.asBlockState(), adjBlock);
     }
 
     @Override
