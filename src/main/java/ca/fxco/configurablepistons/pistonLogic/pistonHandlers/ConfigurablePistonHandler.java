@@ -71,7 +71,8 @@ public class ConfigurablePistonHandler {
             if (this.cantMove(this.posTo, isPull ? this.motionDirection.getOpposite() : this.motionDirection))
                 return false;
         }
-        for (BlockPos blockPos : this.movedBlocks) {
+        for (int i = 0; i < this.movedBlocks.size(); ++i) {
+            BlockPos blockPos = this.movedBlocks.get(i);
             state = this.world.getBlockState(blockPos);
             ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
             if (stick.usesConfigurablePistonStickiness()) {

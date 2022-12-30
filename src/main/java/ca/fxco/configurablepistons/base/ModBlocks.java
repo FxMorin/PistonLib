@@ -104,10 +104,10 @@ public class ModBlocks {
             PistonFamilies.LONG, new LongPistonExtensionBlock()
     );
     public static final LongPistonBlock LONG_PISTON = registerPiston(
-            PistonFamilies.LONG, new LongPistonBlock(false)
+            PistonFamilies.LONG, new LongPistonBlock(false), false
     );
     public static final BasicPistonBlock LONG_STICKY_PISTON = registerPiston(
-            PistonFamilies.LONG, new LongPistonBlock(true)
+            PistonFamilies.LONG, new LongPistonBlock(true), false
     );
     public static final LongPistonArmBlock LONG_PISTON_ARM = registerPiston(
             PistonFamilies.LONG, new LongPistonArmBlock()
@@ -213,6 +213,10 @@ public class ModBlocks {
     }
 
     public static <T extends Block> T registerPiston(PistonFamily family, T block) {
+        return registerPiston(family, block, true);
+    }
+
+    public static <T extends Block> T registerPiston(PistonFamily family, T block, boolean registerItems) {
         if (family == null)
             throw new IllegalStateException("Valid Piston Family must be used! - " + Registry.BLOCK.getId(block));
         String familyId = family.getId();
@@ -242,7 +246,9 @@ public class ModBlocks {
                     Registry.register(Registry.BLOCK, identifier, pistonBlock);
                     family.piston(pistonBlock);
                 }
-                Registry.register(Registry.ITEM, identifier, new BlockItem(pistonBlock, CUSTOM_CREATIVE_GROUP));
+                if (registerItems) {
+                    Registry.register(Registry.ITEM, identifier, new BlockItem(pistonBlock, CUSTOM_CREATIVE_GROUP));
+                }
             } else if (block instanceof BasicPistonExtensionBlock basicPistonExtensionBlock) {
                 Registry.register(Registry.BLOCK, id(familyId+"_moving_piston"), basicPistonExtensionBlock);
                 if (family.getPistonBlock() != null || family.getStickyPistonBlock() != null) {

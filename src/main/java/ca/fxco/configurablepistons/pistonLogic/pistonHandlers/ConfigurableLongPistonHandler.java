@@ -56,7 +56,8 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 return false;
         }
         List<LongPistonBlockEntity> blockEntities = new ArrayList<>();
-        for (BlockPos pos : this.movedBlocks) {
+        for (int i = 0; i < this.movedBlocks.size(); ++i) {
+            BlockPos pos = this.movedBlocks.get(i);
             state = this.world.getBlockState(pos);
             if (state.isOf(this.extensionBlock) &&
                     this.world.getBlockEntity(pos) instanceof LongPistonBlockEntity bpbe) {
