@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "configurable-pistons:block/all_sided_observer"
+  }
+}

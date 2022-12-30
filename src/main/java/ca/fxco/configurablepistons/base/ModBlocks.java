@@ -67,7 +67,7 @@ public class ModBlocks {
     public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
             new AbstractSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
     );
-    public static final Block ALL_SIDED_OBSERVER_BLOCK = registerBlock("all_sided_observer_block",
+    public static final Block ALL_SIDED_OBSERVER = registerBlock("all_sided_observer",
             new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))
     );
     public static final Block GLUE_BLOCK = registerBlock("glue_block",

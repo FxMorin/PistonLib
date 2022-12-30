@@ -17,8 +17,6 @@
     "accessors.BlockEntityAccessor",
     "accessors.PistonBlockAccessor"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }

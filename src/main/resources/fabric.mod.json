@@ -3,7 +3,7 @@
   "id": "configurable-pistons",
   "version": "${version}",
   "name": "Configurable Pistons",
-  "description": "A mod to add a new piston that can do all sorts of things",
+  "description": "A mod/library for creating new pistons that are easily expandable",
   "authors": [
     "FX - PR0CESS"
   ],
