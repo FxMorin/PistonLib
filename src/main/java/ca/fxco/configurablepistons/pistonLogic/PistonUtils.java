@@ -37,8 +37,9 @@ public class PistonUtils {
             ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
                 if (customBehavior.isMovable(state))
-                    return dir != pistonDir ? customBehavior.canPistonPull(state) :
-                            customBehavior.canPistonPush(state) && (!customBehavior.canDestroy(state) || canBreak);
+                    return dir != pistonDir ? customBehavior.canPistonPull(state, dir) :
+                            customBehavior.canPistonPush(state, dir) &&
+                                    (!customBehavior.canDestroy(state) || canBreak);
             } else {
                 if (state.isIn(ModTags.UNPUSHABLE) || state.getHardness(wo, pos) == -1.0F) return false;
                 if (state.isIn(ModTags.PISTONS)) return !state.get(EXTENDED) && !state.hasBlockEntity();

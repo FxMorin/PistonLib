@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.blocks;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.math.Direction;
 
 public class PullOnlyBlock extends Block implements ConfigurablePistonBehavior {
     public PullOnlyBlock(Settings settings) {
@@ -15,7 +16,7 @@ public class PullOnlyBlock extends Block implements ConfigurablePistonBehavior {
     }
 
     @Override
-    public boolean canPistonPush(BlockState state) {
+    public boolean canPistonPush(BlockState state, Direction direction) {
         return false;
     }
 }

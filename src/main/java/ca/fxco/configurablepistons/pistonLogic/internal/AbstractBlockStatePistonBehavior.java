@@ -1,5 +1,7 @@
 package ca.fxco.configurablepistons.pistonLogic.internal;
 
+import net.minecraft.util.math.Direction;
+
 public interface AbstractBlockStatePistonBehavior {
 
     /*
@@ -10,8 +12,8 @@ public interface AbstractBlockStatePistonBehavior {
     // This allows for more configurable & conditional piston behavior
     boolean usesConfigurablePistonBehavior();
     boolean isMovable();
-    boolean canPistonPush();
-    boolean canPistonPull();
+    boolean canPistonPush(Direction direction);
+    boolean canPistonPull(Direction direction);
     boolean canBypassFused();
     boolean canDestroy();
 }

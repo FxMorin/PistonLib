@@ -1,6 +1,7 @@
 package ca.fxco.configurablepistons.pistonLogic.accessible;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.util.math.Direction;
 
 public interface ConfigurablePistonBehavior {
 
@@ -20,11 +21,11 @@ public interface ConfigurablePistonBehavior {
         return true;
     }
 
-    default boolean canPistonPush(BlockState state) {
+    default boolean canPistonPush(BlockState state, Direction direction) {
         return true;
     }
 
-    default boolean canPistonPull(BlockState state) {
+    default boolean canPistonPull(BlockState state, Direction direction) {
         return true;
     }
 

@@ -37,13 +37,13 @@ public abstract class AbstractBlockState_pistonBehaviorMixin
     }
 
     @Override
-    public boolean canPistonPush() {
-        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPush(this.asBlockState());
+    public boolean canPistonPush(Direction direction) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPush(this.asBlockState(), direction);
     }
 
     @Override
-    public boolean canPistonPull() {
-        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPull(this.asBlockState());
+    public boolean canPistonPull(Direction direction) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPull(this.asBlockState(), direction);
     }
 
     @Override
