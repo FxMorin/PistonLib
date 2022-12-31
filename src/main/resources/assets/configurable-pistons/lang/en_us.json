@@ -1,4 +1,7 @@
 {
+  "itemGroup.configurable-pistons.general": "ConfigurablePistons",
+  "block.configurable-pistons.powered_sticky_block": "Powered Sticky Block",
+  "block.configurable-pistons.glue_block": "Glue Block",
   "block.configurable-pistons.all_sided_observer": "All Sided Observer",
   "block.configurable-pistons.drag_block": "Drag Block",
   "block.configurable-pistons.stickyless_block": "Stickyless Block",
@@ -14,5 +17,11 @@
   "block.configurable-pistons.front_powered_piston": "Front Powered Piston",
   "block.configurable-pistons.front_powered_sticky_piston": "Front Powered Sticky Piston",
   "block.configurable-pistons.translocation_piston": "Translocation Piston",
-  "block.configurable-pistons.translocation_sticky_piston": "Translocation Sticky Piston"
+  "block.configurable-pistons.translocation_sticky_piston": "Translocation Sticky Piston",
+  "block.configurable-pistons.sticky_sticky_piston": "Sticky Sticky Piston",
+  "block.configurable-pistons.slippery_piston": "Slippery Piston",
+  "block.configurable-pistons.slippery_sticky_piston": "Slippery Sticky Piston",
+  "block.configurable-pistons.slippery_slime_block": "Slippery Slime Block",
+  "block.configurable-pistons.slippery_redstone_block": "Slippery Redstone Block",
+  "block.configurable-pistons.slippery_stone_block": "Slippery Stone Block"
 }

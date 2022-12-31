@@ -13,10 +13,8 @@ import org.slf4j.LoggerFactory;
 public class ConfigurablePistons implements ModInitializer {
 
     //TODO:
-    // Add custom textures - Like: Strong Piston
-    // Fix Long Pistons & Piston Arms
-    // Add support for Carpet & Carpet-Fixes so I can check if carpet-fixes are enabled in order to remove hackfixes
-    // Add actual logger support
+    // Add custom textures
+    // Add Long Pistons & Piston Arms
 
     public static final String MOD_ID = "configurable-pistons";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
