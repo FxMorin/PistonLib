@@ -1,6 +1,5 @@
 package ca.fxco.configurablepistons.pistonLogic.pistonHandlers;
 
-import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
@@ -9,8 +8,6 @@ import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStic
 import ca.fxco.configurablepistons.pistonLogic.internal.AbstractBlockStateExpandedSticky;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.HoneyBlock;
-import net.minecraft.block.SlimeBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -56,7 +53,7 @@ public class ConfigurablePistonHandler {
         BlockState state = this.world.getBlockState(this.posTo);
         if (!PistonUtils.isMovable(state, this.world, this.posTo, this.motionDirection, false, this.pistonDirection)) {
             if (this.retracted) {
-                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
+                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior) state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
                     if (pistonBehavior.canDestroy(state)) {
                         this.brokenBlocks.add(this.posTo);
@@ -88,10 +85,6 @@ public class ConfigurablePistonHandler {
         return true;
     }
 
-    protected static boolean isBlockSticky(BlockState state) {
-        return ((AbstractBlockStateExpandedSticky)state).getStickyGroup() != null;
-    }
-
     protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
         for (Direction direction : Direction.values()) {
@@ -107,14 +100,17 @@ public class ConfigurablePistonHandler {
 
     protected boolean cantMoveAdjacentStickyBlocks(Map<Direction, StickyType> sides, BlockPos pos) {
         BlockState blockState = this.world.getBlockState(pos);
-        for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
+        for (Map.Entry<Direction, StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
             if (stickyType == StickyType.NO_STICK) continue;
-            Direction direction = sideData.getKey();
-            if (direction.getAxis() != this.motionDirection.getAxis()) {
-                BlockPos blockPos = pos.offset(direction);
-                BlockState blockState2 = this.world.getBlockState(blockPos);
-                if (canAdjacentBlockStick(direction, blockState, blockState2) && this.cantMove(blockPos, direction))
+            Direction dir = sideData.getKey();
+            if (dir.getAxis() != this.motionDirection.getAxis()) {
+                BlockPos blockPos = pos.offset(dir);
+                BlockState adjState = this.world.getBlockState(blockPos);
+                if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(blockState, adjState, dir)) {
+                    continue;
+                }
+                if (canAdjacentBlockStick(dir, blockState, adjState) && this.cantMove(blockPos, dir))
                     return true;
             }
         }
@@ -125,9 +121,14 @@ public class ConfigurablePistonHandler {
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
         AbstractBlockStateExpandedSticky stick = (AbstractBlockStateExpandedSticky)adjState;
-        if (stick.usesConfigurablePistonStickiness())
-            return !stick.isSticky() ||
-                    stick.sideStickiness(dir.getOpposite()) != StickyType.NO_STICK;
+        if (stick.usesConfigurablePistonStickiness()) {
+            if (!stick.isSticky()) return true;
+            StickyType type = stick.sideStickiness(dir.getOpposite());
+            if (type == StickyType.CONDITIONAL && !type.canStick(state, adjState, dir)) {
+                return true;
+            }
+            return type != StickyType.NO_STICK;
+        }
         return StickyGroup.canStick(((AbstractBlockStateExpandedSticky)state).getStickyGroup(), stick.getStickyGroup());
     }
 

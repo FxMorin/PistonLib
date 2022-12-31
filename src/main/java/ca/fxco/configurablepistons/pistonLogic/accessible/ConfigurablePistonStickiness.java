@@ -43,4 +43,11 @@ public interface ConfigurablePistonStickiness {
     default StickyType sideStickiness(BlockState state, Direction direction) {
         return StickyType.DEFAULT;
     }
+
+    /**
+     * This only gets used if the sticky type is `CONDITIONAL`
+     */
+    default boolean matchesStickyConditions(BlockState state, BlockState adjState, Direction direction) {
+        return true;
+    }
 }

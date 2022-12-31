@@ -1,5 +1,9 @@
 package ca.fxco.configurablepistons.pistonLogic;
 
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.Direction;
+
 public enum StickyType {
 
     /*
@@ -12,9 +16,9 @@ public enum StickyType {
     NO_STICK,
 
     /**
-     * Act's like Default although Block will not stick under certain conditions - W.I.P.
+     * Sticky if another sticky block is next to it, and it matches the conditions
      */
-    WEAK,
+    CONDITIONAL,
 
     /**
      * Normal Sticky Behavior, so connects to sticky blocks but itself is not sticky
@@ -34,5 +38,13 @@ public enum StickyType {
     /**
      * Strong except it bypasses the ConfigurablePistonBehavior checks, use `canBypassFused()` to prevent this - W.I.P.
      */
-    FUSED
+    FUSED;
+
+
+    /**
+     * Should only be called if CONDITIONAL
+     */
+    public boolean canStick(BlockState state, BlockState adjState, Direction dir) {
+        return ((ConfigurablePistonStickiness)state.getBlock()).matchesStickyConditions(state, adjState, dir);
+    }
 }
