@@ -1,0 +1,6 @@
+{
+  "parent": "configurable-pistons:block/powered_sticky_block",
+  "textures": {
+    "front": "configurable-pistons:block/strong_piston_top_sticky"
+  }
+}

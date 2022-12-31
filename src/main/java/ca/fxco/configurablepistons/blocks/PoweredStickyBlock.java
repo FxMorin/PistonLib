@@ -25,32 +25,43 @@ public class PoweredStickyBlock extends FacingBlock implements ConfigurablePisto
 
     public void updateState(BlockState state, World world, BlockPos pos, boolean force) {
         boolean isPowered = world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(pos.up());
-        boolean wasPowered = state.get(POWERED);
-        if (isPowered && !wasPowered) {
-            world.setBlockState(pos, state.with(POWERED, true), Block.NO_REDRAW);
-        } else if (!isPowered && wasPowered) {
-            world.setBlockState(pos, state.with(POWERED, false), Block.NO_REDRAW);
+        boolean powered = state.get(POWERED);
+        if (isPowered && !powered) {
+            world.setBlockState(pos, state.with(POWERED, true), Block.NOTIFY_LISTENERS);
+        } else if (!isPowered && powered) {
+            world.setBlockState(pos, state.with(POWERED, false), Block.NOTIFY_LISTENERS);
         }
     }
 
+    @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        updateState(state, world, pos, false);
+        if (!world.isClient) {
+            updateState(state, world, pos, false);
+        }
     }
 
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWERED);
     }
 
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!state.isOf(oldState.getBlock())) {
-            if (!world.isClient() && state.get(POWERED)) {
-                updateState(state, world, pos, true);
-            }
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!world.isClient() && !state.isOf(newState.getBlock()) && moved && state.get(POWERED)) {
+            updateState(state, world, pos, true);
         }
     }
 
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        if (!world.isClient() && !state.isOf(oldState.getBlock()) && state.get(POWERED)) {
+            updateState(state, world, pos, true);
+        }
+    }
+
+    @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite().getOpposite());
+        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection());
     }
 
     @Override
@@ -65,7 +76,7 @@ public class PoweredStickyBlock extends FacingBlock implements ConfigurablePisto
 
     @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(state.get(FACING),StickyType.STICKY); // Sticky Front
+        return Map.of(state.get(FACING), StickyType.STICKY); // Sticky Front
     }
 
     @Override

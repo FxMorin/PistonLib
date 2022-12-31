@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block",
+      "x": 90
+    },
+    "facing=down,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on",
+      "x": 90
+    },
+    "facing=east,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on",
+      "y": 90
+    },
+    "facing=north,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block"
+    },
+    "facing=north,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on"
+    },
+    "facing=south,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on",
+      "y": 180
+    },
+    "facing=up,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block",
+      "x": 270
+    },
+    "facing=up,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on",
+      "x": 270
+    },
+    "facing=west,powered=false": {
+      "model": "configurable-pistons:block/powered_sticky_block",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "configurable-pistons:block/powered_sticky_block_on",
+      "y": 270
+    }
+  }
+}
