@@ -2,7 +2,6 @@ package ca.fxco.configurablepistons.pistonLogic.internal;
 
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import net.minecraft.block.Block;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 

@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(BlockEntity.class)
 public interface BlockEntityAccessor {
+
     @Accessor("type") @Mutable
     void setType(BlockEntityType<?> type);
 }

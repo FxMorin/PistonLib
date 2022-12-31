@@ -28,7 +28,7 @@ public class PistonBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         FabricTagBuilder<Block> movingPistonBuilder = getOrCreateTagBuilder(ModTags.MOVING_PISTONS);
         FabricTagBuilder<Block> unpushableBuilder = getOrCreateTagBuilder(ModTags.UNPUSHABLE);
         FabricTagBuilder<Block> pistonsBuilder = getOrCreateTagBuilder(ModTags.PISTONS);
-        System.out.println("Amount of Piston Families: "+PistonFamilies.getFamilies().size());
+        System.out.println("Amount of Piston Families: " + PistonFamilies.getFamilies().size());
         for (PistonFamily family : PistonFamilies.getFamilies()) {
             if (!family.shouldGenerateAutomatically()) continue;
             BasicPistonBlock pistonBlock = family.getPistonBlock(); // Pistons - pistonBlock
