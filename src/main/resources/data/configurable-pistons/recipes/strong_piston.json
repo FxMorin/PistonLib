@@ -1,12 +1,12 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "###",
+        "CCC",
         "BNB",
         "BRB"
     ],
     "key": {
-        "#": {
+        "C": {
             "item": "minecraft:crimson_planks"
         },
         "B": {
@@ -20,7 +20,6 @@
         }
     },
     "result": {
-        "item": "configurable-pistons:strong_piston",
-        "count": 1
+        "item": "configurable-pistons:strong_piston"
     }
 }

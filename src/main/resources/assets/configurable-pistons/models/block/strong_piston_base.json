@@ -1,5 +1,5 @@
 {
-  "parent": "configurable-pistons:block/piston_extended",
+  "parent": "minecraft:block/piston_extended",
   "textures": {
     "bottom": "configurable-pistons:block/strong_piston_bottom",
     "side": "configurable-pistons:block/strong_piston_side",

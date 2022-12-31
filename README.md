@@ -2,6 +2,7 @@
 - Long piston's & Piston arms
 - Blocks that can be placed on slime but break when the slime moves should not break if the block below has the `fused` sticky property
 - Piston block compression
+- Slab merging
 - Dual-sided piston
 - Movable Block Entities
 - [Half Slime Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus) and Quarter Slime blocks
@@ -16,3 +17,4 @@
 - [Bendy Pistons](https://www.youtube.com/watch?v=_Wk7ZUYkrpI)
 - Player launcher pistons
 - [Half Slime Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
+- Colored Slime blocks & Honey Blocks

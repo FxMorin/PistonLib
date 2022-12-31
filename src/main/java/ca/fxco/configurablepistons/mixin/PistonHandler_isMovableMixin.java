@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.mixin;
 
-import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonHandler;
@@ -77,7 +77,7 @@ public abstract class PistonHandler_isMovableMixin {
             )
     )
     private static boolean isBlockSticky(BlockState state, Block block) {
-        return state.isIn(ModTags.STICKY_BLOCKS);
+        return ((ConfigurablePistonStickiness)state.getBlock()).hasStickyGroup();
     }
 
 

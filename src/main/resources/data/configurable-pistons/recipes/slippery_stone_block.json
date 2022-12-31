@@ -5,11 +5,10 @@
             "item": "minecraft:potion"
         },
         {
-            "item": "minecraft:stone_block"
+            "item": "minecraft:stone"
         }
     ],
     "result": {
-        "item": "configurable-pistons:slippery_stone_block",
-        "count": 1
+        "item": "configurable-pistons:slippery_stone_block"
     }
 }

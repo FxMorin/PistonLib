@@ -26,7 +26,6 @@ public class PistonBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         FabricTagBuilder<Block> slipperyIgnoreBuilder = getOrCreateTagBuilder(ModTags.SLIPPERY_IGNORE_BLOCKS);
         FabricTagBuilder<Block> slipperyBuilder = getOrCreateTagBuilder(ModTags.SLIPPERY_BLOCKS);
         FabricTagBuilder<Block> movingPistonBuilder = getOrCreateTagBuilder(ModTags.MOVING_PISTONS);
-        FabricTagBuilder<Block> stickyBlocksBuilder = getOrCreateTagBuilder(ModTags.STICKY_BLOCKS);
         FabricTagBuilder<Block> unpushableBuilder = getOrCreateTagBuilder(ModTags.UNPUSHABLE);
         FabricTagBuilder<Block> pistonsBuilder = getOrCreateTagBuilder(ModTags.PISTONS);
         System.out.println("Amount of Piston Families: "+PistonFamilies.getFamilies().size());
@@ -42,7 +41,6 @@ public class PistonBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         // Populate custom tags
         pistonsBuilder.add(Blocks.PISTON, Blocks.STICKY_PISTON);
         movingPistonBuilder.add(Blocks.MOVING_PISTON);
-        stickyBlocksBuilder.add(Blocks.SLIME_BLOCK, Blocks.HONEY_BLOCK, ModBlocks.SLIMY_REDSTONE_BLOCK, ModBlocks.SLIPPERY_SLIME_BLOCK);
         unpushableBuilder.add(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR);
         slipperyIgnoreBuilder.addTag(ModTags.MOVING_PISTONS).addTag(ModTags.PISTONS).add(Blocks.OBSERVER, Blocks.REDSTONE_BLOCK);
         slipperyBuilder.add(
