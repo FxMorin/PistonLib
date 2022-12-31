@@ -69,7 +69,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 if (stick.isSticky(state) && cantMoveAdjacentStickyBlocksWithBE(stick.stickySides(state), pos))
                     return false;
             } else {
-                if (isBlockSticky(this.world.getBlockState(pos)) && this.cantMoveAdjacentBlocksWithBE(pos))
+                if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocksWithBE(pos))
                     return false;
             }
         }
@@ -134,7 +134,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 blockEntity.getPushedBlock().getBlock() : state.getBlock());
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
                 (stick.isSticky(state) && stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal()) :
-                isBlockSticky(state);
+                stick.hasStickyGroup();
         BlockPos blockPos = pos.offset(dir2, 0);
         while (isSticky) {
             boolean wasExtensionBlock = isExtensionBlock;
@@ -168,7 +168,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                 if (stickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal()) break;
                 isSticky = stickyStick;
             } else {
-                isSticky = isBlockSticky(state);
+                isSticky = stick.hasStickyGroup();
             }
         }
         int j = 0, k;
@@ -194,7 +194,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonHandler {
                         if (stick.isSticky(state) && this.cantMoveAdjacentStickyBlocksWithBE(stick.stickySides(state),pos3))
                             return true;
                     } else {
-                        if (isBlockSticky(state) && this.cantMoveAdjacentBlocksWithBE(pos3))
+                        if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocksWithBE(pos3))
                             return true;
                     }
                 }

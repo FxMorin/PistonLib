@@ -81,7 +81,7 @@ public class ConfigurablePistonHandler {
                 if (stick.isSticky(state) && cantMoveAdjacentStickyBlocks(stick.stickySides(state), blockPos))
                     return false;
             } else {
-                if (isBlockSticky(this.world.getBlockState(blockPos)) && this.cantMoveAdjacentBlocks(blockPos))
+                if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocks(blockPos))
                     return false;
             }
         }
@@ -89,7 +89,7 @@ public class ConfigurablePistonHandler {
     }
 
     protected static boolean isBlockSticky(BlockState state) {
-        return state.isIn(ModTags.STICKY_BLOCKS);
+        return ((AbstractBlockStateExpandedSticky)state).getStickyGroup() != null;
     }
 
     protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
@@ -141,7 +141,7 @@ public class ConfigurablePistonHandler {
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
                 (stick.isSticky(state) && stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal()) :
-                isBlockSticky(state);
+                stick.hasStickyGroup();
         while (isSticky) {
             BlockPos blockPos = pos.offset(dir2, i);
             BlockState blockState2 = state;
@@ -159,7 +159,7 @@ public class ConfigurablePistonHandler {
                     break;
                 isSticky = StickyStick;
             } else {
-                isSticky = isBlockSticky(state);
+                isSticky = stick.hasStickyGroup();
             }
         }
         int j = 0, k;
@@ -181,7 +181,7 @@ public class ConfigurablePistonHandler {
                         if (stick.isSticky(state) && this.cantMoveAdjacentStickyBlocks(stick.stickySides(state),pos3))
                             return true;
                     } else {
-                        if (isBlockSticky(state) && this.cantMoveAdjacentBlocks(pos3))
+                        if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocks(pos3))
                             return true;
                     }
                 }

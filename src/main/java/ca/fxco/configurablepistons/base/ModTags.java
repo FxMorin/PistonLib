@@ -10,7 +10,6 @@ public class ModTags {
     public static final TagKey<Block> PISTONS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("pistons"));
     public static final TagKey<Block> MOVING_PISTONS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("moving_pistons"));
     public static final TagKey<Block> UNPUSHABLE = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("unpushable"));
-    public static final TagKey<Block> STICKY_BLOCKS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("sticky_blocks"));
     public static final TagKey<Block> SLIPPERY_IGNORE_BLOCKS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("slippery_ignore_blocks"));
     public static final TagKey<Block> SLIPPERY_TRANSPARENT_BLOCKS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("slippery_transparent_blocks"));
     public static final TagKey<Block> SLIPPERY_BLOCKS = TagKey.of(Registry.BLOCK_KEY, ConfigurablePistons.id("slippery_blocks"));

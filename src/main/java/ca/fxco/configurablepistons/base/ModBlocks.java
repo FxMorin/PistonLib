@@ -58,7 +58,7 @@ public class ModBlocks {
             new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY))
     );
     public static final Block SLIMY_REDSTONE_BLOCK = registerBlock("slimy_redstone_block",
-            new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
+            new SlimyRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
     public static final Block ALL_SIDED_OBSERVER = registerBlock("all_sided_observer",
             new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))

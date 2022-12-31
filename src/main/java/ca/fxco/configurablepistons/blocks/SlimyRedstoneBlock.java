@@ -1,11 +1,11 @@
-package ca.fxco.configurablepistons.blocks.slipperyBlocks;
+package ca.fxco.configurablepistons.blocks;
 
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
+import net.minecraft.block.RedstoneBlock;
 
-public class SlipperySlimeBlock extends BaseSlipperyBlock implements ConfigurablePistonStickiness {
-
-    public SlipperySlimeBlock(Settings settings) {
+public class SlimyRedstoneBlock extends RedstoneBlock implements ConfigurablePistonStickiness {
+    public SlimyRedstoneBlock(Settings settings) {
         super(settings);
     }
 

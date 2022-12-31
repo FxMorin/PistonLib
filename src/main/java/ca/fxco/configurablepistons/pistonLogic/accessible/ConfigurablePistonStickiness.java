@@ -10,9 +10,13 @@ import java.util.Map;
 
 public interface ConfigurablePistonStickiness {
 
-    // Defines if this block can stick to the adjacent block
+    // Defines if this block can stick to the adjacent block. Only use this on sticky blocks
     default @Nullable StickyGroup getStickyGroup() {
         return null;
+    }
+
+    default boolean hasStickyGroup() {
+        return getStickyGroup() != null;
     }
 
     /*

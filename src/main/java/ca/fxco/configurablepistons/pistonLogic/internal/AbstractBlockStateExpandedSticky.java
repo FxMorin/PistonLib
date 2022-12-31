@@ -17,6 +17,10 @@ public interface AbstractBlockStateExpandedSticky {
     // Defines the stickyGroup that this block uses
     @Nullable StickyGroup getStickyGroup();
 
+    default boolean hasStickyGroup() {
+        return getStickyGroup() != null;
+    }
+
     // These methods are only used if `usesConfigurablePistonStickiness` return true
     // This allows for more configurable & conditional sticky block logic
     boolean usesConfigurablePistonStickiness();
