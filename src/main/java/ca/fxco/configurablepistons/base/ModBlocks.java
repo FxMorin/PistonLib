@@ -60,15 +60,6 @@ public class ModBlocks {
     public static final Block SLIMY_REDSTONE_BLOCK = registerBlock("slimy_redstone_block",
             new RedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
-    public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block",
-            new SlipperySlimeBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK)), false
-    );
-    public static final Block SLIPPERY_REDSTONE_BLOCK = registerBlock("slippery_redstone_block",
-            new SlipperyRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
-    );
-    public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
-            new BaseSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
-    );
     public static final Block ALL_SIDED_OBSERVER = registerBlock("all_sided_observer",
             new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))
     );
@@ -77,6 +68,21 @@ public class ModBlocks {
     );
     public static final Block POWERED_STICKY_BLOCK = registerBlock("powered_sticky_block",
             new PoweredStickyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS))
+    );
+    public static final Block STICKY_CHAIN_BLOCK = registerBlock("sticky_chain",
+            new StickyChainBlock(FabricBlockSettings.copyOf(Blocks.CHAIN))
+    );
+
+    // Slippery Blocks
+    // These blocks if they are not touching a solid surface
+    public static final Block SLIPPERY_SLIME_BLOCK = registerBlock("slippery_slime_block",
+            new SlipperySlimeBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK)), false
+    );
+    public static final Block SLIPPERY_REDSTONE_BLOCK = registerBlock("slippery_redstone_block",
+            new SlipperyRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
+    );
+    public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
+            new BaseSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
     );
 
     // Piston Blocks should always be initialized in the following order:

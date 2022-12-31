@@ -22,7 +22,9 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
         register(ModBlockEntities.TRANSLOCATION_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         register(ModBlockEntities.SLIPPERY_PISTON_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
 
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, RenderLayer.getTranslucent());
+        BlockRenderLayerMap renderLayerMap = BlockRenderLayerMap.INSTANCE;
+        renderLayerMap.putBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, RenderLayer.getTranslucent());
+        renderLayerMap.putBlock(ModBlocks.STICKY_CHAIN_BLOCK, RenderLayer.getCutoutMipped());
     }
 
     public static <T extends BlockEntity> void register(BlockEntityType<T> blockEntityType,

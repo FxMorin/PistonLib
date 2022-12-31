@@ -1,0 +1,7 @@
+{
+  "parent": "block/chain",
+  "textures": {
+    "particle": "configurable-pistons:block/sticky_chain",
+    "all": "configurable-pistons:block/sticky_chain"
+  }
+}
