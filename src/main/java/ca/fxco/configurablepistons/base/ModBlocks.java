@@ -1,6 +1,10 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.blocks.*;
+import ca.fxco.configurablepistons.blocks.halfBlocks.HalfHoneyBlock;
+import ca.fxco.configurablepistons.blocks.halfBlocks.HalfObsidianBlock;
+import ca.fxco.configurablepistons.blocks.halfBlocks.HalfRedstoneBlock;
+import ca.fxco.configurablepistons.blocks.halfBlocks.HalfSlimeBlock;
 import ca.fxco.configurablepistons.blocks.pistons.FrontPoweredPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.PushLimitPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
@@ -46,6 +50,20 @@ import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 public class ModBlocks {
 
     private static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
+
+    // Half Blocks
+    public static final Block HALF_SLIME_BLOCK = registerBlock("half_slime",
+            new HalfSlimeBlock(FabricBlockSettings.copyOf(Blocks.SLIME_BLOCK))
+    );
+    public static final Block HALF_HONEY_BLOCK = registerBlock("half_honey",
+            new HalfHoneyBlock(FabricBlockSettings.copyOf(Blocks.HONEY_BLOCK))
+    );
+    public static final Block HALF_REDSTONE_BLOCK = registerBlock("half_redstone",
+            new HalfRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
+    );
+    public static final Block HALF_OBSIDIAN_BLOCK = registerBlock("half_obsidian",
+            new HalfObsidianBlock(FabricBlockSettings.copyOf(Blocks.OBSIDIAN))
+    );
 
     // Create Custom Blocks
     public static final Block DRAG_BLOCK = registerBlock("drag_block",

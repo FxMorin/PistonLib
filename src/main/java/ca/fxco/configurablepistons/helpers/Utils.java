@@ -3,6 +3,9 @@ package ca.fxco.configurablepistons.helpers;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 
+import static net.minecraft.util.math.Direction.*;
+import static net.minecraft.util.math.Direction.WEST;
+
 public class Utils {
 
     public static Box stretchBlockBound(Box box, Direction direction, double length) {
@@ -16,6 +19,41 @@ public class Utils {
             case UP ->    new Box(box.minX, Math.ceil(box.maxY + e), box.minZ, box.maxX, Math.floor(box.maxY + f), box.maxZ);
             case NORTH -> new Box(box.minX, box.minY, Math.ceil(box.minZ + e), box.maxX, box.maxY, Math.floor(box.minZ + f));
             case SOUTH -> new Box(box.minX, box.minY, Math.ceil(box.maxZ + e), box.maxX, box.maxY, Math.floor(box.maxZ + f));
+        };
+    }
+
+    public static Direction applyFacing(Direction dir, Direction facing) {
+        return switch(facing) {
+            case DOWN -> switch(dir) {
+                case UP -> SOUTH;
+                case DOWN -> NORTH;
+                case SOUTH -> UP;
+                case NORTH -> DOWN;
+                default -> dir.getOpposite();
+            };
+            case UP -> switch(dir) {
+                case UP -> NORTH;
+                case DOWN -> SOUTH;
+                case SOUTH -> DOWN;
+                case NORTH -> UP;
+                default -> dir.getOpposite();
+            };
+            case NORTH -> dir;
+            case SOUTH -> dir != DOWN && dir != UP ? dir.getOpposite() : dir;
+            case WEST -> switch(dir) {
+                case EAST -> SOUTH;
+                case WEST -> NORTH;
+                case UP, DOWN -> dir;
+                case SOUTH -> WEST;
+                case NORTH -> EAST;
+            };
+            case EAST -> switch(dir) {
+                case EAST -> NORTH;
+                case WEST -> SOUTH;
+                case UP, DOWN -> dir;
+                case SOUTH -> EAST;
+                case NORTH -> WEST;
+            };
         };
     }
 }
