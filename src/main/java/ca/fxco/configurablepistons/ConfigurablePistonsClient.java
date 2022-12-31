@@ -25,6 +25,7 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
         BlockRenderLayerMap renderLayerMap = BlockRenderLayerMap.INSTANCE;
         renderLayerMap.putBlock(ModBlocks.HALF_SLIME_BLOCK, RenderLayer.getTranslucent());
         renderLayerMap.putBlock(ModBlocks.HALF_HONEY_BLOCK, RenderLayer.getTranslucent());
+        renderLayerMap.putBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, RenderLayer.getTranslucent());
         renderLayerMap.putBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, RenderLayer.getTranslucent());
         renderLayerMap.putBlock(ModBlocks.STICKY_CHAIN_BLOCK, RenderLayer.getCutoutMipped());
     }
