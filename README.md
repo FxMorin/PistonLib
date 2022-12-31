@@ -3,7 +3,6 @@
 - Blocks that can be placed on slime but break when the slime moves should not break if the block below has the `fused` sticky property
 - Piston block compression
 - Dual-sided piston
-- Expand the sticky block type API, so we don't just ignore all other blocks. E.x. Slime & Honey
 - Movable Block Entities
 - [Half Slime Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus) and Quarter Slime blocks
 - [Half Redstone Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)

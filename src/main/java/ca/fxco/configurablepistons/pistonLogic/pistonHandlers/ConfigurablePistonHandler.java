@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.pistonLogic.pistonHandlers;
 
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
+import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
@@ -127,8 +128,7 @@ public class ConfigurablePistonHandler {
         if (stick.usesConfigurablePistonStickiness())
             return !stick.isSticky() ||
                     stick.sideStickiness(dir.getOpposite()) != StickyType.NO_STICK;
-        return stick.canStick(state.getBlock()) &&
-                ((AbstractBlockStateExpandedSticky)state).canStick(adjState.getBlock());
+        return StickyGroup.canStick(((AbstractBlockStateExpandedSticky)state).getStickyGroup(), stick.getStickyGroup());
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
