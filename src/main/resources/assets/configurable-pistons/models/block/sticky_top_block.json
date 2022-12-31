@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_top",
   "textures": {
-    "all": "configurable-pistons:block/sticky_top_block"
+    "side": "minecraft:block/deepslate_bricks",
+    "top": "configurable-pistons:block/sticky_top"
   }
 }
