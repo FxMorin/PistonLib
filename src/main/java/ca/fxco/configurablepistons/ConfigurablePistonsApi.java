@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class ConfigurablePistonsApi {
     /**
      * When creativeGroup is null, no item will be created for the piston. CreativeGroup is only used for base piston blocks
      */
-    public static <T extends Block> T registerPiston(PistonFamily family, T block, @Nullable Item.Settings creativeGroup) {
+    public static <T extends Block> T registerPiston(PistonFamily family, T block, @Nullable ItemGroup creativeGroup) {
         return ModBlocks.registerPiston(family, block, creativeGroup);
     }
 

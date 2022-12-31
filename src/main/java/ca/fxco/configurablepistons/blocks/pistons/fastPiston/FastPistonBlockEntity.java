@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -66,7 +67,7 @@ public class FastPistonBlockEntity extends BasicPistonBlockEntity {
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        this.pushedBlock = NbtHelper.toBlockState(nbt.getCompound("blockState"));
+        this.pushedBlock = NbtHelper.toBlockState(Registries.BLOCK.getReadOnlyWrapper(), nbt.getCompound("blockState"));
         this.facing = Direction.byId(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
         this.extending = nbt.getBoolean("extending");

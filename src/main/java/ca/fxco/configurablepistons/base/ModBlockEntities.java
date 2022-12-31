@@ -10,8 +10,9 @@ import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.Translocat
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 
@@ -70,7 +71,7 @@ public class ModBlockEntities {
     ) {
         Identifier identifier = id(id+"_piston_entity");
         return Registry.register(
-                Registry.BLOCK_ENTITY_TYPE,
+                Registries.BLOCK_ENTITY_TYPE,
                 identifier,
                 FabricBlockEntityTypeBuilder.create(
                         blockEntityFactory,

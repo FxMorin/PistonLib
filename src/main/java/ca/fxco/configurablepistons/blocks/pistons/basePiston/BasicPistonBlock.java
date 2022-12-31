@@ -245,6 +245,6 @@ public class BasicPistonBlock extends FacingBlock {
                 0.5F,
                 world.random.nextFloat() * 0.25F + 0.6F
         );
-        world.emitGameEvent(event, pos);
+        //world.emitGameEvent(event, pos);
     }
 }

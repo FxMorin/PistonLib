@@ -17,9 +17,8 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
@@ -68,7 +67,7 @@ public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
         RenderLayer renderLayer = RenderLayers.getMovingBlockLayer(state);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
         this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrix, vertexConsumer,
-                cull, new Random(), state.getRenderingSeed(pos), overlay);
+                cull, Random.createLocal(), state.getRenderingSeed(pos), overlay);
     }
 
     @Override

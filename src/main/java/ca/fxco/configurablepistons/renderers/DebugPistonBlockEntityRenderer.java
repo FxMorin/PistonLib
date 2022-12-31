@@ -18,9 +18,8 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public class DebugPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
@@ -62,7 +61,7 @@ public class DebugPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
         }
         matrix.pop();
         matrix.push();
-        this.manager.renderBlock(Blocks.LIME_STAINED_GLASS.getDefaultState(),pistonBE.getPos(),world,matrix, vertexConsumers.getBuffer(RenderLayer.getTranslucentMovingBlock()), false, new Random());
+        this.manager.renderBlock(Blocks.LIME_STAINED_GLASS.getDefaultState(),pistonBE.getPos(),world,matrix, vertexConsumers.getBuffer(RenderLayer.getTranslucentMovingBlock()), false, Random.create());
         matrix.pop();
         BlockModelRenderer.disableBrightnessCache();
     }
@@ -72,7 +71,7 @@ public class DebugPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> im
         RenderLayer renderLayer = RenderLayers.getMovingBlockLayer(state);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
         this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrix, vertexConsumer,
-                cull, new Random(), state.getRenderingSeed(pos), overlay);
+                cull, Random.create(), state.getRenderingSeed(pos), overlay);
     }
 
     @Override

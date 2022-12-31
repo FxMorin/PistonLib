@@ -12,11 +12,10 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-
-import java.util.Random;
 
 import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
@@ -38,14 +37,14 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
-            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
         super.onBlockAdded(state, world, pos, oldState, notify);
     }
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (!world.isClient())
-            world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 

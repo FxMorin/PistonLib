@@ -39,12 +39,12 @@ public class BaseSlipperyBlock extends Block {
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+        if (!world.isClient) world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!world.isClient()) world.createAndScheduleBlockTick(pos, this, SLIPPERY_DELAY);
+        if (!world.isClient()) world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
         return state;
     }
 

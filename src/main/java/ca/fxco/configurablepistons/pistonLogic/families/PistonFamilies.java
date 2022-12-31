@@ -1,23 +1,11 @@
 package ca.fxco.configurablepistons.pistonLogic.families;
 
-import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonHeadBlock;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.registry.Registries;
 
 import java.util.Collection;
 import java.util.Map;
-
-import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 
 public class PistonFamilies {
     private static final Map<String, PistonFamily> ID_TO_FAMILY = Maps.newHashMap();
@@ -60,7 +48,7 @@ public class PistonFamilies {
         PistonFamily blockFamily = PISTON_HEAD_TO_FAMILY.put(headBlock, family);
         if (blockFamily != null) {
             throw new IllegalStateException(
-                    "Duplicate piston family definition for: " + Registry.BLOCK.getId(headBlock)
+                    "Duplicate piston family definition for: " + Registries.BLOCK.getId(headBlock)
             );
         }
     }

@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.*;
@@ -285,7 +286,7 @@ public class BasicPistonBlockEntity extends PistonBlockEntity {
 
     @Override
     public void readNbt(NbtCompound nbt) {
-        this.pushedBlock = NbtHelper.toBlockState(nbt.getCompound("blockState"));
+        this.pushedBlock = NbtHelper.toBlockState(Registries.BLOCK.getReadOnlyWrapper(), nbt.getCompound("blockState"));
         this.facing = Direction.byId(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
         if (ConfigurablePistons.PISTON_PROGRESS_FIX) {
