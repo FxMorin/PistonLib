@@ -200,6 +200,18 @@ public class ModBlocks {
             PistonFamilies.SLIPPERY, new SlipperyPistonBlock(true)
     );
 
+    // Super Piston
+    // What's push limit? What is super sticky?
+    public static final BasicPistonHeadBlock SUPER_PISTON_HEAD = registerPiston(
+            PistonFamilies.SUPER, new BasicPistonHeadBlock()
+    );
+    public static final BasicPistonBlock SUPER_PISTON = registerPiston(
+            PistonFamilies.SUPER, new PushLimitPistonBlock(false, Integer.MAX_VALUE)
+    );
+    public static final BasicPistonBlock SUPER_STICKY_PISTON = registerPiston(
+            PistonFamilies.SUPER, new PushLimitPistonBlock(true, Integer.MAX_VALUE)
+    );
+
 
     public static <T extends Block> T registerBlock(String blockId, T block) {
         return registerBlock(blockId, block, true);

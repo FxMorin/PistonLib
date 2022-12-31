@@ -19,6 +19,7 @@ public class PistonFamilies {
     public static final PistonFamily FRONT_POWERED = new PistonFamily("front_powered", false);
     public static final PistonFamily TRANSLOCATION = new PistonFamily("translocation", false);
     public static final PistonFamily SLIPPERY = new PistonFamily("slippery", false);
+    public static final PistonFamily SUPER = new PistonFamily("super", false);
 
     public static Map<String, PistonFamily> getFamilyMap() {
         return ID_TO_FAMILY;
