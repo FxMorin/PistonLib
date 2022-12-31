@@ -19,7 +19,7 @@ import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.Translocat
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.VeryStickyPistonBlock;
-import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.SlipperyRedstoneBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.SlipperySlimeBlock;
 import ca.fxco.configurablepistons.datagen.DatagenInitializer;
@@ -32,9 +32,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.RedstoneBlock;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -65,7 +67,7 @@ public class ModBlocks {
             new SlipperyRedstoneBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK))
     );
     public static final Block SLIPPERY_STONE_BLOCK = registerBlock("slippery_stone_block",
-            new AbstractSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
+            new BaseSlipperyBlock(FabricBlockSettings.copyOf(Blocks.STONE))
     );
     public static final Block ALL_SIDED_OBSERVER = registerBlock("all_sided_observer",
             new AllSidedObserverBlock(FabricBlockSettings.copyOf(Blocks.OBSERVER))
@@ -104,10 +106,10 @@ public class ModBlocks {
             PistonFamilies.LONG, new LongPistonExtensionBlock()
     );
     public static final LongPistonBlock LONG_PISTON = registerPiston(
-            PistonFamilies.LONG, new LongPistonBlock(false), false
+            PistonFamilies.LONG, new LongPistonBlock(false), null
     );
     public static final BasicPistonBlock LONG_STICKY_PISTON = registerPiston(
-            PistonFamilies.LONG, new LongPistonBlock(true), false
+            PistonFamilies.LONG, new LongPistonBlock(true), null
     );
     public static final LongPistonArmBlock LONG_PISTON_ARM = registerPiston(
             PistonFamilies.LONG, new LongPistonArmBlock()
@@ -213,7 +215,7 @@ public class ModBlocks {
     );
 
 
-    public static <T extends Block> T registerBlock(String blockId, T block) {
+    static <T extends Block> T registerBlock(String blockId, T block) {
         return registerBlock(blockId, block, true);
     }
 
@@ -224,17 +226,17 @@ public class ModBlocks {
         return Registry.register(Registry.BLOCK, identifier, block);
     }
 
-    public static <T extends Block> T registerPiston(PistonFamily family, T block) {
-        return registerPiston(family, block, true);
+    static <T extends Block> T registerPiston(PistonFamily family, T block) {
+        return registerPiston(family, block, CUSTOM_CREATIVE_GROUP);
     }
 
-    public static <T extends Block> T registerPiston(PistonFamily family, T block, boolean registerItems) {
+    public static <T extends Block> T registerPiston(PistonFamily family, T block, @Nullable Item.Settings creativeGroup) {
         if (family == null)
             throw new IllegalStateException("Valid Piston Family must be used! - " + Registry.BLOCK.getId(block));
         String familyId = family.getId();
         if (family.mustSetupHead()) { // FIRST BLOCK INITIALIZED SHOULD ALWAYS BE THE HEAD!!!
             if (block instanceof BasicPistonHeadBlock headBlock) {
-                Registry.register(Registry.BLOCK, id(familyId+"_piston_head"), block);
+                Registry.register(Registry.BLOCK, id(familyId + "_piston_head"), block);
                 family.head(headBlock);
             } else {
                 throw new IllegalStateException(
@@ -250,19 +252,19 @@ public class ModBlocks {
                 pistonBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
                 Identifier identifier;
                 if (pistonBlock.sticky) {
-                    identifier = id(familyId+"_sticky_piston");
+                    identifier = id(familyId + "_sticky_piston");
                     Registry.register(Registry.BLOCK, identifier, pistonBlock);
                     family.sticky(pistonBlock);
                 } else {
-                    identifier = id(familyId+"_piston");
+                    identifier = id(familyId + "_piston");
                     Registry.register(Registry.BLOCK, identifier, pistonBlock);
                     family.piston(pistonBlock);
                 }
-                if (registerItems) {
-                    Registry.register(Registry.ITEM, identifier, new BlockItem(pistonBlock, CUSTOM_CREATIVE_GROUP));
+                if (creativeGroup != null) {
+                    Registry.register(Registry.ITEM, identifier, new BlockItem(pistonBlock, creativeGroup));
                 }
             } else if (block instanceof BasicPistonExtensionBlock basicPistonExtensionBlock) {
-                Registry.register(Registry.BLOCK, id(familyId+"_moving_piston"), basicPistonExtensionBlock);
+                Registry.register(Registry.BLOCK, id(familyId + "_moving_piston"), basicPistonExtensionBlock);
                 if (family.getPistonBlock() != null || family.getStickyPistonBlock() != null) {
                     throw new IllegalStateException(
                             "Extension blocks must always be initialized before base piston blocks! - Block: " +
@@ -271,7 +273,7 @@ public class ModBlocks {
                 }
                 family.extension(basicPistonExtensionBlock);
             } else if (block instanceof LongPistonArmBlock longPistonArmBlock) {
-                Registry.register(Registry.BLOCK, id(familyId+"_piston_arm"), longPistonArmBlock);
+                Registry.register(Registry.BLOCK, id(familyId + "_piston_arm"), longPistonArmBlock);
                 BasicPistonHeadBlock headBlock = family.getHeadBlock();
                 if (headBlock instanceof LongPistonHeadBlock longHeadBlock) {
                     longPistonArmBlock.setHeadBlock(longHeadBlock);
@@ -282,10 +284,12 @@ public class ModBlocks {
                 }
                 family.arm(longPistonArmBlock);
             } else {
-                throw new IllegalStateException(
-                        "This block cannot be initialized as part of a piston family! - Block: " +
-                                block + " - Family: " + family.getId()
-                );
+                if (!family.hasCustomBlockLogic(block)) {
+                    throw new IllegalStateException(
+                            "This block cannot be initialized as part of a piston family! - Block: " +
+                                    block + " - Family: " + family.getId()
+                    );
+                }
             }
         }
         return block;

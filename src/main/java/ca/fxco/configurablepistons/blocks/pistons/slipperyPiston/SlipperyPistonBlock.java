@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -13,8 +13,8 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonBlock extends BasicPistonBlock {
 
@@ -39,12 +39,12 @@ public class SlipperyPistonBlock extends BasicPistonBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (AbstractSlipperyBlock.calculateDistance(world, pos) >= MAX_DISTANCE)
+        if (BaseSlipperyBlock.calculateDistance(world, pos) >= MAX_DISTANCE)
             FallingBlockEntity.spawnFromBlock(world, pos, state.with(EXTENDED,false));
     }
 
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return AbstractSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
+        return BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
     }
 }

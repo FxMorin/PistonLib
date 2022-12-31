@@ -2,7 +2,7 @@ package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 
 import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.PistonType;
@@ -19,8 +19,8 @@ import net.minecraft.world.WorldView;
 import java.util.Random;
 
 import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
@@ -51,7 +51,7 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        int i = AbstractSlipperyBlock.calculateDistance(world, pos);
+        int i = BaseSlipperyBlock.calculateDistance(world, pos);
         BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
         if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canPlaceAt(state, world, pos)) {
             BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
@@ -65,7 +65,7 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return AbstractSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE ||
+        return BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE ||
                 super.canPlaceAt(state, world, pos);
     }
 

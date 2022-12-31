@@ -5,7 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 
-public class SlipperyRedstoneBlock extends AbstractSlipperyBlock {
+public class SlipperyRedstoneBlock extends BaseSlipperyBlock {
     public SlipperyRedstoneBlock(Settings settings) {
         super(settings);
     }

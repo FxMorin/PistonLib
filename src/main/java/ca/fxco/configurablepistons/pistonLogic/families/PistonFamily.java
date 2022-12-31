@@ -9,18 +9,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class PistonFamily {
     @Nullable
-    private BasicPistonHeadBlock headBlock;
+    protected BasicPistonHeadBlock headBlock;
     @Nullable
-    private BasicPistonBlock pistonBlock = null;
+    protected BasicPistonBlock pistonBlock = null;
     @Nullable
-    private BasicPistonBlock stickyPistonBlock = null;
+    protected BasicPistonBlock stickyPistonBlock = null;
     @Nullable
-    private BasicPistonExtensionBlock extensionBlock = null;
+    protected BasicPistonExtensionBlock extensionBlock = null;
     @Nullable
-    private LongPistonArmBlock armBlock = null;
+    protected LongPistonArmBlock armBlock = null;
 
-    private final boolean generateAutomatically;
-    private final boolean customTextures;
+    protected final boolean generateAutomatically;
+    protected final boolean customTextures;
     private final String id;
 
     PistonFamily(String id) {
@@ -64,6 +64,11 @@ public class PistonFamily {
 
     public boolean hasCustomTextures() {
         return this.customTextures;
+    }
+
+    // Use this method to implement custom block types in families
+    public boolean hasCustomBlockLogic(Block block) {
+        return false;
     }
 
     public String getId() {

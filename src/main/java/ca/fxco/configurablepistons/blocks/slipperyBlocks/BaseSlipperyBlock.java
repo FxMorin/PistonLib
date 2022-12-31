@@ -18,7 +18,7 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-public class AbstractSlipperyBlock extends Block {
+public class BaseSlipperyBlock extends Block {
 
     public static final int SLIPPERY_DELAY = 6;
     public static final int MAX_DISTANCE = 12;
@@ -29,7 +29,7 @@ public class AbstractSlipperyBlock extends Block {
      * A block so slippery that it just keeps falling apart unless it's connected to other blocks
      */
 
-    public AbstractSlipperyBlock(Settings settings) {
+    public BaseSlipperyBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(SLIPPERY_DISTANCE, 0));
     }

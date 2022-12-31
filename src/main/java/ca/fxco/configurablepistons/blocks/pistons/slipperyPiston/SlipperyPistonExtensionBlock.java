@@ -4,7 +4,7 @@ import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.MAX_DISTANCE;
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.SLIPPERY_DELAY;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
 
@@ -63,7 +63,7 @@ public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        int i = AbstractSlipperyBlock.calculateDistance(world, pos);
+        int i = BaseSlipperyBlock.calculateDistance(world, pos);
         BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
         if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
             FallingBlockEntity.spawnFromBlock(world, pos, blockState);
@@ -73,7 +73,7 @@ public class SlipperyPistonExtensionBlock extends BasicPistonExtensionBlock {
     }
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return AbstractSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
+        return BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
     }
 
     @Override

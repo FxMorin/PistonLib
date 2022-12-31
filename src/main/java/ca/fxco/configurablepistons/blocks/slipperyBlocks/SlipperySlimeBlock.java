@@ -21,7 +21,7 @@ import net.minecraft.world.WorldView;
 
 import java.util.Random;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.AbstractSlipperyBlock.*;
+import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.*;
 
 // Inherits from SlimeBlock instead of AbstractSlipperyBlock so that it won't stick to honey - TODO: Fix this
 public class SlipperySlimeBlock extends SlimeBlock {
