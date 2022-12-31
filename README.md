@@ -5,9 +5,7 @@
 - Slab merging
 - Dual-sided piston
 - Movable Block Entities
-- [Half Slime Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus) and Quarter Slime blocks
-- [Half Redstone Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
-- [Half Obsidian Blocks](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
+- Quarter Slime blocks
 - [Obsidian Slabs & Stairs](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
 
 ## Mods to make/update using the API
