@@ -1,0 +1,6 @@
+{
+  "parent": "configurable-pistons:block/template_moving_piston",
+  "textures": {
+    "particle": "configurable-pistons:block/strong_piston_side"
+  }
+}

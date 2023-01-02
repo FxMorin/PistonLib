@@ -7,6 +7,9 @@
   "authors": [
     "FX - PR0CESS"
   ],
+  "contributors": [
+    "Shnupbups"
+  ],
 
   "license": "MIT",
   "icon": "assets/configurable-pistons/icon.png",
@@ -20,7 +23,7 @@
       "ca.fxco.configurablepistons.ConfigurablePistonsClient"
     ],
     "fabric-datagen": [
-      "ca.fxco.configurablepistons.datagen.DatagenInitializer"
+      "ca.fxco.configurablepistons.datagen.ConfigurablePistonsDatagen"
     ]
   },
   "accessWidener" : "configurable-pistons.accesswidener",

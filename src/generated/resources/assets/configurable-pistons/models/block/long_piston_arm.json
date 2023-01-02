@@ -1,0 +1,6 @@
+{
+  "parent": "configurable-pistons:block/template_piston_arm",
+  "textures": {
+    "texture": "minecraft:block/piston_side"
+  }
+}

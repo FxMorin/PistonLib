@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/chain",
-  "textures": {
-    "layer0": "configurable-pistons:item/sticky_chain"
-  }
-}

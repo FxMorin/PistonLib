@@ -1,0 +1,16 @@
+{
+    "textures": {
+        "particle": "#texture"
+    },
+    "elements": [
+        {   "from": [ 6, 6, 4 ],
+            "to": [ 10, 10, 20 ],
+            "faces": {
+                "down": { "uv": [  0, 0, 16, 4 ], "texture": "#texture", "rotation": 90 },
+                "up":   { "uv": [  0, 0, 16, 4 ], "texture": "#texture", "rotation": 270 },
+                "west": { "uv": [ 16, 4,  0, 0 ], "texture": "#texture" },
+                "east": { "uv": [  0, 0, 16, 4 ], "texture": "#texture" }
+            }
+        }
+    ]
+}
