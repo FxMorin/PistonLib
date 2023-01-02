@@ -24,9 +24,6 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 			LOGGER.info("Generating block loot tables for piston family "+family.getId()+"...");
 			if(family.getPistonBlock() != null) addDrop(family.getPistonBlock());
 			if(family.getStickyPistonBlock() != null) addDrop(family.getStickyPistonBlock());
-			if(family.getHeadBlock() != null) excludeFromStrictValidation(family.getHeadBlock());
-			if(family.getArmBlock() != null) excludeFromStrictValidation(family.getArmBlock());
-			if(family.getExtensionBlock() != null) excludeFromStrictValidation(family.getExtensionBlock());
 		}
 
 		LOGGER.info("Finished generating block loot tables for pistons, generating for other blocks...");

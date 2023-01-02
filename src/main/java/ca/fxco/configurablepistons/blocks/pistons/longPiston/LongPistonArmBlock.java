@@ -71,7 +71,7 @@ public class LongPistonArmBlock extends FacingBlock {
     }
 
     public LongPistonArmBlock() {
-        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD).dropsNothing());
+        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
     }
 
     public LongPistonArmBlock(Settings settings) {
