@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "configurable-pistons:block/half_obsidian",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "configurable-pistons:block/half_obsidian",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "configurable-pistons:block/half_obsidian",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "configurable-pistons:block/half_obsidian",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "configurable-pistons:block/half_obsidian"
+    },
+    "facing=west": {
+      "model": "configurable-pistons:block/half_obsidian",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

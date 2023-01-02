@@ -67,7 +67,7 @@ public class BasicPistonHeadBlock extends FacingBlock {
     }
 
     public BasicPistonHeadBlock() {
-        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
+        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD).dropsNothing());
     }
 
     public BasicPistonHeadBlock(Settings settings) {

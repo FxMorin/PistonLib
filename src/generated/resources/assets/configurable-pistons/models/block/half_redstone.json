@@ -1,0 +1,7 @@
+{
+  "parent": "configurable-pistons:block/template_half_block",
+  "textures": {
+    "side": "minecraft:block/redstone_block",
+    "top": "minecraft:block/redstone_block"
+  }
+}

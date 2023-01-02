@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm",
+      "x": 90
+    },
+    "facing=down,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short",
+      "x": 90
+    },
+    "facing=east,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm",
+      "y": 90
+    },
+    "facing=east,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short",
+      "y": 90
+    },
+    "facing=north,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm"
+    },
+    "facing=north,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short"
+    },
+    "facing=south,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm",
+      "y": 180
+    },
+    "facing=south,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short",
+      "y": 180
+    },
+    "facing=up,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm",
+      "x": 270
+    },
+    "facing=up,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short",
+      "x": 270
+    },
+    "facing=west,short=false": {
+      "model": "configurable-pistons:block/long_piston_arm",
+      "y": 270
+    },
+    "facing=west,short=true": {
+      "model": "configurable-pistons:block/long_piston_arm_short",
+      "y": 270
+    }
+  }
+}
