@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "facing=down,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp",
+      "x": 180
+    },
+    "facing=down,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on",
+      "x": 180
+    },
+    "facing=east,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp",
+      "x": 90
+    },
+    "facing=north,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on",
+      "x": 90
+    },
+    "facing=south,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp"
+    },
+    "facing=up,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on"
+    },
+    "facing=west,lit=false": {
+      "model": "configurable-pistons:block/half_redstone_lamp",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "configurable-pistons:block/half_redstone_lamp_on",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,7 +1,12 @@
 package ca.fxco.configurablepistons.helpers;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 import static net.minecraft.util.math.Direction.*;
 import static net.minecraft.util.math.Direction.WEST;
@@ -55,5 +60,20 @@ public class Utils {
                 case NORTH -> WEST;
             };
         };
+    }
+
+    public static boolean isReceivingRedstonePowerExcludingDirection(World world, BlockPos pos, Direction direction) {
+        if (direction != Direction.DOWN && world.getEmittedRedstonePower(pos.down(), Direction.DOWN) > 0) {
+            return true;
+        } else if (direction != Direction.UP && world.getEmittedRedstonePower(pos.up(), Direction.UP) > 0) {
+            return true;
+        } else if (direction != Direction.NORTH && world.getEmittedRedstonePower(pos.north(), Direction.NORTH) > 0) {
+            return true;
+        } else if (direction != Direction.SOUTH && world.getEmittedRedstonePower(pos.south(), Direction.SOUTH) > 0) {
+            return true;
+        } else if (direction != Direction.WEST && world.getEmittedRedstonePower(pos.west(), Direction.WEST) > 0) {
+            return true;
+        }
+        return direction != Direction.EAST && world.getEmittedRedstonePower(pos.east(), Direction.EAST) > 0;
     }
 }

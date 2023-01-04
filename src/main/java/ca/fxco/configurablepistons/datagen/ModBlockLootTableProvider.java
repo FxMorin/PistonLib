@@ -32,6 +32,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 		addDrop(ModBlocks.HALF_HONEY_BLOCK);
 		addDrop(ModBlocks.HALF_REDSTONE_BLOCK);
 		addDrop(ModBlocks.HALF_OBSIDIAN_BLOCK);
+		addDrop(ModBlocks.HALF_REDSTONE_LAMP_BLOCK);
 
 		addDrop(ModBlocks.DRAG_BLOCK);
 		addDrop(ModBlocks.STICKYLESS_BLOCK);

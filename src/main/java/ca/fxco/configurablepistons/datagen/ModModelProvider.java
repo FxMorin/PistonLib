@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.ConfigurablePistons;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -49,6 +50,13 @@ public class ModModelProvider extends FabricModelProvider {
 		registerHalfBlockWithCustomModel(generator, ModBlocks.HALF_HONEY_BLOCK);
 		registerHalfBlockWithCustomModel(generator, ModBlocks.HALF_SLIME_BLOCK);
 
+		registerHalfBlockWithCustomStates(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK,
+				createLitFacingBlockState(
+						ModelIds.getBlockModelId(ModBlocks.HALF_REDSTONE_LAMP_BLOCK),
+						ModelIds.getBlockSubModelId(ModBlocks.HALF_REDSTONE_LAMP_BLOCK, "_on")));
+		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelIds.getBlockModelId(Blocks.REDSTONE_LAMP));
+		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelIds.getBlockSubModelId(Blocks.REDSTONE_LAMP, "_on"), "_on");
+
 		generator.registerSimpleCubeAll(ModBlocks.DRAG_BLOCK);
 		generator.registerSimpleCubeAll(ModBlocks.STICKYLESS_BLOCK);
 		generator.registerSimpleCubeAll(ModBlocks.GLUE_BLOCK);
@@ -89,8 +97,27 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateItemModels(ItemModelGenerator generator) {
 	}
 
+	public static void registerHalfBlockTextureMap(BlockStateModelGenerator generator, Block halfBlock, Identifier baseTextureId) {
+		registerHalfBlockTextureMap(generator, halfBlock, baseTextureId, null);
+	}
+
+	public static void registerHalfBlockTextureMap(BlockStateModelGenerator generator, Block halfBlock, Identifier baseTextureId, @Nullable String suffix) {
+		TextureMap halfBlockTextureMap = new TextureMap().put(TextureKey.SIDE, baseTextureId).put(TextureKey.TOP, baseTextureId);
+		if (suffix == null) {
+			TEMPLATE_HALF_BLOCK.upload(halfBlock, halfBlockTextureMap, generator.modelCollector);
+		} else {
+			TEMPLATE_HALF_BLOCK.upload(halfBlock, suffix, halfBlockTextureMap, generator.modelCollector);
+		}
+	}
+
 	public static void registerHalfBlockWithCustomModel(BlockStateModelGenerator generator, Block halfBlock) {
 		registerHalfBlock(generator, halfBlock, null);
+	}
+
+	public static void registerHalfBlockWithCustomStates(BlockStateModelGenerator generator, Block halfBlock, BlockStateVariantMap customStates) {
+		generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(halfBlock, BlockStateVariant.create()
+				.put(VariantSettings.MODEL, ModelIds.getBlockModelId(halfBlock))).coordinate(customStates)
+		);
 	}
 
 	public static void registerHalfBlock(BlockStateModelGenerator generator, Block halfBlock, @Nullable Block base) {
@@ -99,11 +126,7 @@ public class ModModelProvider extends FabricModelProvider {
 		));
 
 		if (base != null) {
-			Identifier baseTextureId = TextureMap.getId(base);
-
-			TextureMap halfBlockTextureMap = new TextureMap().put(TextureKey.SIDE, baseTextureId).put(TextureKey.TOP, baseTextureId);
-
-			TEMPLATE_HALF_BLOCK.upload(halfBlock, halfBlockTextureMap, generator.modelCollector);
+			registerHalfBlockTextureMap(generator, halfBlock, TextureMap.getId(base));
 		}
 	}
 
@@ -178,5 +201,62 @@ public class ModModelProvider extends FabricModelProvider {
 
 			generator.registerSingleton(movingPiston, movingPistonTextureMap, TEMPLATE_MOVING_PISTON);
 		}
+	}
+
+	public static BlockStateVariantMap createLitFacingBlockState(Identifier offModelId, Identifier onModelId) {
+		return BlockStateVariantMap
+				.create(Properties.FACING, Properties.LIT)
+				.register(Direction.NORTH, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90))
+				.register(Direction.SOUTH, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R180))
+				.register(Direction.EAST, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R90))
+				.register(Direction.WEST, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R270))
+				.register(Direction.DOWN, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R180))
+				.register(Direction.UP, false,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, offModelId))
+				.register(Direction.NORTH, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90))
+				.register(Direction.SOUTH, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R180))
+				.register(Direction.EAST, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R90))
+				.register(Direction.WEST, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R90)
+								.put(VariantSettings.Y, VariantSettings.Rotation.R270))
+				.register(Direction.DOWN, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId)
+								.put(VariantSettings.X, VariantSettings.Rotation.R180))
+				.register(Direction.UP, true,
+						BlockStateVariant.create()
+								.put(VariantSettings.MODEL, onModelId));
 	}
 }

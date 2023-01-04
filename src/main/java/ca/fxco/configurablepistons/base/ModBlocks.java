@@ -1,10 +1,7 @@
 package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.blocks.*;
-import ca.fxco.configurablepistons.blocks.halfBlocks.HalfHoneyBlock;
-import ca.fxco.configurablepistons.blocks.halfBlocks.HalfObsidianBlock;
-import ca.fxco.configurablepistons.blocks.halfBlocks.HalfRedstoneBlock;
-import ca.fxco.configurablepistons.blocks.halfBlocks.HalfSlimeBlock;
+import ca.fxco.configurablepistons.blocks.halfBlocks.*;
 import ca.fxco.configurablepistons.blocks.pistons.FrontPoweredPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.PushLimitPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
@@ -55,6 +52,7 @@ public class ModBlocks {
     public static final Block HALF_HONEY_BLOCK = registerBlock("half_honey", HalfHoneyBlock::new, Blocks.HONEY_BLOCK);
     public static final Block HALF_REDSTONE_BLOCK = registerBlock("half_redstone", HalfRedstoneBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block HALF_OBSIDIAN_BLOCK = registerBlock("half_obsidian", HalfObsidianBlock::new, Blocks.OBSIDIAN);
+    public static final Block HALF_REDSTONE_LAMP_BLOCK = registerBlock("half_redstone_lamp", HalfRedstoneLampBlock::new, Blocks.REDSTONE_LAMP);
 
     // Create Custom Blocks
     public static final Block DRAG_BLOCK = registerBlock("drag_block", new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f)));
