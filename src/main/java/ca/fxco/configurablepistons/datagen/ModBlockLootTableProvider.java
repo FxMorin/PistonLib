@@ -42,6 +42,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 		addDrop(ModBlocks.GLUE_BLOCK);
 		addDrop(ModBlocks.POWERED_STICKY_BLOCK);
 		addDrop(ModBlocks.STICKY_CHAIN_BLOCK);
+		addDrop(ModBlocks.AXIS_LOCKED_BLOCK);
 
 		addDrop(ModBlocks.SLIPPERY_SLIME_BLOCK);
 		addDrop(ModBlocks.SLIPPERY_REDSTONE_BLOCK);

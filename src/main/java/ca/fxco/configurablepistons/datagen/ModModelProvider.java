@@ -57,6 +57,7 @@ public class ModModelProvider extends FabricModelProvider {
 		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelIds.getBlockModelId(Blocks.REDSTONE_LAMP));
 		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelIds.getBlockSubModelId(Blocks.REDSTONE_LAMP, "_on"), "_on");
 
+		generator.registerAxisRotated(ModBlocks.AXIS_LOCKED_BLOCK, TexturedModel.END_FOR_TOP_CUBE_COLUMN, TexturedModel.END_FOR_TOP_CUBE_COLUMN_HORIZONTAL);
 		generator.registerSimpleCubeAll(ModBlocks.DRAG_BLOCK);
 		generator.registerSimpleCubeAll(ModBlocks.STICKYLESS_BLOCK);
 		generator.registerSimpleCubeAll(ModBlocks.GLUE_BLOCK);

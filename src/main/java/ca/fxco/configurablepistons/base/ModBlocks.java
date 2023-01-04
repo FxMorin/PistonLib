@@ -63,6 +63,7 @@ public class ModBlocks {
     public static final Block GLUE_BLOCK = registerBlock("glue_block", GlueBlock::new, Blocks.END_STONE);
     public static final Block POWERED_STICKY_BLOCK = registerBlock("powered_sticky_block", PoweredStickyBlock::new, Blocks.OAK_PLANKS);
     public static final Block STICKY_CHAIN_BLOCK = registerBlock("sticky_chain", StickyChainBlock::new, Blocks.CHAIN);
+    public static final Block AXIS_LOCKED_BLOCK = registerBlock("axis_locked_block", AxisLockedBlock::new, Blocks.DEEPSLATE_BRICKS);
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
