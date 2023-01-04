@@ -1,19 +1,19 @@
-package ca.fxco.configurablepistons.mixin;
+package ca.fxco.configurablepistons.mixin.movingPiston;
 
 import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.BlockCollisionSpliterator;
+import net.minecraft.entity.mob.ShulkerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(BlockCollisionSpliterator.class)
-public class BlockCollisionSpliterator_movingPistonMixin {
+@Mixin(ShulkerEntity.class)
+public class ShulkerEntity_movingPistonMixin {
 
 
     @Redirect(
-            method = "computeNext()Lnet/minecraft/util/shape/VoxelShape;",
+            method = "isInvalidPosition",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"

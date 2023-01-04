@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.mixin;
+package ca.fxco.configurablepistons.mixin.movingPiston;
 
 import ca.fxco.configurablepistons.base.ModTags;
 import net.minecraft.block.Block;

@@ -1,15 +1,15 @@
-package ca.fxco.configurablepistons.mixin;
+package ca.fxco.configurablepistons.mixin.stickyGroup;
 
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.SlimeBlock;
+import net.minecraft.block.HoneyBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(SlimeBlock.class)
-public class SlimeBlock_honeyMixin implements ConfigurablePistonStickiness {
+@Mixin(HoneyBlock.class)
+public class HoneyBlock_slimeMixin implements ConfigurablePistonStickiness {
 
     @Override
     public StickyGroup getStickyGroup() {
-        return StickyGroup.SLIME;
+        return StickyGroup.HONEY;
     }
 }

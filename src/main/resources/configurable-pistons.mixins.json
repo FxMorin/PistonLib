@@ -6,14 +6,14 @@
   "mixins": [
     "AbstractBlockState_pistonBehaviorMixin",
     "Block_pistonBehaviorMixin",
-    "BlockCollisionSpliterator_movingPistonMixin",
-    "Factory_movingPistonMixin",
-    "FallingBlockEntity_movingPistonsMixin",
-    "HoneyBlock_slimeMixin",
+    "movingPiston.BlockCollisionSpliterator_movingPistonMixin",
+    "movingPiston.Factory_movingPistonMixin",
+    "movingPiston.FallingBlockEntity_movingPistonsMixin",
+    "stickyGroup.HoneyBlock_slimeMixin",
     "PistonBlock_tagsMixin",
     "PistonHandler_isMovableMixin",
-    "ShulkerEntity_movingPistonMixin",
-    "SlimeBlock_honeyMixin",
+    "movingPiston.ShulkerEntity_movingPistonMixin",
+    "stickyGroup.SlimeBlock_honeyMixin",
     "accessors.BlockEntityAccessor"
   ],
   "injectors": {
