@@ -4,6 +4,7 @@ import ca.fxco.configurablepistons.blocks.*;
 import ca.fxco.configurablepistons.blocks.halfBlocks.*;
 import ca.fxco.configurablepistons.blocks.pistons.FrontPoweredPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.PushLimitPistonBlock;
+import ca.fxco.configurablepistons.blocks.pistons.StalePistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -88,6 +89,12 @@ public class ModBlocks {
     public static final LongPistonBlock LONG_PISTON = registerPiston(LONG, new LongPistonBlock(false), null);
     public static final BasicPistonBlock LONG_STICKY_PISTON = registerPiston(LONG, new LongPistonBlock(true), null);
     public static final LongPistonArmBlock LONG_PISTON_ARM = registerPiston(LONG, new LongPistonArmBlock());
+
+    // Stale Piston
+    // A vanilla piston except it cannot be quasi-powered
+    public static final BasicPistonHeadBlock STALE_PISTON_HEAD = registerPiston(STALE, new BasicPistonHeadBlock());
+    public static final BasicPistonBlock STALE_PISTON = registerPiston(STALE, new StalePistonBlock(false));
+    public static final BasicPistonBlock STALE_STICKY_PISTON = registerPiston(STALE, new StalePistonBlock(true));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
