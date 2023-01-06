@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.base.ModTags;
+import ca.fxco.configurablepistons.helpers.Utils;
 import ca.fxco.configurablepistons.pistonLogic.MotionType;
 import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
 import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
@@ -175,10 +176,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        for(Direction dir : Direction.values())
-            if (dir != facing && level.hasSignal(pos.relative(dir), dir))
-                return true;
-        return level.hasNeighborSignal(pos.above());
+        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) || level.hasNeighborSignal(pos.above());
     }
 
     @Override

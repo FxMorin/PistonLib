@@ -11,23 +11,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SlimeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static ca.fxco.configurablepistons.helpers.HalfBlockUtils.SIDES_LIST;
 
-//TODO: Remove bouncing if not centered on the slime part. Remove bouncing when jumping on the back
-public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStickiness {
+public class HalfSlimeBlock extends Block implements ConfigurablePistonStickiness {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -37,7 +37,7 @@ public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStic
 
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (state.getValue(FACING) != Direction.UP || entity.isSuppressingBounce()) { //TODO: Add half block effects when facing sideways
+        if (entity.isSuppressingBounce() || HalfBlockUtils.isOnFacingSide(entity.position(), pos, state)) {
             super.fallOn(level, state, pos, entity, fallDistance);
         } else {
             entity.causeFallDamage(fallDistance, 0.0F, DamageSource.FALL);
@@ -45,23 +45,28 @@ public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStic
     }
 
     @Override
-    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) { //TODO: Add half block effects when facing sideways
-        if (entity.isSuppressingBounce()) {
+    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
+        if (entity.isSuppressingBounce() || HalfBlockUtils.isOnFacingSide(level, entity.position(), entity.getOnPos())) {
             super.updateEntityAfterFallOn(level, entity);
         } else {
-            this.bounceUp(entity);
+            this.bounce(entity);
         }
+    }
 
+    protected void bounce(Entity entity) {
+        Vec3 velocity = entity.getDeltaMovement();
+        if (velocity.y < 0.0) {
+            double bounceStrength = entity instanceof LivingEntity ? 1.0 : 0.8;
+            entity.setDeltaMovement(velocity.x, -velocity.y * bounceStrength, velocity.z);
+        }
     }
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (state.getValue(FACING) == Direction.UP) { //TODO: Add half block effects when facing sideways
-            double d = Math.abs(entity.getDeltaMovement().y);
-            if (d < 0.1 && !entity.isSteppingCarefully()) {
-                double e = 0.4 + d * 0.2;
-                entity.setDeltaMovement(entity.getDeltaMovement().multiply(e, 1.0, e));
-            }
+        double velocityY = Math.abs(entity.getDeltaMovement().y);
+        if (velocityY < 0.1 && !(entity.isSteppingCarefully() || HalfBlockUtils.isOnFacingSide(entity.position(), pos, state))) {
+            double bounceStrength = 0.4 + velocityY * 0.2;
+            entity.setDeltaMovement(entity.getDeltaMovement().multiply(bounceStrength, 1.0, bounceStrength));
         }
         super.stepOn(level, pos, state, entity);
     }

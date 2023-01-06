@@ -6,8 +6,13 @@ import java.util.Map;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class HalfBlockUtils {
@@ -48,6 +53,21 @@ public class HalfBlockUtils {
             case SOUTH -> SOUTH_SHAPE;
             case WEST -> WEST_SHAPE;
             case EAST -> EAST_SHAPE;
+        };
+    }
+
+    public static boolean isOnFacingSide(BlockGetter level, Vec3 entityPos, BlockPos blockPos) {
+        return isOnFacingSide(entityPos, blockPos, level.getBlockState(blockPos));
+    }
+
+    public static boolean isOnFacingSide(Vec3 entityPos, BlockPos blockPos, BlockState state) {
+        return switch(state.get(BlockStateProperties.FACING)) {
+            case DOWN  -> true;
+            case UP    -> false;
+            case NORTH -> entityPos.z() - blockPos.getCenter().z() >= 0;
+            case SOUTH -> entityPos.z() - blockPos.getCenter().z() <= 0;
+            case WEST  -> entityPos.x() - blockPos.getCenter().x() >= 0;
+            case EAST  -> entityPos.x() - blockPos.getCenter().x() <= 0;
         };
     }
 }

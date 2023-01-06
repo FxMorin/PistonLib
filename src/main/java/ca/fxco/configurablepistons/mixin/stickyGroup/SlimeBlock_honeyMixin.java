@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.mixin;
+package ca.fxco.configurablepistons.mixin.stickyGroup;
 
 import org.spongepowered.asm.mixin.Mixin;
 

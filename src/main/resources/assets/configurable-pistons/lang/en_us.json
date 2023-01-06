@@ -26,5 +26,10 @@
   "block.configurable-pistons.slippery_sticky_piston": "Slippery Sticky Piston",
   "block.configurable-pistons.slippery_slime_block": "Slippery Slime Block",
   "block.configurable-pistons.slippery_redstone_block": "Slippery Redstone Block",
-  "block.configurable-pistons.slippery_stone_block": "Slippery Stone Block"
+  "block.configurable-pistons.slippery_stone_block": "Slippery Stone Block",
+  "block.configurable-pistons.half_honey": "Half Honey",
+  "block.configurable-pistons.half_slime": "Half Slime",
+  "block.configurable-pistons.half_obsidian": "Half Obsidian",
+  "block.configurable-pistons.half_redstone": "Half Redstone",
+  "block.configurable-pistons.half_redstone_lamp": "Half Redstone Lamp"
 }

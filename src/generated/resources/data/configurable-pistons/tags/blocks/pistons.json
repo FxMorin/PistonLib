@@ -7,6 +7,8 @@
     "configurable-pistons:super_sticky_piston",
     "configurable-pistons:strong_piston",
     "configurable-pistons:strong_sticky_piston",
+    "configurable-pistons:stale_piston",
+    "configurable-pistons:stale_sticky_piston",
     "configurable-pistons:fast_piston",
     "configurable-pistons:fast_sticky_piston",
     "configurable-pistons:translocation_piston",

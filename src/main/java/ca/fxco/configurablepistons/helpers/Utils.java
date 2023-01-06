@@ -1,6 +1,8 @@
 package ca.fxco.configurablepistons.helpers;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import static net.minecraft.core.Direction.*;
 
@@ -39,5 +41,15 @@ public class Utils {
                 case NORTH -> WEST;
             };
         };
+    }
+
+    public static boolean hasNeighborSignalExceptFromFacing(Level level, BlockPos pos, Direction except) {
+        for (Direction dir : Direction.values()) {
+            if (dir != except && level.hasSignal(pos.relative(dir), dir)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

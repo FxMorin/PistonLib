@@ -11,6 +11,7 @@ import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.PistonType;
@@ -43,6 +44,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 		dropSelf(ModBlocks.HALF_HONEY_BLOCK);
 		dropSelf(ModBlocks.HALF_REDSTONE_BLOCK);
 		dropSelf(ModBlocks.HALF_OBSIDIAN_BLOCK);
+		dropSelf(ModBlocks.HALF_REDSTONE_LAMP_BLOCK);
 
 		dropSelf(ModBlocks.DRAG_BLOCK);
 		dropSelf(ModBlocks.STICKYLESS_BLOCK);
@@ -52,6 +54,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 		dropSelf(ModBlocks.GLUE_BLOCK);
 		dropSelf(ModBlocks.POWERED_STICKY_BLOCK);
 		dropSelf(ModBlocks.STICKY_CHAIN_BLOCK);
+		dropSelf(ModBlocks.AXIS_LOCKED_BLOCK);
 
 		dropSelf(ModBlocks.SLIPPERY_SLIME_BLOCK);
 		dropSelf(ModBlocks.SLIPPERY_REDSTONE_BLOCK);
