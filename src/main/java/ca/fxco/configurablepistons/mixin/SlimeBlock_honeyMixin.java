@@ -1,9 +1,11 @@
 package ca.fxco.configurablepistons.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.SlimeBlock;
-import org.spongepowered.asm.mixin.Mixin;
+
+import net.minecraft.world.level.block.SlimeBlock;
 
 @Mixin(SlimeBlock.class)
 public class SlimeBlock_honeyMixin implements ConfigurablePistonStickiness {

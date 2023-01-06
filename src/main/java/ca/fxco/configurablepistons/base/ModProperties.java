@@ -1,9 +1,11 @@
 package ca.fxco.configurablepistons.base;
 
-import net.minecraft.state.property.IntProperty;
+import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 
-import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class ModProperties {
-    public static final IntProperty SLIPPERY_DISTANCE = IntProperty.of("distance", 0, MAX_DISTANCE);
+
+    public static final IntegerProperty SLIPPERY_DISTANCE = IntegerProperty.create("distance", 0, BaseSlipperyBlock.MAX_DISTANCE);
+
 }

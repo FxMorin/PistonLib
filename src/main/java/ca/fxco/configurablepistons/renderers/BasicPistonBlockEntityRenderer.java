@@ -1,77 +1,142 @@
 package ca.fxco.configurablepistons.renderers;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.PistonType;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.BlockModelRenderer;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
-public class BasicPistonBlockEntityRenderer<T extends BasicPistonBlockEntity> implements BlockEntityRenderer<T> {
-    private final BlockRenderManager manager;
+public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
 
-    public BasicPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.manager = ctx.getRenderManager();
+    protected final BlockRenderDispatcher blockRenderer;
+
+    public BasicPistonBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+        this.blockRenderer = ctx.getBlockRenderDispatcher();
     }
 
     @Override
-    public void render(T pistonBE, float f, MatrixStack matrix, VertexConsumerProvider vertexConsumers, int i, int j) {
-        World world = pistonBE.getWorld();
-        if (world == null) return;
-        BlockPos blockPos = pistonBE.getPos().offset(pistonBE.getMovementDirection().getOpposite());
-        BlockState blockState = pistonBE.getPushedBlock();
-        if (blockState.isAir()) return;
-        BlockModelRenderer.enableBrightnessCache();
-        matrix.push();
-        matrix.translate(pistonBE.getRenderOffsetX(f), pistonBE.getRenderOffsetY(f), pistonBE.getRenderOffsetZ(f));
-        if (blockState.getBlock() instanceof BasicPistonHeadBlock && pistonBE.getProgress(f) <= 4.0f) {
-            blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) <= 0.5f);
-            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
-        } else if (pistonBE.isSource() && !pistonBE.isExtending()) {
-            if (blockState.getBlock() instanceof BasicPistonBlock bpb) {
-                PistonType pistonType = bpb.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-                BlockState blockState2 = bpb.getHeadBlock().getDefaultState()
-                        .with(BasicPistonHeadBlock.TYPE, pistonType)
-                        .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
-                blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) >= 0.5f);
-                this.renderModel(blockPos, blockState2, matrix, vertexConsumers, world, false, j);
-                BlockPos blockPos2 = blockPos.offset(pistonBE.getMovementDirection());
-                matrix.pop();
-                matrix.push();
-                blockState = blockState.with(BasicPistonBlock.EXTENDED, true);
-                this.renderModel(blockPos2, blockState, matrix, vertexConsumers, world, true, j);
+    public void render(T mbe, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
+        Level level = mbe.getLevel();
+
+        if (level == null) {
+            return;
+        }
+
+        BlockState state = mbe.getMovedState();
+
+        if (state.isAir()) {
+            return;
+        }
+
+        ModelBlockRenderer.enableCaching();
+        stack.pushPose();
+        stack.translate(mbe.getXOff(partialTick), mbe.getYOff(partialTick), mbe.getZOff(partialTick));
+
+        Direction moveDir = mbe.getMovementDirection();
+        BlockPos toPos = mbe.getBlockPos();
+        BlockPos fromPos = toPos.relative(moveDir.getOpposite());
+
+        if (mbe.isSourcePiston()) {
+            renderMovingSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+        } else {
+            renderMovingBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+        }
+
+        stack.popPose();
+        stack.pushPose();
+
+        if (mbe.isSourcePiston()) {
+            renderStaticSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+        } else {
+            renderStaticBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+        }
+
+        stack.popPose();
+        ModelBlockRenderer.clearCache();
+    }
+
+    protected void renderMovingSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
+                                      MultiBufferSource bufferSource, int light, int overlay) {
+        BlockState state = mbe.getMovedState();
+
+        if (mbe.isExtending()) {
+            if (state.getBlock() instanceof BasicPistonHeadBlock) {
+                renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
+                    bufferSource, level, false, overlay);
             }
         } else {
-            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
+            if (state.getBlock() instanceof BasicPistonBaseBlock base) {
+                PistonType type = base.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
+                Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
+
+                BlockState headState = base.getHeadBlock().defaultBlockState()
+                    .setValue(BasicPistonHeadBlock.TYPE, type)
+                    .setValue(BasicPistonHeadBlock.FACING, facing)
+                    .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
+
+                renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
+            }
         }
-        matrix.pop();
-        BlockModelRenderer.disableBrightnessCache();
     }
 
-    protected void renderModel(BlockPos pos, BlockState state, MatrixStack matrix,
-                             VertexConsumerProvider vertexConsumers, World world, boolean cull, int overlay) {
-        RenderLayer renderLayer = RenderLayers.getMovingBlockLayer(state);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrix, vertexConsumer,
-                cull, Random.createLocal(), state.getRenderingSeed(pos), overlay);
+    protected void renderStaticSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
+                                      MultiBufferSource bufferSource, int light, int overlay) {
+        if (!mbe.isExtending()) {
+            BlockState state = mbe.getMovedState();
+
+            if (state.getBlock() instanceof BasicPistonBaseBlock) {
+                renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, true, overlay);
+            }
+        }
+    }
+
+    protected void renderMovingBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
+                                     MultiBufferSource bufferSource, int light, int overlay) {
+        BlockState state = mbe.getMovedState();
+
+        if (state.getBlock() instanceof BasicPistonHeadBlock) {
+            renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource,
+                level, false, overlay);
+        } else {
+            renderBlock(fromPos, state, stack, bufferSource, level, false, overlay);
+        }
+    }
+
+    protected void renderStaticBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
+                                     MultiBufferSource bufferSource, int light, int overlay) {
+
+    }
+
+    protected void renderBlock(BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource, Level level,
+                               boolean cull, int overlay) {
+        RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        VertexConsumer consumer = bufferSource.getBuffer(type);
+
+        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, stack,
+            consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
 
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 68;
     }
 }

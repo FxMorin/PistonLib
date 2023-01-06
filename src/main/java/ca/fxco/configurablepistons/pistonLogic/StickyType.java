@@ -1,8 +1,9 @@
 package ca.fxco.configurablepistons.pistonLogic;
 
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.Direction;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 public enum StickyType {
 

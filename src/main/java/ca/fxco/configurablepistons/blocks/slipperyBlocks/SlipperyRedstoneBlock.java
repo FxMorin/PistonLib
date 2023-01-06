@@ -1,24 +1,29 @@
 package ca.fxco.configurablepistons.blocks.slipperyBlocks;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Redstone;
 
 public class SlipperyRedstoneBlock extends BaseSlipperyBlock {
-    public SlipperyRedstoneBlock(Settings settings) {
+
+    public SlipperyRedstoneBlock(Properties settings) {
         super(settings);
     }
 
-    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
-        return stateFrom.isOf(this) || super.isSideInvisible(state, stateFrom, direction);
+    @Override
+    public boolean skipRendering(BlockState state, BlockState neighborState, Direction dir) {
+        return neighborState.is(this) || super.skipRendering(state, neighborState, dir);
     }
 
-    public boolean emitsRedstonePower(BlockState state) {
+    @Override
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return 15;
+    @Override
+    public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
+        return Redstone.SIGNAL_MAX;
     }
 }

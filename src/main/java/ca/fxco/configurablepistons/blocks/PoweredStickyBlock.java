@@ -1,67 +1,67 @@
 package ca.fxco.configurablepistons.blocks;
 
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FacingBlock;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-
 import java.util.Map;
 
-public class PoweredStickyBlock extends FacingBlock implements ConfigurablePistonStickiness {
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 
-    public static final BooleanProperty POWERED = Properties.POWERED;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-    public PoweredStickyBlock(Settings settings) {
-        super(settings);
+public class PoweredStickyBlock extends DirectionalBlock implements ConfigurablePistonStickiness {
+
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+
+    public PoweredStickyBlock(Properties properties) {
+        super(properties);
     }
 
-    public void updateState(BlockState state, World world, BlockPos pos, boolean force) {
-        boolean isPowered = world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(pos.up());
-        boolean powered = state.get(POWERED);
-        if (isPowered && !powered) {
-            world.setBlockState(pos, state.with(POWERED, true), Block.NOTIFY_LISTENERS);
-        } else if (!isPowered && powered) {
-            world.setBlockState(pos, state.with(POWERED, false), Block.NOTIFY_LISTENERS);
+    public void updatePowered(BlockState state, Level level, BlockPos pos, boolean force) {
+    	boolean isPowered = state.getValue(POWERED);
+        boolean shouldBePowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
+
+        if (isPowered != shouldBePowered) {
+            level.setBlock(pos, state.setValue(POWERED, shouldBePowered), UPDATE_ALL);
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        if (!world.isClient) {
-            updateState(state, world, pos, false);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (!level.isClientSide()) {
+            updatePowered(state, level, pos, false);
         }
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWERED);
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!world.isClient() && !state.isOf(newState.getBlock()) && moved && state.get(POWERED)) {
-            updateState(state, world, pos, true);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!level.isClientSide() && !newState.is(this) && movedByPiston && state.getValue(POWERED)) {
+            updatePowered(state, level, pos, true);
         }
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient() && !state.isOf(oldState.getBlock()) && state.get(POWERED)) {
-            updateState(state, world, pos, true);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (!level.isClientSide() && !oldState.is(this) && state.getValue(POWERED)) {
+            updatePowered(state, level, pos, true);
         }
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection());
     }
 
     @Override
@@ -71,16 +71,16 @@ public class PoweredStickyBlock extends FacingBlock implements ConfigurablePisto
 
     @Override
     public boolean isSticky(BlockState state) {
-        return state.get(POWERED);
+        return state.getValue(POWERED);
     }
 
     @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(state.get(FACING), StickyType.STICKY); // Sticky Front
+        return Map.of(state.getValue(FACING), StickyType.STICKY); // Sticky Front
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
-        return direction == state.get(FACING) ? StickyType.STICKY : StickyType.DEFAULT;
+    public StickyType sideStickiness(BlockState state, Direction dir) {
+        return dir == state.getValue(FACING) ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }

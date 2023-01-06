@@ -2,11 +2,13 @@ package ca.fxco.configurablepistons.blocks;
 
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.RedstoneBlock;
 
-public class SlimyRedstoneBlock extends RedstoneBlock implements ConfigurablePistonStickiness {
-    public SlimyRedstoneBlock(Settings settings) {
-        super(settings);
+import net.minecraft.world.level.block.PoweredBlock;
+
+public class SlimyPoweredBlock extends PoweredBlock implements ConfigurablePistonStickiness {
+
+	public SlimyPoweredBlock(Properties properties) {
+        super(properties);
     }
 
     @Override

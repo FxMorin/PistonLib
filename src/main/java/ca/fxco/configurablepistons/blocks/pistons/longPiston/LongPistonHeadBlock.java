@@ -1,7 +1,8 @@
 package ca.fxco.configurablepistons.blocks.pistons.longPiston;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import net.minecraft.block.BlockState;
+
+import net.minecraft.world.level.block.state.BlockState;
 
 public class LongPistonHeadBlock extends BasicPistonHeadBlock {
 
@@ -9,14 +10,14 @@ public class LongPistonHeadBlock extends BasicPistonHeadBlock {
         super();
     }
 
-    public LongPistonHeadBlock(Settings settings) {
+    public LongPistonHeadBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public boolean isAttached(BlockState headState, BlockState backState) {
-        return backState.getBlock() instanceof LongPistonArmBlock ?
-                headState.get(TYPE) == backState.get(TYPE) && backState.get(FACING) == headState.get(FACING) :
-                super.isAttached(headState, backState);
+    public boolean isFittingBase(BlockState headState, BlockState behindState) {
+        return behindState.getBlock() instanceof LongPistonArmBlock ?
+                headState.getValue(TYPE) == behindState.getValue(TYPE) && behindState.getValue(FACING) == headState.getValue(FACING) :
+                super.isFittingBase(headState, behindState);
     }
 }

@@ -4,16 +4,17 @@
   "package": "ca.fxco.configurablepistons.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractBlockState_pistonBehaviorMixin",
     "Block_pistonBehaviorMixin",
-    "BlockCollisionSpliterator_movingPistonMixin",
+    "BlockCollisions_movingPistonMixin",
+    "BlockStateBase_pistonBehaviorMixin",
     "Factory_movingPistonMixin",
-    "FallingBlockEntity_movingPistonsMixin",
+    "FallingBlockEntity_movingPistonMixin",
     "HoneyBlock_slimeMixin",
-    "PistonBlock_tagsMixin",
-    "PistonHandler_isMovableMixin",
-    "ShulkerEntity_movingPistonMixin",
+    "PistonBaseBlock_tagsMixin",
+    "PistonStructureResolver_isMovableMixin",
+    "Shulker_movingPistonMixin",
     "SlimeBlock_honeyMixin",
+
     "accessors.BlockEntityAccessor"
   ],
   "injectors": {

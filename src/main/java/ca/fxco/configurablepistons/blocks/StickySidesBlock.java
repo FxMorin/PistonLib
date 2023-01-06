@@ -1,19 +1,20 @@
 package ca.fxco.configurablepistons.blocks;
 
+import java.util.Map;
+
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.Direction;
 
-import java.util.Map;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class StickySidesBlock extends Block implements ConfigurablePistonStickiness {
 
     private final Map<Direction, StickyType> stickList;
 
-    public StickySidesBlock(Settings settings, Map<Direction, StickyType> stickList) {
-        super(settings);
+    public StickySidesBlock(Properties properties, Map<Direction, StickyType> stickList) {
+        super(properties);
         this.stickList = stickList;
     }
 
@@ -33,8 +34,7 @@ public class StickySidesBlock extends Block implements ConfigurablePistonStickin
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
-        StickyType stickyType = stickList.get(direction);
-        return stickyType == null ? StickyType.DEFAULT : stickyType;
+    public StickyType sideStickiness(BlockState state, Direction dir) {
+        return stickList.getOrDefault(dir, StickyType.DEFAULT);
     }
 }

@@ -1,32 +1,39 @@
 package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 
+import java.util.Arrays;
+
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamily;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
-import net.minecraft.block.enums.PistonType;
-import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
 
-import java.util.Arrays;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.PistonType;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BasicPistonHeadBlock extends FacingBlock {
+public class BasicPistonHeadBlock extends DirectionalBlock {
+
     public static final EnumProperty<PistonType> TYPE;
     public static final BooleanProperty SHORT;
     protected static final VoxelShape EAST_HEAD_SHAPE;
@@ -57,12 +64,12 @@ public class BasicPistonHeadBlock extends FacingBlock {
     //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
     public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
         return switch (direction) {
-            default -> VoxelShapes.union(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
-            case UP -> VoxelShapes.union(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
-            case NORTH -> VoxelShapes.union(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
-            case SOUTH -> VoxelShapes.union(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
-            case WEST -> VoxelShapes.union(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
-            case EAST -> VoxelShapes.union(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
+            default -> Shapes.or(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
+            case UP -> Shapes.or(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
+            case NORTH -> Shapes.or(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
+            case SOUTH -> Shapes.or(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
+            case WEST -> Shapes.or(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
+            case EAST -> Shapes.or(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
         };
     }
 
@@ -70,107 +77,129 @@ public class BasicPistonHeadBlock extends FacingBlock {
         this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
     }
 
-    public BasicPistonHeadBlock(Settings settings) {
-        super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(TYPE, PistonType.DEFAULT)
-                .with(SHORT, false));
+    public BasicPistonHeadBlock(Properties properties) {
+        super(properties);
+
+        this.registerDefaultState(this.stateDefinition.any()
+            .setValue(FACING, Direction.NORTH)
+            .setValue(TYPE, PistonType.DEFAULT)
+            .setValue(SHORT, false));
     }
 
-    public boolean hasSidedTransparency(BlockState state) {
+    @Override
+    public boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return (state.get(SHORT) ? SHORT_HEAD_SHAPES : HEAD_SHAPES)[state.get(FACING).ordinal()];
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return (state.getValue(SHORT) ? SHORT_HEAD_SHAPES : HEAD_SHAPES)[state.getValue(FACING).ordinal()];
     }
 
-    public boolean isAttached(BlockState headState, BlockState pistonState) {
+    public boolean isFittingBase(BlockState headState, BlockState behindState) {
         PistonFamily family = PistonFamilies.getFamily(this);
-        Block of = headState.get(TYPE) == PistonType.DEFAULT ? family.getPistonBlock() : family.getStickyPistonBlock();
-        return pistonState.isOf(of) && pistonState.get(BasicPistonBlock.EXTENDED) &&
-                pistonState.get(FACING) == headState.get(FACING);
+        Block base = family.getBaseBlock(headState.getValue(TYPE));
+
+        return behindState.is(base) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+                behindState.getValue(FACING) == headState.getValue(FACING);
     }
 
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (!world.isClient && player.getAbilities().creativeMode) {
-            BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-            if (this.isAttached(state, world.getBlockState(blockPos))) world.breakBlock(blockPos, false);
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide() && player.getAbilities().instabuild) {
+            BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
+
+            if (this.isFittingBase(state, level.getBlockState(behindPos))) {
+                level.destroyBlock(behindPos, false);
+            }
         }
-        super.onBreak(world, pos, state, player);
+
+        super.playerWillDestroy(level, pos, state, player);
     }
 
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.isOf(newState.getBlock())) return;
-        super.onStateReplaced(state, world, pos, newState, moved);
-        BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-        if (this.isAttached(state, world.getBlockState(blockPos))) world.breakBlock(blockPos, true);
-    }
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!newState.is(this)) {
+            super.onRemove(state, level, pos, newState, movedByPiston);
 
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        return direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos) ?
-                Blocks.AIR.getDefaultState() :
-                super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
-    }
+            BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
 
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-        return this.isAttached(state, blockState) || blockState.isIn(ModTags.MOVING_PISTONS) &&
-                blockState.get(FACING) == state.get(FACING);
-    }
-
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean n) {
-        if (state.canPlaceAt(world, pos)) {
-            BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-            world.getBlockState(blockPos).neighborUpdate(world, blockPos, block, fromPos, false);
+            if (this.isFittingBase(state, level.getBlockState(behindPos))) {
+                level.destroyBlock(behindPos, true);
+            }
         }
     }
 
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+    @Override
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
+                                                LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return dir.getOpposite() == state.getValue(FACING) && !state.canSurvive(level, pos) ?
+                Blocks.AIR.defaultBlockState() :
+                super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState behindState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
+        return this.isFittingBase(state, behindState) || behindState.is(ModTags.MOVING_PISTONS) &&
+                behindState.getValue(FACING) == state.getValue(FACING);
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (state.canSurvive(level, pos)) {
+            BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
+            level.neighborChanged(level.getBlockState(behindPos), behindPos, neighborBlock, neighborPos, false);
+        }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
         PistonFamily family = PistonFamilies.getFamily(this);
-        return new ItemStack(state.get(TYPE) == PistonType.STICKY ?
-                family.getStickyPistonBlock() : family.getPistonBlock());
+        return new ItemStack(family.getBaseBlock(state.getValue(TYPE)));
     }
 
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    @Override
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE, SHORT);
     }
 
-    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
+    @Override
+    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
         return false;
     }
 
     static {
-        TYPE = Properties.PISTON_TYPE;
-        SHORT = Properties.SHORT;
-        EAST_HEAD_SHAPE = Block.createCuboidShape(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
-        WEST_HEAD_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 4.0, 16.0, 16.0);
-        SOUTH_HEAD_SHAPE = Block.createCuboidShape(0.0, 0.0, 12.0, 16.0, 16.0, 16.0);
-        NORTH_HEAD_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 4.0);
-        UP_HEAD_SHAPE = Block.createCuboidShape(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
-        DOWN_HEAD_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 4.0, 16.0);
-        UP_ARM_SHAPE = Block.createCuboidShape(6.0, -4.0, 6.0, 10.0, 12.0, 10.0);
-        DOWN_ARM_SHAPE = Block.createCuboidShape(6.0, 4.0, 6.0, 10.0, 20.0, 10.0);
-        SOUTH_ARM_SHAPE = Block.createCuboidShape(6.0, 6.0, -4.0, 10.0, 10.0, 12.0);
-        NORTH_ARM_SHAPE = Block.createCuboidShape(6.0, 6.0, 4.0, 10.0, 10.0, 20.0);
-        EAST_ARM_SHAPE = Block.createCuboidShape(-4.0, 6.0, 6.0, 12.0, 10.0, 10.0);
-        WEST_ARM_SHAPE = Block.createCuboidShape(4.0, 6.0, 6.0, 20.0, 10.0, 10.0);
-        SHORT_UP_ARM_SHAPE = Block.createCuboidShape(6.0, 0.0, 6.0, 10.0, 12.0, 10.0);
-        SHORT_DOWN_ARM_SHAPE = Block.createCuboidShape(6.0, 4.0, 6.0, 10.0, 16.0, 10.0);
-        SHORT_SOUTH_ARM_SHAPE = Block.createCuboidShape(6.0, 6.0, 0.0, 10.0, 10.0, 12.0);
-        SHORT_NORTH_ARM_SHAPE = Block.createCuboidShape(6.0, 6.0, 4.0, 10.0, 10.0, 16.0);
-        SHORT_EAST_ARM_SHAPE = Block.createCuboidShape(0.0, 6.0, 6.0, 12.0, 10.0, 10.0);
-        SHORT_WEST_ARM_SHAPE = Block.createCuboidShape(4.0, 6.0, 6.0, 16.0, 10.0, 10.0);
+        TYPE = BlockStateProperties.PISTON_TYPE;
+        SHORT = BlockStateProperties.SHORT;
+        EAST_HEAD_SHAPE = Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+        WEST_HEAD_SHAPE = Block.box(0.0, 0.0, 0.0, 4.0, 16.0, 16.0);
+        SOUTH_HEAD_SHAPE = Block.box(0.0, 0.0, 12.0, 16.0, 16.0, 16.0);
+        NORTH_HEAD_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 4.0);
+        UP_HEAD_SHAPE = Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
+        DOWN_HEAD_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0);
+        UP_ARM_SHAPE = Block.box(6.0, -4.0, 6.0, 10.0, 12.0, 10.0);
+        DOWN_ARM_SHAPE = Block.box(6.0, 4.0, 6.0, 10.0, 20.0, 10.0);
+        SOUTH_ARM_SHAPE = Block.box(6.0, 6.0, -4.0, 10.0, 10.0, 12.0);
+        NORTH_ARM_SHAPE = Block.box(6.0, 6.0, 4.0, 10.0, 10.0, 20.0);
+        EAST_ARM_SHAPE = Block.box(-4.0, 6.0, 6.0, 12.0, 10.0, 10.0);
+        WEST_ARM_SHAPE = Block.box(4.0, 6.0, 6.0, 20.0, 10.0, 10.0);
+        SHORT_UP_ARM_SHAPE = Block.box(6.0, 0.0, 6.0, 10.0, 12.0, 10.0);
+        SHORT_DOWN_ARM_SHAPE = Block.box(6.0, 4.0, 6.0, 10.0, 16.0, 10.0);
+        SHORT_SOUTH_ARM_SHAPE = Block.box(6.0, 6.0, 0.0, 10.0, 10.0, 12.0);
+        SHORT_NORTH_ARM_SHAPE = Block.box(6.0, 6.0, 4.0, 10.0, 10.0, 16.0);
+        SHORT_EAST_ARM_SHAPE = Block.box(0.0, 6.0, 6.0, 12.0, 10.0, 10.0);
+        SHORT_WEST_ARM_SHAPE = Block.box(4.0, 6.0, 6.0, 16.0, 10.0, 10.0);
         SHORT_HEAD_SHAPES = getHeadShapes(true);
         HEAD_SHAPES = getHeadShapes(false);
     }

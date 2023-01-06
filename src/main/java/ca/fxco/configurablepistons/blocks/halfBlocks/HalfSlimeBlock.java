@@ -1,92 +1,93 @@
 package ca.fxco.configurablepistons.blocks.halfBlocks;
 
+import java.util.Map;
+
 import ca.fxco.configurablepistons.helpers.HalfBlockUtils;
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SlimeBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 
-import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SlimeBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static ca.fxco.configurablepistons.helpers.HalfBlockUtils.SIDES_LIST;
 
 //TODO: Remove bouncing if not centered on the slime part. Remove bouncing when jumping on the back
 public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStickiness {
 
-    public static final DirectionProperty FACING = Properties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    public HalfSlimeBlock(Settings settings) {
-        super(settings);
+    public HalfSlimeBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (state.get(FACING) != Direction.UP || entity.bypassesLandingEffects()) { //TODO: Add half block effects when facing sideways
-            super.onLandedUpon(world, state, pos, entity, fallDistance);
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        if (state.getValue(FACING) != Direction.UP || entity.isSuppressingBounce()) { //TODO: Add half block effects when facing sideways
+            super.fallOn(level, state, pos, entity, fallDistance);
         } else {
-            entity.handleFallDamage(fallDistance, 0.0F, DamageSource.FALL);
+            entity.causeFallDamage(fallDistance, 0.0F, DamageSource.FALL);
         }
     }
 
     @Override
-    public void onEntityLand(BlockView world, Entity entity) { //TODO: Add half block effects when facing sideways
-        if (entity.bypassesLandingEffects()) {
-            super.onEntityLand(world, entity);
+    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) { //TODO: Add half block effects when facing sideways
+        if (entity.isSuppressingBounce()) {
+            super.updateEntityAfterFallOn(level, entity);
         } else {
-            this.bounce(entity);
+            this.bounceUp(entity);
         }
 
     }
 
     @Override
-    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
-        if (state.get(FACING) == Direction.UP) { //TODO: Add half block effects when facing sideways
-            double d = Math.abs(entity.getVelocity().y);
-            if (d < 0.1 && !entity.bypassesSteppingEffects()) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (state.getValue(FACING) == Direction.UP) { //TODO: Add half block effects when facing sideways
+            double d = Math.abs(entity.getDeltaMovement().y);
+            if (d < 0.1 && !entity.isSteppingCarefully()) {
                 double e = 0.4 + d * 0.2;
-                entity.setVelocity(entity.getVelocity().multiply(e, 1.0, e));
+                entity.setDeltaMovement(entity.getDeltaMovement().multiply(e, 1.0, e));
             }
         }
-        super.onSteppedOn(world, pos, state, entity);
+        super.stepOn(level, pos, state, entity);
     }
 
     @Override
-    public VoxelShape getCullingShape(BlockState state, BlockView world, BlockPos pos) {
-        return HalfBlockUtils.getSlabShape(state.get(FACING));
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter world, BlockPos pos) {
+        return HalfBlockUtils.getSlabShape(state.getValue(FACING));
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
@@ -97,15 +98,15 @@ public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStic
 
     @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return SIDES_LIST[state.get(FACING).ordinal()];
+        return SIDES_LIST[state.getValue(FACING).ordinal()];
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
-        Direction facing = state.get(FACING);
-        if (direction == facing) { // front
+    public StickyType sideStickiness(BlockState state, Direction dir) {
+        Direction facing = state.getValue(FACING);
+        if (dir == facing) { // front
             return StickyType.STICKY;
-        } else if (direction == facing.getOpposite()) {
+        } else if (dir == facing.getOpposite()) { // back
             return StickyType.DEFAULT;
         }
         return StickyType.CONDITIONAL;
@@ -113,13 +114,13 @@ public class HalfSlimeBlock extends SlimeBlock implements ConfigurablePistonStic
 
     // Only the sides call the conditional check
     @Override
-    public boolean matchesStickyConditions(BlockState state, BlockState adjState, Direction direction) {
-        if (adjState.getBlock() == this) { // Block attempting to stick another half slime block
-            Direction facing = state.get(FACING);
-            Direction adjFacing = adjState.get(FACING);
-            return facing == adjFacing || facing.getOpposite() != adjFacing;
+    public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+        if (neighborState.getBlock() == this) { // Block attempting to stick another half slime block
+            Direction facing = state.getValue(FACING);
+            Direction neighborFacing = neighborState.getValue(FACING);
+            return facing == neighborFacing || facing.getOpposite() != neighborFacing;
         }
-        StickyGroup group = ((ConfigurablePistonStickiness)adjState.getBlock()).getStickyGroup();
+        StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
         if (group != null) {
             return StickyGroup.canStick(StickyGroup.SLIME, group);
         }

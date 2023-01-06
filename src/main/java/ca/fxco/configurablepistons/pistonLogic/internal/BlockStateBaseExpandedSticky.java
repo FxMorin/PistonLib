@@ -1,13 +1,15 @@
 package ca.fxco.configurablepistons.pistonLogic.internal;
 
-import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import net.minecraft.util.math.Direction;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
 
-public interface AbstractBlockStateExpandedSticky {
+import org.jetbrains.annotations.Nullable;
+
+import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+
+import net.minecraft.core.Direction;
+
+public interface BlockStateBaseExpandedSticky {
 
     /*
      * This interface is for internal use only. Use ConfigurablePistonStickiness for single block conditions
@@ -26,4 +28,5 @@ public interface AbstractBlockStateExpandedSticky {
     boolean isSticky();
     Map<Direction, StickyType> stickySides();
     StickyType sideStickiness(Direction direction);
+
 }

@@ -1,23 +1,44 @@
 package ca.fxco.configurablepistons.helpers;
 
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import net.minecraft.block.Block;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+
+import net.minecraft.Util;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
 public class HalfBlockUtils {
 
-    public static final Map<Direction, StickyType>[] SIDES_LIST = generateSides();
+    public static final Map<Direction, StickyType>[] SIDES_LIST = Util.make(() -> {
+        Direction[] dirs = Direction.values();
+        @SuppressWarnings("unchecked")
+        Map<Direction, StickyType>[] maps = new HashMap[dirs.length];
 
-    protected static final VoxelShape UP_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
-    protected static final VoxelShape DOWN_SHAPE = Block.createCuboidShape(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-    protected static final VoxelShape NORTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 8.0, 16.0, 16.0, 16.0);
-    protected static final VoxelShape SOUTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 8.0);
-    protected static final VoxelShape EAST_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 8.0, 16.0, 16.0);
-    protected static final VoxelShape WEST_SHAPE = Block.createCuboidShape(8.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+        for (int i = 0; i < dirs.length; i++) {
+            Direction dir = dirs[i];
+
+            maps[i] = Util.make(new HashMap<>(), map -> {
+                map.put(Utils.applyFacing(Direction.UP, dir), StickyType.STICKY);
+                map.put(Utils.applyFacing(Direction.DOWN, dir), StickyType.DEFAULT);
+                map.put(Utils.applyFacing(Direction.NORTH, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.SOUTH, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.EAST, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.WEST, dir), StickyType.CONDITIONAL);
+            });
+        }
+
+        return maps;
+    });
+
+    protected static final VoxelShape UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+    protected static final VoxelShape DOWN_SHAPE = Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+    protected static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 8.0, 16.0, 16.0, 16.0);
+    protected static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 8.0);
+    protected static final VoxelShape EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 8.0, 16.0, 16.0);
+    protected static final VoxelShape WEST_SHAPE = Block.box(8.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 
     public static VoxelShape getSlabShape(Direction facing) {
         return switch(facing) {
@@ -28,23 +49,5 @@ public class HalfBlockUtils {
             case WEST -> WEST_SHAPE;
             case EAST -> EAST_SHAPE;
         };
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<Direction, StickyType>[] generateSides() {
-        Direction[] directions = Direction.values();
-        Map<Direction, StickyType>[] maps = new HashMap[directions.length];
-        for (int i = 0; i < directions.length; i++) {
-            Direction dir = directions[i];
-            maps[i] = new HashMap<>() {{
-                put(Utils.applyFacing(Direction.UP, dir), StickyType.STICKY);
-                put(Utils.applyFacing(Direction.DOWN, dir), StickyType.DEFAULT);
-                put(Utils.applyFacing(Direction.NORTH, dir), StickyType.CONDITIONAL);
-                put(Utils.applyFacing(Direction.SOUTH, dir), StickyType.CONDITIONAL);
-                put(Utils.applyFacing(Direction.EAST, dir), StickyType.CONDITIONAL);
-                put(Utils.applyFacing(Direction.WEST, dir), StickyType.CONDITIONAL);
-            }};
-        }
-        return maps;
     }
 }

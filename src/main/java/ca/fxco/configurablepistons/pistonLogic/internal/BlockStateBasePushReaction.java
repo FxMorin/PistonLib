@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.pistonLogic.internal;
 
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
 
-public interface AbstractBlockStatePistonBehavior {
+public interface BlockStateBasePushReaction {
 
     /*
      * This interface is for internal use only. Use ConfigurablePistonBehavior for single block conditions
