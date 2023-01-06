@@ -27,7 +27,7 @@ public class StickyPistonHeadBlock extends BasicPistonHeadBlock implements Confi
 
     @Override
     public boolean usesConfigurablePistonBehavior() {
-        return true;
+        return true; // Makes the piston head movable by bypassing vanilla checks
     }
 
     @Override
