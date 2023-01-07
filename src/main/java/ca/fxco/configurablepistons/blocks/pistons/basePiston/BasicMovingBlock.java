@@ -82,12 +82,12 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Override
-    public void destroy(LevelAccessor world, BlockPos pos, BlockState state) {
+    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
         BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
-        BlockState behindState = world.getBlockState(behindPos);
+        BlockState behindState = level.getBlockState(behindPos);
 
         if (behindState.getBlock() instanceof BasicPistonBaseBlock && behindState.getValue(BasicPistonBaseBlock.EXTENDED)) {
-            world.removeBlock(behindPos, false);
+            level.removeBlock(behindPos, false);
         }
     }
 
@@ -110,7 +110,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         return Shapes.empty();
     }
 
@@ -126,7 +126,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
         return ItemStack.EMPTY;
     }
 
