@@ -25,14 +25,17 @@ public class MoveCountingBlock extends Block {
         builder.add(POWER);
     }
 
+    @Override
     public boolean isSignalSource(BlockState blockState) {
         return true;
     }
 
+    @Override
     public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
         return blockState.getValue(POWER);
     }
 
+    @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!level.isClientSide() && !oldState.is(this) && movedByPiston) {
             level.setBlock(pos, state.cycle(POWER), UPDATE_ALL);

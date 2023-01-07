@@ -21,6 +21,7 @@ I don't have much time to work on this, so any time your willing to give to help
 ### Blocks that need textures
 - axis_locked_block
 - move_counting_block
+- most pistons
   
 ### Mods to make/update using the API
 - [chains-link](https://www.curseforge.com/minecraft/mc-mods/chains-link)

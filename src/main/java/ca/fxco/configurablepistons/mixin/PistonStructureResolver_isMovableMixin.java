@@ -59,7 +59,7 @@ public class PistonStructureResolver_isMovableMixin {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;" +
-                    "addBlockLine(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"
+                     "addBlockLine(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"
         )
     )
     private boolean customIsMovable(PistonStructureResolver structureResolver, BlockPos pos, Direction dir) {
