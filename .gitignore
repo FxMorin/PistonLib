@@ -1,5 +1,7 @@
 # User-specific stuff
-.idea/
+!.idea/
+.idea/*
+!.idea/codeStyles/
 
 *.iml
 *.ipr
@@ -118,4 +120,6 @@ run/
 !gradle-wrapper.jar
 
 # Datagen caches
-src/generated/resources/.cache/
+src/main/generated/
+src/generated/
+src/generated/**
