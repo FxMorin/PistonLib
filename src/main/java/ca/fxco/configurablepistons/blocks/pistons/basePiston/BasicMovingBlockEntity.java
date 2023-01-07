@@ -370,7 +370,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
         if (ConfigurablePistons.PISTON_PROGRESS_FIX) {
-            this.progressO = nbt.contains("progressO") ? nbt.getFloat("lastProgress") : this.progress;
+            this.progressO = nbt.contains("progressO") ? nbt.getFloat("progressO") : this.progress;
         } else {
             this.progressO = this.progress;
         }
