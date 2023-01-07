@@ -12,11 +12,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
 
     public VeryStickyPistonBaseBlock() {
-        super(true);
+        super(PistonType.STICKY);
     }
 
     // I want to create a diagonal block entity instead of just teleporting blocks

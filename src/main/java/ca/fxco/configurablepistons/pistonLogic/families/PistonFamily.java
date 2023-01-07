@@ -1,7 +1,5 @@
 package ca.fxco.configurablepistons.pistonLogic.families;
 
-import java.util.Objects;
-
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
@@ -49,15 +47,23 @@ public class PistonFamily {
     }
 
     public @Nullable BasicPistonBaseBlock getBaseBlock(PistonType type) {
-        return getBaseBlock(Objects.requireNonNull(type) == PistonType.STICKY);
-    }
-
-    public @Nullable BasicPistonBaseBlock getBaseBlock(boolean sticky) {
-        return sticky ? this.stickyBaseBlock : this.normalBaseBlock;
+        return switch (type) {
+            case DEFAULT -> normalBaseBlock;
+            case STICKY -> stickyBaseBlock;
+            default -> throw new IllegalArgumentException("unknown base type " + type);
+        };
     }
 
     public Block getBaseBlock() {
-        return this.normalBaseBlock == null ? this.stickyBaseBlock : this.normalBaseBlock;
+        for (PistonType type : PistonType.values()) {
+            Block baseBlock = getBaseBlock(type);
+
+            if (baseBlock != null) {
+                return baseBlock;
+            }
+        }
+
+        return null;
     }
 
     public @Nullable BasicMovingBlock getMovingBlock() {
@@ -91,16 +97,17 @@ public class PistonFamily {
 
     public void head(BasicPistonHeadBlock block) {
         this.headBlock = block;
-        PistonFamilies.registerPistonHead(block,this); // Adds the piston head to the quick lookup table
+        PistonFamilies.registerPistonHead(block, this); // Adds the piston head to the quick lookup table
     }
 
-    public void base(PistonType type, BasicPistonBaseBlock block) {
-        Objects.requireNonNull(type);
-        if (type == PistonType.STICKY) {
-            this.stickyBaseBlock = block;
-        } else {
-            this.normalBaseBlock = block;
-        }
+    public void base(BasicPistonBaseBlock block) {
+        if (getBaseBlock(block.type) != null)
+            throw new IllegalStateException("base of type " + block.type + " has already been registered!");
+        switch (block.type) {
+            case DEFAULT -> normalBaseBlock = block;
+            case STICKY -> stickyBaseBlock = block;
+            default -> throw new IllegalArgumentException("unknown base type " + block.type);
+        };
     }
 
     public void moving(BasicMovingBlock block) {

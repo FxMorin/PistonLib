@@ -107,11 +107,11 @@ public class PistonUtils {
             blockStates[j++] = state2;
         }
         if (push) {
-            PistonType pistonType = piston.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
+            PistonType pistonType = piston.type;
             BlockState state4 = piston.getHeadBlock().defaultBlockState().setValue(PistonHeadBlock.FACING, dir)
                     .setValue(PistonHeadBlock.TYPE, pistonType);
             state2 = piston.getMovingBlock().defaultBlockState().setValue(MovingPistonBlock.FACING, dir)
-                    .setValue(MovingPistonBlock.TYPE, piston.isSticky ? PistonType.STICKY : PistonType.DEFAULT);
+                    .setValue(MovingPistonBlock.TYPE, piston.type);
             map.remove(pos2);
             world.setBlock(pos2, state2, Block.UPDATE_IMMEDIATE | Block.UPDATE_MOVE_BY_PISTON);
             world.setBlockEntity(piston.getMovingBlock().createMovingBlockEntity(

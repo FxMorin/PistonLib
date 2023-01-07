@@ -6,11 +6,12 @@ import ca.fxco.configurablepistons.helpers.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class StalePistonBaseBlock extends BasicPistonBaseBlock {
 
-    public StalePistonBaseBlock(boolean isSticky) {
-        super(isSticky);
+    public StalePistonBaseBlock(PistonType type) {
+        super(type);
     }
 
     @Override

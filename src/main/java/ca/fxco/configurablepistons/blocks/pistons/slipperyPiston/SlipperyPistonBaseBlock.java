@@ -12,14 +12,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public SlipperyPistonBaseBlock(boolean isSticky) {
-        super(isSticky);
+    public SlipperyPistonBaseBlock(PistonType type) {
+        super(type);
     }
 
     @Override
