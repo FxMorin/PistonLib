@@ -25,6 +25,11 @@ loom {
     }
 }
 
+if (!project.file("src/generated").exists()) {
+    runClient.dependsOn runDatagenClient
+}
+
+
 sourceSets {
     main {
         resources {
