@@ -21,6 +21,7 @@ import ca.fxco.configurablepistons.blocks.halfBlocks.HalfRedstoneLampBlock;
 import ca.fxco.configurablepistons.blocks.halfBlocks.HalfSlimeBlock;
 import ca.fxco.configurablepistons.blocks.pistons.FrontPoweredPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.PushLimitPistonBaseBlock;
+import ca.fxco.configurablepistons.blocks.pistons.StalePistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -57,7 +58,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.Material;
 
-import static ca.fxco.configurablepistons.ConfigurablePistons.CUSTOM_CREATIVE_GROUP;
+import static ca.fxco.configurablepistons.ConfigurablePistons.CUSTOM_CREATIVE_MODE_TAB;
 import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 import static ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies.*;
 
@@ -175,13 +176,16 @@ public class ModBlocks {
     }
 
     static <T extends Block> T registerPiston(PistonFamily family, T block) {
-        return registerPiston(family, block, CUSTOM_CREATIVE_GROUP);
+        return registerPiston(family, block, CUSTOM_CREATIVE_MODE_TAB);
     }
 
     public static <T extends Block> T registerPiston(PistonFamily family, T block, @Nullable CreativeModeTab creativeModeTab) {
-        if (family == null)
+        if (family == null) {
             throw new IllegalStateException("Valid Piston Family must be used! - " + BuiltInRegistries.BLOCK.getId(block));
+        }
+
         String familyId = family.getId();
+
         if (family.mustSetupHead()) { // FIRST BLOCK INITIALIZED SHOULD ALWAYS BE THE HEAD!!!
             if (block instanceof BasicPistonHeadBlock headBlock) {
                 Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_head"), block);
@@ -193,49 +197,49 @@ public class ModBlocks {
                 );
             }
         } else {
-            if (block instanceof BasicPistonBaseBlock pistonBlock) {
-                BasicMovingBlock extensionBlock = family.getMovingBlock();
-                pistonBlock.setMovingBlock(extensionBlock != null ? extensionBlock : BASIC_MOVING_BLOCK);
+            if (block instanceof BasicPistonBaseBlock baseBlock) {
+                BasicMovingBlock movingBlock = family.getMovingBlock();
+                baseBlock.setMovingBlock(movingBlock != null ? movingBlock : BASIC_MOVING_BLOCK);
                 BasicPistonHeadBlock headBlock = family.getHeadBlock();
-                pistonBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
-                ResourceLocation identifier;
-                if (pistonBlock.isSticky) {
-                    identifier = id(familyId + "_sticky_piston");
-                    Registry.register(BuiltInRegistries.BLOCK, identifier, pistonBlock);
-                    family.base(PistonType.STICKY, pistonBlock);
+                baseBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
+                ResourceLocation id;
+                if (baseBlock.isSticky) {
+                    id = id(familyId + "_sticky_piston");
+                    Registry.register(BuiltInRegistries.BLOCK, id, baseBlock);
+                    family.base(PistonType.STICKY, baseBlock);
                 } else {
-                    identifier = id(familyId + "_piston");
-                    Registry.register(BuiltInRegistries.BLOCK, identifier, pistonBlock);
-                    family.base(PistonType.DEFAULT, pistonBlock);
+                    id = id(familyId + "_piston");
+                    Registry.register(BuiltInRegistries.BLOCK, id, baseBlock);
+                    family.base(PistonType.DEFAULT, baseBlock);
                 }
                 if (creativeModeTab != null) {
-                    Registry.register(BuiltInRegistries.ITEM, identifier, new BlockItem(pistonBlock, new Item.Properties()));
+                    Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(baseBlock, new Item.Properties()));
                 }
-            } else if (block instanceof BasicMovingBlock basicPistonExtensionBlock) {
-                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_moving_piston"), basicPistonExtensionBlock);
+            } else if (block instanceof BasicMovingBlock movingBlock) {
+                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_moving_piston"), movingBlock);
                 if (family.getBaseBlock(PistonType.DEFAULT) != null || family.getBaseBlock(PistonType.STICKY) != null) {
                     throw new IllegalStateException(
-                            "Extension blocks must always be initialized before base piston blocks! - Block: " +
-                                    BuiltInRegistries.BLOCK.getId(basicPistonExtensionBlock) + " - Family: " + family.getId()
+                        "Extension blocks must always be initialized before base piston blocks! - Block: " +
+                            BuiltInRegistries.BLOCK.getId(movingBlock) + " - Family: " + family.getId()
                     );
                 }
-                family.moving(basicPistonExtensionBlock);
-            } else if (block instanceof LongPistonArmBlock longPistonArmBlock) {
-                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_arm"), longPistonArmBlock);
+                family.moving(movingBlock);
+            } else if (block instanceof LongPistonArmBlock armBlock) {
+                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_arm"), armBlock);
                 BasicPistonHeadBlock headBlock = family.getHeadBlock();
                 if (headBlock instanceof LongPistonHeadBlock longHeadBlock) {
-                    longPistonArmBlock.setHeadBlock(longHeadBlock);
+                    armBlock.setHeadBlock(longHeadBlock);
                 } else {
                     throw new IllegalStateException(
-                            "Pistons using the LongPistonArmBlock, must also use a LongPistonHeadBlock"
+                        "Pistons using the LongPistonArmBlock, must also use a LongPistonHeadBlock"
                     );
                 }
-                family.arm(longPistonArmBlock);
+                family.arm(armBlock);
             } else {
                 if (!family.hasCustomBlockLogic(block)) {
                     throw new IllegalStateException(
-                            "This block cannot be initialized as part of a piston family! - Block: " +
-                                    block + " - Family: " + family.getId()
+                        "This block cannot be initialized as part of a piston family! - Block: " +
+                            block + " - Family: " + family.getId()
                     );
                 }
             }

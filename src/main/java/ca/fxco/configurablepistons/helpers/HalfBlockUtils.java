@@ -61,7 +61,7 @@ public class HalfBlockUtils {
     }
 
     public static boolean isOnFacingSide(Vec3 entityPos, BlockPos blockPos, BlockState state) {
-        return switch(state.get(BlockStateProperties.FACING)) {
+        return switch(state.getValue(BlockStateProperties.FACING)) {
             case DOWN  -> true;
             case UP    -> false;
             case NORTH -> entityPos.z() - blockPos.getCenter().z() >= 0;
