@@ -21,7 +21,7 @@ public class PistonStructureResolver_isMovableMixin {
 
     @Shadow
     @Final
-    private boolean extend;
+    private boolean extending;
 
     @Shadow
     private boolean addBlockLine(BlockPos pos, Direction dir) { return false; }
@@ -59,11 +59,11 @@ public class PistonStructureResolver_isMovableMixin {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;" +
-                     "addBlockLine(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)Z"
+                     "addBlockLine(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z"
         )
     )
     private boolean customIsMovable(PistonStructureResolver structureResolver, BlockPos pos, Direction dir) {
-        return this.addBlockLine(pos,this.extend ? dir : dir.getOpposite());
+        return this.addBlockLine(pos,this.extending ? dir : dir.getOpposite());
     }
 
     @Redirect(

@@ -1,5 +1,6 @@
 {
   "itemGroup.configurable-pistons.general": "ConfigurablePistons",
+  "block.configurable-pistons.move_counting_block": "Move Counting Block",
   "block.configurable-pistons.sticky_chain": "Sticky Chain",
   "block.configurable-pistons.powered_sticky_block": "Powered Sticky Block",
   "block.configurable-pistons.glue_block": "Glue Block",
