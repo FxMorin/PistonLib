@@ -1,65 +1,59 @@
 package ca.fxco.configurablepistons.renderers;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongMovingBlockEntity;
 import ca.fxco.configurablepistons.pistonLogic.families.PistonFamilies;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.PistonType;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.BlockModelRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
-public class LongPistonBlockEntityRenderer<T extends LongPistonBlockEntity> extends BasicPistonBlockEntityRenderer<T> {
+public class LongPistonBlockEntityRenderer<T extends LongMovingBlockEntity> extends BasicPistonBlockEntityRenderer<T> {
 
-    public LongPistonBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public LongPistonBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
-    //TODO: The entire thing
     @Override
-    public void render(T pistonBE, float f, MatrixStack matrix, VertexConsumerProvider vertexConsumers, int i, int j) {
-        World world = pistonBE.getWorld();
-        if (world == null) return;
-        BlockPos blockPos = pistonBE.getPos().offset(pistonBE.getMovementDirection().getOpposite());
-        BlockState blockState = pistonBE.getPushedBlock();
-        if (blockState.isAir()) return;
-        BlockModelRenderer.enableBrightnessCache();
-        matrix.push();
-        matrix.translate(pistonBE.getRenderOffsetX(f), pistonBE.getRenderOffsetY(f), pistonBE.getRenderOffsetZ(f));
-        if (blockState.getBlock() instanceof BasicPistonHeadBlock && pistonBE.getProgress(f) <= 4.0f) {
-            blockState = blockState.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) <= 0.5f);
-            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
-        } else if (pistonBE.isSource() && !pistonBE.isExtending()) {
-            if (blockState.getBlock() instanceof BasicPistonBlock bpb) {
-                BlockState blockState2;
-                if (pistonBE.isArm()) {
-                    blockState2 = PistonFamilies.LONG.getArmBlock().getDefaultState()
-                            .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
-                } else {
-                    PistonType pistonType = bpb.sticky ? PistonType.STICKY : PistonType.DEFAULT;
-                    blockState2 = bpb.getHeadBlock().getDefaultState()
-                            .with(BasicPistonHeadBlock.TYPE, pistonType)
-                            .with(BasicPistonHeadBlock.FACING, blockState.get(BasicPistonBlock.FACING));
-                }
-                blockState2 = blockState2.with(BasicPistonHeadBlock.SHORT, pistonBE.getProgress(f) >= 0.5f);
-                this.renderModel(blockPos, blockState2, matrix, vertexConsumers, world, false, j);
-                BlockPos blockPos2 = blockPos.offset(pistonBE.getMovementDirection());
-                matrix.pop();
-                matrix.push();
-                blockState = blockState.with(BasicPistonBlock.EXTENDED, true);
-                this.renderModel(blockPos2, blockState, matrix, vertexConsumers, world, true, j);
+    protected void renderMovingSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
+                                      MultiBufferSource bufferSource, int light, int overlay) {
+        BlockState state = mbe.getMovedState();
+
+        if (mbe.isExtending()) {
+            if (state.getBlock() instanceof BasicPistonHeadBlock) {
+                renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
+                    bufferSource, level, false, overlay);
             }
         } else {
-            this.renderModel(blockPos, blockState, matrix, vertexConsumers, world, false, j);
+            if (state.getBlock() instanceof BasicPistonBaseBlock base) {
+                PistonType type = base.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
+                Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
+
+                BlockState renderState;
+
+                if (mbe.isArm()) {
+                    renderState = PistonFamilies.LONG.getArmBlock().defaultBlockState()
+                        .setValue(BasicPistonHeadBlock.FACING, facing);
+                } else {
+                    renderState = base.getHeadBlock().defaultBlockState()
+                        .setValue(BasicPistonHeadBlock.TYPE, type)
+                        .setValue(BasicPistonHeadBlock.FACING, facing)
+                        .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
+                }
+
+                renderBlock(fromPos, renderState, stack, bufferSource, level, false, overlay);
+            }
         }
-        matrix.pop();
-        BlockModelRenderer.disableBrightnessCache();
     }
 }

@@ -1,10 +1,12 @@
 package ca.fxco.configurablepistons.pistonLogic;
 
-import net.minecraft.util.Identifier;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiPredicate;
+
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.BiPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 public class StickyGroup {
 
@@ -29,14 +31,14 @@ public class StickyGroup {
         return true;
     };
 
-    public static final StickyGroup SLIME = create(new Identifier("minecraft", "slime"), STRICT_SAME, null);
-    public static final StickyGroup HONEY = create(new Identifier("minecraft", "honey"), STRICT_SAME, null);
+    public static final StickyGroup SLIME = create(new ResourceLocation("slime"), STRICT_SAME, null);
+    public static final StickyGroup HONEY = create(new ResourceLocation("honey"), STRICT_SAME, null);
 
-    private final Identifier id;
+    private final ResourceLocation id;
     private final BiPredicate<StickyGroup, StickyGroup> stickRule;
     private final @Nullable StickyGroup inherits;
 
-    StickyGroup(Identifier id, BiPredicate<StickyGroup, StickyGroup> stickRule, @Nullable StickyGroup inherits) {
+    StickyGroup(ResourceLocation id, BiPredicate<StickyGroup, StickyGroup> stickRule, @Nullable StickyGroup inherits) {
         this.id = id;
         this.stickRule = stickRule;
         this.inherits = inherits;
@@ -48,7 +50,7 @@ public class StickyGroup {
         }
     }
 
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
@@ -56,7 +58,7 @@ public class StickyGroup {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return id.equals(((StickyGroup) o).id);
+        return id.equals(((StickyGroup)o).id);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class StickyGroup {
                 adjStickyGroup.stickRule.test(adjStickyGroup, stickyGroup);
     }
 
-    public static StickyGroup create(Identifier id, BiPredicate<StickyGroup, StickyGroup> stickRule, @Nullable StickyGroup inherits) {
+    public static StickyGroup create(ResourceLocation id, BiPredicate<StickyGroup, StickyGroup> stickRule, @Nullable StickyGroup inherits) {
         StickyGroup group = new StickyGroup(id, stickRule, inherits);
         STICKY_GROUPS.add(group);
         return group;

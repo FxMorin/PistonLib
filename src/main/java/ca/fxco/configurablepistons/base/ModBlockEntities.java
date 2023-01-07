@@ -1,78 +1,78 @@
 package ca.fxco.configurablepistons.base;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationPistonBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyPistonBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston.StickyMovingBlockEntity;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 
 public class ModBlockEntities {
 
-    public static BlockEntityType<BasicPistonBlockEntity> BASIC_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<LongPistonBlockEntity> LONG_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<SpeedPistonBlockEntity> SPEED_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<FastPistonBlockEntity> FAST_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<StickyPistonBlockEntity> STICKY_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<TranslocationPistonBlockEntity> TRANSLOCATION_PISTON_BLOCK_ENTITY;
-    public static BlockEntityType<SlipperyPistonBlockEntity> SLIPPERY_PISTON_BLOCK_ENTITY;
+    public static final BlockEntityType<BasicMovingBlockEntity> BASIC_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<LongMovingBlockEntity> LONG_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<SpeedMovingBlockEntity> SPEED_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<FastMovingBlockEntity> FAST_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<StickyMovingBlockEntity> STICKY_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<TranslocationMovingBlockEntity> TRANSLOCATION_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<SlipperyMovingBlockEntity> SLIPPERY_MOVING_BLOCK_ENTITY;
 
     static {
-        BASIC_PISTON_BLOCK_ENTITY = register(
+        BASIC_MOVING_BLOCK_ENTITY = register(
                 "basic",
-                BasicPistonBlockEntity::new,
-                ModBlocks.BASIC_MOVING_PISTON
+                BasicMovingBlockEntity::new,
+                ModBlocks.BASIC_MOVING_BLOCK
         );
-        LONG_PISTON_BLOCK_ENTITY = register(
+        LONG_MOVING_BLOCK_ENTITY = register(
                 "long",
-                LongPistonBlockEntity::new,
-                ModBlocks.LONG_MOVING_PISTON
+                LongMovingBlockEntity::new,
+                ModBlocks.LONG_MOVING_BLOCK
         );
-        SPEED_PISTON_BLOCK_ENTITY = register(
+        SPEED_MOVING_BLOCK_ENTITY = register(
                 "speed",
-                SpeedPistonBlockEntity::new,
-                ModBlocks.STRONG_MOVING_PISTON
+                SpeedMovingBlockEntity::new,
+                ModBlocks.STRONG_MOVING_BLOCK
         );
-        FAST_PISTON_BLOCK_ENTITY = register(
+        FAST_MOVING_BLOCK_ENTITY = register(
                 "fast",
-                FastPistonBlockEntity::new,
-                ModBlocks.FAST_MOVING_PISTON
+                FastMovingBlockEntity::new,
+                ModBlocks.FAST_MOVING_BLOCK
         );
-        STICKY_PISTON_BLOCK_ENTITY = register(
+        STICKY_MOVING_BLOCK_ENTITY = register(
                 "sticky",
-                StickyPistonBlockEntity::new,
-                ModBlocks.STICKY_MOVING_PISTON
+                StickyMovingBlockEntity::new,
+                ModBlocks.STICKY_MOVING_BLOCK
         );
-        TRANSLOCATION_PISTON_BLOCK_ENTITY = register(
+        TRANSLOCATION_MOVING_BLOCK_ENTITY = register(
                 "translocation",
-                TranslocationPistonBlockEntity::new,
-                ModBlocks.TRANSLOCATION_MOVING_PISTON
+                TranslocationMovingBlockEntity::new,
+                ModBlocks.TRANSLOCATION_MOVING_BLOCK
         );
-        SLIPPERY_PISTON_BLOCK_ENTITY = register(
+        SLIPPERY_MOVING_BLOCK_ENTITY = register(
                 "slippery",
-                SlipperyPistonBlockEntity::new,
-                ModBlocks.SLIPPERY_MOVING_PISTON
+                SlipperyMovingBlockEntity::new,
+                ModBlocks.SLIPPERY_MOVING_BLOCK
         );
     }
 
-    public static <T extends BasicPistonBlockEntity> BlockEntityType<T> register(
-            String id,
+    public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
+            String name,
             FabricBlockEntityTypeBuilder.Factory<T> blockEntityFactory,
-            BasicPistonExtensionBlock extensionBlock
+            BasicMovingBlock extensionBlock
     ) {
-        Identifier identifier = id(id+"_piston_entity");
         return Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
-                identifier,
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                id(name+"_piston_entity"),
                 FabricBlockEntityTypeBuilder.create(
                         blockEntityFactory,
                         extensionBlock

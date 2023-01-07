@@ -1,31 +1,12 @@
 package ca.fxco.configurablepistons.helpers;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
-import static net.minecraft.util.math.Direction.*;
-import static net.minecraft.util.math.Direction.WEST;
+import static net.minecraft.core.Direction.*;
 
 public class Utils {
-
-    public static Box stretchBlockBound(Box box, Direction direction, double length) {
-        double d = length * (double)direction.getDirection().offset();
-        double e = Math.min(d, 0.0);
-        double f = Math.max(d, 0.0);
-        return switch (direction) {
-            case WEST ->  new Box(Math.ceil(box.minX + e), box.minY, box.minZ, Math.floor(box.minX + f), box.maxY, box.maxZ);
-            case EAST ->  new Box(Math.ceil(box.maxX + e), box.minY, box.minZ, Math.floor(box.maxX + f), box.maxY, box.maxZ);
-            case DOWN ->  new Box(box.minX, Math.ceil(box.minY + e), box.minZ, box.maxX, Math.floor(box.minY + f), box.maxZ);
-            case UP ->    new Box(box.minX, Math.ceil(box.maxY + e), box.minZ, box.maxX, Math.floor(box.maxY + f), box.maxZ);
-            case NORTH -> new Box(box.minX, box.minY, Math.ceil(box.minZ + e), box.maxX, box.maxY, Math.floor(box.minZ + f));
-            case SOUTH -> new Box(box.minX, box.minY, Math.ceil(box.maxZ + e), box.maxX, box.maxY, Math.floor(box.maxZ + f));
-        };
-    }
 
     public static Direction applyFacing(Direction dir, Direction facing) {
         return switch(facing) {
@@ -62,18 +43,13 @@ public class Utils {
         };
     }
 
-    public static boolean isReceivingRedstonePowerExcludingDirection(World world, BlockPos pos, Direction direction) {
-        if (direction != Direction.DOWN && world.getEmittedRedstonePower(pos.down(), Direction.DOWN) > 0) {
-            return true;
-        } else if (direction != Direction.UP && world.getEmittedRedstonePower(pos.up(), Direction.UP) > 0) {
-            return true;
-        } else if (direction != Direction.NORTH && world.getEmittedRedstonePower(pos.north(), Direction.NORTH) > 0) {
-            return true;
-        } else if (direction != Direction.SOUTH && world.getEmittedRedstonePower(pos.south(), Direction.SOUTH) > 0) {
-            return true;
-        } else if (direction != Direction.WEST && world.getEmittedRedstonePower(pos.west(), Direction.WEST) > 0) {
-            return true;
+    public static boolean hasNeighborSignalExceptFromFacing(Level level, BlockPos pos, Direction except) {
+        for (Direction dir : Direction.values()) {
+            if (dir != except && level.hasSignal(pos.relative(dir), dir)) {
+                return true;
+            }
         }
-        return direction != Direction.EAST && world.getEmittedRedstonePower(pos.east(), Direction.EAST) > 0;
+
+        return false;
     }
 }

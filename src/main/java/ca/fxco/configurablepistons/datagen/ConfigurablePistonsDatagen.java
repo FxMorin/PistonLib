@@ -1,13 +1,15 @@
 package ca.fxco.configurablepistons.datagen;
 
-import ca.fxco.configurablepistons.ConfigurablePistons;
 import org.slf4j.Logger;
+
+import ca.fxco.configurablepistons.ConfigurablePistons;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 public class ConfigurablePistonsDatagen implements DataGeneratorEntrypoint {
-	public static final Logger LOGGER = ConfigurablePistons.LOGGER;
+
+    public static final Logger LOGGER = ConfigurablePistons.LOGGER;
 
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {

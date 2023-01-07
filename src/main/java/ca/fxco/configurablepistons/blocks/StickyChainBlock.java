@@ -1,23 +1,25 @@
 package ca.fxco.configurablepistons.blocks;
 
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ChainBlock;
-import net.minecraft.util.math.Direction;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
+
+import net.minecraft.Util;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.ChainBlock;
+import net.minecraft.world.level.block.state.BlockState;
+
 public class StickyChainBlock extends ChainBlock implements ConfigurablePistonStickiness {
 
-    private static final Map<Direction, StickyType> CHAIN_SIDES_LIST = new HashMap<>() {{
-        put(Direction.NORTH, StickyType.STICKY);
-        put(Direction.SOUTH, StickyType.STICKY);
-    }};
+    private static final Map<Direction, StickyType> CHAIN_SIDES_LIST = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.NORTH, StickyType.STICKY);
+        map.put(Direction.SOUTH, StickyType.STICKY);
+    });
 
-    public StickyChainBlock(Settings settings) {
-        super(settings);
+    public StickyChainBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -31,7 +33,7 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
+    public StickyType sideStickiness(BlockState state, Direction dir) {
         return StickyType.STICKY;
     }
 }

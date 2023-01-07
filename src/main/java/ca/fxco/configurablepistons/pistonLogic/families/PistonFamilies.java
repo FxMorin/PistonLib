@@ -1,15 +1,17 @@
 package ca.fxco.configurablepistons.pistonLogic.families;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import com.google.common.collect.Maps;
-import net.minecraft.registry.Registries;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
 public class PistonFamilies {
-    private static final Map<String, PistonFamily> ID_TO_FAMILY = Maps.newHashMap();
-    private static final Map<BasicPistonHeadBlock, PistonFamily> PISTON_HEAD_TO_FAMILY = Maps.newHashMap();
+
+    private static final Map<String, PistonFamily> ID_TO_FAMILY = new HashMap<>();
+    private static final Map<BasicPistonHeadBlock, PistonFamily> PISTON_HEAD_TO_FAMILY = new HashMap<>();
 
     public static final PistonFamily BASIC = new PistonFamily("basic", false);
     public static final PistonFamily LONG = new PistonFamily("long", false);
@@ -49,7 +51,7 @@ public class PistonFamilies {
         PistonFamily blockFamily = PISTON_HEAD_TO_FAMILY.put(headBlock, family);
         if (blockFamily != null) {
             throw new IllegalStateException(
-                    "Duplicate piston family definition for: " + Registries.BLOCK.getId(headBlock)
+                    "Duplicate piston family definition for: " + BuiltInRegistries.BLOCK.getId(headBlock)
             );
         }
     }

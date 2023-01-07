@@ -1,12 +1,14 @@
 package ca.fxco.configurablepistons.pistonLogic.accessible;
 
-import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
-import ca.fxco.configurablepistons.pistonLogic.StickyType;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.Direction;
+import java.util.Map;
+
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 public interface ConfigurablePistonStickiness {
 
@@ -40,14 +42,14 @@ public interface ConfigurablePistonStickiness {
         return Map.of();
     }
 
-    default StickyType sideStickiness(BlockState state, Direction direction) {
+    default StickyType sideStickiness(BlockState state, Direction dir) {
         return StickyType.DEFAULT;
     }
 
     /**
-     * This only gets used if the sticky type is `CONDITIONAL`
+     * This only gets used if the sticky type is {@linkplain ca.fxco.configurablepistons.pistonLogic.StickyType#CONDITIONAL CONDITIONAL}.
      */
-    default boolean matchesStickyConditions(BlockState state, BlockState adjState, Direction direction) {
+    default boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         return true;
     }
 }

@@ -1,26 +1,27 @@
 package ca.fxco.configurablepistons.mixin.movingPiston;
 
-import ca.fxco.configurablepistons.base.ModTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.particle.BlockDustParticle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(BlockDustParticle.Factory.class)
+import ca.fxco.configurablepistons.base.ModTags;
+
+import net.minecraft.client.particle.TerrainParticle;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
+@Mixin(TerrainParticle.Provider.class)
 public class Factory_movingPistonMixin {
 
-
     @Redirect(
-            method = "createParticle(Lnet/minecraft/particle/BlockStateParticleEffect;" +
-                    "Lnet/minecraft/client/world/ClientWorld;DDDDDD)Lnet/minecraft/client/particle/Particle;",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"
-            )
+        method = "createParticle(Lnet/minecraft/core/particles/BlockParticleOptions;" +
+                 "Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
+        )
     )
-    private boolean isInMovingPistons(BlockState state, Block block) {
-        return state.isIn(ModTags.MOVING_PISTONS);
+    private boolean allMovingPistons(BlockState state, Block block) {
+        return state.is(ModTags.MOVING_PISTONS);
     }
 }

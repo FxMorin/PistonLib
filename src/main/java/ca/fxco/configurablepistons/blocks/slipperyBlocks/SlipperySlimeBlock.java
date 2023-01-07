@@ -5,7 +5,7 @@ import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStic
 
 public class SlipperySlimeBlock extends BaseSlipperyBlock implements ConfigurablePistonStickiness {
 
-    public SlipperySlimeBlock(Settings settings) {
+    public SlipperySlimeBlock(Properties settings) {
         super(settings);
     }
 

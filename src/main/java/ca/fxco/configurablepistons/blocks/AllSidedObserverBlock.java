@@ -1,85 +1,93 @@
 package ca.fxco.configurablepistons.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-
-import java.util.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Redstone;
 
 public class AllSidedObserverBlock extends Block {
 
-    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    public AllSidedObserverBlock(Settings settings) {
-        super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(POWERED, false));
+    public AllSidedObserverBlock(Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false));
     }
 
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
     }
 
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (state.get(POWERED)) {
-            world.setBlockState(pos, state.with(POWERED, false), Block.NOTIFY_LISTENERS);
-        } else {
-            world.setBlockState(pos, state.with(POWERED, true), Block.NOTIFY_LISTENERS);
-            world.scheduleBlockTick(pos, this, 2);
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        level.setBlock(pos, state = state.cycle(POWERED), UPDATE_CLIENTS);
+        if (state.getValue(POWERED)) {
+            level.scheduleTick(pos, this, 2);
         }
-        this.updateNeighbors(world, pos, state);
+        this.updateNeighbors(level, pos);
     }
 
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.get(POWERED) && !neighborState.emitsRedstonePower()) this.scheduleTick(world, pos);
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    @Override
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!state.getValue(POWERED) && !neighborState.isSignalSource()) {
+            this.startSignal(level, pos);
+        }
+
+        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
-    private void scheduleTick(WorldAccess world, BlockPos pos) {
-        if (!world.isClient() && !world.getBlockTickScheduler().isQueued(pos, this))
-            world.scheduleBlockTick(pos, this, 2);
-    }
-
-    protected void updateNeighbors(World world, BlockPos pos, BlockState state) {
-        for (Direction direction : Direction.values()) {
-            BlockPos blockPos = pos.offset(direction);
-            world.updateNeighbor(blockPos, this, pos);
-            world.updateNeighborsExcept(blockPos, this, direction);
+    private void startSignal(LevelAccessor level, BlockPos pos) {
+        if (!level.isClientSide() && !level.getBlockTicks().hasScheduledTick(pos, this)) {
+            level.scheduleTick(pos, this, 2);
         }
     }
 
-    public boolean emitsRedstonePower(BlockState state) {
+    protected void updateNeighbors(Level world, BlockPos pos) {
+        for (Direction dir : Direction.values()) {
+            BlockPos side = pos.relative(dir);
+
+            world.neighborChanged(side, this, pos);
+            world.updateNeighborsAtExceptFromFacing(side, this, dir);
+        }
+    }
+
+    @Override
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
-    public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return state.getWeakRedstonePower(world, pos, direction);
+    @Override
+    public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
+        return state.getSignal(level, pos, dir);
     }
 
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return state.get(POWERED) ? 15 : 0;
+    @Override
+    public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
+        return state.getValue(POWERED) ? Redstone.SIGNAL_MAX : Redstone.SIGNAL_NONE;
     }
 
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient && !state.isOf(oldState.getBlock()) && state.get(POWERED) &&
-                !world.getBlockTickScheduler().isQueued(pos, this)) {
-            BlockState blockState = state.with(POWERED, false);
-            world.setBlockState(pos, blockState, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-            this.updateNeighbors(world, pos, blockState);
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (!level.isClientSide() && !oldState.is(this) && state.getValue(POWERED) && !level.getBlockTicks().hasScheduledTick(pos, this)) {
+            level.setBlock(pos, state.setValue(POWERED, false), UPDATE_CLIENTS | UPDATE_KNOWN_SHAPE);
+            this.updateNeighbors(level, pos);
         }
     }
 
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!world.isClient && !state.isOf(newState.getBlock()) &&
-                state.get(POWERED) && world.getBlockTickScheduler().isQueued(pos, this))
-            this.updateNeighbors(world, pos, state.with(POWERED, false));
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!level.isClientSide() && !newState.is(this) && state.getValue(POWERED) && !level.getBlockTicks().hasScheduledTick(pos, this)) {
+            this.updateNeighbors(level, pos);
+        }
     }
 }

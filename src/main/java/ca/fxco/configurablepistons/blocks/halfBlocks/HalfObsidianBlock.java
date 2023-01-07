@@ -1,46 +1,46 @@
 package ca.fxco.configurablepistons.blocks.halfBlocks;
 
-import ca.fxco.configurablepistons.helpers.Utils;
+import java.util.Map;
+
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.Direction;
 
-import java.util.Map;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
 
-    public static final DirectionProperty FACING = Properties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    public HalfObsidianBlock(Settings settings) {
-        super(settings);
+    public HalfObsidianBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
@@ -50,13 +50,13 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
     }
 
     @Override
-    public boolean canPistonPush(BlockState state, Direction direction) {
-        return direction.getOpposite() != state.get(FACING);
+    public boolean canPistonPush(BlockState state, Direction dir) {
+        return dir.getOpposite() != state.getValue(FACING);
     }
 
     @Override
-    public boolean canPistonPull(BlockState state, Direction direction) {
-        return direction != state.get(FACING);
+    public boolean canPistonPull(BlockState state, Direction dir) {
+        return dir != state.getValue(FACING);
     }
 
     @Override
@@ -66,11 +66,11 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
 
     @Override
     public  Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(Direction.NORTH, StickyType.NO_STICK);
+        return Map.of(state.getValue(FACING), StickyType.NO_STICK);
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
-        return state.get(FACING) == direction ? StickyType.NO_STICK : StickyType.DEFAULT;
+    public StickyType sideStickiness(BlockState state, Direction dir) {
+        return dir == state.getValue(FACING) ? StickyType.NO_STICK : StickyType.DEFAULT;
     }
 }

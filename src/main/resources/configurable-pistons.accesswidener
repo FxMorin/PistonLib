@@ -1,15 +1,15 @@
 accessWidener	v1	named
-# Setup PistonBlockEntity Extending for custom classes
-accessible field net/minecraft/block/entity/PistonBlockEntity pushedBlock Lnet/minecraft/block/BlockState;
-accessible field net/minecraft/block/entity/PistonBlockEntity facing Lnet/minecraft/util/math/Direction;
-accessible field net/minecraft/block/entity/PistonBlockEntity extending Z
-accessible field net/minecraft/block/entity/PistonBlockEntity source Z
-accessible field net/minecraft/block/entity/PistonBlockEntity progress F
-accessible field net/minecraft/block/entity/PistonBlockEntity lastProgress F
-accessible field net/minecraft/block/entity/PistonBlockEntity savedWorldTime J
-accessible field net/minecraft/block/entity/PistonBlockEntity field_26705 I
-accessible field net/minecraft/block/entity/PistonBlockEntity field_12205 Ljava/lang/ThreadLocal;
-extendable method net/minecraft/block/entity/PistonBlockEntity getAmountExtended (F)F
-extendable method net/minecraft/block/entity/PistonBlockEntity getHeadBlockState ()Lnet/minecraft/block/BlockState;
-extendable method net/minecraft/block/entity/PistonBlockEntity isPushingHoneyBlock ()Z
-extendable method net/minecraft/block/SlimeBlock bounce (Lnet/minecraft/entity/Entity;)V
+# Setup PistonMovingBlockEntity Extending for custom classes
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity movedState Lnet/minecraft/world/level/block/state/BlockState;
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity direction Lnet/minecraft/core/Direction;
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity extending Z
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity isSourcePiston Z
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity progress F
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity progressO F
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity lastTicked J
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity deathTicks I
+accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity NOCLIP Ljava/lang/ThreadLocal;
+extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getExtendedProgress (F)F
+extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getCollisionRelatedBlockState ()Lnet/minecraft/world/level/block/state/BlockState;
+extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity isStickyForEntities ()Z
+extendable method net/minecraft/world/level/block/SlimeBlock bounceUp (Lnet/minecraft/world/entity/Entity;)V

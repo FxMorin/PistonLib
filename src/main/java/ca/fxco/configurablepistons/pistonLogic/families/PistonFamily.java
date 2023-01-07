@@ -1,21 +1,27 @@
 package ca.fxco.configurablepistons.pistonLogic.families;
 
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
-import net.minecraft.block.Block;
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.PistonType;
+
 public class PistonFamily {
+
     @Nullable
     protected BasicPistonHeadBlock headBlock;
     @Nullable
-    protected BasicPistonBlock pistonBlock = null;
+    protected BasicPistonBaseBlock normalBaseBlock = null;
     @Nullable
-    protected BasicPistonBlock stickyPistonBlock = null;
+    protected BasicPistonBaseBlock stickyBaseBlock = null;
     @Nullable
-    protected BasicPistonExtensionBlock extensionBlock = null;
+    protected BasicMovingBlock movingBlock = null;
     @Nullable
     protected LongPistonArmBlock armBlock = null;
 
@@ -35,23 +41,27 @@ public class PistonFamily {
         this.id = id;
         this.customTextures = hasCustomTextures;
         this.generateAutomatically = shouldGenerateAutomatically;
-        PistonFamilies.registerBlockId(id,this); // Adds the blockId to the quick lookup table
+        PistonFamilies.registerBlockId(id, this); // Adds the blockId to the quick lookup table
     }
 
     public @Nullable BasicPistonHeadBlock getHeadBlock() {
         return this.headBlock;
     }
 
-    public @Nullable BasicPistonBlock getPistonBlock() {
-        return this.pistonBlock;
+    public @Nullable BasicPistonBaseBlock getBaseBlock(PistonType type) {
+        return getBaseBlock(Objects.requireNonNull(type) == PistonType.STICKY);
     }
 
-    public @Nullable BasicPistonBlock getStickyPistonBlock() {
-        return this.stickyPistonBlock;
+    public @Nullable BasicPistonBaseBlock getBaseBlock(boolean sticky) {
+        return sticky ? this.stickyBaseBlock : this.normalBaseBlock;
     }
 
-    public @Nullable BasicPistonExtensionBlock getExtensionBlock() {
-        return this.extensionBlock;
+    public Block getBaseBlock() {
+        return this.normalBaseBlock == null ? this.stickyBaseBlock : this.normalBaseBlock;
+    }
+
+    public @Nullable BasicMovingBlock getMovingBlock() {
+        return this.movingBlock;
     }
 
     public @Nullable LongPistonArmBlock getArmBlock() {
@@ -79,25 +89,22 @@ public class PistonFamily {
         return this.headBlock == null;
     }
 
-    public Block getBaseBlock() {
-        return this.pistonBlock == null ? this.stickyPistonBlock : this.pistonBlock;
+    public void head(BasicPistonHeadBlock block) {
+        this.headBlock = block;
+        PistonFamilies.registerPistonHead(block,this); // Adds the piston head to the quick lookup table
     }
 
-    public void head(BasicPistonHeadBlock headBlock) {
-        this.headBlock = headBlock;
-        PistonFamilies.registerPistonHead(headBlock,this); // Adds the piston head to the quick lookup table
+    public void base(PistonType type, BasicPistonBaseBlock block) {
+        Objects.requireNonNull(type);
+        if (type == PistonType.STICKY) {
+            this.stickyBaseBlock = block;
+        } else {
+            this.normalBaseBlock = block;
+        }
     }
 
-    public void piston(BasicPistonBlock block) {
-        this.pistonBlock = block;
-    }
-
-    public void sticky(BasicPistonBlock block) {
-        this.stickyPistonBlock = block;
-    }
-
-    public void extension(BasicPistonExtensionBlock block) {
-        this.extensionBlock = block;
+    public void moving(BasicMovingBlock block) {
+        this.movingBlock = block;
     }
 
     // For modded pistons that extend further than one block

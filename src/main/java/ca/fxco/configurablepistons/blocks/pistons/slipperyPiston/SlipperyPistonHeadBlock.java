@@ -3,73 +3,74 @@ package ca.fxco.configurablepistons.blocks.pistons.slipperyPiston;
 import ca.fxco.configurablepistons.base.ModProperties;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.PistonType;
-import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
 
-import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.PistonType;
+
+import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
-    public static final IntProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
+    public static final IntegerProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
     public SlipperyPistonHeadBlock() {
         super();
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(TYPE, PistonType.DEFAULT)
-                .with(SHORT, false)
-                .with(SLIPPERY_DISTANCE, 0));
+
+        this.registerDefaultState(this.stateDefinition.any()
+            .setValue(FACING, Direction.NORTH)
+            .setValue(TYPE, PistonType.DEFAULT)
+            .setValue(SHORT, false)
+            .setValue(SLIPPERY_DISTANCE, 0));
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null)
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
-        super.onBlockAdded(state, world, pos, oldState, notify);
+    public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (!oldState.is(this) && !world.isClientSide() && world.getBlockEntity(pos) == null)
+            world.scheduleTick(pos, this, SLIPPERY_DELAY);
+        super.onPlace(state, world, pos, oldState, movedByPiston);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!world.isClient())
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!level.isClientSide())
+            level.scheduleTick(pos, this, SLIPPERY_DELAY);
+        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        int i = BaseSlipperyBlock.calculateDistance(world, pos);
-        BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
-        if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canPlaceAt(state, world, pos)) {
-            BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-            if (this.isAttached(state, world.getBlockState(blockPos)))
-                FallingBlockEntity.spawnFromBlock(world, blockPos, world.getBlockState(blockPos).with(EXTENDED,false));
-            world.removeBlock(pos,false);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        int i = BaseSlipperyBlock.calculateDistance(level, pos);
+        BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
+        if (blockState.getValue(SLIPPERY_DISTANCE) >= MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
+            BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
+            if (this.isFittingBase(state, level.getBlockState(blockPos)))
+                FallingBlockEntity.fall(level, blockPos, level.getBlockState(blockPos).setValue(EXTENDED,false));
+            level.removeBlock(pos,false);
         } else if (state != blockState) {
-            world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
+            level.setBlock(pos, blockState, UPDATE_ALL);
         }
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE ||
-                super.canPlaceAt(state, world, pos);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE || super.canSurvive(state, level, pos);
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE, SHORT, SLIPPERY_DISTANCE);
     }
 }

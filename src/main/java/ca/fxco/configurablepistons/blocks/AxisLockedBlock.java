@@ -1,14 +1,15 @@
 package ca.fxco.configurablepistons.blocks;
 
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PillarBlock;
-import net.minecraft.util.math.Direction;
 
-public class AxisLockedBlock extends PillarBlock implements ConfigurablePistonBehavior {
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
-    public AxisLockedBlock(Settings settings) {
-        super(settings);
+public class AxisLockedBlock extends RotatedPillarBlock implements ConfigurablePistonBehavior {
+
+    public AxisLockedBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -16,11 +17,13 @@ public class AxisLockedBlock extends PillarBlock implements ConfigurablePistonBe
         return true;
     }
 
-    public boolean canPistonPush(BlockState state, Direction direction) {
-        return state.get(AXIS) == direction.getAxis();
+    @Override
+    public boolean canPistonPush(BlockState state, Direction dir) {
+        return dir.getAxis() == state.getValue(AXIS);
     }
 
-    public boolean canPistonPull(BlockState state, Direction direction) {
-        return state.get(AXIS) == direction.getAxis();
+    @Override
+    public boolean canPistonPull(BlockState state, Direction dir) {
+        return dir.getAxis() == state.getValue(AXIS);
     }
 }

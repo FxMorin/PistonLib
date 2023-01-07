@@ -1,65 +1,73 @@
 package ca.fxco.configurablepistons.blocks.halfBlocks;
 
+import java.util.Map;
+
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HoneyBlock;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-
-import java.util.Map;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HoneyBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static ca.fxco.configurablepistons.helpers.HalfBlockUtils.SIDES_LIST;
 import static ca.fxco.configurablepistons.helpers.HalfBlockUtils.getSlabShape;
 
 public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStickiness {
 
-    public static final DirectionProperty FACING = Properties.FACING;
-    protected static final VoxelShape[] COLLISION_SHAPES = generateShapes();
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    protected static final VoxelShape[] COLLISION_SHAPES = Util.make(() -> {
+        Direction[] dirs = Direction.values();
+        VoxelShape[] shapes = new VoxelShape[dirs.length];
+        for (int i = 0; i < dirs.length; i++) {
+            shapes[i] = Shapes.or(SHAPE, getSlabShape(dirs[i]));
+        }
+        return shapes;
+    });
 
-    public HalfHoneyBlock(Settings settings) {
-        super(settings);
+    public HalfHoneyBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return COLLISION_SHAPES[state.get(FACING).ordinal()];
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        return COLLISION_SHAPES[state.getValue(FACING).ordinal()];
     }
 
     @Override
-    public VoxelShape getCullingShape(BlockState state, BlockView world, BlockPos pos) {
-        return getSlabShape(state.get(FACING));
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return getSlabShape(state.getValue(FACING));
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
@@ -70,15 +78,15 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
 
     @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return SIDES_LIST[state.get(FACING).ordinal()];
+        return SIDES_LIST[state.getValue(FACING).ordinal()];
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
-        Direction facing = state.get(FACING);
-        if (direction == facing) { // front
+    public StickyType sideStickiness(BlockState state, Direction dir) {
+        Direction facing = state.getValue(FACING);
+        if (dir == facing) { // front
             return StickyType.STICKY;
-        } else if (direction == facing.getOpposite()) {
+        } else if (dir == facing.getOpposite()) { // back
             return StickyType.DEFAULT;
         }
         return StickyType.CONDITIONAL;
@@ -86,25 +94,16 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
 
     // Only the sides call the conditional check
     @Override
-    public boolean matchesStickyConditions(BlockState state, BlockState adjState, Direction direction) {
-        if (adjState.getBlock() == this) { // Block attempting to stick another half honey block
-            Direction facing = state.get(FACING);
-            Direction adjFacing = adjState.get(FACING);
-            return facing == adjFacing || facing.getOpposite() != adjFacing;
+    public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+        if (neighborState.is(this)) { // Block attempting to stick another half honey block
+            Direction facing = state.getValue(FACING);
+            Direction neighborFacing = neighborState.getValue(FACING);
+            return facing == neighborFacing || facing.getOpposite() != neighborFacing;
         }
-        StickyGroup group = ((ConfigurablePistonStickiness)adjState.getBlock()).getStickyGroup();
+        StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
         if (group != null) {
             return StickyGroup.canStick(StickyGroup.HONEY, group);
         }
         return false;
-    }
-
-    public static VoxelShape[] generateShapes() {
-        Direction[] directions = Direction.values();
-        VoxelShape[] shapes = new VoxelShape[directions.length];
-        for (int i = 0; i < directions.length; i++) {
-            shapes[i] = VoxelShapes.union(SHAPE, getSlabShape(directions[i]));
-        }
-        return shapes;
     }
 }

@@ -1,16 +1,17 @@
 package ca.fxco.configurablepistons.blocks.pistons.veryStickyPiston;
 
+import java.util.Map;
+
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldView;
 
-import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class StickyPistonHeadBlock extends BasicPistonHeadBlock implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
 
@@ -19,9 +20,9 @@ public class StickyPistonHeadBlock extends BasicPistonHeadBlock implements Confi
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-        return this.isAttached(state, blockState) || blockState.isIn(ModTags.MOVING_PISTONS);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
+        return this.isFittingBase(state, blockState) || blockState.is(ModTags.MOVING_PISTONS);
     }
 
     @Override
@@ -34,12 +35,13 @@ public class StickyPistonHeadBlock extends BasicPistonHeadBlock implements Confi
         return true;
     }
 
-    // Returns a list of directions that are sticky, and the stickyType.
+    @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(state.get(FACING), StickyType.STICKY, state.get(FACING).getOpposite(), StickyType.STICKY);
+        return Map.of(state.getValue(FACING), StickyType.STICKY, state.getValue(FACING).getOpposite(), StickyType.STICKY);
     }
 
+    @Override
     public StickyType sideStickiness(BlockState state, Direction direction) {
-        return state.get(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
+        return state.getValue(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }
