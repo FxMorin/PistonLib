@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " O ",
+        "OQO",
+        " O "
+    ],
+    "key": {
+        "O": {
+            "item": "minecraft:observer"
+        },
+        "Q": {
+            "item": "minecraft:quartz"
+        }
+    },
+    "result": {
+        "item": "pistonlib:all_sided_observer",
+        "count": 2
+    }
+}

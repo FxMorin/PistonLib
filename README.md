@@ -1,4 +1,4 @@
-## ConfigurablePistons
+## PistonLib
 #### A mod/library that expands the piston system
 
 This mod/library is a work in progress!  
