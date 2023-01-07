@@ -6,13 +6,15 @@ import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePiston
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class PushLimitPistonBaseBlock extends BasicPistonBaseBlock {
 
     protected final int pushLimit;
 
-    public PushLimitPistonBaseBlock(boolean isSticky, int pushLimit) {
-        super(isSticky);
+    public PushLimitPistonBaseBlock(PistonType type, int pushLimit) {
+        super(type);
+
         this.pushLimit = pushLimit;
     }
 

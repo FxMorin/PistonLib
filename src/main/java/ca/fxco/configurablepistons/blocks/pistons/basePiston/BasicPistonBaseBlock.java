@@ -1,5 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 
+import java.util.Objects;
+
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.base.ModTags;
 import ca.fxco.configurablepistons.helpers.Utils;
@@ -49,27 +51,27 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     protected static final VoxelShape EXTENDED_UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.box(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
 
-    public final boolean isSticky;
+    public final PistonType type;
 
     protected BasicMovingBlock MOVING_BLOCK;
     protected BasicPistonHeadBlock HEAD_BLOCK;
 
-    public BasicPistonBaseBlock(boolean isSticky) {
-        this(isSticky, ModBlocks.BASIC_MOVING_BLOCK, ModBlocks.BASIC_PISTON_HEAD);
+    public BasicPistonBaseBlock(PistonType type) {
+        this(type, ModBlocks.BASIC_MOVING_BLOCK, ModBlocks.BASIC_PISTON_HEAD);
     }
 
-    public BasicPistonBaseBlock(boolean isSticky, Properties properties) {
-        this(isSticky, properties, ModBlocks.BASIC_MOVING_BLOCK, ModBlocks.BASIC_PISTON_HEAD);
+    public BasicPistonBaseBlock(PistonType type, Properties properties) {
+        this(type, properties, ModBlocks.BASIC_MOVING_BLOCK, ModBlocks.BASIC_PISTON_HEAD);
     }
 
-    public BasicPistonBaseBlock(boolean isSticky, BasicMovingBlock movingBlock, BasicPistonHeadBlock headBlock) {
-        this(isSticky, FabricBlockSettings.copyOf(Blocks.PISTON), movingBlock, headBlock);
+    public BasicPistonBaseBlock(PistonType type, BasicMovingBlock movingBlock, BasicPistonHeadBlock headBlock) {
+        this(type, FabricBlockSettings.copyOf(Blocks.PISTON), movingBlock, headBlock);
     }
 
-    public BasicPistonBaseBlock(boolean isSticky, Properties properties, BasicMovingBlock movingBlock, BasicPistonHeadBlock headBlock) {
+    public BasicPistonBaseBlock(PistonType type, Properties properties, BasicMovingBlock movingBlock, BasicPistonHeadBlock headBlock) {
         super(properties);
 
-        this.isSticky = isSticky;
+        this.type = Objects.requireNonNull(type);
 
         MOVING_BLOCK = movingBlock;
         HEAD_BLOCK = headBlock;
@@ -211,7 +213,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
 
             BlockState movingBaseState = MOVING_BLOCK.defaultBlockState()
                 .setValue(MovingPistonBlock.FACING, facing)
-                .setValue(MovingPistonBlock.TYPE, this.isSticky ? PistonType.STICKY : PistonType.DEFAULT);
+                .setValue(MovingPistonBlock.TYPE, this.type);
             BlockEntity movingBaseBlockEntity = MOVING_BLOCK.createMovingBlockEntity(
                 pos,
                 movingBaseState,
@@ -227,7 +229,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             world.updateNeighborsAt(pos, movingBaseState.getBlock());
             movingBaseState.updateNeighbourShapes(world, pos, UPDATE_CLIENTS);
 
-            if (this.isSticky) {
+            if (this.type == PistonType.STICKY) {
                 boolean droppedBlock = false;
 
                 BlockPos frontPos = pos.relative(facing, 2);

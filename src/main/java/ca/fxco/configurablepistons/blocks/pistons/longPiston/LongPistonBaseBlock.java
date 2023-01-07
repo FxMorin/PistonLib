@@ -1,8 +1,8 @@
 package ca.fxco.configurablepistons.blocks.pistons.longPiston;
 
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurableLongPistonHandler;
 import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
@@ -13,24 +13,25 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class LongPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public LongPistonBaseBlock(boolean isSticky) {
-        this(isSticky, ModBlocks.LONG_MOVING_BLOCK, ModBlocks.LONG_PISTON_HEAD);
+    public LongPistonBaseBlock(PistonType type) {
+        this(type, ModBlocks.LONG_MOVING_BLOCK, ModBlocks.LONG_PISTON_HEAD);
     }
 
-    public LongPistonBaseBlock(boolean isSticky, Properties properties) {
-        this(isSticky, properties, ModBlocks.LONG_MOVING_BLOCK, ModBlocks.LONG_PISTON_HEAD);
+    public LongPistonBaseBlock(PistonType type, Properties properties) {
+        this(type, properties, ModBlocks.LONG_MOVING_BLOCK, ModBlocks.LONG_PISTON_HEAD);
     }
 
-    public LongPistonBaseBlock(boolean isSticky, LongMovingBlock movingBlock, LongPistonHeadBlock headBlock) {
-        this(isSticky, FabricBlockSettings.copyOf(Blocks.PISTON), movingBlock, headBlock);
+    public LongPistonBaseBlock(PistonType type, LongMovingBlock movingBlock, LongPistonHeadBlock headBlock) {
+        this(type, FabricBlockSettings.copyOf(Blocks.PISTON), movingBlock, headBlock);
     }
 
-    public LongPistonBaseBlock(boolean isSticky, Properties properties,
+    public LongPistonBaseBlock(PistonType type, Properties properties,
                             LongMovingBlock movingBlock, LongPistonHeadBlock headBlock) {
-        super(isSticky, properties, movingBlock, headBlock);
+        super(type, properties, movingBlock, headBlock);
     }
 
     @Override

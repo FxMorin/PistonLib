@@ -85,7 +85,7 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
             }
         } else {
             if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonType type = base.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
+                PistonType type = base.type;
                 Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
                 BlockState headState = base.getHeadBlock().defaultBlockState()

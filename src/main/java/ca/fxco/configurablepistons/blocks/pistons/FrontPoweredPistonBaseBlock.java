@@ -5,11 +5,12 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBloc
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class FrontPoweredPistonBaseBlock extends BasicPistonBaseBlock {
 
-	public FrontPoweredPistonBaseBlock(boolean sticky) {
-        super(sticky);
+	public FrontPoweredPistonBaseBlock(PistonType type) {
+        super(type);
     }
 
     @Override

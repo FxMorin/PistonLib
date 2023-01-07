@@ -37,7 +37,7 @@ public class LongPistonBlockEntityRenderer<T extends LongMovingBlockEntity> exte
             }
         } else {
             if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonType type = base.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
+                PistonType type = base.type;
                 Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
                 BlockState renderState;
