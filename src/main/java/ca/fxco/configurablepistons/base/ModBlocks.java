@@ -3,17 +3,9 @@ package ca.fxco.configurablepistons.base;
 import java.util.Map;
 import java.util.function.Function;
 
+import ca.fxco.configurablepistons.blocks.*;
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.configurablepistons.blocks.AllSidedObserverBlock;
-import ca.fxco.configurablepistons.blocks.AxisLockedBlock;
-import ca.fxco.configurablepistons.blocks.GlueBlock;
-import ca.fxco.configurablepistons.blocks.PoweredStickyBlock;
-import ca.fxco.configurablepistons.blocks.PullOnlyBlock;
-import ca.fxco.configurablepistons.blocks.SlimyPoweredBlock;
-import ca.fxco.configurablepistons.blocks.StickyChainBlock;
-import ca.fxco.configurablepistons.blocks.StickySidesBlock;
-import ca.fxco.configurablepistons.blocks.StickylessBlock;
 import ca.fxco.configurablepistons.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.configurablepistons.blocks.halfBlocks.HalfObsidianBlock;
 import ca.fxco.configurablepistons.blocks.halfBlocks.HalfPoweredBlock;
@@ -81,6 +73,7 @@ public class ModBlocks {
     public static final Block POWERED_STICKY_BLOCK = register("powered_sticky_block", PoweredStickyBlock::new, Blocks.OAK_PLANKS);
     public static final Block STICKY_CHAIN_BLOCK = register("sticky_chain", StickyChainBlock::new, Blocks.CHAIN);
     public static final Block AXIS_LOCKED_BLOCK = register("axis_locked_block", AxisLockedBlock::new, Blocks.DEEPSLATE_BRICKS);
+    public static final Block MOVE_COUNTING_BLOCK = register("move_counting_block", MoveCountingBlock::new, Blocks.SCULK);
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface

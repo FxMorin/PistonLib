@@ -17,6 +17,10 @@ I don't have much time to work on this, so any time your willing to give to help
 - Movable Block Entities
 - Quarter Slime blocks
 - [Obsidian Slabs & Stairs](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
+
+### Blocks that need textures
+- axis_locked_block
+- move_counting_block
   
 ### Mods to make/update using the API
 - [chains-link](https://www.curseforge.com/minecraft/mc-mods/chains-link)
