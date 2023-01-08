@@ -21,7 +21,8 @@ public class StickyMovingBlockEntity extends BasicMovingBlockEntity {
 
     public StickyMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                    boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.STICKY_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston, ModBlocks.STICKY_MOVING_BLOCK);
+        this(ModBlockEntities.STICKY_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
+            ModBlocks.STICKY_MOVING_BLOCK);
     }
     public StickyMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
                                    Direction facing, boolean extending, boolean isSourcePiston, StickyMovingBlock movingBlock) {

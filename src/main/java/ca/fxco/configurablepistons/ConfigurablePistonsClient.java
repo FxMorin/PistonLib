@@ -2,7 +2,9 @@ package ca.fxco.configurablepistons;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
-import ca.fxco.configurablepistons.renderers.BasicPistonBlockEntityRenderer;
+import ca.fxco.configurablepistons.renderers.BasicMovingBlockEntityRenderer;
+import ca.fxco.configurablepistons.renderers.LongMovingBlockEntityRenderer;
+import ca.fxco.configurablepistons.renderers.MBEMovingBlockEntityRenderer;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -14,13 +16,14 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        BlockEntityRenderers.register(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.STICKY_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, LongMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.STICKY_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, MBEMovingBlockEntityRenderer::new);
 
         BlockRenderLayerMap renderLayers = BlockRenderLayerMap.INSTANCE;
         renderLayers.putBlock(ModBlocks.HALF_SLIME_BLOCK, RenderType.translucent());

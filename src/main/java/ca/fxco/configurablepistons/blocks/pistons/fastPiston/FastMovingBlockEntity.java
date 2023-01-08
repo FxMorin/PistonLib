@@ -22,7 +22,8 @@ public class FastMovingBlockEntity extends BasicMovingBlockEntity {
     }
     public FastMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                  boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston, ModBlocks.FAST_MOVING_BLOCK);
+        this(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
+            ModBlocks.FAST_MOVING_BLOCK);
     }
 
     public FastMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,

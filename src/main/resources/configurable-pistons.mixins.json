@@ -6,7 +6,6 @@
   "mixins": [
     "Block_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
-    "PistonStructureResolver_isMovableMixin",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",

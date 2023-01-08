@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.pistonLogic.StickyGroup;
 import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
@@ -14,49 +14,36 @@ import ca.fxco.configurablepistons.pistonLogic.internal.BlockStateBaseExpandedSt
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
-public class ConfigurablePistonStructureResolver {
+public class ConfigurablePistonStructureResolver extends PistonStructureResolver {
 
-    public static final int DEFAULT_MAX_MOVABLE_BLOCKS = 12;
-
-    protected final Level level;
-    protected final BlockPos pistonPos;
-    protected final boolean extend;
-    protected final BlockPos startPos;
-    protected final Direction moveDirection;
-    protected final List<BlockPos> toMove = new ArrayList<>();
-    protected final List<BlockPos> toDestroy = new ArrayList<>();
-    protected final Direction pistonFacing;
+    protected final BasicPistonBaseBlock piston;
     protected final int maxMovableBlocks;
 
-    public ConfigurablePistonStructureResolver(Level level, BlockPos pistonPos, Direction pistonFacing, boolean extend) {
-        this(level, pistonPos, pistonFacing, extend, DEFAULT_MAX_MOVABLE_BLOCKS);
+    public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+                                               Direction facing, boolean extend) {
+        this(piston, level, pos, facing, extend, MAX_PUSH_DEPTH);
     }
 
-    public ConfigurablePistonStructureResolver(Level level, BlockPos pistonPos, Direction pistonFacing, boolean extend, int maxMovableBlocks) {
-        this.level = level;
-        this.pistonPos = pistonPos;
-        this.pistonFacing = pistonFacing;
-        this.extend = extend;
-        if (extend) {
-            this.moveDirection = pistonFacing;
-            this.startPos = pistonPos.relative(pistonFacing);
-        } else {
-            this.moveDirection = pistonFacing.getOpposite();
-            this.startPos = pistonPos.relative(pistonFacing, 2);
-        }
+    public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+                                               Direction facing, boolean extend, int maxMovableBlocks) {
+        super(level, pos, facing, extend );
+
+        this.piston = piston;
         this.maxMovableBlocks = maxMovableBlocks;
     }
 
-    public boolean resolve(boolean isPull) {
-        this.toMove.clear();
+    @Override
+    public boolean resolve() {
+        this.toPush.clear();
         this.toDestroy.clear();
         BlockState state = this.level.getBlockState(this.startPos);
-        if (!PistonUtils.isMovable(state, this.level, this.startPos, this.moveDirection, false, this.pistonFacing)) {
-            if (this.extend) {
-                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior) state.getBlock();
+        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
+            if (this.extending) {
+                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
                     if (pistonBehavior.canDestroy(state)) {
                         this.toDestroy.add(this.startPos);
@@ -70,11 +57,11 @@ public class ConfigurablePistonStructureResolver {
             }
             return false;
         } else {
-            if (this.cantMove(this.startPos, isPull ? this.moveDirection.getOpposite() : this.moveDirection))
+            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection))
                 return false;
         }
-        for (int i = 0; i < this.toMove.size(); ++i) {
-            BlockPos blockPos = this.toMove.get(i);
+        for (int i = 0; i < this.toPush.size(); ++i) {
+            BlockPos blockPos = this.toPush.get(i);
             state = this.level.getBlockState(blockPos);
             ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
             if (stick.usesConfigurablePistonStickiness()) {
@@ -91,7 +78,7 @@ public class ConfigurablePistonStructureResolver {
     protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
         BlockState blockState = this.level.getBlockState(pos);
         for (Direction direction : Direction.values()) {
-            if (direction.getAxis() != this.moveDirection.getAxis()) {
+            if (direction.getAxis() != this.pushDirection.getAxis()) {
                 BlockPos blockPos = pos.relative(direction);
                 BlockState blockState2 = this.level.getBlockState(blockPos);
                 if (canAdjacentBlockStick(direction, blockState, blockState2) && this.cantMove(blockPos, direction))
@@ -107,7 +94,7 @@ public class ConfigurablePistonStructureResolver {
             StickyType stickyType = sideData.getValue();
             if (stickyType == StickyType.NO_STICK) continue;
             Direction dir = sideData.getKey();
-            if (dir.getAxis() != this.moveDirection.getAxis()) {
+            if (dir.getAxis() != this.pushDirection.getAxis()) {
                 BlockPos blockPos = pos.relative(dir);
                 BlockState adjState = this.level.getBlockState(blockPos);
                 if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(blockState, adjState, dir)) {
@@ -137,11 +124,11 @@ public class ConfigurablePistonStructureResolver {
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || pos.equals(this.pistonPos) || this.toMove.contains(pos)) return false;
-        if (!PistonUtils.isMovable(state, this.level, pos, this.moveDirection, false, dir)) return false;
+        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
+        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
         int i = 1;
-        if (i + this.toMove.size() > this.maxMovableBlocks) return true;
-        Direction dir2 = this.moveDirection.getOpposite();
+        if (i + this.toPush.size() > this.maxMovableBlocks) return true;
+        Direction dir2 = this.pushDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
                 (stick.isSticky(state) && stick.sideStickiness(state, dir2).ordinal() >= StickyType.STICKY.ordinal()) :
@@ -154,9 +141,9 @@ public class ConfigurablePistonStructureResolver {
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
                     blockPos.equals(this.pistonPos) ||
-                    !PistonUtils.isMovable(state, this.level, blockPos, this.moveDirection, false, dir2))
+                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
                 break;
-            if (++i + this.toMove.size() > this.maxMovableBlocks) return true;
+            if (++i + this.toPush.size() > this.maxMovableBlocks) return true;
             if (stick.usesConfigurablePistonStickiness()) {
                 boolean StickyStick = stick.isSticky(state);
                 if (StickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal())
@@ -168,17 +155,17 @@ public class ConfigurablePistonStructureResolver {
         }
         int j = 0, k;
         for(k = i - 1; k >= 0; --k) {
-            this.toMove.add(pos.relative(dir2, k));
+            this.toPush.add(pos.relative(dir2, k));
             ++j;
         }
         k = 1;
         while(true) {
-            BlockPos pos2 = pos.relative(this.moveDirection, k);
-            int l = this.toMove.indexOf(pos2);
+            BlockPos pos2 = pos.relative(this.pushDirection, k);
+            int l = this.toPush.indexOf(pos2);
             if (l > -1) {
                 this.setMovedBlocks(j, l);
                 for(int m = 0; m <= l + j; ++m) {
-                    BlockPos pos3 = this.toMove.get(m);
+                    BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
                     stick = (ConfigurablePistonStickiness)state.getBlock();
                     if (stick.usesConfigurablePistonStickiness()) {
@@ -196,7 +183,7 @@ public class ConfigurablePistonStructureResolver {
                 return false;
             if (pos2.equals(this.pistonPos))
                 return true;
-            if (!PistonUtils.isMovable(state, this.level, pos2, this.moveDirection, true, this.moveDirection))
+            if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
@@ -208,8 +195,8 @@ public class ConfigurablePistonStructureResolver {
                 this.toDestroy.add(pos2);
                 return false;
             }
-            if (this.toMove.size() >= this.maxMovableBlocks) return true;
-            this.toMove.add(pos2);
+            if (this.toPush.size() >= this.maxMovableBlocks) return true;
+            this.toPush.add(pos2);
             ++j;
             ++k;
         }
@@ -219,28 +206,16 @@ public class ConfigurablePistonStructureResolver {
         List<BlockPos> list = new ArrayList<>();
         List<BlockPos> list2 = new ArrayList<>();
         List<BlockPos> list3 = new ArrayList<>();
-        list.addAll(this.toMove.subList(0, to));
-        list2.addAll(this.toMove.subList(this.toMove.size() - from, this.toMove.size()));
-        list3.addAll(this.toMove.subList(to, this.toMove.size() - from));
-        this.toMove.clear();
-        this.toMove.addAll(list);
-        this.toMove.addAll(list2);
-        this.toMove.addAll(list3);
+        list.addAll(this.toPush.subList(0, to));
+        list2.addAll(this.toPush.subList(this.toPush.size() - from, this.toPush.size()));
+        list3.addAll(this.toPush.subList(to, this.toPush.size() - from));
+        this.toPush.clear();
+        this.toPush.addAll(list);
+        this.toPush.addAll(list2);
+        this.toPush.addAll(list3);
     }
 
-    public Direction getMoveDirection() {
-        return this.moveDirection;
-    }
-
-    public List<BlockPos> getToMove() {
-        return this.toMove;
-    }
-
-    public List<BlockPos> getToDestroy() {
-        return this.toDestroy;
-    }
-
-    public int getMaxMovableBlocks() {
+    public int getMoveLimit() {
         return this.maxMovableBlocks;
     }
 }
