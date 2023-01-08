@@ -1,5 +1,16 @@
 accessWidener	v1	named
-# Setup PistonMovingBlockEntity Extending for custom classes
+
+# Set up PistonStructureResolver extending for custom classes
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver level Lnet/minecraft/world/level/Level;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver pistonPos Lnet/minecraft/core/BlockPos;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver extending Z
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver startPos Lnet/minecraft/core/BlockPos;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver pushDirection Lnet/minecraft/core/Direction;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver toPush Ljava/util/List;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver toDestroy Ljava/util/List;
+accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver pistonDirection Lnet/minecraft/core/Direction;
+
+# Set up PistonMovingBlockEntity extending for custom classes
 accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity movedState Lnet/minecraft/world/level/block/state/BlockState;
 accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity direction Lnet/minecraft/core/Direction;
 accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity extending Z
@@ -12,4 +23,3 @@ accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity 
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getExtendedProgress (F)F
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getCollisionRelatedBlockState ()Lnet/minecraft/world/level/block/state/BlockState;
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity isStickyForEntities ()Z
-extendable method net/minecraft/world/level/block/SlimeBlock bounceUp (Lnet/minecraft/world/entity/Entity;)V

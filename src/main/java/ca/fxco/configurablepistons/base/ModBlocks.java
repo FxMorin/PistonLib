@@ -26,6 +26,8 @@ import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonArmBlock;
 import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongPistonHeadBlock;
+import ca.fxco.configurablepistons.blocks.pistons.movableBlockEntities.MBEMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.movableBlockEntities.MBEPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyPistonHeadBlock;
@@ -165,6 +167,13 @@ public class ModBlocks {
     public static final BasicPistonHeadBlock SUPER_PISTON_HEAD = registerPiston(SUPER, new BasicPistonHeadBlock());
     public static final BasicPistonBaseBlock SUPER_PISTON = registerPiston(SUPER, new PushLimitPistonBaseBlock(PistonType.DEFAULT, Integer.MAX_VALUE));
     public static final BasicPistonBaseBlock SUPER_STICKY_PISTON = registerPiston(SUPER, new PushLimitPistonBaseBlock(PistonType.STICKY, Integer.MAX_VALUE));
+
+    // MBE Piston
+    // A piston that can move block entities
+    public static final BasicPistonHeadBlock MBE_PISTON_HEAD_BLOCK = registerPiston(MBE, new BasicPistonHeadBlock());
+    public static final MBEMovingBlock MBE_MOVING_BLOCK = registerPiston(MBE, new MBEMovingBlock());
+    public static final MBEPistonBaseBlock MBE_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.DEFAULT));
+    public static final MBEPistonBaseBlock MBE_STICKY_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.STICKY));
 
     //
     // Registration methods

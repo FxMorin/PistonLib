@@ -19,9 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
-public class LongPistonBlockEntityRenderer<T extends LongMovingBlockEntity> extends BasicPistonBlockEntityRenderer<T> {
+public class LongMovingBlockEntityRenderer<T extends LongMovingBlockEntity> extends BasicMovingBlockEntityRenderer<T> {
 
-    public LongPistonBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+    public LongMovingBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
@@ -32,7 +32,7 @@ public class LongPistonBlockEntityRenderer<T extends LongMovingBlockEntity> exte
 
         if (mbe.isExtending()) {
             if (state.getBlock() instanceof BasicPistonHeadBlock) {
-                renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
+                this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
                     bufferSource, level, false, overlay);
             }
         } else {
@@ -52,7 +52,7 @@ public class LongPistonBlockEntityRenderer<T extends LongMovingBlockEntity> exte
                         .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
                 }
 
-                renderBlock(fromPos, renderState, stack, bufferSource, level, false, overlay);
+                this.renderBlock(fromPos, renderState, stack, bufferSource, level, false, overlay);
             }
         }
     }

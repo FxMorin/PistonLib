@@ -21,7 +21,8 @@ public class StickyMovingBlock extends BasicMovingBlock {
 
     @Override
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               Direction facing, boolean extending, boolean isSourcePiston) {
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new StickyMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, this);
     }
 

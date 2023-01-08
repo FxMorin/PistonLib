@@ -23,13 +23,15 @@ public class LongMovingBlock extends BasicMovingBlock {
 
     @Override
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               Direction facing, boolean extending, boolean isSourcePiston) {
-        return createMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, MAX_ARM_LENGTH, 0, false);
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
+        return createMovingBlockEntity(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, MAX_ARM_LENGTH,
+            0, false);
     }
 
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               Direction facing, boolean extending, boolean isSourcePiston,
-                                               int maxLength, int length, boolean isArm) {
+                                               BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                               boolean isSourcePiston, int maxLength, int length, boolean isArm) {
         return new LongMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm, this);
     }
 

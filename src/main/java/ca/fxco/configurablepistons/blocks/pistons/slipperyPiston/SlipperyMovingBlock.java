@@ -38,7 +38,8 @@ public class SlipperyMovingBlock extends BasicMovingBlock {
 
     @Override
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               Direction facing, boolean extending, boolean isSourcePiston) {
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new SlipperyMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, this);
     }
 

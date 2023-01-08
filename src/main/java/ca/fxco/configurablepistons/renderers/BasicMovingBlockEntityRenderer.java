@@ -25,11 +25,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
-public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
+public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
 
     protected final BlockRenderDispatcher blockRenderer;
 
-    public BasicPistonBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+    public BasicMovingBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.blockRenderer = ctx.getBlockRenderDispatcher();
     }
 
@@ -56,18 +56,18 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         BlockPos fromPos = toPos.relative(moveDir.getOpposite());
 
         if (mbe.isSourcePiston()) {
-            renderMovingSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+            this.renderMovingSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
         } else {
-            renderMovingBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+            this.renderMovingBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
         }
 
         stack.popPose();
         stack.pushPose();
 
         if (mbe.isSourcePiston()) {
-            renderStaticSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+            this.renderStaticSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
         } else {
-            renderStaticBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
+            this.renderStaticBlock(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
         }
 
         stack.popPose();
@@ -80,7 +80,7 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
 
         if (mbe.isExtending()) {
             if (state.getBlock() instanceof BasicPistonHeadBlock) {
-                renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
+                this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
                     bufferSource, level, false, overlay);
             }
         } else {
@@ -93,7 +93,7 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
                     .setValue(BasicPistonHeadBlock.FACING, facing)
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 
-                renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
+                this.renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
             }
         }
     }
@@ -104,7 +104,7 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
             BlockState state = mbe.getMovedState();
 
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
-                renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, true, overlay);
+                this.renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, true, overlay);
             }
         }
     }
@@ -114,10 +114,10 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         BlockState state = mbe.getMovedState();
 
         if (state.getBlock() instanceof BasicPistonHeadBlock) {
-            renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource,
-                level, false, overlay);
+            this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
+                bufferSource, level, false, overlay);
         } else {
-            renderBlock(fromPos, state, stack, bufferSource, level, false, overlay);
+            this.renderBlock(fromPos, state, stack, bufferSource, level, false, overlay);
         }
     }
 
@@ -134,6 +134,8 @@ public class BasicPistonBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, stack,
             consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
+
+    
 
     @Override
     public int getViewDistance() {

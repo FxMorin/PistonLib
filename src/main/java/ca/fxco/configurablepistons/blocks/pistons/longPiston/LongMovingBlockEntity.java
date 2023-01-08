@@ -5,12 +5,9 @@ import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.configurablepistons.pistonLogic.PistonUtils;
-import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurableLongPistonHandler;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
@@ -72,12 +69,14 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
         }
     }
 
-    public ConfigurableLongPistonHandler createStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new ConfigurableLongPistonHandler(level, pos, facing, extend, MOVING_BLOCK);
+    @Override
+    protected void finishMovement() {
+        if (this.finishArmMovement()) {
+            super.finishMovement();
+        }
     }
 
-    @Override
-    protected boolean canFinishMovement() {
+    protected boolean finishArmMovement() {
         BlockPos arriveAt = this.worldPosition.relative(this.direction);
         BlockEntity blockEntity = this.level.getBlockEntity(arriveAt);
         //Should tick before the other piston block entities because it was created first. But not really V
@@ -126,15 +125,14 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
             return false;
         }*/
         // TODO: Make more configurable          V
-        PistonUtils.move(this.level, this.worldPosition, ModBlocks.LONG_PISTON, this.direction, this.extending, (pistonHandler, pull) ->
-                ((ConfigurableLongPistonHandler)pistonHandler).calculateLongPullPush(pull, LongMovingBlockEntity::skipCheck));
+        ModBlocks.LONG_PISTON.moveBlocks(this.level, this.worldPosition, this.direction, this.extending);
         return true;
     }
 
     @Override
     protected BlockState getMovingStateForCollisionShape() {
-        if (this.isSourcePiston()) {
-            if (this.isArm()) {
+        if (this.isSourcePiston) {
+            if (this.isArm) {
                 return ModBlocks.LONG_PISTON_ARM.defaultBlockState()
                     .setValue(PistonHeadBlock.FACING, this.direction)
                     .setValue(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);

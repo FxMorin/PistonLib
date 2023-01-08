@@ -53,7 +53,9 @@ public class BasicMovingBlock extends MovingPistonBlock {
         super(properties);
     }
 
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing, boolean extending, boolean isSourcePiston) {
+    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, this);
     }
 
@@ -101,7 +103,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
-        PistonMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
+        BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
 
         return mbe == null ? Collections.emptyList() : mbe.getMovedState().getDrops(builder);
     }
