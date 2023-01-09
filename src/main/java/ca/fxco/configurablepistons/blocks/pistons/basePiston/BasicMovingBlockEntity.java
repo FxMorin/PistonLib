@@ -257,9 +257,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         return this.movedState;
     }
 
-    private boolean finalTickStuckNeighbors(Map<Direction, StickyType> stickyTypes) {
-        boolean success = false;
-
+    public void finalTickStuckNeighbors(Map<Direction, StickyType> stickyTypes) {
         for (Map.Entry<Direction, StickyType> entry : stickyTypes.entrySet()) {
             StickyType stickyType = entry.getValue();
 
@@ -281,18 +279,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                     }
                 }
             }
-
-            success = true;
         }
-
-        return success;
     }
 
     @Override
     public void finalTick() {
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
-            this.progress = 1.0F;
-            this.progressO = this.progress;
 
             this.finishMovement();
 
@@ -301,6 +293,9 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
                 this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
             }
+
+            this.progress = 1.0F;
+            this.progressO = this.progress;
         }
     }
 
