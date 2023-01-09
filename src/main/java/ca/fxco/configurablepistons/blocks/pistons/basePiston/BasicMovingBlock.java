@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
-import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Material;
@@ -56,7 +55,8 @@ public class BasicMovingBlock extends MovingPistonBlock {
         );
     }
 
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing, boolean extending, boolean isSourcePiston) {
+    public BlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
+                                            Direction facing, boolean extending, boolean isSourcePiston) {
         return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
     }
 
@@ -104,7 +104,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
-        PistonMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
+        BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
 
         return mbe == null ? Collections.emptyList() : mbe.getMovedState().getDrops(builder);
     }

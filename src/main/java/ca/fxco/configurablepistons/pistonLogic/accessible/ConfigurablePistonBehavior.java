@@ -33,7 +33,6 @@ public interface ConfigurablePistonBehavior {
         return false;
     }
 
-    // Only called on pushing, may add pulling later
     default boolean canDestroy(BlockState state) {
         return false;
     }

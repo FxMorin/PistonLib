@@ -28,14 +28,15 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
         this.setSpeed(speed);
     }
 
-    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState,
-                                  Direction facing, boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, speed, pos, state, movedState, facing, extending, isSourcePiston, ModBlocks.STRONG_MOVING_BLOCK);
+    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState, Direction facing,
+                                  boolean extending, boolean isSourcePiston) {
+        this(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, speed, pos, state, movedState, facing, extending, isSourcePiston,
+            ModBlocks.STRONG_MOVING_BLOCK);
     }
 
     public SpeedMovingBlockEntity(BlockEntityType<?> type, float speed, BlockPos pos, BlockState state, BlockState movedState,
-                                  Direction dir, boolean extending, boolean isSourcePiston, SpeedMovingBlock movingBlock) {
-        super(type, pos, state, movedState, dir, extending, isSourcePiston, movingBlock);
+                                  Direction facing, boolean extending, boolean isSourcePiston, SpeedMovingBlock movingBlock) {
+        super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
 
         this.setSpeed(speed);
     }

@@ -4,6 +4,7 @@ import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEnt
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.translocationPiston.TranslocationMovingBlockEntity;
@@ -26,6 +27,7 @@ public class ModBlockEntities {
     public static final BlockEntityType<StickyMovingBlockEntity> STICKY_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<TranslocationMovingBlockEntity> TRANSLOCATION_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SlipperyMovingBlockEntity> SLIPPERY_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<MBEMovingBlockEntity> MBE_MOVING_BLOCK_ENTITY;
 
     static {
         BASIC_MOVING_BLOCK_ENTITY = register(
@@ -63,19 +65,24 @@ public class ModBlockEntities {
                 SlipperyMovingBlockEntity::new,
                 ModBlocks.SLIPPERY_MOVING_BLOCK
         );
+        MBE_MOVING_BLOCK_ENTITY = register(
+                "mbe",
+                MBEMovingBlockEntity::new,
+                ModBlocks.MBE_MOVING_BLOCK
+        );
     }
 
     public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             String name,
             FabricBlockEntityTypeBuilder.Factory<T> blockEntityFactory,
-            BasicMovingBlock extensionBlock
+            BasicMovingBlock movingBlock
     ) {
         return Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id(name+"_piston_entity"),
                 FabricBlockEntityTypeBuilder.create(
                         blockEntityFactory,
-                        extensionBlock
+                        movingBlock
                 ).build(null)
         );
     }

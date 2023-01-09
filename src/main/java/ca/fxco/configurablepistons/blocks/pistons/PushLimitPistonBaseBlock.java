@@ -6,6 +6,7 @@ import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePiston
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class PushLimitPistonBaseBlock extends BasicPistonBaseBlock {
@@ -19,7 +20,7 @@ public class PushLimitPistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    public ConfigurablePistonStructureResolver createStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new ConfigurablePistonStructureResolver(level, pos, facing, extend, this.pushLimit);
+    public PistonStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
+        return new ConfigurablePistonStructureResolver(this, level, pos, facing, extend, this.pushLimit);
     }
 }

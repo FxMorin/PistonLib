@@ -21,11 +21,13 @@ public class SlipperyMovingBlockEntity extends BasicMovingBlockEntity {
 
     public SlipperyMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                      boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston, ModBlocks.SLIPPERY_MOVING_BLOCK);
+        this(ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
+            ModBlocks.SLIPPERY_MOVING_BLOCK);
     }
 
     public SlipperyMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
-                                     Direction facing, boolean extending, boolean isSourcePiston, SlipperyMovingBlock movingBlock) {
+                                     Direction facing, boolean extending, boolean isSourcePiston,
+                                     SlipperyMovingBlock movingBlock) {
         super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
     }
 }

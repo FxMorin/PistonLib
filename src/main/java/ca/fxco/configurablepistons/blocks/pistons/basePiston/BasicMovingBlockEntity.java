@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -49,8 +48,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     public BasicMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BasicMovingBlock movingBlock) {
         super(pos, state);
 
-        MOVING_BLOCK = movingBlock;
         ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
+        this.MOVING_BLOCK = movingBlock;
     }
 
     public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
@@ -62,8 +61,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                                   Direction facing, boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
-        MOVING_BLOCK = movingBlock;
+        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
+        this.MOVING_BLOCK = movingBlock;
     }
 
     public BasicMovingBlock getMovingBlock() {
@@ -282,7 +281,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 BlockEntity blockEntity = this.level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof BasicMovingBlockEntity mbe) {
-                    if (getMovementDirection() == mbe.getMovementDirection() && this.progress == mbe.progress) {
+                    if (this.getMovementDirection() == mbe.getMovementDirection() && this.progress == mbe.progress) {
                         // Maybe do a stick test?
                         mbe.finalTick();
                     }
@@ -297,26 +296,17 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void finalTick() {
-        if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide()) && this.canFinishMovement()) {
-            if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
-                BlockState state = this.isSourcePiston ?
-                    Blocks.AIR.defaultBlockState() : Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
-
-                this.level.setBlock(this.worldPosition, state, Block.UPDATE_ALL);
-                this.level.neighborChanged(this.worldPosition, state.getBlock(), this.worldPosition);
-
-                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
-
-                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(state)) {
-                    finalTickStuckNeighbors(stick.stickySides(state));
-                }
-            }
-
+        if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
             this.progress = 1.0F;
             this.progressO = this.progress;
 
-            this.level.removeBlockEntity(this.worldPosition);
-            this.setRemoved();
+            this.finishMovement();
+
+            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)this.movedState.getBlock();
+
+            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
+                this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+            }
         }
     }
 
@@ -326,26 +316,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         if (this.progressO >= 1.0F) {
             if (this.level.isClientSide() && this.deathTicks < 5) {
                 this.deathTicks++;
-            } else if (this.canFinishMovement()) {
-                this.level.removeBlockEntity(this.worldPosition);
-                this.setRemoved();
-
-                if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
-                    BlockState state = Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
-
-                    if (state.isAir()) {
-                        this.level.setBlock(this.worldPosition, this.movedState,
-                            Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_INVISIBLE);
-                        Block.updateOrDestroy(this.movedState, state, this.level, this.worldPosition, Block.UPDATE_ALL);
-                    } else {
-                        if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-                            state = state.setValue(BlockStateProperties.WATERLOGGED, false);
-                        }
-
-                        this.level.setBlock(this.worldPosition, state, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
-                        this.level.neighborChanged(this.worldPosition, state.getBlock(), this.worldPosition);
-                    }
-                }
+            } else {
+                this.finishMovement();
             }
         } else {
             float nextProgress = this.progress + 0.5F * this.speed();
@@ -360,8 +332,37 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
     }
 
-    protected boolean canFinishMovement() {
-        return true;
+    protected void finishMovement() {
+        this.level.removeBlockEntity(this.worldPosition);
+        this.setRemoved();
+
+        if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
+            this.placeAndUpdateMovedBlock();
+        }
+    }
+
+    protected void placeAndUpdateMovedBlock() {
+        if (!this.placeMovedBlock()) {
+            return;
+        }
+
+        BlockState updatedState = Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
+
+        if (updatedState == this.movedState) {
+            this.level.updateNeighborsAt(this.worldPosition, updatedState.getBlock());
+
+            updatedState.updateNeighbourShapes(this.level, this.worldPosition, Block.UPDATE_ALL);
+            updatedState.updateIndirectNeighbourShapes(this.level, this.worldPosition, Block.UPDATE_ALL);
+        } else {
+            this.level.setBlock(this.worldPosition, updatedState, Block.UPDATE_ALL);
+        }
+
+        this.level.neighborChanged(this.worldPosition, updatedState.getBlock(), this.worldPosition);
+    }
+
+    protected boolean placeMovedBlock() {
+        return this.level.setBlock(this.worldPosition, this.movedState,
+            Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
     }
 
     @Override

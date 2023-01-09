@@ -30,11 +30,13 @@ public class TranslocationMovingBlockEntity extends BasicMovingBlockEntity {
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                           boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston, ModBlocks.TRANSLOCATION_MOVING_BLOCK);
+        this(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
+            ModBlocks.TRANSLOCATION_MOVING_BLOCK);
     }
 
     public TranslocationMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
-                                          Direction facing, boolean extending, boolean isSourcePiston, TranslocationMovingBlock movingBlock) {
+                                          Direction facing, boolean extending, boolean isSourcePiston,
+                                          TranslocationMovingBlock movingBlock) {
         super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
     }
 
