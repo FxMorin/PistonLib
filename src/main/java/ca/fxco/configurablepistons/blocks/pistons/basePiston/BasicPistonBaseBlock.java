@@ -157,12 +157,14 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 level.blockEvent(pos, this, MotionType.PUSH, facing.get3DDataValue());
             }
         } else if (!shouldBeExtended && isExtended) {
-            int type = shouldDoPullEvent((ServerLevel)level, pos, facing) ? MotionType.PULL : MotionType.RETRACT;
-            level.blockEvent(pos, this, type, facing.get3DDataValue());
+            int type = getPullType((ServerLevel)level, pos, facing);
+            if (type != -1) {
+                level.blockEvent(pos, this, type, facing.get3DDataValue());
+            }
         }
     }
 
-    protected boolean shouldDoPullEvent(ServerLevel level, BlockPos pos, Direction facing) {
+    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
         BlockPos frontPos = pos.relative(facing, 2);
         BlockState frontState = level.getBlockState(frontPos);
 
@@ -170,11 +172,13 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             BlockEntity blockEntity = level.getBlockEntity(frontPos);
 
             if (blockEntity instanceof PistonMovingBlockEntity mbe) {
-                return !mbe.isExtending() || !(mbe.getProgress(0.0F) < 0.5F || mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick());
+                if (mbe.isExtending() && mbe.getProgress(0.0F) < 0.5F && mbe.getLastTicked() == level.getGameTime() && level.isHandlingTick()) {
+                    return MotionType.RETRACT;
+                }
             }
         }
 
-        return true;
+        return MotionType.PULL;
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
@@ -239,6 +243,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     BlockEntity frontBlockEntity = world.getBlockEntity(frontPos);
 
                     if (frontBlockEntity instanceof PistonMovingBlockEntity mbe && mbe.getDirection() == facing && mbe.isExtending()) {
+                        System.out.println("Did block dropping");
                         mbe.finalTick();
                         droppedBlock = true;
                     }

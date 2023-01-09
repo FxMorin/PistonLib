@@ -2,7 +2,7 @@ package ca.fxco.configurablepistons.blocks.pistons.configurablePiston;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
 
-public class ConfigurableMovingBlockEntity extends BasicMovingBlockEntity {
+public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
 
     protected boolean translocation;
 
@@ -35,10 +35,9 @@ public class ConfigurableMovingBlockEntity extends BasicMovingBlockEntity {
     public ConfigurableMovingBlockEntity(float speed, boolean translocation, BlockPos pos, BlockState state,
                                          BlockState pushedBlock, Direction facing, boolean extending, boolean source,
                                          BasicMovingBlock movingBlock, BlockEntityType<?> type) {
-        super(pos, state, pushedBlock, facing, extending, source, movingBlock, type);
-        this.translocation = translocation;
+        super(speed, pos, state, pushedBlock, facing, extending, source, movingBlock, type);
 
-        this.speed();
+        this.translocation = translocation;
     }
 
     @Override
@@ -87,12 +86,14 @@ public class ConfigurableMovingBlockEntity extends BasicMovingBlockEntity {
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
+
         this.translocation = nbt.getBoolean("translocation");
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
+
         nbt.putBoolean("translocation", translocation);
     }
 }

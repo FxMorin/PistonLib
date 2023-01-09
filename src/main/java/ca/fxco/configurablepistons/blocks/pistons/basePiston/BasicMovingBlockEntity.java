@@ -291,10 +291,15 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void finalTick() {
+        finalTick(false);
+    }
+
+    public void finalTick(boolean placeSource) {
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide()) && this.canFinishMovement()) {
             if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
-                BlockState state = this.isSourcePiston ?
-                    Blocks.AIR.defaultBlockState() : Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
+                BlockState state = (!placeSource && this.isSourcePiston) ?
+                        Blocks.AIR.defaultBlockState() :
+                        Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
 
                 this.level.setBlock(this.worldPosition, state, Block.UPDATE_ALL);
                 this.level.neighborChanged(this.worldPosition, state.getBlock(), this.worldPosition);

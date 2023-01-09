@@ -39,8 +39,10 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
         canExtendOnRetracting = settings.canExtendOnRetracting;
     }
 
-    public ConfigurablePistonStructureResolver getPistonHandler(Level level, BlockPos pos, Direction dir, boolean retract) {
-        return new ConfigurablePistonStructureResolver(level, pos, dir, retract, this.pushLimit);
+    @Override
+    public ConfigurablePistonStructureResolver createStructureResolver(Level level, BlockPos pos,
+                                                                       Direction dir, boolean extend) {
+        return new ConfigurablePistonStructureResolver(level, pos, dir, extend, this.pushLimit);
     }
 
     @Override
@@ -51,8 +53,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    protected boolean shouldDoPullEvent(ServerLevel level, BlockPos pos, Direction facing) {
-        return !canRetractOnExtending && super.shouldDoPullEvent(level, pos, facing);
+    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
+        return canRetractOnExtending ? super.getPullType(level, pos, facing) : -1;
     }
 
     @Override

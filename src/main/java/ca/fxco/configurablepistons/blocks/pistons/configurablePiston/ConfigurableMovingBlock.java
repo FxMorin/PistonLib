@@ -3,7 +3,6 @@ package ca.fxco.configurablepistons.blocks.pistons.configurablePiston;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -63,63 +61,39 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
         return createTicker(type, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
     }
 
-    /*@Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (canExtendOnRetracting && world.getBlockEntity(pos) instanceof PistonBlockEntity pistonBlockEntity) {
-            if (pistonBlockEntity.source && pistonBlockEntity.pushedBlock.getBlock() instanceof BasicPistonBlock) {
-                if (!pistonBlockEntity.isExtending()) {
-                    System.out.println("Skipped Retracted on Extension!");
-                    world.addSyncedBlockEvent(pos, this, 0, 0);
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (canExtendOnRetracting && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
+            if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
+                if (!movingBlockEntity.isExtending()) {
+                    Direction facing = movingBlockEntity.movedState.getValue(FACING);
+                    if (cpbb.hasNeighborSignal(level, pos, facing)) {
+                        float progress = movingBlockEntity.progress;
+                        movingBlockEntity.finalTick(true);
+                        boolean temp = false;
+                        BlockPos frontPos = pos.relative(facing);
+                        if (level.getBlockEntity(frontPos) instanceof BasicMovingBlockEntity bmbe && !bmbe.isSourcePiston && !bmbe.extending && bmbe.progress == progress) {
+                            bmbe.finalTick(false);
+                            temp = true;
+                        }
+                        cpbb.checkIfExtend(level, pos, movingBlockEntity.movedState);
+                        int progressInt = Float.floatToIntBits(1 - progress);
+                        level.blockEvent(frontPos, this, 99, progressInt);
+                        if (temp) {
+                            level.blockEvent(frontPos.relative(facing), this, 99, progressInt);
+                        }
+                    }
                 }
             }
         }
     }
 
-    public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
-        if (type == 0) {
-            if (world.getBlockEntity(pos) instanceof BasicPistonBlockEntity pbe && pbe.source &&
-                    pbe.pushedBlock.getBlock() instanceof BasicPistonBlock basicPistonBlock) {
-                //pbe.facing = pbe.facing.getOpposite();
-                //pbe.progress = pbe.lastProgress = 1 - pbe.progress;
-                float progress = pbe.progress;
-                //pbe.extending = !pbe.extending;
-                //pbe.progress = pbe.lastProgress = 1 - pbe.progress;
-                BlockPos facingPos = pos.offset(pbe.facing);
-                BlockState facingState = world.getBlockState(facingPos);
-                if (facingState.isOf(this) &&
-                        world.getBlockEntity(facingPos) instanceof BasicPistonBlockEntity bpbe &&
-                        bpbe.facing == pbe.facing && bpbe.progress == progress) {
-                    bpbe.extending = !bpbe.extending;
-                    //bpbe.progress = bpbe.lastProgress = 1 - bpbe.progress;
-                    changeBlockEntitiesTogether(world, facingPos, bpbe.pushedBlock, pbe.facing, progress);
-                }
-            }
+    public boolean triggerEvent(BlockState blockState, Level level, BlockPos blockPos, int type, int data) {
+        if (type == 99 && level.getBlockEntity(blockPos) instanceof BasicMovingBlockEntity bmbe) {
+            bmbe.progress = bmbe.progressO = Float.intBitsToFloat(data);
         }
         return true;
     }
-
-    private void changeBlockEntitiesTogether(World world, BlockPos pos, BlockState state,
-                                             Direction movement, float progress) {
-        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
-        if (stick.usesConfigurablePistonStickiness() && stick.isSticky(state)) {
-            //pistonBlockEntity.facing = pistonBlockEntity.facing.getOpposite();
-            //pistonBlockEntity.progress = pistonBlockEntity.lastProgress = 1 - pistonBlockEntity.progress;
-            for (Map.Entry<Direction,StickyType> sideData : stick.stickySides(state).entrySet()) {
-                StickyType stickyType = sideData.getValue();
-                if (stickyType.ordinal() < StickyType.STRONG.ordinal()) continue; // Only strong or fused
-                Direction direction = sideData.getKey();
-                BlockPos blockPos = pos.offset(direction);
-                BlockState blockState2 = world.getBlockState(blockPos);
-                if (blockState2.isOf(this) &&
-                        world.getBlockEntity(blockPos) instanceof BasicPistonBlockEntity bpbe &&
-                        bpbe.facing == movement && bpbe.progress == progress) {
-                    bpbe.extending = !bpbe.extending;
-                    //bpbe.progress = bpbe.lastProgress = 1 - bpbe.progress;
-                    changeBlockEntitiesTogether(world, blockPos, bpbe.pushedBlock, movement, progress);
-                }
-            }
-        }
-    }*/
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
