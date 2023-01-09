@@ -54,7 +54,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
-        return canRetractOnExtending ? super.getPullType(level, pos, facing) : -1;
+        return canRetractOnExtending ? super.getPullType(level, pos, facing) : -1; //TODO: Does not work completely!
     }
 
     @Override
