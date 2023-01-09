@@ -59,18 +59,18 @@ public class PistonUtils {
         return false;
     }
 
-    public static boolean move(Level world, BlockPos pos1, BasicPistonBaseBlock piston, Direction dir,
+    public static boolean move(Level level, BlockPos pos1, BasicPistonBaseBlock piston, Direction dir,
                                boolean push, BiPredicate<ConfigurablePistonStructureResolver,Boolean> pistonHandlerAction) {
         BlockPos pos2 = pos1.relative(dir);
-        if (!push && world.getBlockState(pos2).is(piston.getHeadBlock()))
-            world.setBlock(pos2, Blocks.AIR.defaultBlockState(), Block.UPDATE_IMMEDIATE | Block.UPDATE_KNOWN_SHAPE);
-        ConfigurablePistonStructureResolver pistonHandler = piston.createStructureResolver(world, pos1, dir, push);
+        if (!push && level.getBlockState(pos2).is(piston.getHeadBlock()))
+            level.setBlock(pos2, Blocks.AIR.defaultBlockState(), Block.UPDATE_IMMEDIATE | Block.UPDATE_KNOWN_SHAPE);
+        ConfigurablePistonStructureResolver pistonHandler = piston.createStructureResolver(level, pos1, dir, push);
         if (!pistonHandlerAction.test(pistonHandler,!push)) return false;
         Map<BlockPos, BlockState> map = new HashMap<>();
         List<BlockPos> list = pistonHandler.getToMove();
         List<BlockState> list2 = new ArrayList<>();
         for (BlockPos value : list) {
-            BlockState blockState = world.getBlockState(value);
+            BlockState blockState = level.getBlockState(value);
             list2.add(blockState);
             map.put(value, blockState);
         }
@@ -82,21 +82,21 @@ public class PistonUtils {
         BlockState state2;
         for(k = list3.size() - 1; k >= 0; --k) {
             pos3 = list3.get(k);
-            state2 = world.getBlockState(pos3);
-            BlockEntity blockEntity = state2.hasBlockEntity() ? world.getBlockEntity(pos3) : null;
-            dropResources(state2, world, pos3, blockEntity);
-            world.setBlock(pos3, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
-            if (!state2.is(BlockTags.FIRE)) world.addDestroyBlockEffect(pos3, state2);
+            state2 = level.getBlockState(pos3);
+            BlockEntity blockEntity = state2.hasBlockEntity() ? level.getBlockEntity(pos3) : null;
+            dropResources(state2, level, pos3, blockEntity);
+            level.setBlock(pos3, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            if (!state2.is(BlockTags.FIRE)) level.addDestroyBlockEffect(pos3, state2);
             blockStates[j++] = state2;
         }
         for(k = list.size() - 1; k >= 0; --k) {
             pos3 = list.get(k);
-            state2 = world.getBlockState(pos3);
+            state2 = level.getBlockState(pos3);
             pos3 = pos3.relative(direction);
             map.remove(pos3);
             BlockState state3 = piston.getMovingBlock().defaultBlockState().setValue(BlockStateProperties.FACING, dir);
-            world.setBlock(pos3, state3, Block.UPDATE_IMMEDIATE | Block.UPDATE_MOVE_BY_PISTON);
-            world.setBlockEntity(piston.getMovingBlock().createMovingBlockEntity(
+            level.setBlock(pos3, state3, Block.UPDATE_IMMEDIATE | Block.UPDATE_MOVE_BY_PISTON);
+            level.setBlockEntity(piston.getMovingBlock().createMovingBlockEntity(
                     pos3,
                     state3,
                     list2.get(k),
@@ -113,8 +113,8 @@ public class PistonUtils {
             state2 = piston.getMovingBlock().defaultBlockState().setValue(MovingPistonBlock.FACING, dir)
                     .setValue(MovingPistonBlock.TYPE, piston.type);
             map.remove(pos2);
-            world.setBlock(pos2, state2, Block.UPDATE_IMMEDIATE | Block.UPDATE_MOVE_BY_PISTON);
-            world.setBlockEntity(piston.getMovingBlock().createMovingBlockEntity(
+            level.setBlock(pos2, state2, Block.UPDATE_IMMEDIATE | Block.UPDATE_MOVE_BY_PISTON);
+            level.setBlockEntity(piston.getMovingBlock().createMovingBlockEntity(
                     pos2,
                     state2,
                     state4,
@@ -125,56 +125,56 @@ public class PistonUtils {
         }
         BlockState blockState5 = Blocks.AIR.defaultBlockState();
         for (BlockPos pos4 : map.keySet())
-            world.setBlock(pos4, blockState5, Block.UPDATE_IMMEDIATE | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_MOVE_BY_PISTON);
+            level.setBlock(pos4, blockState5, Block.UPDATE_IMMEDIATE | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_MOVE_BY_PISTON);
         BlockPos pos5;
         for (Map.Entry<BlockPos, BlockState> entry : map.entrySet()) {
             pos5 = entry.getKey();
-            entry.getValue().updateIndirectNeighbourShapes(world, pos5, 2);
-            blockState5.updateNeighbourShapes(world, pos5, Block.UPDATE_CLIENTS);
-            blockState5.updateIndirectNeighbourShapes(world, pos5, 2);
+            entry.getValue().updateIndirectNeighbourShapes(level, pos5, 2);
+            blockState5.updateNeighbourShapes(level, pos5, Block.UPDATE_CLIENTS);
+            blockState5.updateIndirectNeighbourShapes(level, pos5, 2);
         }
         j = 0;
         for(k = list3.size() - 1; k >= 0; --k) {
             state2 = blockStates[j++];
             pos5 = list3.get(k);
-            state2.updateIndirectNeighbourShapes(world, pos5, 2);
-            world.updateNeighborsAt(pos5, state2.getBlock());
+            state2.updateIndirectNeighbourShapes(level, pos5, 2);
+            level.updateNeighborsAt(pos5, state2.getBlock());
         }
-        for(k = list.size() - 1; k >= 0; --k) world.updateNeighborsAt(list.get(k), blockStates[j++].getBlock());
-        if (push) world.updateNeighborsAt(pos2, piston.getHeadBlock());
+        for(k = list.size() - 1; k >= 0; --k) level.updateNeighborsAt(list.get(k), blockStates[j++].getBlock());
+        if (push) level.updateNeighborsAt(pos2, piston.getHeadBlock());
         return true;
     }
 
     // Does the state checks for you, although matches any moving piston instead of specific ones
-    public static boolean areExtensionsMatching(Level world, BlockPos pos1, BlockPos pos2) {
+    public static boolean areExtensionsMatching(Level level, BlockPos pos1, BlockPos pos2) {
         // Make sure they are moving pistons
-        BlockState state1 = world.getBlockState(pos2);
+        BlockState state1 = level.getBlockState(pos2);
         if (!state1.is(ModTags.MOVING_PISTONS)) return false;
-        BlockState state2 = world.getBlockState(pos2);
+        BlockState state2 = level.getBlockState(pos2);
         if (!state2.is(ModTags.MOVING_PISTONS)) return false;
-        return areExtensionsMatching(world, state1, state2, pos1, pos2);
+        return areExtensionsMatching(level, state1, state2, pos1, pos2);
     }
 
     // Does the state checks for you, with a specific extension block
-    public static boolean areExtensionsMatching(Level world, BasicMovingBlock movingBlock,
+    public static boolean areExtensionsMatching(Level level, BasicMovingBlock movingBlock,
                                                 BlockPos pos1, BlockPos pos2) {
         // Make sure they are moving pistons
-        BlockState state1 = world.getBlockState(pos2);
+        BlockState state1 = level.getBlockState(pos2);
         if (!state1.is(movingBlock)) return false;
-        BlockState state2 = world.getBlockState(pos2);
+        BlockState state2 = level.getBlockState(pos2);
         if (!state2.is(movingBlock)) return false;
-        return areExtensionsMatching(world, state1, state2, pos1, pos2);
+        return areExtensionsMatching(level, state1, state2, pos1, pos2);
     }
 
     // You are expected to make sure that both states are of the correct extension, yourself
-    public static boolean areExtensionsMatching(Level world, BlockState state1, BlockState state2,
+    public static boolean areExtensionsMatching(Level level, BlockState state1, BlockState state2,
                                                 BlockPos pos1, BlockPos pos2) {
         // Make sure they are moving pistons
         if (state1.getValue(BlockStateProperties.FACING) != state2.getValue(BlockStateProperties.FACING) ||
                 state1.getValue(BlockStateProperties.PISTON_TYPE) != state2.getValue(BlockStateProperties.PISTON_TYPE))
             return false;
-        if (!(world.getBlockEntity(pos1) instanceof BasicMovingBlockEntity bpbe1) ||
-                !(world.getBlockEntity(pos2) instanceof BasicMovingBlockEntity bpbe2))
+        if (!(level.getBlockEntity(pos1) instanceof BasicMovingBlockEntity bpbe1) ||
+                !(level.getBlockEntity(pos2) instanceof BasicMovingBlockEntity bpbe2))
             return false;
         return bpbe1.extending == bpbe2.extending && bpbe1.progress == bpbe2.progress && bpbe1.direction == bpbe2.direction;
     }
