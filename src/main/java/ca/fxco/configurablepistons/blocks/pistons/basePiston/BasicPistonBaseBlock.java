@@ -162,7 +162,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         }
     }
 
-    private boolean shouldDoPullEvent(ServerLevel level, BlockPos pos, Direction facing) {
+    protected boolean shouldDoPullEvent(ServerLevel level, BlockPos pos, Direction facing) {
         BlockPos frontPos = pos.relative(facing, 2);
         BlockState frontState = level.getBlockState(frontPos);
 

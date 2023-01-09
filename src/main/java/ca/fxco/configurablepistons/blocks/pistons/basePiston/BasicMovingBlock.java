@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
@@ -45,15 +46,11 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public BasicMovingBlock() {
-        super(FabricBlockSettings.of(Material.PISTON)
-            .strength(-1.0f)
-            .dynamicBounds()
-            .dropsNothing()
-            .nonOpaque()
-            .solidBlock(BasicMovingBlock::never)
-            .suffocates(BasicMovingBlock::never)
-            .blockVision(BasicMovingBlock::never)
-        );
+        this(createDefaultSettings());
+    }
+
+    public BasicMovingBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing, boolean extending, boolean isSourcePiston) {
@@ -148,5 +145,16 @@ public class BasicMovingBlock extends MovingPistonBlock {
     @Override
     public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return false;
+    }
+
+    public static BlockBehaviour.Properties createDefaultSettings() {
+        return FabricBlockSettings.of(Material.PISTON)
+                .strength(-1.0f)
+                .dynamicBounds()
+                .dropsNothing()
+                .nonOpaque()
+                .solidBlock(BasicMovingBlock::never)
+                .suffocates(BasicMovingBlock::never)
+                .blockVision(BasicMovingBlock::never);
     }
 }

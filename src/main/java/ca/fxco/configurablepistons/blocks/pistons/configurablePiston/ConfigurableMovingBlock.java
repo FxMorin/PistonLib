@@ -1,30 +1,33 @@
 package ca.fxco.configurablepistons.blocks.pistons.configurablePiston;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
-import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonExtensionBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import org.jetbrains.annotations.Nullable;
 
 import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
-public class ConfigurablePistonExtensionBlock extends BasicPistonExtensionBlock {
+public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     protected final boolean slippery;
     protected final float extendingSpeed;
@@ -33,13 +36,13 @@ public class ConfigurablePistonExtensionBlock extends BasicPistonExtensionBlock 
     protected final boolean verySticky;
     protected final boolean canExtendOnRetracting;
 
-    public ConfigurablePistonExtensionBlock(ConfigurablePistonBlock.Settings pistonSettings) {
-        this(BasicPistonExtensionBlock.getDefaultSettings(), pistonSettings);
+    public ConfigurableMovingBlock(ConfigurablePistonBaseBlock.Settings pistonSettings) {
+        this(BasicMovingBlock.createDefaultSettings(), pistonSettings);
     }
 
-    public ConfigurablePistonExtensionBlock(AbstractBlock.Settings settings,
-                                            ConfigurablePistonBlock.Settings pistonSettings) {
-        super(settings);
+    public ConfigurableMovingBlock(BlockBehaviour.Properties properties,
+                                   ConfigurablePistonBaseBlock.Settings pistonSettings) {
+        super(properties);
         slippery = pistonSettings.slippery;
         extendingSpeed = pistonSettings.extendingSpeed;
         retractingSpeed = pistonSettings.retractingSpeed;
@@ -49,15 +52,15 @@ public class ConfigurablePistonExtensionBlock extends BasicPistonExtensionBlock 
     }
 
     @Override
-    public BlockEntity createPistonBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock,
+    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock,
                                                Direction facing, boolean extending, boolean source) {
-        return new ConfigurablePistonBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
+        return new ConfigurableMovingBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
                 pos, state, pushedBlock, facing, extending, source, this);
     }
 
     @Override @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World w, BlockState state, BlockEntityType<T> t) {
-        return checkType(t, ModBlockEntities.CONFIGURABLE_PISTON_BLOCK_ENTITY, ConfigurablePistonBlockEntity::tick);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTicker(type, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
     }
 
     /*@Override
@@ -119,40 +122,41 @@ public class ConfigurablePistonExtensionBlock extends BasicPistonExtensionBlock 
     }*/
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (slippery && !oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null) {
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (slippery && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+            level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (slippery && !world.isClient()) {
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
+                                  BlockPos pos, BlockPos neighborPos) {
+        if (slippery && !level.isClientSide()) {
+            level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (slippery) {
-            int i = BaseSlipperyBlock.calculateDistance(world, pos);
-            BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
-            if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
-                FallingBlockEntity.spawnFromBlock(world, pos, blockState);
+            int i = BaseSlipperyBlock.calculateDistance(level, pos);
+            BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
+            if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
+                FallingBlockEntity.fall(level, pos, blockState);
             } else if (state != blockState) {
-                world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
+                level.setBlock(pos, blockState, Block.UPDATE_ALL);
             }
         }
     }
 
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return !slippery || BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE;
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return !slippery || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE);
         if (slippery) {
             builder.add(SLIPPERY_DISTANCE);

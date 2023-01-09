@@ -119,6 +119,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
         List<AABB> blockAabbs = blockShape.toAabbs();
         boolean shouldBounceEntities = this.movedState.is(Blocks.SLIME_BLOCK);
+        float speed = this.speed();
 
         for (Entity entity : entities) {
             if (entity.getPistonPushReaction() == PushReaction.IGNORE) {
@@ -135,9 +136,9 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 double velocityZ = velocity.z;
 
                 switch (moveDir.getAxis()) {
-                    case X -> velocityX = moveDir.getStepX();
-                    case Y -> velocityY = moveDir.getStepY();
-                    case Z -> velocityZ = moveDir.getStepZ();
+                    case X -> velocityX = moveDir.getStepX() * speed;
+                    case Y -> velocityY = moveDir.getStepY() * speed;
+                    case Z -> velocityZ = moveDir.getStepZ() * speed;
                 }
 
                 entity.setDeltaMovement(velocityX, velocityY, velocityZ);

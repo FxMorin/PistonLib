@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.base;
 
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.configurablepistons.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.longPiston.LongMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.slipperyPiston.SlipperyMovingBlockEntity;
@@ -26,12 +27,18 @@ public class ModBlockEntities {
     public static final BlockEntityType<StickyMovingBlockEntity> STICKY_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<TranslocationMovingBlockEntity> TRANSLOCATION_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SlipperyMovingBlockEntity> SLIPPERY_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
 
     static {
         BASIC_MOVING_BLOCK_ENTITY = register(
                 "basic",
                 BasicMovingBlockEntity::new,
                 ModBlocks.BASIC_MOVING_BLOCK
+        );
+        CONFIGURABLE_MOVING_BLOCK_ENTITY = register(
+                "configurable",
+                ConfigurableMovingBlockEntity::new,
+                ModBlocks.CONFIGURABLE_MOVING_BLOCK
         );
         LONG_MOVING_BLOCK_ENTITY = register(
                 "long",

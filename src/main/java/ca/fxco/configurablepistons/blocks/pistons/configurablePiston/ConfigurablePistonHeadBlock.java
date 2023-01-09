@@ -7,23 +7,23 @@ import ca.fxco.configurablepistons.pistonLogic.StickyType;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 
 import java.util.Map;
 
 import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
-import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBlock.EXTENDED;
+import static ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
@@ -33,70 +33,70 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     private final boolean slippery;
     private final boolean verySticky;
 
-    public ConfigurablePistonHeadBlock(ConfigurablePistonBlock.Settings pistonSettings) {
+    public ConfigurablePistonHeadBlock(ConfigurablePistonBaseBlock.Settings pistonSettings) {
         this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD), pistonSettings);
     }
 
-    public ConfigurablePistonHeadBlock(Settings settings, ConfigurablePistonBlock.Settings pistonSettings) {
-        super(settings);
-        slippery = pistonSettings.slippery;
-        verySticky = pistonSettings.verySticky;
+    public ConfigurablePistonHeadBlock(Properties properties, ConfigurablePistonBaseBlock.Settings settings) {
+        super(properties);
+        slippery = settings.slippery;
+        verySticky = settings.verySticky;
         if (slippery) {
-            this.setDefaultState(this.getDefaultState().with(SLIPPERY_DISTANCE, 0));
+            this.registerDefaultState(this.defaultBlockState().setValue(SLIPPERY_DISTANCE, 0));
         }
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (slippery && !oldState.isOf(state.getBlock()) && !world.isClient && world.getBlockEntity(pos) == null) {
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (slippery && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+            level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
-        super.onBlockAdded(state, world, pos, oldState, notify);
+        super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (slippery && !world.isClient()) {
-            world.scheduleBlockTick(pos, this, SLIPPERY_DELAY);
-        }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
+                                  LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (slippery && !level.isClientSide())
+            level.scheduleTick(pos, this, SLIPPERY_DELAY);
+        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (slippery) {
-            int i = BaseSlipperyBlock.calculateDistance(world, pos);
-            BlockState blockState = state.with(SLIPPERY_DISTANCE, i);
-            if (blockState.get(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canPlaceAt(state, world, pos)) {
-                BlockPos blockPos = pos.offset(state.get(FACING).getOpposite());
-                if (this.isAttached(state, world.getBlockState(blockPos))) {
-                    FallingBlockEntity.spawnFromBlock(world, blockPos, world.getBlockState(blockPos).with(EXTENDED, false));
+            int i = BaseSlipperyBlock.calculateDistance(level, pos);
+            BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
+            if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
+                BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
+                if (this.isFittingBase(state, level.getBlockState(blockPos))) {
+                    FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
                 }
-                world.removeBlock(pos, false);
+                level.removeBlock(pos, false);
             } else if (state != blockState) {
-                world.setBlockState(pos, blockState, Block.NOTIFY_ALL);
+                level.setBlock(pos, blockState, Block.UPDATE_ALL);
             }
         }
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        if (!slippery || BaseSlipperyBlock.calculateDistance(world, pos) < MAX_DISTANCE) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        if (!slippery || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE) {
             if (verySticky) {
-                BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-                return this.isAttached(state, blockState) || blockState.isIn(ModTags.MOVING_PISTONS);
+                BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
+                return this.isFittingBase(state, blockState) || blockState.is(ModTags.MOVING_PISTONS);
             }
-            return super.canPlaceAt(state, world, pos);
+            return super.canSurvive(state, level, pos);
         }
         if (verySticky) {
-            BlockState blockState = world.getBlockState(pos.offset(state.get(FACING).getOpposite()));
-            return this.isAttached(state, blockState) || blockState.isIn(ModTags.MOVING_PISTONS);
+            BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
+            return this.isFittingBase(state, blockState) || blockState.is(ModTags.MOVING_PISTONS);
         }
-        return super.canPlaceAt(state, world, pos);
+        return super.canSurvive(state, level, pos);
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE, SHORT);
         if (slippery) {
             builder.add(SLIPPERY_DISTANCE);
@@ -115,10 +115,11 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
 
     // Returns a list of directions that are sticky, and the stickyType.
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return Map.of(state.get(FACING), StickyType.STICKY, state.get(FACING).getOpposite(), StickyType.STICKY);
+        return Map.of(state.getValue(FACING), StickyType.STICKY,
+                state.getValue(FACING).getOpposite(), StickyType.STICKY);
     }
 
     public StickyType sideStickiness(BlockState state, Direction direction) {
-        return state.get(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
+        return state.getValue(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }
