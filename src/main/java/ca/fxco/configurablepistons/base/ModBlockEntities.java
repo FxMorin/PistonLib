@@ -21,13 +21,13 @@ import static ca.fxco.configurablepistons.ConfigurablePistons.id;
 public class ModBlockEntities {
 
     public static final BlockEntityType<BasicMovingBlockEntity> BASIC_MOVING_BLOCK_ENTITY;
+    public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<LongMovingBlockEntity> LONG_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SpeedMovingBlockEntity> SPEED_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<FastMovingBlockEntity> FAST_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<StickyMovingBlockEntity> STICKY_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<TranslocationMovingBlockEntity> TRANSLOCATION_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SlipperyMovingBlockEntity> SLIPPERY_MOVING_BLOCK_ENTITY;
-    public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
 
     static {
         BASIC_MOVING_BLOCK_ENTITY = register(

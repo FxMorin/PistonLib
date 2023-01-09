@@ -15,6 +15,7 @@ public class ConfigurablePistonsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         BlockEntityRenderers.register(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, BasicPistonBlockEntityRenderer::new);

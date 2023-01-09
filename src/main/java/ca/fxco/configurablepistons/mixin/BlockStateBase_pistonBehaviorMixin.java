@@ -22,10 +22,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky {
 
     @Shadow
-    private Block getBlock() { return null; }
+    public Block getBlock() { return null; }
 
     @Shadow
-    private BlockState asState() { return null; }
+    protected BlockState asState() { return null; }
 
     @Override
     public boolean usesConfigurablePistonBehavior() {

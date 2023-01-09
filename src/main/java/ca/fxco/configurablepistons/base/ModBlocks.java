@@ -7,6 +7,7 @@ import ca.fxco.configurablepistons.blocks.*;
 import ca.fxco.configurablepistons.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.configurablepistons.blocks.halfBlocks.HalfHoneyBlock;
@@ -94,10 +95,9 @@ public class ModBlocks {
     public static final BasicPistonBaseBlock BASIC_PISTON = registerPiston(BASIC, new BasicPistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock BASIC_STICKY_PISTON = registerPiston(BASIC, new BasicPistonBaseBlock(PistonType.STICKY));
 
-    // Configurable Piston
+    // Configurable Piston - Testing only
     // The one and only configurable piston. It can do mostly everything that the other pistons can do, allowing you
     // to very easily enable and disable features in your pistons
-    // TODO: This is currently only for testing and should be removed later on!
     public static final BasicPistonHeadBlock CONFIGURABLE_PISTON_HEAD;
     public static final ConfigurableMovingBlock CONFIGURABLE_MOVING_BLOCK;
     public static final BasicPistonBaseBlock CONFIGURABLE_PISTON;
@@ -252,13 +252,20 @@ public class ModBlocks {
     public static void order() {}
 
     static {
-        ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
-                .canExtendOnRetracting(true)
-                .canRetractOnExtending(true)
-                .speed(0.05F);
-        CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
-        CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
-        CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
-        CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
+                    .canExtendOnRetracting(true)
+                    .canRetractOnExtending(true)
+                    .speed(0.05F);
+            CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
+            CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
+            CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
+            CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
+        } else {
+            CONFIGURABLE_PISTON_HEAD = null;
+            CONFIGURABLE_MOVING_BLOCK = null;
+            CONFIGURABLE_PISTON = null;
+            CONFIGURABLE_STICKY_PISTON = null;
+        }
     }
 }

@@ -5,15 +5,16 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "Block_pistonBehaviorMixin",
+    "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
     "PistonStructureResolver_isMovableMixin",
+    "accessors.BlockEntityAccessor",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",
     "movingPiston.Shulker_movingPistonMixin",
     "stickyGroup.HoneyBlock_slimeMixin",
-    "stickyGroup.SlimeBlock_honeyMixin",
-    "accessors.BlockEntityAccessor"
+    "stickyGroup.SlimeBlock_honeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1

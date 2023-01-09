@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class Factory_movingPistonMixin {
 
     @Redirect(
-        method = "createParticle(Lnet/minecraft/core/particles/BlockParticleOptions;" +
-                 "Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;",
+        method = "createParticle(Lnet/minecraft/core/particles/BlockParticleOption;" +
+                "Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
