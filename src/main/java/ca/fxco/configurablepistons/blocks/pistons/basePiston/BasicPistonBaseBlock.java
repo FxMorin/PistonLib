@@ -334,6 +334,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             }
             if (!allowDestroy && !customBehavior.canDestroy(state))
                 return false;
+            return true;
         } else {
             if (state.is(ModTags.UNPUSHABLE) || state.getDestroySpeed(level, pos) == -1.0F)
                 return false;
@@ -351,12 +352,10 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 }
                 default -> { }
             }
+
+            // custom piston behavior
+            return canMoveBlock(state);
         }
-
-
-        // custom piston behavior
-
-        return canMoveBlock(state);
     }
 
     /**

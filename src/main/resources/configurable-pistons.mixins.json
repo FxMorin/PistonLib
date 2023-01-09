@@ -7,7 +7,6 @@
     "Block_pistonBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
-    "PistonStructureResolver_isMovableMixin",
     "accessors.BlockEntityAccessor",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",

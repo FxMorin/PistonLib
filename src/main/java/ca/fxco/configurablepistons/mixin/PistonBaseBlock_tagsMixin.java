@@ -34,14 +34,15 @@ public class PistonBaseBlock_tagsMixin {
     private boolean isSticky;
 
     @Redirect(
-        method = "checkIfExtend(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState)V",
-        at = @At(
-            value = "NEW",
-            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;<init>(Lnet/minecraft/world/level/Level;"
-                   + "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)V"
-        )
+            method = "checkIfExtend(Lnet/minecraft/world/level/Level;" +
+                    "Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
+            at = @At(
+                    value = "NEW",
+                    target = "net/minecraft/world/level/block/piston/PistonStructureResolver"
+            )
     )
-    private PistonStructureResolver customStructureResolver1(Level level, BlockPos pos, Direction facing, boolean extend) {
+    private PistonStructureResolver customStructureResolver1(Level level, BlockPos pos,
+                                                             Direction facing, boolean extend) {
         return newStructureResolver(level, pos, facing, extend);
     }
 
@@ -50,7 +51,8 @@ public class PistonBaseBlock_tagsMixin {
                  "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/piston/PistonBaseBlock;isPushable(Lnet/minecraft/world/level/block/state/BlockState;" +
+            target = "Lnet/minecraft/world/level/block/piston/PistonBaseBlock;isPushable(" +
+                     "Lnet/minecraft/world/level/block/state/BlockState;" +
                      "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
                      "Lnet/minecraft/core/Direction;ZLnet/minecraft/core/Direction;)Z"
         )
@@ -87,14 +89,15 @@ public class PistonBaseBlock_tagsMixin {
     }
 
     @Redirect(
-        method = "moveBlocks(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z",
+        method = "moveBlocks(Lnet/minecraft/world/level/Level;" +
+                "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z",
         at = @At(
             value = "NEW",
-            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;<init>(Lnet/minecraft/world/level/Level;"
-                   + "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)V"
+            target = "net/minecraft/world/level/block/piston/PistonStructureResolver"
         )
     )
-    private PistonStructureResolver customStructureResolver2(Level level, BlockPos pos, Direction facing, boolean extend) {
+    private PistonStructureResolver customStructureResolver2(Level level, BlockPos pos,
+                                                             Direction facing, boolean extend) {
         return newStructureResolver(level, pos, facing, extend);
     }
 

@@ -50,10 +50,11 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     }
 
     @Override
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState pushedBlock,
-                                               Direction facing, boolean extending, boolean source) {
+    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new ConfigurableMovingBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
-                pos, state, pushedBlock, facing, extending, source, this);
+                pos, state, movedState, facing, extending, isSourcePiston, this);
     }
 
     @Override @Nullable
@@ -69,11 +70,11 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
                     if (cpbb.hasNeighborSignal(level, pos, facing)) {
                         float progress = movingBlockEntity.progress;
-                        movingBlockEntity.finalTick(true);
+                        movingBlockEntity.finalTick();
                         boolean temp = false;
                         BlockPos frontPos = pos.relative(facing);
                         if (level.getBlockEntity(frontPos) instanceof BasicMovingBlockEntity bmbe && !bmbe.isSourcePiston && !bmbe.extending && bmbe.progress == progress) {
-                            bmbe.finalTick(false);
+                            bmbe.finalTick();
                             temp = true;
                         }
                         cpbb.checkIfExtend(level, pos, movingBlockEntity.movedState);
