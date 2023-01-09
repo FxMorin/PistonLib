@@ -36,34 +36,27 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
-    /*
-     * This class overrides all the non-static methods of PistonBlockEntity
-     */
-
     protected final BasicMovingBlock MOVING_BLOCK;
 
+    /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, ModBlocks.BASIC_MOVING_BLOCK);
-    }
-
-    public BasicMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BasicMovingBlock movingBlock) {
         super(pos, state);
 
-        MOVING_BLOCK = movingBlock;
-        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
+        MOVING_BLOCK = null;
     }
 
     public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
-            ModBlocks.BASIC_MOVING_BLOCK);
+                                  boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
+        this(pos, state, movedState, facing, extending, isSourcePiston,
+                movingBlock, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
     }
-    public BasicMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
-                                  Direction facing, boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
+    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
+                                  boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock,
+                                  BlockEntityType<?> type) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
         MOVING_BLOCK = movingBlock;
+        ((BlockEntityAccessor)this).setType(type);
     }
 
     public BasicMovingBlock getMovingBlock() {

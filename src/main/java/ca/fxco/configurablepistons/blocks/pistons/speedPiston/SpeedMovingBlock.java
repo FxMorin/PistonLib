@@ -1,5 +1,6 @@
 package ca.fxco.configurablepistons.blocks.pistons.speedPiston;
 
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
@@ -22,10 +23,15 @@ public class SpeedMovingBlock extends BasicMovingBlock {
         this.speed = speed;
     }
 
+    public SpeedMovingBlock(float speed, BlockBehaviour.Properties properties) {
+        super(properties);
+        this.speed = speed;
+    }
+
     @Override
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                                      Direction facing, boolean extending, boolean isSourcePiston) {
-        return new SpeedMovingBlockEntity(this.speed, pos, state, movedState, facing, extending, isSourcePiston);
+                                               Direction facing, boolean extending, boolean isSourcePiston) {
+        return new SpeedMovingBlockEntity(this.speed, pos, state, movedState, facing, extending, isSourcePiston, this);
     }
 
     @Override @Nullable
