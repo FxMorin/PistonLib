@@ -238,7 +238,6 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     BlockEntity frontBlockEntity = level.getBlockEntity(frontPos);
 
                     if (frontBlockEntity instanceof PistonMovingBlockEntity mbe && mbe.getDirection() == facing && mbe.isExtending()) {
-                        System.out.println("Did block dropping");
                         mbe.finalTick();
                         droppedBlock = true;
                     }
