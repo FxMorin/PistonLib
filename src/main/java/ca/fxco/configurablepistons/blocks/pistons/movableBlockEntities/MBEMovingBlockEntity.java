@@ -4,7 +4,7 @@ import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
+import ca.fxco.configurablepistons.interfaces.mixin.ILevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +19,7 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
     protected BlockEntity movedBlockEntity;
 
     public MBEMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, ModBlocks.BASIC_MOVING_BLOCK);
+        this(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, pos, state, ModBlocks.MBE_MOVING_BLOCK);
     }
 
     public MBEMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BasicMovingBlock movingBlock) {
@@ -28,8 +28,8 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
 
     public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
                                   Direction facing, boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, movedState, movedBlockEntity, facing, extending,
-            isSourcePiston, ModBlocks.BASIC_MOVING_BLOCK);
+        this(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, pos, state, movedState, movedBlockEntity, facing, extending,
+            isSourcePiston, ModBlocks.MBE_MOVING_BLOCK);
     }
     public MBEMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
                                   BlockEntity movedBlockEntity, Direction facing, boolean extending, boolean isSourcePiston,
@@ -43,14 +43,8 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
 
     @Override
     protected boolean placeMovedBlock() {
-        boolean success = super.placeMovedBlock();
-
-        if (success && this.movedBlockEntity != null) {
-            ((BlockEntityAccessor)this.movedBlockEntity).setPos(this.worldPosition);
-            this.level.setBlockEntity(this.movedBlockEntity);
-        }
-
-        return success;
+        ((ILevel)this.level).prepareBlockEntityPlacement(this.worldPosition, this.movedState, this.movedBlockEntity);
+        return super.placeMovedBlock();
     }
 
     @Override

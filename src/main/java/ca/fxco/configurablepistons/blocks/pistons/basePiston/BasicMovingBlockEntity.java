@@ -61,7 +61,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                                   Direction facing, boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        ((BlockEntityAccessor)this).setType(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
+        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
         this.MOVING_BLOCK = movingBlock;
     }
 

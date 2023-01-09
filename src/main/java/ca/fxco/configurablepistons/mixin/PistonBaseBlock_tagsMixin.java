@@ -34,11 +34,10 @@ public class PistonBaseBlock_tagsMixin {
     private boolean isSticky;
 
     @Redirect(
-        method = "checkIfExtend(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState)V",
+        method = "checkIfExtend(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
         at = @At(
             value = "NEW",
-            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;<init>(Lnet/minecraft/world/level/Level;"
-                   + "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)V"
+            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;"
         )
     )
     private PistonStructureResolver customStructureResolver1(Level level, BlockPos pos, Direction facing, boolean extend) {
@@ -90,8 +89,7 @@ public class PistonBaseBlock_tagsMixin {
         method = "moveBlocks(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z",
         at = @At(
             value = "NEW",
-            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;<init>(Lnet/minecraft/world/level/Level;"
-                   + "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)V"
+            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;"
         )
     )
     private PistonStructureResolver customStructureResolver2(Level level, BlockPos pos, Direction facing, boolean extend) {

@@ -6,6 +6,8 @@
   "mixins": [
     "Block_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
+    "movableBlockEntities.LevelChunkMixin",
+    "movableBlockEntities.LevelMixin",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",
