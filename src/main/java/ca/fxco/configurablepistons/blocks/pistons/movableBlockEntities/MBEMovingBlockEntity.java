@@ -4,7 +4,7 @@ import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
+import ca.fxco.configurablepistons.interfaces.mixin.ILevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,14 +41,8 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
 
     @Override
     protected boolean placeMovedBlock() {
-        boolean success = super.placeMovedBlock();
-
-        if (success && this.movedBlockEntity != null) {
-            ((BlockEntityAccessor)this.movedBlockEntity).setPos(this.worldPosition);
-            this.level.setBlockEntity(this.movedBlockEntity);
-        }
-
-        return success;
+        ((ILevel)this.level).prepareBlockEntityPlacement(this.worldPosition, this.movedState, this.movedBlockEntity);
+        return super.placeMovedBlock();
     }
 
     @Override

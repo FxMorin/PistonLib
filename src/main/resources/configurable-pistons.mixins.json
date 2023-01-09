@@ -7,13 +7,15 @@
     "Block_pistonBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
-    "accessors.BlockEntityAccessor",
+    "movableBlockEntities.LevelChunkMixin",
+    "movableBlockEntities.LevelMixin",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",
     "movingPiston.Shulker_movingPistonMixin",
     "stickyGroup.HoneyBlock_slimeMixin",
-    "stickyGroup.SlimeBlock_honeyMixin"
+    "stickyGroup.SlimeBlock_honeyMixin",
+    "accessors.BlockEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

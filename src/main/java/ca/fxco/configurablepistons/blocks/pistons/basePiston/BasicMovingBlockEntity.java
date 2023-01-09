@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -56,7 +55,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
         MOVING_BLOCK = movingBlock;
-        ((BlockEntityAccessor)this).setType(type);
+        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
     }
 
     public BasicMovingBlock getMovingBlock() {
