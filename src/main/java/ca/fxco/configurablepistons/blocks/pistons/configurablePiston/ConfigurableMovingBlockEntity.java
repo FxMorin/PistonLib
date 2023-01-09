@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.blocks.pistons.configurablePiston;
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -80,6 +81,29 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
             }
         } else {
             super.moveCollidedEntities(nextProgress); // Just speed
+        }
+    }
+
+    @Override
+    public void finalTick() {
+        finalTick(false);
+    }
+
+    public void finalTick(boolean skipStickiness) {
+        if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
+
+            this.finishMovement();
+
+            if (!skipStickiness) {
+                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
+
+                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
+                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                }
+            }
+
+            this.progress = 1.0F;
+            this.progressO = this.progress;
         }
     }
 

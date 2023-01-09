@@ -4,6 +4,8 @@ import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
+import ca.fxco.configurablepistons.pistonLogic.StickyType;
+import ca.fxco.configurablepistons.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +22,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static ca.fxco.configurablepistons.base.ModProperties.SLIPPERY_DISTANCE;
 import static ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
@@ -71,18 +77,55 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                     if (cpbb.hasNeighborSignal(level, pos, facing)) {
                         float progress = movingBlockEntity.progress;
                         movingBlockEntity.finalTick();
-                        boolean temp = false;
+                        Set<BlockPos> positions = new HashSet<>();
                         BlockPos frontPos = pos.relative(facing);
-                        if (level.getBlockEntity(frontPos) instanceof BasicMovingBlockEntity bmbe && !bmbe.isSourcePiston && !bmbe.extending && bmbe.progress == progress) {
+                        if (level.getBlockEntity(frontPos) instanceof ConfigurableMovingBlockEntity bmbe && !bmbe.extending && bmbe.progress == progress) {
+                            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)bmbe.movedState.getBlock();
+                            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(bmbe.movedState)) {
+                                stuckNeighbors(level, frontPos, stick.stickySides(bmbe.movedState), bmbe, positions);
+                            }
                             bmbe.finalTick();
-                            temp = true;
                         }
+                        //stuckNeighbors(level, pos.relative(facing), );
                         cpbb.checkIfExtend(level, pos, movingBlockEntity.movedState);
                         int progressInt = Float.floatToIntBits(1 - progress);
                         level.blockEvent(frontPos, this, 99, progressInt);
-                        if (temp) {
-                            level.blockEvent(frontPos.relative(facing), this, 99, progressInt);
+                        for (BlockPos pos9 : positions) {
+                            level.blockEvent(pos9.relative(facing), this, 99, progressInt);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private void stuckNeighbors(Level level, BlockPos pos, Map<Direction, StickyType> stickyTypes,
+                                ConfigurableMovingBlockEntity thisMbe, Set<BlockPos> set) {
+        for (Map.Entry<Direction, StickyType> entry : stickyTypes.entrySet()) {
+            StickyType stickyType = entry.getValue();
+
+            if (stickyType.ordinal() < StickyType.STRONG.ordinal()) { // only strong or fused
+                continue;
+            }
+
+            Direction dir = entry.getKey();
+            BlockPos neighborPos = pos.relative(dir);
+            if (set.contains(neighborPos)) {
+                continue;
+            }
+            BlockState neighborState = level.getBlockState(neighborPos);
+
+            if (neighborState.is(thisMbe.getMovingBlock())) {
+                BlockEntity blockEntity = level.getBlockEntity(neighborPos);
+
+                if (blockEntity instanceof ConfigurableMovingBlockEntity mbe) {
+                    if (!mbe.isExtending() && thisMbe.progress == mbe.progress) {
+                        set.add(neighborPos);
+                        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)mbe.movedState.getBlock();
+                        if (stick.usesConfigurablePistonStickiness() && stick.isSticky(mbe.movedState)) {
+                            stuckNeighbors(level, neighborPos, stick.stickySides(mbe.movedState), mbe, set);
+                        }
+                        mbe.finalTick(true);
                     }
                 }
             }
