@@ -1,10 +1,9 @@
 package ca.fxco.configurablepistons.blocks.pistons.movableBlockEntities;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
-import ca.fxco.configurablepistons.base.ModBlocks;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.configurablepistons.interfaces.mixin.ILevel;
+import ca.fxco.configurablepistons.interfaces.ILevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

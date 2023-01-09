@@ -1,4 +1,4 @@
-package ca.fxco.configurablepistons.interfaces.mixin;
+package ca.fxco.configurablepistons.interfaces;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
