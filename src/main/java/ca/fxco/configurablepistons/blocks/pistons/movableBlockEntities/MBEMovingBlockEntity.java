@@ -18,19 +18,21 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
     protected BlockEntity movedBlockEntity;
 
     public MBEMovingBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        this(pos, state, ModBlockEntities.MBE_MOVING_BLOCK_ENTITY);
+    }
+
+    public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-                                Direction facing, boolean extending, boolean isSourcePiston,
-                                BasicMovingBlock movingBlock) {
-        this(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, movingBlock,
-                ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
+                                Direction facing, boolean extending, boolean isSourcePiston) {
+        this(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston,
+                ModBlockEntities.MBE_MOVING_BLOCK_ENTITY);
     }
     public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-                                Direction facing, boolean extending, boolean isSourcePiston,
-                                BasicMovingBlock movingBlock, BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, movingBlock, type);
+                                Direction facing, boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
         this.movedBlockEntity = movedBlockEntity;
     }
 

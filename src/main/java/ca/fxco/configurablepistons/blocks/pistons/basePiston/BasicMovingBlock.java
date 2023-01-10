@@ -56,7 +56,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                @Nullable BlockEntity movedBlockEntity, Direction facing,
                                                boolean extending, boolean isSourcePiston) {
-        return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, this);
+        return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
     }
 
     @Override @Nullable

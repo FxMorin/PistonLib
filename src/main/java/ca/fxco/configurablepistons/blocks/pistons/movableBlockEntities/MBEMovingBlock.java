@@ -27,7 +27,7 @@ public class MBEMovingBlock extends BasicMovingBlock {
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                @Nullable BlockEntity movedBlockEntity, Direction facing,
                                                boolean extending, boolean isSourcePiston) {
-        return new MBEMovingBlockEntity(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, this);
+        return new MBEMovingBlockEntity(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
     }
 
     @Override @Nullable

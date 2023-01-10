@@ -23,7 +23,7 @@ public class TranslocationMovingBlock extends BasicMovingBlock {
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                @Nullable BlockEntity movedBlockEntity, Direction facing,
                                                boolean extending, boolean isSourcePiston) {
-        return new TranslocationMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, this);
+        return new TranslocationMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
     }
 
     @Override @Nullable

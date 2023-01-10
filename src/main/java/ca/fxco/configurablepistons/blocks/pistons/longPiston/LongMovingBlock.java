@@ -32,7 +32,7 @@ public class LongMovingBlock extends BasicMovingBlock {
     public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                BlockEntity movedBlockEntity, Direction facing, boolean extending,
                                                boolean isSourcePiston, int maxLength, int length, boolean isArm) {
-        return new LongMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm, this);
+        return new LongMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm);
     }
 
     @Override @Nullable

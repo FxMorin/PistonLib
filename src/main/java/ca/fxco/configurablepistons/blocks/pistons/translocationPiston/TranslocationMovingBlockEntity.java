@@ -21,19 +21,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class TranslocationMovingBlockEntity extends BasicMovingBlockEntity {
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        this(pos, state, ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY);
+    }
+
+    public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                          boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, movingBlock,
+                                          boolean extending, boolean isSourcePiston) {
+        super(pos, state, movedState, facing, extending, isSourcePiston,
                 ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY);
     }
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                           Direction facing, boolean extending, boolean isSourcePiston,
-                                          BasicMovingBlock movingBlock, BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, movingBlock, type);
+                                          BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
     }
 
     @Override

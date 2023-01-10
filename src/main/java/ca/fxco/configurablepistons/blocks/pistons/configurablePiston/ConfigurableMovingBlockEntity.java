@@ -24,19 +24,22 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
     protected boolean translocation;
 
     public ConfigurableMovingBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        this(pos, state, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
+    }
+
+    public ConfigurableMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public ConfigurableMovingBlockEntity(float speed, boolean translocation, BlockPos pos, BlockState state,
-                                         BlockState pushedBlock, Direction facing, boolean extending, boolean source,
-                                         BasicMovingBlock movingBlock) {
-        this(speed, translocation, pos, state, pushedBlock, facing, extending, source, movingBlock,
+                                         BlockState pushedBlock, Direction facing, boolean extending, boolean source) {
+        this(speed, translocation, pos, state, pushedBlock, facing, extending, source,
                 ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
     }
     public ConfigurableMovingBlockEntity(float speed, boolean translocation, BlockPos pos, BlockState state,
                                          BlockState pushedBlock, Direction facing, boolean extending, boolean source,
-                                         BasicMovingBlock movingBlock, BlockEntityType<?> type) {
-        super(speed, pos, state, pushedBlock, facing, extending, source, movingBlock, type);
+                                         BlockEntityType<?> type) {
+        super(speed, pos, state, pushedBlock, facing, extending, source, type);
 
         this.translocation = translocation;
     }

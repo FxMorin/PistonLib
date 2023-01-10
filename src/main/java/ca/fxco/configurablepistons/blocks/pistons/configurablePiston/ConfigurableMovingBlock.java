@@ -60,7 +60,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                                                @Nullable BlockEntity movedBlockEntity, Direction facing,
                                                boolean extending, boolean isSourcePiston) {
         return new ConfigurableMovingBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
-                pos, state, movedState, facing, extending, isSourcePiston, this);
+                pos, state, movedState, facing, extending, isSourcePiston);
     }
 
     @Override @Nullable

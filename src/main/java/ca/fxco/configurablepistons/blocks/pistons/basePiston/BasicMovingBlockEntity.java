@@ -39,23 +39,36 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
+        this(pos, state, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
+    }
+
+    /** This is only used to register the moving block entities, where none of the values are required **/
+    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
         super(pos, state);
 
-        MOVING_BLOCK = null;
+        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
+            MOVING_BLOCK = basicMovingBlock;
+        } else {
+            MOVING_BLOCK = null; // Shouldn't be possible?
+        }
+        ((BlockEntityAccessor)this).setType(type);
     }
 
     public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
-        this(pos, state, movedState, facing, extending, isSourcePiston,
-                movingBlock, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
+                                  boolean extending, boolean isSourcePiston) {
+        this(pos, state, movedState, facing, extending, isSourcePiston, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
     }
+
     public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock,
-                                  BlockEntityType<?> type) {
+                                  boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        MOVING_BLOCK = movingBlock;
-        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
+        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
+            MOVING_BLOCK = basicMovingBlock;
+        } else {
+            MOVING_BLOCK = null; // Shouldn't be possible?
+        }
+        ((BlockEntityAccessor)this).setType(type);
     }
 
     public BasicMovingBlock getMovingBlock() {

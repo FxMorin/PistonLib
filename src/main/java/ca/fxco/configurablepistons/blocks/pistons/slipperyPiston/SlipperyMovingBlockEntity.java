@@ -12,18 +12,20 @@ import net.minecraft.world.level.block.state.BlockState;
 public class SlipperyMovingBlockEntity extends BasicMovingBlockEntity {
 
     public SlipperyMovingBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        this(pos, state, ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY);
+    }
+
+    public SlipperyMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public SlipperyMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                     boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
-        this(pos, state, movedState, facing, extending, isSourcePiston, movingBlock,
-                ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY);
+                                     boolean extending, boolean isSourcePiston) {
+        this(pos, state, movedState, facing, extending, isSourcePiston, ModBlockEntities.SLIPPERY_MOVING_BLOCK_ENTITY);
     }
 
     public SlipperyMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                     boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock,
-                                     BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, movingBlock, type);
+                                     boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
     }
 }

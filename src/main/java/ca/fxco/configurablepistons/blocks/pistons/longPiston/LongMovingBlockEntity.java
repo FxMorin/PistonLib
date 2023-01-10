@@ -24,20 +24,23 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     public boolean skipCheck = false;
 
     public LongMovingBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+        this(pos, state, ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
+    }
+
+    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
         maxLength = 0;
     }
 
     public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm,
-                                 BasicMovingBlock movingBlock) {
-        this(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm, movingBlock,
+                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm) {
+        this(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm,
                 ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
     }
     public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                  boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm,
-                                 BasicMovingBlock movingBlock, BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, movingBlock, type);
+                                 BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
 
         this.maxLength = maxLength;
         this.length = length;
