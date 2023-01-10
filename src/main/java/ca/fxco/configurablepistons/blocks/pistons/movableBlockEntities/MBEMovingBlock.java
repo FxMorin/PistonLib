@@ -23,8 +23,10 @@ import net.minecraft.world.phys.Vec3;
 
 public class MBEMovingBlock extends BasicMovingBlock {
 
-    public BlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-        Direction facing, boolean extending, boolean isSourcePiston) {
+    @Override
+    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new MBEMovingBlockEntity(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
     }
 

@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Material;
@@ -44,19 +46,16 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public BasicMovingBlock() {
-        super(FabricBlockSettings.of(Material.PISTON)
-            .strength(-1.0f)
-            .dynamicBounds()
-            .dropsNothing()
-            .nonOpaque()
-            .solidBlock(BasicMovingBlock::never)
-            .suffocates(BasicMovingBlock::never)
-            .blockVision(BasicMovingBlock::never)
-        );
+        this(createDefaultSettings());
     }
 
-    public BlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-                                            Direction facing, boolean extending, boolean isSourcePiston) {
+    public BasicMovingBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+    }
+
+    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
+                                               boolean extending, boolean isSourcePiston) {
         return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
     }
 
@@ -148,5 +147,16 @@ public class BasicMovingBlock extends MovingPistonBlock {
     @Override
     public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return false;
+    }
+
+    public static BlockBehaviour.Properties createDefaultSettings() {
+        return FabricBlockSettings.of(Material.PISTON)
+                .strength(-1.0f)
+                .dynamicBounds()
+                .dropsNothing()
+                .nonOpaque()
+                .solidBlock(BasicMovingBlock::never)
+                .suffocates(BasicMovingBlock::never)
+                .blockVision(BasicMovingBlock::never);
     }
 }

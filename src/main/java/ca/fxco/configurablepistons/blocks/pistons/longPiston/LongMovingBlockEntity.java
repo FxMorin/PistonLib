@@ -2,6 +2,7 @@ package ca.fxco.configurablepistons.blocks.pistons.longPiston;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
 import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 
@@ -23,32 +24,23 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     public boolean skipCheck = false;
 
     public LongMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, MAX_ARM_LENGTH, MAX_ARM_LENGTH, false);
+        this(pos, state, ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
     }
 
-    public LongMovingBlockEntity(BlockPos pos, BlockState state, int maxLength, int length, boolean isArm) {
-        this(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, pos, state, maxLength, length, isArm, ModBlocks.LONG_MOVING_BLOCK);
-    }
-
-    public LongMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int maxLength, int length,
-                                 boolean isArm, LongMovingBlock movingBlock) {
-        super(type, pos, state, movingBlock);
-
-        this.maxLength = maxLength;
-        this.length = length;
-        this.isArm = isArm;
+    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
+        maxLength = 0;
     }
 
     public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston, int maxLength, int length,
-                                 boolean isArm) {
-        this(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
-            maxLength, length, isArm, ModBlocks.LONG_MOVING_BLOCK);
+                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm) {
+        this(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm,
+                ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
     }
-    public LongMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
-                                 Direction facing, boolean extending, boolean isSourcePiston, int maxLength,
-                                 int length, boolean isArm, LongMovingBlock movingBlock) {
-        super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
+    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
+                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm,
+                                 BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
 
         this.maxLength = maxLength;
         this.length = length;
@@ -81,9 +73,9 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    protected void finishMovement() {
+    protected void finishMovement(boolean removeSource) {
         if (this.finishArmMovement()) {
-            super.finishMovement();
+            super.finishMovement(removeSource);
         }
     }
 

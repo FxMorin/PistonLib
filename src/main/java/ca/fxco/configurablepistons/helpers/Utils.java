@@ -1,8 +1,12 @@
 package ca.fxco.configurablepistons.helpers;
 
+import ca.fxco.configurablepistons.interfaces.ILevel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.core.Direction.*;
 
@@ -51,5 +55,11 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static boolean setBlockWithEntity(Level level, BlockPos blockPos, BlockState state,
+                                             BlockEntity blockEntity, int flags) {
+        ((ILevel)level).prepareBlockEntityPlacement(blockPos, state, blockEntity);
+        return level.setBlock(blockPos, state, flags);
     }
 }

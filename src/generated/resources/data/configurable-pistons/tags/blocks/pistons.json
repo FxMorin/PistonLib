@@ -20,6 +20,8 @@
     "configurable-pistons:basic_sticky_piston",
     "configurable-pistons:long_piston",
     "configurable-pistons:long_sticky_piston",
+    "configurable-pistons:configurable_piston",
+    "configurable-pistons:configurable_sticky_piston",
     "configurable-pistons:slippery_piston",
     "configurable-pistons:slippery_sticky_piston"
   ]

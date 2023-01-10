@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "Block_pistonBehaviorMixin",
+    "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
     "movableBlockEntities.LevelChunkMixin",
     "movableBlockEntities.LevelMixin",

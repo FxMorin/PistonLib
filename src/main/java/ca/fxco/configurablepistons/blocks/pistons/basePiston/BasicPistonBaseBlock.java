@@ -151,24 +151,28 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 level.blockEvent(pos, this, MotionType.PUSH, facing.get3DDataValue());
             }
         } else if (!shouldBeExtended && isExtended) {
-            int type = shouldDoPullEvent((ServerLevel)level, pos, facing) ? MotionType.PULL : MotionType.RETRACT;
-            level.blockEvent(pos, this, type, facing.get3DDataValue());
+            int type = getPullType((ServerLevel)level, pos, facing);
+            if (type != MotionType.NONE) {
+                level.blockEvent(pos, this, type, facing.get3DDataValue());
+            }
         }
     }
 
-    private boolean shouldDoPullEvent(ServerLevel level, BlockPos pos, Direction facing) {
+    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
         BlockPos frontPos = pos.relative(facing, 2);
         BlockState frontState = level.getBlockState(frontPos);
 
         if (frontState.is(MOVING_BLOCK) && frontState.getValue(FACING) == facing) {
-            BlockEntity blockEntity = level.getBlockEntity(frontPos);
 
-            if (blockEntity instanceof PistonMovingBlockEntity mbe) {
-                return !mbe.isExtending() || !(mbe.getProgress(0.0F) < 0.5F || mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick());
+            if (level.getBlockEntity(frontPos) instanceof PistonMovingBlockEntity mbe &&
+                    mbe.isExtending() &&
+                    (mbe.getProgress(0.0F) < 0.5F ||
+                            mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick())) {
+                return MotionType.RETRACT;
             }
         }
 
-        return true;
+        return MotionType.PULL;
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
@@ -208,7 +212,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             BlockState movingBaseState = MOVING_BLOCK.defaultBlockState()
                 .setValue(MovingPistonBlock.FACING, facing)
                 .setValue(MovingPistonBlock.TYPE, this.type);
-            BlockEntity movingBaseBlockEntity = MOVING_BLOCK.newMovingBlockEntity(
+            BlockEntity movingBaseBlockEntity = MOVING_BLOCK.createMovingBlockEntity(
                 pos,
                 movingBaseState,
                 this.defaultBlockState()
@@ -292,7 +296,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             0.5F,
             0.6F + 0.25F * level.getRandom().nextFloat()
         );
-        //level.gameEvent(event, pos);
+        level.gameEvent(null, event, pos);
     }
 
     /**
@@ -327,30 +331,34 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 if (!customBehavior.canPistonPull(state, moveDir))
                     return false;
             }
-            if (!allowDestroy && !customBehavior.canDestroy(state))
+            if (customBehavior.canDestroy(state) && !allowDestroy)
                 return false;
         } else {
-            if (state.is(ModTags.UNPUSHABLE) || state.getDestroySpeed(level, pos) == -1.0F)
+            if (state.is(ModTags.UNPUSHABLE))
                 return false;
-            if (state.is(ModTags.PISTONS) && state.getValue(EXTENDED))
-                return false;
-            switch (state.getPistonPushReaction()) {
-                case BLOCK -> { return false; }
-                case DESTROY -> {
-                    if (!allowDestroy)
-                        return false;
+            if (state.is(ModTags.PISTONS)) {
+                if (state.getValue(EXTENDED)) {
+                    return false;
                 }
-                case PUSH_ONLY -> {
-                    if (moveDir != pistonFacing)
-                        return false;
+            } else { // Pistons shouldn't be checked against destroy speed or PistonPushReaction
+                if (state.getDestroySpeed(level, pos) == -1.0F)
+                    return false;
+                switch (state.getPistonPushReaction()) {
+                    case BLOCK -> { return false; }
+                    case DESTROY -> {
+                        if (!allowDestroy)
+                            return false;
+                    }
+                    case PUSH_ONLY -> {
+                        if (moveDir != pistonFacing)
+                            return false;
+                    }
+                    default -> { }
                 }
-                default -> { }
             }
         }
 
-
         // custom piston behavior
-
         return canMoveBlock(state);
     }
 
@@ -436,7 +444,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             BlockState movingBlock = MOVING_BLOCK.defaultBlockState()
                 .setValue(BasicMovingBlock.FACING, facing);
             BlockEntity movingBlockEntity = MOVING_BLOCK
-                .newMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                .createMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
             level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBlockEntity);
@@ -457,7 +465,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 .setValue(BasicMovingBlock.TYPE, this.type)
                 .setValue(BasicMovingBlock.FACING, facing);
             BlockEntity movingBlockEntity = MOVING_BLOCK
-                .newMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
+                .createMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
 
             level.setBlock(headPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBlockEntity);

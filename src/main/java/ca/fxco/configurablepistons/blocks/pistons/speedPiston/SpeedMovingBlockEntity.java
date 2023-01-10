@@ -1,7 +1,7 @@
 package ca.fxco.configurablepistons.blocks.pistons.speedPiston;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
-import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -15,28 +15,22 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
     private float speed = 1.0F;
 
     public SpeedMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(1.0F, pos, state);
+        this(pos, state, ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY);
     }
 
-    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state) {
-        this(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, speed, pos, state, ModBlocks.STRONG_MOVING_BLOCK);
-    }
-
-    public SpeedMovingBlockEntity(BlockEntityType<?> type, float speed, BlockPos pos, BlockState state, SpeedMovingBlock movingBlock) {
-        super(type, pos, state, movingBlock);
-
-        this.setSpeed(speed);
+    public SpeedMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                   boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, speed, pos, state, movedState, facing, extending, isSourcePiston,
-            ModBlocks.STRONG_MOVING_BLOCK);
+        this(speed, pos, state, movedState, facing, extending, isSourcePiston,
+                ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY);
     }
 
-    public SpeedMovingBlockEntity(BlockEntityType<?> type, float speed, BlockPos pos, BlockState state, BlockState movedState,
-                                  Direction facing, boolean extending, boolean isSourcePiston, SpeedMovingBlock movingBlock) {
-        super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
+    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState, Direction dir,
+                                  boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
+        super(pos, state, movedState, dir, extending, isSourcePiston, type);
 
         this.setSpeed(speed);
     }

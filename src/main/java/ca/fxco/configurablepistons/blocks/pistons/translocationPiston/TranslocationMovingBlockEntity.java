@@ -3,7 +3,7 @@ package ca.fxco.configurablepistons.blocks.pistons.translocationPiston;
 import java.util.List;
 
 import ca.fxco.configurablepistons.base.ModBlockEntities;
-import ca.fxco.configurablepistons.base.ModBlocks;
+import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -21,23 +21,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class TranslocationMovingBlockEntity extends BasicMovingBlockEntity {
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, pos, state, ModBlocks.TRANSLOCATION_MOVING_BLOCK);
+        this(pos, state, ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY);
     }
 
-    public TranslocationMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, TranslocationMovingBlock movingBlock) {
-        super(pos, state);
+    public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
+        super(pos, state, type);
     }
 
     public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                           boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
-            ModBlocks.TRANSLOCATION_MOVING_BLOCK);
+        super(pos, state, movedState, facing, extending, isSourcePiston,
+                ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY);
     }
 
-    public TranslocationMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
+    public TranslocationMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                           Direction facing, boolean extending, boolean isSourcePiston,
-                                          TranslocationMovingBlock movingBlock) {
-        super(type, pos, state, movedState, facing, extending, isSourcePiston, movingBlock);
+                                          BlockEntityType<?> type) {
+        super(pos, state, movedState, facing, extending, isSourcePiston, type);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import ca.fxco.configurablepistons.interfaces.mixin.ILevel;
+import ca.fxco.configurablepistons.interfaces.ILevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

@@ -35,34 +35,40 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
-    /*
-     * This class overrides all the non-static methods of PistonBlockEntity
-     */
-
     protected final BasicMovingBlock MOVING_BLOCK;
 
+    /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, ModBlocks.BASIC_MOVING_BLOCK);
+        this(pos, state, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
     }
 
-    public BasicMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BasicMovingBlock movingBlock) {
+    /** This is only used to register the moving block entities, where none of the values are required **/
+    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
         super(pos, state);
 
-        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
-        this.MOVING_BLOCK = movingBlock;
+        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
+            MOVING_BLOCK = basicMovingBlock;
+        } else {
+            MOVING_BLOCK = null; // Shouldn't be possible?
+        }
+        ((BlockEntityAccessor)this).setType(type);
     }
 
     public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
                                   boolean extending, boolean isSourcePiston) {
-        this(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, pos, state, movedState, facing, extending, isSourcePiston,
-            ModBlocks.BASIC_MOVING_BLOCK);
+        this(pos, state, movedState, facing, extending, isSourcePiston, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
     }
-    public BasicMovingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, BlockState movedState,
-                                  Direction facing, boolean extending, boolean isSourcePiston, BasicMovingBlock movingBlock) {
+
+    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
+                                  boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        ((BlockEntityAccessor)this).setType(type); // TODO: Automate this using piston family
-        this.MOVING_BLOCK = movingBlock;
+        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
+            MOVING_BLOCK = basicMovingBlock;
+        } else {
+            MOVING_BLOCK = null; // Shouldn't be possible?
+        }
+        ((BlockEntityAccessor)this).setType(type);
     }
 
     public BasicMovingBlock getMovingBlock() {
@@ -125,6 +131,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
         List<AABB> blockAabbs = blockShape.toAabbs();
         boolean shouldBounceEntities = this.movedState.is(Blocks.SLIME_BLOCK);
+        float speed = this.speed();
 
         for (Entity entity : entities) {
             if (entity.getPistonPushReaction() == PushReaction.IGNORE) {
@@ -141,9 +148,9 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 double velocityZ = velocity.z;
 
                 switch (moveDir.getAxis()) {
-                    case X -> velocityX = moveDir.getStepX();
-                    case Y -> velocityY = moveDir.getStepY();
-                    case Z -> velocityZ = moveDir.getStepZ();
+                    case X -> velocityX = moveDir.getStepX() * speed;
+                    case Y -> velocityY = moveDir.getStepY() * speed;
+                    case Z -> velocityZ = moveDir.getStepZ() * speed;
                 }
 
                 entity.setDeltaMovement(velocityX, velocityY, velocityZ);
@@ -263,9 +270,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         return this.movedState;
     }
 
-    private boolean finalTickStuckNeighbors(Map<Direction, StickyType> stickyTypes) {
-        boolean success = false;
-
+    public void finalTickStuckNeighbors(Map<Direction, StickyType> stickyTypes) {
         for (Map.Entry<Direction, StickyType> entry : stickyTypes.entrySet()) {
             StickyType stickyType = entry.getValue();
 
@@ -281,32 +286,37 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 BlockEntity blockEntity = this.level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof BasicMovingBlockEntity mbe) {
-                    if (this.getMovementDirection() == mbe.getMovementDirection() && this.progress == mbe.progress) {
+                    if (this.getMovementDirection() == mbe.getMovementDirection() && this.progressO == mbe.progress) {
                         // Maybe do a stick test?
                         mbe.finalTick();
                     }
                 }
             }
-
-            success = true;
         }
-
-        return success;
     }
 
     @Override
     public void finalTick() {
+        finalTick(false, true);
+    }
+
+    public void finalTick(boolean skipStickiness, boolean removeSource) {
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
-            this.progress = 1.0F;
+
             this.progressO = this.progress;
+            this.progress = 1.0F;
 
-            this.finishMovement();
+            this.finishMovement(removeSource);
 
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)this.movedState.getBlock();
+            if (!skipStickiness) {
+                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
 
-            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
-                this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
+                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                }
             }
+
+            this.progressO = 1.0F;
         }
     }
 
@@ -317,7 +327,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             if (this.level.isClientSide() && this.deathTicks < 5) {
                 this.deathTicks++;
             } else {
-                this.finishMovement();
+                this.finishMovement(false);
             }
         } else {
             float nextProgress = this.progress + 0.5F * this.speed();
@@ -332,23 +342,25 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
     }
 
-    protected void finishMovement() {
+    protected void finishMovement(boolean removeSource) {
         this.level.removeBlockEntity(this.worldPosition);
         this.setRemoved();
 
         if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
-            this.placeAndUpdateMovedBlock();
+            this.placeAndUpdateMovedBlock(removeSource);
         }
     }
 
-    protected void placeAndUpdateMovedBlock() {
-        if (!this.placeMovedBlock()) {
+    protected void placeAndUpdateMovedBlock(boolean removeSource) {
+        boolean setAir = removeSource && this.isSourcePiston;
+        if (!setAir && !this.placeMovedBlock()) {
             return;
         }
 
-        BlockState updatedState = Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
+        BlockState updatedState = setAir ? Blocks.AIR.defaultBlockState() :
+                Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
 
-        if (updatedState == this.movedState) {
+        if (updatedState == this.movedState) { // If it doesn't change, add updates manually
             this.level.updateNeighborsAt(this.worldPosition, updatedState.getBlock());
 
             updatedState.updateNeighbourShapes(this.level, this.worldPosition, Block.UPDATE_ALL);

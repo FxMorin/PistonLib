@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import ca.fxco.configurablepistons.interfaces.mixin.ILevel;
+import ca.fxco.configurablepistons.interfaces.ILevel;
 import ca.fxco.configurablepistons.mixin.accessors.BlockEntityAccessor;
 
 import net.minecraft.core.BlockPos;
