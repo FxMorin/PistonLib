@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "configurable-pistons:block/axis_locked_block_top",
-    "side": "configurable-pistons:block/axis_locked_block"
-  }
-}

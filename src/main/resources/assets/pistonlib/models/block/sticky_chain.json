@@ -1,0 +1,7 @@
+{
+  "parent": "block/chain",
+  "textures": {
+    "particle": "pistonlib:block/sticky_chain",
+    "all": "pistonlib:block/sticky_chain"
+  }
+}

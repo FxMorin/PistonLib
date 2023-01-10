@@ -1,4 +1,4 @@
-## ConfigurablePistons
+## PistonLib
 #### A mod/library that expands the piston system
 
 This mod/library is a work in progress!  
@@ -14,7 +14,6 @@ I don't have much time to work on this, so any time your willing to give to help
 - Piston block compression
 - Slab merging
 - Dual-sided piston
-- Movable Block Entities
 - Quarter Slime blocks
 - [Obsidian Slabs & Stairs](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
 

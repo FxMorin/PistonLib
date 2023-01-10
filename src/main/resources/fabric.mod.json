@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "configurable-pistons",
+  "id": "pistonlib",
   "version": "${version}",
-  "name": "Configurable Pistons",
+  "name": "PistonLib",
   "description": "A mod/library that expands the piston system",
   "authors": [
     "FX - PR0CESS",
@@ -13,23 +13,23 @@
   ],
 
   "license": "MIT",
-  "icon": "assets/configurable-pistons/icon.png",
+  "icon": "assets/pistonlib/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "ca.fxco.configurablepistons.ConfigurablePistons"
+      "ca.fxco.pistonlib.PistonLib"
     ],
     "client": [
-      "ca.fxco.configurablepistons.ConfigurablePistonsClient"
+      "ca.fxco.pistonlib.PistonLibClient"
     ],
     "fabric-datagen": [
-      "ca.fxco.configurablepistons.datagen.ConfigurablePistonsDatagen"
+      "ca.fxco.pistonlib.datagen.PistonLibDatagen"
     ]
   },
-  "accessWidener" : "configurable-pistons.accesswidener",
+  "accessWidener" : "pistonlib.accesswidener",
   "mixins": [
-    "configurable-pistons.mixins.json"
+    "pistonlib.mixins.json"
   ],
   "depends": {
     "minecraft": "1.19.3",
