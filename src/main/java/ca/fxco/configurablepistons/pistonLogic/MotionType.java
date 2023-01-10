@@ -3,6 +3,10 @@ package ca.fxco.configurablepistons.pistonLogic;
 public class MotionType {
 
     /**
+     * Cancel the motion from happening
+     */
+    public static final int NONE    = -1;
+    /**
      * Extend and push any blocks in front.
      */
     public static final int PUSH    = 0;

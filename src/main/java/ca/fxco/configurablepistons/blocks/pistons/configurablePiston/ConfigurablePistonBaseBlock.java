@@ -3,6 +3,7 @@ package ca.fxco.configurablepistons.blocks.pistons.configurablePiston;
 import ca.fxco.configurablepistons.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.configurablepistons.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.configurablepistons.helpers.Utils;
+import ca.fxco.configurablepistons.pistonLogic.MotionType;
 import ca.fxco.configurablepistons.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,7 +55,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
-        return canRetractOnExtending ? super.getPullType(level, pos, facing) : -1; //TODO: Does not work completely!
+        return canRetractOnExtending ? super.getPullType(level, pos, facing) : MotionType.NONE;
     }
 
     @Override
