@@ -273,7 +273,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 BlockEntity blockEntity = this.level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof BasicMovingBlockEntity mbe) {
-                    if (this.getMovementDirection() == mbe.getMovementDirection() && this.progress == mbe.progress) {
+                    if (this.getMovementDirection() == mbe.getMovementDirection() && this.progressO == mbe.progress) {
                         // Maybe do a stick test?
                         mbe.finalTick();
                     }
@@ -286,6 +286,9 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     public void finalTick() {
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
 
+            this.progressO = this.progress;
+            this.progress = 1.0F;
+
             this.finishMovement();
 
             ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)this.movedState.getBlock();
@@ -294,7 +297,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
             }
 
-            this.progress = 1.0F;
             this.progressO = this.progress;
         }
     }
