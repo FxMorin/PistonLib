@@ -297,20 +297,26 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void finalTick() {
+        finalTick(false, true);
+    }
+
+    public void finalTick(boolean skipStickiness, boolean removeSource) {
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
 
             this.progressO = this.progress;
             this.progress = 1.0F;
 
-            this.finishMovement();
+            this.finishMovement(removeSource);
 
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)this.movedState.getBlock();
+            if (!skipStickiness) {
+                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
 
-            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
-                this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
+                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                }
             }
 
-            this.progressO = this.progress;
+            this.progressO = 1.0F;
         }
     }
 
@@ -321,7 +327,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             if (this.level.isClientSide() && this.deathTicks < 5) {
                 this.deathTicks++;
             } else {
-                this.finishMovement();
+                this.finishMovement(false);
             }
         } else {
             float nextProgress = this.progress + 0.5F * this.speed();
@@ -336,21 +342,22 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
     }
 
-    protected void finishMovement() {
+    protected void finishMovement(boolean removeSource) {
         this.level.removeBlockEntity(this.worldPosition);
         this.setRemoved();
 
         if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
-            this.placeAndUpdateMovedBlock();
+            this.placeAndUpdateMovedBlock(removeSource);
         }
     }
 
-    protected void placeAndUpdateMovedBlock() {
+    protected void placeAndUpdateMovedBlock(boolean removeSource) {
         if (!this.placeMovedBlock()) {
             return;
         }
 
-        BlockState updatedState = Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
+        BlockState updatedState = removeSource && this.isSourcePiston ? Blocks.AIR.defaultBlockState() :
+                Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
 
         if (updatedState == this.movedState) {
             this.level.updateNeighborsAt(this.worldPosition, updatedState.getBlock());

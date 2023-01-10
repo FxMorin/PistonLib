@@ -76,7 +76,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
                     if (cpbb.hasNeighborSignal(level, pos, facing)) {
                         float progress = movingBlockEntity.progress;
-                        movingBlockEntity.finalTick();
+                        movingBlockEntity.finalTick(false, false);
                         Set<BlockPos> positions = new HashSet<>();
                         BlockPos frontPos = pos.relative(facing);
                         if (level.getBlockEntity(frontPos) instanceof ConfigurableMovingBlockEntity bmbe && !bmbe.extending && bmbe.progress == progress) {
@@ -125,7 +125,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                         if (stick.usesConfigurablePistonStickiness() && stick.isSticky(mbe.movedState)) {
                             stuckNeighbors(level, neighborPos, stick.stickySides(mbe.movedState), mbe, set);
                         }
-                        mbe.finalTick(true);
+                        mbe.finalTick(true, true);
                     }
                 }
             }

@@ -88,29 +88,6 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
     }
 
     @Override
-    public void finalTick() {
-        finalTick(false);
-    }
-
-    public void finalTick(boolean skipStickiness) {
-        if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
-
-            this.finishMovement();
-
-            if (!skipStickiness) {
-                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
-
-                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
-                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
-                }
-            }
-
-            this.progress = 1.0F;
-            this.progressO = this.progress;
-        }
-    }
-
-    @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
 

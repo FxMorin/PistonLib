@@ -73,9 +73,9 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    protected void finishMovement() {
+    protected void finishMovement(boolean removeSource) {
         if (this.finishArmMovement()) {
-            super.finishMovement();
+            super.finishMovement(removeSource);
         }
     }
 
