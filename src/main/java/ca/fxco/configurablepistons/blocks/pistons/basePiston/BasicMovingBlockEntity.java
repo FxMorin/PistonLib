@@ -352,14 +352,15 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     protected void placeAndUpdateMovedBlock(boolean removeSource) {
-        if (!this.placeMovedBlock()) {
+        boolean setAir = removeSource && this.isSourcePiston;
+        if (!setAir && !this.placeMovedBlock()) {
             return;
         }
 
-        BlockState updatedState = removeSource && this.isSourcePiston ? Blocks.AIR.defaultBlockState() :
+        BlockState updatedState = setAir ? Blocks.AIR.defaultBlockState() :
                 Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
 
-        if (updatedState == this.movedState) {
+        if (updatedState == this.movedState) { // If it doesn't change, add updates manually
             this.level.updateNeighborsAt(this.worldPosition, updatedState.getBlock());
 
             updatedState.updateNeighbourShapes(this.level, this.worldPosition, Block.UPDATE_ALL);
