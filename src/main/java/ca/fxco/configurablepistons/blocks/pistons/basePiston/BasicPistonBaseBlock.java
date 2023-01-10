@@ -165,10 +165,10 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         if (frontState.is(MOVING_BLOCK) && frontState.getValue(FACING) == facing) {
             BlockEntity blockEntity = level.getBlockEntity(frontPos);
 
-            if (blockEntity instanceof PistonMovingBlockEntity mbe) {
-                if (mbe.isExtending() && mbe.getProgress(0.0F) < 0.5F && mbe.getLastTicked() == level.getGameTime() && level.isHandlingTick()) {
-                    return MotionType.RETRACT;
-                }
+            if (blockEntity instanceof PistonMovingBlockEntity mbe && mbe.isExtending() &&
+                    (mbe.getProgress(0.0F) < 0.5F ||
+                            mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick())) {
+                return MotionType.RETRACT;
             }
         }
 
