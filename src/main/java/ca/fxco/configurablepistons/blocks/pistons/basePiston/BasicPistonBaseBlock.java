@@ -152,7 +152,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             }
         } else if (!shouldBeExtended && isExtended) {
             int type = getPullType((ServerLevel)level, pos, facing);
-            if (type != -1) {
+            if (type != MotionType.NONE) {
                 level.blockEvent(pos, this, type, facing.get3DDataValue());
             }
         }
@@ -163,9 +163,9 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         BlockState frontState = level.getBlockState(frontPos);
 
         if (frontState.is(MOVING_BLOCK) && frontState.getValue(FACING) == facing) {
-            BlockEntity blockEntity = level.getBlockEntity(frontPos);
 
-            if (blockEntity instanceof PistonMovingBlockEntity mbe && mbe.isExtending() &&
+            if (level.getBlockEntity(frontPos) instanceof PistonMovingBlockEntity mbe &&
+                    mbe.isExtending() &&
                     (mbe.getProgress(0.0F) < 0.5F ||
                             mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick())) {
                 return MotionType.RETRACT;
@@ -296,7 +296,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             0.5F,
             0.6F + 0.25F * level.getRandom().nextFloat()
         );
-        //level.gameEvent(event, pos);
+        level.gameEvent(null, event, pos);
     }
 
     /**
@@ -331,24 +331,30 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 if (!customBehavior.canPistonPull(state, moveDir))
                     return false;
             }
-            if (!allowDestroy && !customBehavior.canDestroy(state))
+            if (customBehavior.canDestroy(state) && !allowDestroy)
                 return false;
         } else {
-            if (state.is(ModTags.UNPUSHABLE) || state.getDestroySpeed(level, pos) == -1.0F)
+            if (state.is(ModTags.UNPUSHABLE))
                 return false;
-            if (state.is(ModTags.PISTONS) && state.getValue(EXTENDED))
-                return false;
-            switch (state.getPistonPushReaction()) {
-                case BLOCK -> { return false; }
-                case DESTROY -> {
-                    if (!allowDestroy)
-                        return false;
+            if (state.is(ModTags.PISTONS)) {
+                if (state.getValue(EXTENDED)) {
+                    return false;
                 }
-                case PUSH_ONLY -> {
-                    if (moveDir != pistonFacing)
-                        return false;
+            } else { // Pistons shouldn't be checked against destroy speed or PistonPushReaction
+                if (state.getDestroySpeed(level, pos) == -1.0F)
+                    return false;
+                switch (state.getPistonPushReaction()) {
+                    case BLOCK -> { return false; }
+                    case DESTROY -> {
+                        if (!allowDestroy)
+                            return false;
+                    }
+                    case PUSH_ONLY -> {
+                        if (moveDir != pistonFacing)
+                            return false;
+                    }
+                    default -> { }
                 }
-                default -> { }
             }
         }
 
