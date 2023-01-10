@@ -57,10 +57,9 @@ public class Utils {
         return false;
     }
 
-    public static boolean setBlockWithEntity(Level level, BlockPos blockPos,
-                                             BlockState state, BlockEntity blockEntity) {
+    public static boolean setBlockWithEntity(Level level, BlockPos blockPos, BlockState state,
+                                             BlockEntity blockEntity, int flags) {
         ((ILevel)level).prepareBlockEntityPlacement(blockPos, state, blockEntity);
-        return level.setBlock(blockPos, state,
-                Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+        return level.setBlock(blockPos, state, flags);
     }
 }
