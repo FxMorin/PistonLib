@@ -129,13 +129,11 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
                 return false;
             }
 
-            // Movement Checks
             state = this.level.getBlockState(currentPos);
 
             // Merge checks
-            if (lastBlockPos != null) { //TODO: Add MultiMerge checks
+            if (lastBlockPos != null) {
                 if (state.getBlock() instanceof MergeBlock) { // MultiMerge
-                    //System.out.println("MergeBlock Found: " + currentPos);
                     ConfigurablePistonMerging merge = (ConfigurablePistonMerging) lastState.getBlock();
                     if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(lastState, pushDirOpposite)) {
                         if (level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity) {
@@ -163,6 +161,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
                 }
             }
 
+            // Movement Checks
             if (state.isAir())
                 return false;
             if (currentPos.equals(this.pistonPos))
