@@ -17,6 +17,29 @@ I don't have much time to work on this, so any time your willing to give to help
 - Quarter Slime blocks
 - [Obsidian Slabs & Stairs](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
 
+### Current Piston Features
+- Configurable piston speed
+- Configurable push limit
+- Movable block entities
+- translocation piston
+- Configurable sticky types
+- Unlimited Sticky Groups (Slime, Honey, etc...)
+- Individual sticky behaviour per block sides
+- Disable Quasi powering
+- Pull only logic
+- Huge custom piston behavior api
+- Huge custom piston stickiness api
+
+### Other Features
+- Half Slime/Honey/Powered/Redstone Lamp/Obsidian block
+- Glue Block (Strong sticky)
+- Togglable sticky block
+- Sticky chain (chainstone)
+- Axis-Locked blocks (only movable on one axis)
+- Move counting block (power level based amount moved)
+- All sided observer
+- Slippery blocks (block fall when not attached to any solid blocks)
+
 ### Blocks that need textures
 - axis_locked_block
 - move_counting_block
