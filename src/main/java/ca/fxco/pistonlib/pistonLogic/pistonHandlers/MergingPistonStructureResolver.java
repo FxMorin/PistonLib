@@ -137,7 +137,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
                 if (state.getBlock() instanceof MergeBlock) { // MultiMerge
                     //System.out.println("MergeBlock Found: " + currentPos);
                     ConfigurablePistonMerging merge = (ConfigurablePistonMerging) lastState.getBlock();
-                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(pushDirOpposite)) {
+                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(lastState, pushDirOpposite)) {
                         if (level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity) {
                             if (mergeBlockEntity.canMergeFromSide(this.pushDirection)) {
                                 if (mergeBlockEntity.canMerge(state, this.pushDirection)) {
@@ -150,9 +150,9 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
                     }
                 } else {
                     ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
-                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(this.pushDirection)) {
+                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(state, this.pushDirection)) {
                         ConfigurablePistonMerging lastMerge = (ConfigurablePistonMerging) lastState.getBlock();
-                        if (lastMerge.usesConfigurablePistonMerging() && lastMerge.canMergeFromSide(pushDirOpposite)) {
+                        if (lastMerge.usesConfigurablePistonMerging() && lastMerge.canMergeFromSide(lastState, pushDirOpposite)) {
                             if (merge.canMerge(lastState, state, this.pushDirection)) {
                                 this.toMerge.add(lastBlockPos);
                                 this.toPush.remove(lastBlockPos);

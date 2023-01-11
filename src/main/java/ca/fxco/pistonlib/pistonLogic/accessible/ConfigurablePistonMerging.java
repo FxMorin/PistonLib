@@ -23,7 +23,7 @@ public interface ConfigurablePistonMerging {
     }
 
     // If the block can be merged from a given side or can be merged from that side. Usually opposite of pushDirection
-    default boolean canMergeFromSide(Direction pushDirection) {
+    default boolean canMergeFromSide(BlockState state, Direction pushDirection) {
         return true;
     }
 
