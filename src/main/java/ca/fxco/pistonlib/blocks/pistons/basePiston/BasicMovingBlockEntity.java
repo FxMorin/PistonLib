@@ -75,7 +75,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         return MOVING_BLOCK;
     }
 
-    protected float speed() {
+    public float speed() {
         return 1.0F;
     }
 

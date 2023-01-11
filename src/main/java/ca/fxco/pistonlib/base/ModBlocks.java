@@ -7,6 +7,8 @@ import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
 
@@ -174,6 +176,15 @@ public class ModBlocks {
     public static final MBEMovingBlock MBE_MOVING_BLOCK = registerPiston(MBE, new MBEMovingBlock());
     public static final MBEPistonBaseBlock MBE_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.DEFAULT));
     public static final MBEPistonBaseBlock MBE_STICKY_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.STICKY));
+
+    // Merge Piston
+    // A piston that can merge blocks together
+    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = registerPiston(MERGE, new BasicPistonHeadBlock());
+    public static final SpeedMovingBlock MERGE_MOVING_BLOCK = registerPiston(MERGE, new SpeedMovingBlock(0.05F));
+    public static final BasicPistonBaseBlock MERGE_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
+
+    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
 
     //
     // Registration methods

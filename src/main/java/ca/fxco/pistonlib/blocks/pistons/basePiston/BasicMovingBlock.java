@@ -64,8 +64,18 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Nullable
-    protected static <T extends BlockEntity, B extends BasicMovingBlockEntity> BlockEntityTicker<T> createTicker(BlockEntityType<T> targetType, BlockEntityType<B> movingBlockEntityType) {
-        return createTickerHelper(targetType, movingBlockEntityType, (l, p, s, mbe) -> mbe.tick());
+    protected static <T extends BlockEntity, B extends BasicMovingBlockEntity> BlockEntityTicker<T> createTicker(BlockEntityType<T> targetType, BlockEntityType<B>... movingBlockEntityType) {
+        return createTickerHelper((l, p, s, mbe) -> mbe.tick(), targetType, movingBlockEntityType);
+    }
+
+    @Nullable
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityTicker<? super E> blockEntityTicker, BlockEntityType<A> blockEntityType, BlockEntityType<E>... blockEntityTypes) {
+        for (BlockEntityType<E> type : blockEntityTypes) {
+            if (type == blockEntityType) {
+                return (BlockEntityTicker<A>) blockEntityTicker;
+            }
+        }
+        return null;
     }
 
     @Override
