@@ -17,6 +17,7 @@ public class PistonFamilies {
     public static final PistonFamily LONG = new PistonFamily("long", false);
     public static final PistonFamily CONFIGURABLE = new PistonFamily("configurable", false);
     public static final PistonFamily STALE = new PistonFamily("stale", false);
+    public static final PistonFamily QUASI = new PistonFamily("quasi", false);
     public static final PistonFamily STRONG = new PistonFamily("strong");
     public static final PistonFamily FAST = new PistonFamily("fast", false);
     public static final PistonFamily STICKY = new PistonFamily("sticky", false);

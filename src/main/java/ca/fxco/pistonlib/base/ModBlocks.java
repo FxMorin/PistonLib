@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import ca.fxco.pistonlib.blocks.*;
+import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
@@ -119,6 +120,12 @@ public class ModBlocks {
     public static final BasicPistonHeadBlock STALE_PISTON_HEAD = registerPiston(STALE, new BasicPistonHeadBlock());
     public static final BasicPistonBaseBlock STALE_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock STALE_STICKY_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.STICKY));
+
+    // Very Quasi Piston
+    // A vanilla piston except it can be quasi-powered from 5 blocks up
+    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = registerPiston(QUASI, new BasicPistonHeadBlock());
+    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.STICKY));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
