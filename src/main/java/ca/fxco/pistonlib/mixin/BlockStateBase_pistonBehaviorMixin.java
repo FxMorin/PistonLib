@@ -2,6 +2,10 @@ package ca.fxco.pistonlib.mixin;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.impl.BlockQuasiPower;
+import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BlockStateBase.class)
-public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky {
+public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateQuasiPower {
 
     @Shadow
     public Block getBlock() { return null; }
@@ -80,5 +84,15 @@ public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushRea
     @Override
     public StickyType sideStickiness(Direction direction) {
         return ((ConfigurablePistonStickiness)this.getBlock()).sideStickiness(this.asState(), direction);
+    }
+
+    @Override
+    public int getQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist) {
+        return ((BlockQuasiPower)this.getBlock()).getQuasiSignal(this.asState(), blockGetter, blockPos, direction, dist);
+    }
+
+    @Override
+    public boolean hasQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist) {
+        return ((BlockQuasiPower)this.getBlock()).hasQuasiSignal(this.asState(), blockGetter, blockPos, direction, dist);
     }
 }

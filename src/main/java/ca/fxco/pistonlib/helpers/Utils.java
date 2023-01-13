@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.pistonlib.interfaces.ILevel;
+import ca.fxco.pistonlib.impl.ILevel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

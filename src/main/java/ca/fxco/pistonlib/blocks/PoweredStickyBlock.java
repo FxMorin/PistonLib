@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 
@@ -26,7 +27,7 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
 
     public void updatePowered(BlockState state, Level level, BlockPos pos, boolean force) {
     	boolean isPowered = state.getValue(POWERED);
-        boolean shouldBePowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
+        boolean shouldBePowered = level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1);
 
         if (isPowered != shouldBePowered) {
             level.setBlock(pos, state.setValue(POWERED, shouldBePowered), UPDATE_ALL);

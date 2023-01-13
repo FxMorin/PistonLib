@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.helpers.Utils;
+import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
 import net.minecraft.core.BlockPos;
@@ -50,7 +51,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return (frontPowered ? level.hasNeighborSignal(pos) :
                 Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
-                (quasi && level.hasNeighborSignal(pos.above()));
+                (quasi && ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1));
     }
 
     @Override

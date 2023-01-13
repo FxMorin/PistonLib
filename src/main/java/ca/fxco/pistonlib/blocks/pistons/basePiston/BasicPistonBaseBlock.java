@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.helpers.Utils;
+import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
@@ -176,7 +177,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) || level.hasNeighborSignal(pos.above());
+        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) || ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1);
     }
 
     @Override
