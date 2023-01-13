@@ -24,8 +24,7 @@ public class PistonLib implements ModInitializer {
 
     public static final boolean PISTON_PROGRESS_FIX = true;
 
-    public static final CreativeModeTab CUSTOM_CREATIVE_MODE_TAB = FabricItemGroup
-            .builder(new ResourceLocation(MOD_ID, "general"))
+    public static final CreativeModeTab CUSTOM_CREATIVE_MODE_TAB = FabricItemGroup.builder(id("general"))
             .icon(() -> new ItemStack(ModBlocks.STRONG_STICKY_PISTON))
             .build();
 

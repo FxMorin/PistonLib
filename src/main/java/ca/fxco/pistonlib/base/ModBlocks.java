@@ -3,10 +3,12 @@ package ca.fxco.pistonlib.base;
 import java.util.Map;
 import java.util.function.Function;
 
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,7 +187,7 @@ public class ModBlocks {
 
     public static <T extends Block> T register(String name, T block) {
         ResourceLocation id = id(name);
-        Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, new Item.Properties()));
+        registerBlockItem(id, block);
         return Registry.register(BuiltInRegistries.BLOCK, id, block);
     }
 
@@ -210,52 +212,56 @@ public class ModBlocks {
                         block + " - Family: " + family.getId()
                 );
             }
-        } else {
-            if (block instanceof BasicPistonBaseBlock baseBlock) {
-                BasicMovingBlock movingBlock = family.getMovingBlock();
-                baseBlock.setMovingBlock(movingBlock != null ? movingBlock : BASIC_MOVING_BLOCK);
-                BasicPistonHeadBlock headBlock = family.getHeadBlock();
-                baseBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
-                ResourceLocation id = switch (baseBlock.type) {
-                    case DEFAULT -> id(familyId + "_piston");
-                    case STICKY -> id(familyId + "_sticky_piston");
-                    default -> throw new IllegalStateException("unknown base type " + baseBlock.type);
-                };
-                Registry.register(BuiltInRegistries.BLOCK, id, baseBlock);
-                family.base(baseBlock);
-                if (creativeModeTab != null) {
-                    Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(baseBlock, new Item.Properties()));
-                }
-            } else if (block instanceof BasicMovingBlock movingBlock) {
-                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_moving_piston"), movingBlock);
-                if (family.getBaseBlock() != null) {
-                    throw new IllegalStateException(
-                        "Moving blocks must always be initialized before base blocks! - Block: " +
-                            BuiltInRegistries.BLOCK.getId(movingBlock) + " - Family: " + family.getId()
-                    );
-                }
-                family.moving(movingBlock);
-            } else if (block instanceof LongPistonArmBlock armBlock) {
-                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_arm"), armBlock);
-                BasicPistonHeadBlock headBlock = family.getHeadBlock();
-                if (headBlock instanceof LongPistonHeadBlock longHeadBlock) {
-                    armBlock.setHeadBlock(longHeadBlock);
-                } else {
-                    throw new IllegalStateException(
-                        "Pistons using the LongPistonArmBlock, must also use a LongPistonHeadBlock"
-                    );
-                }
-                family.arm(armBlock);
+            return block;
+        }
+        if (block instanceof BasicPistonBaseBlock baseBlock) {
+            BasicMovingBlock movingBlock = family.getMovingBlock();
+            baseBlock.setMovingBlock(movingBlock != null ? movingBlock : BASIC_MOVING_BLOCK);
+            BasicPistonHeadBlock headBlock = family.getHeadBlock();
+            baseBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
+            ResourceLocation id = switch (baseBlock.type) {
+                case DEFAULT -> id(familyId + "_piston");
+                case STICKY -> id(familyId + "_sticky_piston");
+            };
+            Registry.register(BuiltInRegistries.BLOCK, id, baseBlock);
+            family.base(baseBlock);
+            if (creativeModeTab != null) {
+                registerBlockItem(id, baseBlock);
+            }
+        } else if (block instanceof BasicMovingBlock movingBlock) {
+            Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_moving_piston"), movingBlock);
+            if (family.getBaseBlock() != null) {
+                throw new IllegalStateException(
+                    "Moving blocks must always be initialized before base blocks! - Block: " +
+                        BuiltInRegistries.BLOCK.getId(movingBlock) + " - Family: " + family.getId()
+                );
+            }
+            family.moving(movingBlock);
+        } else if (block instanceof LongPistonArmBlock armBlock) {
+            Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_arm"), armBlock);
+            BasicPistonHeadBlock headBlock = family.getHeadBlock();
+            if (headBlock instanceof LongPistonHeadBlock longHeadBlock) {
+                armBlock.setHeadBlock(longHeadBlock);
             } else {
-                if (!family.hasCustomBlockLogic(block)) {
-                    throw new IllegalStateException(
-                        "This block cannot be initialized as part of a piston family! - Block: " +
-                            block + " - Family: " + family.getId()
-                    );
-                }
+                throw new IllegalStateException(
+                    "Pistons using the LongPistonArmBlock, must also use a LongPistonHeadBlock"
+                );
+            }
+            family.arm(armBlock);
+        } else {
+            if (!family.hasCustomBlockLogic(block)) {
+                throw new IllegalStateException(
+                    "This block cannot be initialized as part of a piston family! - Block: " +
+                        block + " - Family: " + family.getId()
+                );
             }
         }
         return block;
+    }
+
+    public static void registerBlockItem(ResourceLocation id, Block block) {
+        Item item = Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, new Item.Properties()));
+        ItemGroupEvents.modifyEntriesEvent(CUSTOM_CREATIVE_MODE_TAB).register(content -> content.accept(item));
     }
 
     public static void order() {}
