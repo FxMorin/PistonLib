@@ -8,6 +8,8 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlo
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
@@ -86,6 +88,10 @@ public class ModBlocks {
     public static final Block SLIPPERY_SLIME_BLOCK = register("slippery_slime_block", SlipperySlimeBlock::new, Blocks.SLIME_BLOCK);
     public static final Block SLIPPERY_REDSTONE_BLOCK = register("slippery_redstone_block", SlipperyRedstoneBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block SLIPPERY_STONE_BLOCK = register("slippery_stone_block", BaseSlipperyBlock::new, Blocks.STONE);
+
+    // Obsidian Blocks
+    public static final Block OBSIDIAN_SLAB_BLOCK = register("obsidian_slab_block", SlabBlock::new, Blocks.OBSIDIAN);
+    public static final Block OBSIDIAN_STAIR_BLOCK = register("obsidian_stair_block", new StairBlock(Blocks.OBSIDIAN.defaultBlockState(), FabricBlockSettings.copyOf(Blocks.OBSIDIAN)));
 
     // Piston Blocks should always be initialized in the following order:
     // Piston heads, Moving Pistons, base piston blocks, Piston Arms
