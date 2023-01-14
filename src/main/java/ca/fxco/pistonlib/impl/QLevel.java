@@ -23,7 +23,5 @@ public interface QLevel {
 
     boolean hasQuasiNeighborSignalColumn(BlockPos blockPos, int dist);
 
-    boolean hasQuasiNeighborSignalColumn(BlockPos blockPos, int dist, boolean bothDirections);
-
     boolean hasQuasiNeighborSignalBubble(BlockPos pos);
 }

@@ -124,37 +124,20 @@ public abstract class Level_quasiMixin implements QLevel {
     }
 
     /**
-     * BlockPos is the block position of the block doing the check, not the location that the check happens at
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at.
      */
     @Override
     public boolean hasQuasiNeighborSignalColumn(BlockPos pos, int dist) {
-        return hasQuasiNeighborSignalColumn(pos, dist, false);
-    }
-
-    /**
-     * BlockPos is the block position of the block doing the check, not the location that the check happens at.
-     * When `bothDirections` is true, negative and position directions will be iterated!
-     */
-    @Override
-    public boolean hasQuasiNeighborSignalColumn(BlockPos pos, int dist, boolean bothDirections) {
-        if (bothDirections) {
-            for (int i = 1; i <= Math.abs(dist); i++) {
-                if (hasQuasiNeighborSignalOptimized(pos, i) || hasQuasiNeighborSignalOptimized(pos, i * -1)) {
+        if (dist < 0) {
+            for (int i = -1; i >= dist; i--) {
+                if (hasQuasiNeighborSignalOptimized(pos, i)) {
                     return true;
                 }
             }
         } else {
-            if (dist < 0) {
-                for (int i = -1; i >= dist; i--) {
-                    if (hasQuasiNeighborSignalOptimized(pos, i)) {
-                        return true;
-                    }
-                }
-            } else {
-                for (int i = 1; i <= dist; i++) {
-                    if (hasQuasiNeighborSignalOptimized(pos, i)) {
-                        return true;
-                    }
+            for (int i = 1; i <= dist; i++) {
+                if (hasQuasiNeighborSignalOptimized(pos, i)) {
+                    return true;
                 }
             }
         }
