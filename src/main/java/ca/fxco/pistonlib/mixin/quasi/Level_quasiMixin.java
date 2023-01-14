@@ -10,6 +10,9 @@ import net.minecraft.world.level.redstone.Redstone;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Mixin(Level.class)
 public abstract class Level_quasiMixin implements QLevel {
 
@@ -110,20 +113,7 @@ public abstract class Level_quasiMixin implements QLevel {
                 .getDirectQuasiSignal((Level)(Object)this, pos, dir, dist);
     }
 
-    /**
-     * BlockPos is the block position of the block doing the check, not the location that the check happens at
-     */
-    @Override
-    public boolean hasQuasiNeighborSignalColumn(BlockPos pos, int dist) {
-        return hasQuasiNeighborSignalColumn(pos, dist, false);
-    }
-
-    /**
-     * Optimized version of `hasQuasiNeighborSignal` where there are not useless duplicate checks done in columns.
-     * This is only used by `hasQuasiNeighborSignalColumn`
-     */
-    @Override
-    public boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, int dist) {
+    private boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, int dist) {
         blockPos = blockPos.above(dist);
         return ((dist < 0 || dist == 2) && this.hasQuasiSignal(blockPos.below(), Direction.DOWN, dist)) ||
                 ((dist > 0 || dist == -2) && this.hasQuasiSignal(blockPos.above(), Direction.UP, dist)) ||
@@ -131,6 +121,14 @@ public abstract class Level_quasiMixin implements QLevel {
                 this.hasQuasiSignal(blockPos.south(), Direction.SOUTH, dist) ||
                 this.hasQuasiSignal(blockPos.west(), Direction.WEST, dist) ||
                 this.hasQuasiSignal(blockPos.east(), Direction.EAST, dist);
+    }
+
+    /**
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at
+     */
+    @Override
+    public boolean hasQuasiNeighborSignalColumn(BlockPos pos, int dist) {
+        return hasQuasiNeighborSignalColumn(pos, dist, false);
     }
 
     /**
@@ -157,6 +155,33 @@ public abstract class Level_quasiMixin implements QLevel {
                     if (hasQuasiNeighborSignalOptimized(pos, i)) {
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at.
+     *
+     * Don't abuse this method, it can be rather expensive when its frequently called
+     */
+    @Override
+    public boolean hasQuasiNeighborSignalBubble(BlockPos pos) {
+        Set<BlockPos> blockPosList = new HashSet<>();
+        for(Direction extendedDir : Direction.values()) {
+            BlockPos p = pos.relative(extendedDir);
+            Direction extendedDirOpp = extendedDir.getOpposite();
+            for(Direction dir : Direction.values()) {
+                if (dir == extendedDirOpp) {
+                    continue; // Don't update self
+                }
+                BlockPos nextPos = p.relative(dir);
+                if (!blockPosList.contains(nextPos)) {
+                    if (this.hasQuasiSignal(nextPos, extendedDir, 1)) {
+                        return true;
+                    }
+                    blockPosList.add(nextPos);
                 }
             }
         }
