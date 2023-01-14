@@ -15,6 +15,8 @@ public interface QLevel {
 
     boolean hasQuasiNeighborSignal(BlockPos blockPos, int dist);
 
+    boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, int dist);
+
     boolean hasQuasiSignal(BlockPos blockPos, Direction direction, int dist);
 
     int getQuasiSignal(BlockPos blockPos, Direction direction, int dist);

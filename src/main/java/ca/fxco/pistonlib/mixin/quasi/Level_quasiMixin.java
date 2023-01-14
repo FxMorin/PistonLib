@@ -119,27 +119,42 @@ public abstract class Level_quasiMixin implements QLevel {
     }
 
     /**
+     * Optimized version of `hasQuasiNeighborSignal` where there are not useless duplicate checks done in columns.
+     * This is only used by `hasQuasiNeighborSignalColumn`
+     */
+    @Override
+    public boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, int dist) {
+        blockPos = blockPos.above(dist);
+        return ((dist < 0 || dist == 2) && this.hasQuasiSignal(blockPos.below(), Direction.DOWN, dist)) ||
+                ((dist > 0 || dist == -2) && this.hasQuasiSignal(blockPos.above(), Direction.UP, dist)) ||
+                this.hasQuasiSignal(blockPos.north(), Direction.NORTH, dist) ||
+                this.hasQuasiSignal(blockPos.south(), Direction.SOUTH, dist) ||
+                this.hasQuasiSignal(blockPos.west(), Direction.WEST, dist) ||
+                this.hasQuasiSignal(blockPos.east(), Direction.EAST, dist);
+    }
+
+    /**
      * BlockPos is the block position of the block doing the check, not the location that the check happens at.
      * When `bothDirections` is true, negative and position directions will be iterated!
      */
-    @Override //TODO: Optimize for double checks in center column
+    @Override
     public boolean hasQuasiNeighborSignalColumn(BlockPos pos, int dist, boolean bothDirections) {
         if (bothDirections) {
             for (int i = 1; i <= Math.abs(dist); i++) {
-                if (hasQuasiNeighborSignal(pos, i) || hasQuasiNeighborSignal(pos, i * -1)) {
+                if (hasQuasiNeighborSignalOptimized(pos, i) || hasQuasiNeighborSignalOptimized(pos, i * -1)) {
                     return true;
                 }
             }
         } else {
             if (dist < 0) {
                 for (int i = -1; i >= dist; i--) {
-                    if (hasQuasiNeighborSignal(pos, i)) {
+                    if (hasQuasiNeighborSignalOptimized(pos, i)) {
                         return true;
                     }
                 }
             } else {
                 for (int i = 1; i <= dist; i++) {
-                    if (hasQuasiNeighborSignal(pos, i)) {
+                    if (hasQuasiNeighborSignalOptimized(pos, i)) {
                         return true;
                     }
                 }
