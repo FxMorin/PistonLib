@@ -20,4 +20,8 @@ public interface QLevel {
     int getQuasiSignal(BlockPos blockPos, Direction direction, int dist);
 
     int getDirectQuasiSignal(BlockPos pos, Direction dir, int dist);
+
+    boolean hasQuasiNeighborSignalColumn(BlockPos blockPos, int dist);
+
+    boolean hasQuasiNeighborSignalColumn(BlockPos blockPos, int dist, boolean bothDirections);
 }

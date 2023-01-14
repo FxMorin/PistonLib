@@ -15,10 +15,11 @@ public class DispenserBlock_quasiMixin {
             method = "neighborChanged",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z"
+                    target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z",
+                    ordinal = 1
             )
     )
     private boolean useQuasiSignalCheck(Level level, BlockPos pos) {
-        return ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
+        return ((QLevel)level).hasQuasiNeighborSignal(pos.below(), 1);
     }
 }

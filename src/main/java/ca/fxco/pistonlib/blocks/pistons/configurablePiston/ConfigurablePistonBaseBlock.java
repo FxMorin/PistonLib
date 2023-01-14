@@ -51,7 +51,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return (frontPowered ? level.hasNeighborSignal(pos) :
                 Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
-                (quasi && ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1));
+                (quasi && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override

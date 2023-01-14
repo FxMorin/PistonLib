@@ -17,17 +17,9 @@ public class VeryQuasiPistonBaseBlock extends BasicPistonBaseBlock {
         this.quasiStrength = quasiStrength;
     }
 
-    private boolean hasQuasiSignal(Level level, BlockPos pos) {
-        for (int i = 1; i <= this.quasiStrength; i++) {
-            if (((QLevel)level).hasQuasiNeighborSignal(pos.above(i), i)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) || hasQuasiSignal(level, pos);
+        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
+                ((QLevel)level).hasQuasiNeighborSignalColumn(pos, this.quasiStrength);
     }
 }

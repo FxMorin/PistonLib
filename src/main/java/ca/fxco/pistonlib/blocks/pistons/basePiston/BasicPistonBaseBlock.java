@@ -177,7 +177,8 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) || ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1);
+        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
+                ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
     }
 
     @Override

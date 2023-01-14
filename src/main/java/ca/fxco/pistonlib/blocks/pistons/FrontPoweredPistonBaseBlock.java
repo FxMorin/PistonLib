@@ -17,6 +17,6 @@ public class FrontPoweredPistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         // Implementation that allows power received through the piston face.
-        return level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos.above(), 1);
+        return level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
     }
 }
