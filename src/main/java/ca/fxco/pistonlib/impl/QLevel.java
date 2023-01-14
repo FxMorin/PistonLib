@@ -13,15 +13,21 @@ public interface QLevel {
 
     int getStrongestQuasiNeighborSignal(BlockPos blockPos, int dist);
 
+    int getStrongestQuasiNeighborSignal(BlockPos blockPos, Direction direction, int dist);
+
     boolean hasQuasiNeighborSignal(BlockPos blockPos, int dist);
+
+    boolean hasQuasiNeighborSignal(BlockPos blockPos, Direction direction, int dist);
 
     boolean hasQuasiSignal(BlockPos blockPos, Direction direction, int dist);
 
     int getQuasiSignal(BlockPos blockPos, Direction direction, int dist);
 
-    int getDirectQuasiSignal(BlockPos pos, Direction dir, int dist);
+    int getDirectQuasiSignal(BlockPos pos, Direction direction, int dist);
 
     boolean hasQuasiNeighborSignalColumn(BlockPos blockPos, int dist);
+
+    boolean hasQuasiNeighborSignalColumn(BlockPos pos, Direction direction, int dist);
 
     boolean hasQuasiNeighborSignalBubble(BlockPos pos);
 }

@@ -70,6 +70,24 @@ public abstract class Level_quasiMixin implements QLevel {
     }
 
     /**
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at
+     */
+    @Override
+    public int getStrongestQuasiNeighborSignal(BlockPos blockPos, Direction direction, int dist) {
+        blockPos = blockPos.relative(direction, dist);
+        int strongest = Redstone.SIGNAL_NONE;
+        for (Direction dir : Direction.values()) {
+            int strength = this.getQuasiSignal(blockPos.relative(dir), dir, dist);
+            if (strength >= Redstone.SIGNAL_MAX) {
+                return Redstone.SIGNAL_MAX;
+            } else if (strength > strongest) {
+                strongest = strength;
+            }
+        }
+        return strongest;
+    }
+
+    /**
      * BlockPos is the position that the check happens at
      */
     @Override
@@ -86,6 +104,20 @@ public abstract class Level_quasiMixin implements QLevel {
     @Override
     public boolean hasQuasiNeighborSignal(BlockPos blockPos, int dist) {
         blockPos = blockPos.above(dist);
+        return this.hasQuasiSignal(blockPos.below(), Direction.DOWN, dist) ||
+                this.hasQuasiSignal(blockPos.above(), Direction.UP, dist) ||
+                this.hasQuasiSignal(blockPos.north(), Direction.NORTH, dist) ||
+                this.hasQuasiSignal(blockPos.south(), Direction.SOUTH, dist) ||
+                this.hasQuasiSignal(blockPos.west(), Direction.WEST, dist) ||
+                this.hasQuasiSignal(blockPos.east(), Direction.EAST, dist);
+    }
+
+    /**
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at
+     */
+    @Override
+    public boolean hasQuasiNeighborSignal(BlockPos blockPos, Direction direction, int dist) {
+        blockPos = blockPos.relative(direction, dist);
         return this.hasQuasiSignal(blockPos.below(), Direction.DOWN, dist) ||
                 this.hasQuasiSignal(blockPos.above(), Direction.UP, dist) ||
                 this.hasQuasiSignal(blockPos.north(), Direction.NORTH, dist) ||
@@ -123,6 +155,25 @@ public abstract class Level_quasiMixin implements QLevel {
                 this.hasQuasiSignal(blockPos.east(), Direction.EAST, dist);
     }
 
+    private boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, Direction dir, int dist) {
+        blockPos = blockPos.relative(dir, dist);
+        Direction dirOpp = dir.getOpposite();
+        for (Direction direction : Direction.values()) {
+            if (direction == dir) {
+                if ((dist > 0 || dist == -2) && this.hasQuasiSignal(blockPos.relative(direction), direction, dist)) {
+                    return true;
+                }
+            } else if (direction == dirOpp) {
+                if ((dist < 0 || dist == 2) && this.hasQuasiSignal(blockPos.relative(direction), direction, dist)) {
+                    return true;
+                }
+            } else if (this.hasQuasiSignal(blockPos.relative(direction), direction, dist)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * BlockPos is the block position of the block doing the check, not the location that the check happens at.
      */
@@ -137,6 +188,27 @@ public abstract class Level_quasiMixin implements QLevel {
         } else {
             for (int i = 1; i <= dist; i++) {
                 if (hasQuasiNeighborSignalOptimized(pos, i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * BlockPos is the block position of the block doing the check, not the location that the check happens at.
+     */
+    @Override
+    public boolean hasQuasiNeighborSignalColumn(BlockPos pos, Direction direction, int dist) {
+        if (dist < 0) {
+            for (int i = -1; i >= dist; i--) {
+                if (hasQuasiNeighborSignalOptimized(pos, direction, i)) {
+                    return true;
+                }
+            }
+        } else {
+            for (int i = 1; i <= dist; i++) {
+                if (hasQuasiNeighborSignalOptimized(pos, direction, i)) {
                     return true;
                 }
             }
