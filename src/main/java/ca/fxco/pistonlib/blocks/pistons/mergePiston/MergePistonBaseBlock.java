@@ -71,7 +71,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             toRemove.put(posToMove, stateToMove);
         }
 
-        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size() + toMerge.size()];
+        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
         int affectedIndex = 0;
 
         float speed = 1F;
@@ -81,25 +81,28 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             speed = movingBlockEntity.speed();
         }
 
+        Direction moveDir = extend ? facing : facing.getOpposite();
+
+        // Merge Blocks
         for (int i = toMerge.size() - 1; i >= 0; i--) {
             BlockPos posToMerge = toMerge.get(i);
             BlockState stateToMerge = level.getBlockState(posToMerge);
             //BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge); //TODO: Add block entity merging api
 
-            BlockPos mergeIntoPos = posToMerge.relative(facing);
+            BlockPos mergeIntoPos = posToMerge.relative(moveDir);
             BlockState mergeIntoState = level.getBlockState(mergeIntoPos);
 
             level.setBlock(posToMerge, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
 
             if (mergeIntoState.getBlock() instanceof MergeBlock) { // MultiMerge
                 if (level.getBlockEntity(mergeIntoPos) instanceof MergeBlockEntity mergeBlockEntity) {
-                    mergeBlockEntity.doMerge(stateToMerge, facing, speed);
+                    mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                 }
             } else {
 
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
                 MergeBlockEntity mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState); // TODO: Make it expandable like pistons later
-                mergeBlockEntity.doMerge(stateToMerge, facing, speed);
+                mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
 
                 level.setBlock(mergeIntoPos, mergeBlockState, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
                 level.setBlockEntity(mergeBlockEntity);
@@ -120,8 +123,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
             affectedStates[affectedIndex++] = stateToDestroy;
         }
-
-        Direction moveDir = extend ? facing : facing.getOpposite();
 
         // move blocks
         for (int i = toMove.size() - 1; i >= 0; i--) {

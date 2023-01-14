@@ -19,6 +19,7 @@ import java.util.List;
 public class MergingPistonStructureResolver extends ConfigurablePistonStructureResolver {
 
     public final List<BlockPos> toMerge = Lists.newArrayList();
+    public final List<BlockPos> ignore = Lists.newArrayList();
 
     public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
         super(piston, level, pos, facing, extend);
@@ -29,6 +30,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
         this.toPush.clear();
         this.toDestroy.clear();
         this.toMerge.clear(); // clear merge
+        this.ignore.clear();
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
             if (this.extending) {
@@ -66,8 +68,13 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos))
+        if (state.isAir() ||
+                pos.equals(this.pistonPos) ||
+                this.toPush.contains(pos) ||
+                this.toMerge.contains(pos) ||
+                this.ignore.contains(pos)) {
             return false;
+        }
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
             return false;
         if (1 + this.toPush.size() > this.maxMovableBlocks)
@@ -87,6 +94,8 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
             if (state.isAir() ||
                     !canAdjacentBlockStick(pushDirOpposite, lastState, state) ||
                     blockPos.equals(this.pistonPos) ||
+                    this.toMerge.contains(blockPos) ||
+                    this.ignore.contains(blockPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite))
                 break;
             if (++distance + this.toPush.size() > this.maxMovableBlocks)
@@ -105,7 +114,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
         }
         int nextIndex = 1;
         BlockState lastState;
-        BlockPos lastBlockPos = null;
+        BlockPos lastBlockPos = pos;
         while(true) {
             BlockPos currentPos = pos.relative(this.pushDirection, nextIndex);
             lastState = state;
@@ -132,30 +141,30 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
             state = this.level.getBlockState(currentPos);
 
             // Merge checks
-            if (lastBlockPos != null) {
-                if (state.getBlock() instanceof MergeBlock) { // MultiMerge
-                    ConfigurablePistonMerging merge = (ConfigurablePistonMerging) lastState.getBlock();
-                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(lastState, pushDirOpposite)) {
-                        if (level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity) {
-                            if (mergeBlockEntity.canMergeFromSide(this.pushDirection)) {
-                                if (mergeBlockEntity.canMerge(state, this.pushDirection)) {
-                                    this.toMerge.add(lastBlockPos);
-                                    this.toPush.remove(lastBlockPos);
-                                    return false;
-                                }
+            if (state.getBlock() instanceof MergeBlock) { // MultiMerge
+                ConfigurablePistonMerging merge = (ConfigurablePistonMerging) lastState.getBlock();
+                if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(lastState, pushDirOpposite)) {
+                    if (level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity) {
+                        if (mergeBlockEntity.canMergeFromSide(this.pushDirection)) {
+                            if (mergeBlockEntity.canMerge(state, this.pushDirection)) {
+                                this.toMerge.add(lastBlockPos);
+                                this.toPush.remove(lastBlockPos);
+                                this.ignore.add(currentPos);
+                                return false;
                             }
                         }
                     }
-                } else {
-                    ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
-                    if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(state, this.pushDirection)) {
-                        ConfigurablePistonMerging lastMerge = (ConfigurablePistonMerging) lastState.getBlock();
-                        if (lastMerge.usesConfigurablePistonMerging() && lastMerge.canMergeFromSide(lastState, pushDirOpposite)) {
-                            if (merge.canMerge(lastState, state, this.pushDirection)) {
-                                this.toMerge.add(lastBlockPos);
-                                this.toPush.remove(lastBlockPos);
-                                return false;
-                            }
+                }
+            } else {
+                ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
+                if (merge.usesConfigurablePistonMerging() && merge.canMergeFromSide(state, this.pushDirection)) {
+                    ConfigurablePistonMerging lastMerge = (ConfigurablePistonMerging) lastState.getBlock();
+                    if (lastMerge.usesConfigurablePistonMerging() && lastMerge.canMergeFromSide(lastState, pushDirOpposite)) {
+                        if (merge.canMerge(lastState, state, this.pushDirection)) {
+                            this.toMerge.add(lastBlockPos);
+                            this.toPush.remove(lastBlockPos);
+                            this.ignore.add(currentPos);
+                            return false;
                         }
                     }
                 }
