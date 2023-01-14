@@ -273,20 +273,13 @@ public class ModBlocks {
     public static void order() {}
 
     static {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
-                    .canExtendOnRetracting(true)
-                    .canRetractOnExtending(true)
-                    .speed(0.05F);
-            CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
-            CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
-            CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
-            CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
-        } else {
-            CONFIGURABLE_PISTON_HEAD = null;
-            CONFIGURABLE_MOVING_BLOCK = null;
-            CONFIGURABLE_PISTON = null;
-            CONFIGURABLE_STICKY_PISTON = null;
-        }
+        ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
+                .canExtendOnRetracting(true)
+                .canRetractOnExtending(true)
+                .speed(0.05F);
+        CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
+        CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
+        CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
+        CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
     }
 }
