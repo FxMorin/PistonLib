@@ -2,6 +2,8 @@ package ca.fxco.pistonlib.datagen;
 
 import java.util.function.Consumer;
 
+import net.minecraft.data.BlockFamily;
+import net.minecraft.data.recipes.*;
 import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
@@ -12,10 +14,6 @@ import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -49,6 +47,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 		offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_REDSTONE_BLOCK, Blocks.REDSTONE_BLOCK);
 		offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_SLIME_BLOCK, Blocks.SLIME_BLOCK);
 		offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_STONE_BLOCK, Blocks.STONE);
+
+		generateRecipes(exporter, new BlockFamily.Builder(Blocks.OBSIDIAN).slab(ModBlocks.OBSIDIAN_SLAB_BLOCK).stairs(ModBlocks.OBSIDIAN_STAIR_BLOCK).getFamily());
 
 		LOGGER.info("Finished generating recipes!");
 	}

@@ -32,6 +32,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
+import static net.minecraft.data.models.BlockModelGenerators.createSimpleBlock;
+import static net.minecraft.data.models.BlockModelGenerators.createSlab;
+
 public class ModModelProvider extends FabricModelProvider {
 
     public static final Logger LOGGER = PistonLib.LOGGER;
@@ -51,7 +54,7 @@ public class ModModelProvider extends FabricModelProvider {
 		LOGGER.info("Generating blockstate definitions and models...");
 
 		for(PistonFamily family : PistonFamilies.getFamilies()) {
-			LOGGER.info("Generating blockstate definitions and models for piston family "+family.getId()+"...");
+			LOGGER.info("Generating blockstate definitions and models for piston family " + family.getId()+"...");
 			registerPistonFamily(generator, family);
 		}
 
@@ -77,10 +80,13 @@ public class ModModelProvider extends FabricModelProvider {
         generator.createTrivialCube(ModBlocks.SLIPPERY_STONE_BLOCK);
         generator.createTrivialCube(ModBlocks.MOVE_COUNTING_BLOCK);
 
+		registerSlab(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_SLAB_BLOCK);
+		registerStair(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_STAIR_BLOCK);
+
 		generator.createTrivialBlock(ModBlocks.STICKY_TOP_BLOCK, new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.DEEPSLATE_BRICKS)).put(TextureSlot.TOP, TextureMapping.getBlockTexture(ModBlocks.STICKY_TOP_BLOCK)), ModelTemplates.CUBE_TOP);
 
-		generator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIMY_REDSTONE_BLOCK)));
-		generator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
+		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIMY_REDSTONE_BLOCK)));
+		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.ALL_SIDED_OBSERVER).with(
 			PropertyDispatch.property(BlockStateProperties.POWERED)
@@ -133,6 +139,24 @@ public class ModModelProvider extends FabricModelProvider {
                 .with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(halfBlock))).with(customStates)
         );
     }
+
+	private static void registerSlab(BlockModelGenerators generator, Block baseBlock, Block block) {
+		TextureMapping textureBase = TextureMapping.cube(baseBlock);
+		ResourceLocation bottom = ModelTemplates.SLAB_BOTTOM.create(block, textureBase, generator.modelOutput);
+		ResourceLocation top = ModelTemplates.SLAB_TOP.create(block, textureBase, generator.modelOutput);
+		ResourceLocation _double = ModelTemplates.CUBE_COLUMN.createWithOverride(block, "_double", textureBase, generator.modelOutput);
+		generator.blockStateOutput.accept(createSlab(block, bottom, top, _double));
+		generator.delegateItemModel(block, bottom);
+	}
+
+	private static void registerStair(BlockModelGenerators generator, Block baseBlock, Block block) {
+		TextureMapping textureBase = TextureMapping.cube(baseBlock);
+		ResourceLocation inner = ModelTemplates.STAIRS_INNER.create(block, textureBase, generator.modelOutput);
+		ResourceLocation flat = ModelTemplates.STAIRS_STRAIGHT.create(block, textureBase, generator.modelOutput);
+		ResourceLocation outer = ModelTemplates.STAIRS_OUTER.create(block, textureBase, generator.modelOutput);
+		generator.blockStateOutput.accept(BlockModelGenerators.createStairs(block, inner, flat, outer));
+		generator.delegateItemModel(block, flat);
+	}
 
 	public static void registerHalfBlock(BlockModelGenerators generator, Block halfBlock, @Nullable Block base) {
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(halfBlock, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(halfBlock))).with(generator.createColumnWithFacing()));
