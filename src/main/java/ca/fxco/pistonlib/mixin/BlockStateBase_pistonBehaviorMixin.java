@@ -23,13 +23,15 @@ import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BlockStateBase.class)
-public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateQuasiPower {
+public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateQuasiPower {
 
     @Shadow
     public Block getBlock() { return null; }
 
     @Shadow
     protected BlockState asState() { return null; }
+
+    @Shadow public abstract boolean isRedstoneConductor(BlockGetter blockGetter, BlockPos blockPos);
 
     @Override
     public boolean usesConfigurablePistonBehavior() {
@@ -87,12 +89,17 @@ public class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushRea
     }
 
     @Override
-    public int getQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist) {
-        return ((BlockQuasiPower)this.getBlock()).getQuasiSignal(this.asState(), blockGetter, blockPos, direction, dist);
+    public int getQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction dir, int dist) {
+        return ((BlockQuasiPower)this.getBlock()).getQuasiSignal(this.asState(), blockGetter, blockPos, dir, dist);
     }
 
     @Override
-    public boolean hasQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist) {
-        return ((BlockQuasiPower)this.getBlock()).hasQuasiSignal(this.asState(), blockGetter, blockPos, direction, dist);
+    public boolean hasQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction dir, int dist) {
+        return ((BlockQuasiPower)this.getBlock()).hasQuasiSignal(this.asState(), blockGetter, blockPos, dir, dist);
+    }
+
+    @Override
+    public boolean isQuasiConductor(BlockGetter blockGetter, BlockPos blockPos) {
+        return ((BlockQuasiPower)this.getBlock()).isQuasiConductor(this.asState(), blockGetter, blockPos);
     }
 }

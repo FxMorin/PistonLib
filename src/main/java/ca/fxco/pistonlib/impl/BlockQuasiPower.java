@@ -12,4 +12,8 @@ public interface BlockQuasiPower {
     default boolean hasQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
         return getQuasiSignal(state, blockGetter, pos, dir, dist) > 0;
     }
+
+    int getDirectQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist);
+
+    boolean isQuasiConductor(BlockState state, BlockGetter blockGetter, BlockPos pos);
 }

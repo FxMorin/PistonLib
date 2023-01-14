@@ -10,4 +10,8 @@ public interface BlockStateQuasiPower {
     int getQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist);
 
     boolean hasQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction direction, int dist);
+
+    int getDirectQuasiSignal(BlockGetter blockGetter, BlockPos pos, Direction dir, int dist);
+
+    boolean isQuasiConductor(BlockGetter blockGetter, BlockPos pos);
 }

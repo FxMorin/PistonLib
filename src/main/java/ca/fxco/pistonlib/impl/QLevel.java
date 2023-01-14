@@ -7,6 +7,10 @@ import net.minecraft.core.Direction;
 // preferable before making the API public. Also should rename this interface xD
 public interface QLevel {
 
+    int getDirectQuasiSignalTo(BlockPos pos, int dist);
+
+    boolean hasDirectQuasiSignalTo(BlockPos pos, int d);
+
     int getStrongestQuasiNeighborSignal(BlockPos blockPos, int dist);
 
     boolean hasQuasiNeighborSignal(BlockPos blockPos, int dist);
@@ -14,4 +18,6 @@ public interface QLevel {
     boolean hasQuasiSignal(BlockPos blockPos, Direction direction, int dist);
 
     int getQuasiSignal(BlockPos blockPos, Direction direction, int dist);
+
+    int getDirectQuasiSignal(BlockPos pos, Direction dir, int dist);
 }

@@ -15,7 +15,32 @@ public abstract class Level_quasiMixin implements QLevel {
 
     @Shadow public abstract BlockState getBlockState(BlockPos blockPos);
 
-    @Shadow public abstract int getDirectSignalTo(BlockPos blockPos);
+    @Override
+    public int getDirectQuasiSignalTo(BlockPos pos, int d) {
+        int i = Redstone.SIGNAL_NONE;
+        if ((i = Math.max(i, getDirectQuasiSignal(pos.below(), Direction.DOWN, d))) >= Redstone.SIGNAL_MAX) {
+            return i;
+        } else if ((i = Math.max(i, getDirectQuasiSignal(pos.above(), Direction.UP, d))) >= Redstone.SIGNAL_MAX) {
+            return i;
+        } else if ((i = Math.max(i, getDirectQuasiSignal(pos.north(), Direction.NORTH, d))) >= Redstone.SIGNAL_MAX) {
+            return i;
+        } else if ((i = Math.max(i, getDirectQuasiSignal(pos.south(), Direction.SOUTH, d))) >= Redstone.SIGNAL_MAX) {
+            return i;
+        } else if ((i = Math.max(i, getDirectQuasiSignal(pos.west(), Direction.WEST, d))) >= Redstone.SIGNAL_MAX) {
+            return i;
+        }
+        return Math.max(i, getDirectQuasiSignal(pos.east(), Direction.EAST, d));
+    }
+
+    @Override
+    public boolean hasDirectQuasiSignalTo(BlockPos pos, int d) {
+        return getDirectQuasiSignal(pos.below(), Direction.DOWN, d) > 0 ||
+                getDirectQuasiSignal(pos.above(), Direction.UP, d) > 0 ||
+                getDirectQuasiSignal(pos.north(), Direction.NORTH, d) > 0 ||
+                getDirectQuasiSignal(pos.south(), Direction.SOUTH, d) > 0 ||
+                getDirectQuasiSignal(pos.west(), Direction.WEST, d) > 0 ||
+                getDirectQuasiSignal(pos.east(), Direction.EAST, d) > 0;
+    }
 
     @Override
     public int getStrongestQuasiNeighborSignal(BlockPos blockPos, int dist) {
@@ -33,10 +58,10 @@ public abstract class Level_quasiMixin implements QLevel {
 
     @Override
     public int getQuasiSignal(BlockPos blockPos, Direction direction, int dist) {
-        BlockState blockState = this.getBlockState(blockPos);
-        int i = ((BlockStateQuasiPower)blockState).getQuasiSignal((Level)(Object)this, blockPos, direction, dist);
-        return blockState.isRedstoneConductor((Level)(Object)this, blockPos) ?
-                Math.max(i, this.getDirectSignalTo(blockPos)) : i;
+        BlockState state = this.getBlockState(blockPos);
+        int i = ((BlockStateQuasiPower)state).getQuasiSignal((Level)(Object)this, blockPos, direction, dist);
+        return ((BlockStateQuasiPower)state).isQuasiConductor((Level)(Object)this, blockPos) ?
+                Math.max(i, this.getDirectQuasiSignalTo(blockPos, dist)) : i;
     }
 
     @Override
@@ -50,9 +75,15 @@ public abstract class Level_quasiMixin implements QLevel {
     }
 
     @Override
-    public boolean hasQuasiSignal(BlockPos blockPos, Direction direction, int dist) {
-        BlockState blockState = this.getBlockState(blockPos);
-        return ((BlockStateQuasiPower)blockState).hasQuasiSignal((Level)(Object)this, blockPos, direction, dist) ||
-                (blockState.isRedstoneConductor((Level)(Object)this, blockPos) && this.getDirectSignalTo(blockPos) > 0);
+    public boolean hasQuasiSignal(BlockPos pos, Direction dir, int dist) {
+        BlockStateQuasiPower quasiPower = (BlockStateQuasiPower)this.getBlockState(pos);
+        return (quasiPower.hasQuasiSignal((Level)(Object)this, pos, dir, dist) ||
+                (quasiPower.isQuasiConductor((Level)(Object)this, pos) && this.hasDirectQuasiSignalTo(pos, dist)));
+    }
+
+    @Override
+    public int getDirectQuasiSignal(BlockPos pos, Direction dir, int dist) {
+        return ((BlockStateQuasiPower)this.getBlockState(pos))
+                .getDirectQuasiSignal((Level)(Object)this, pos, dir, dist);
     }
 }

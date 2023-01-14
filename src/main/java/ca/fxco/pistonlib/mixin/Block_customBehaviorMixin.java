@@ -24,4 +24,14 @@ public abstract class Block_customBehaviorMixin extends BlockBehaviour implement
     public int getQuasiSignal(BlockState blockState, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
         return getSignal(blockState, blockGetter, pos, dir);
     }
+
+    @Override
+    public int getDirectQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
+        return getDirectSignal(state, blockGetter, pos, dir);
+    }
+
+    @Override
+    public boolean isQuasiConductor(BlockState state, BlockGetter blockGetter, BlockPos blockPos) {
+        return state.isRedstoneConductor(blockGetter, blockPos);
+    }
 }
