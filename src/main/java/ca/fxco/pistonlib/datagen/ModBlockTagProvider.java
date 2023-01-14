@@ -47,7 +47,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 		getOrCreateTagBuilder(ModTags.SLIPPERY_BLOCKS).add(ModBlocks.SLIPPERY_SLIME_BLOCK, ModBlocks.SLIPPERY_REDSTONE_BLOCK, ModBlocks.SLIPPERY_STONE_BLOCK, ModBlocks.SLIPPERY_PISTON_HEAD, ModBlocks.SLIPPERY_MOVING_BLOCK);
 		getOrCreateTagBuilder(ModTags.SLIPPERY_IGNORE_BLOCKS).add(Blocks.OBSERVER, Blocks.REDSTONE_BLOCK).addTag(ModTags.PISTONS).addTag(ModTags.MOVING_PISTONS);
 		getOrCreateTagBuilder(ModTags.SLIPPERY_TRANSPARENT_BLOCKS).add(ModBlocks.SLIPPERY_PISTON, ModBlocks.SLIPPERY_STICKY_PISTON);
-		getOrCreateTagBuilder(ModTags.UNPUSHABLE).add(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR, Blocks.BEACON, Blocks.ENDER_CHEST, Blocks.ENCHANTING_TABLE, Blocks.SPAWNER);
+		getOrCreateTagBuilder(ModTags.UNPUSHABLE).add(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR, Blocks.BEACON, Blocks.ENDER_CHEST, Blocks.ENCHANTING_TABLE, Blocks.SPAWNER, ModBlocks.OBSIDIAN_SLAB_BLOCK, ModBlocks.OBSIDIAN_STAIR_BLOCK);
 
 		getOrCreateTagBuilder(BlockTags.WITHER_IMMUNE).addTag(ModTags.MOVING_PISTONS);
 		getOrCreateTagBuilder(BlockTags.DRAGON_IMMUNE).addTag(ModTags.MOVING_PISTONS);
