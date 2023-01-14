@@ -84,6 +84,7 @@ public class ModBlocks {
     public static final Block STICKY_CHAIN_BLOCK = register("sticky_chain", StickyChainBlock::new, Blocks.CHAIN);
     public static final Block AXIS_LOCKED_BLOCK = register("axis_locked_block", AxisLockedBlock::new, Blocks.DEEPSLATE_BRICKS);
     public static final Block MOVE_COUNTING_BLOCK = register("move_counting_block", MoveCountingBlock::new, Blocks.SCULK);
+    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.of(Material.METAL), 2));
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
