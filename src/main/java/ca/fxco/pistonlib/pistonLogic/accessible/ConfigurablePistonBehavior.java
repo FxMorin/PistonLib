@@ -5,6 +5,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface ConfigurablePistonBehavior {
 
+    default int getWeight(BlockState state) {
+        return 1;
+    }
+
     /*
      * These methods are only used if `usesConfigurablePistonBehavior` returns true
      * This allows for more configurable & conditional piston behavior

@@ -4,6 +4,8 @@ import net.minecraft.core.Direction;
 
 public interface BlockStateBasePushReaction {
 
+    int getWeight();
+
     /*
      * This interface is for internal use only. Use ConfigurablePistonBehavior for single block conditions
      */

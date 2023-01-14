@@ -11,6 +11,7 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -21,7 +22,8 @@ import net.minecraft.world.level.material.PushReaction;
 public class ConfigurablePistonStructureResolver extends PistonStructureResolver {
 
     protected final BasicPistonBaseBlock piston;
-    protected final int maxMovableBlocks;
+    protected final int maxMovableWeight;
+    protected int movingWeight = 0; // used instead of the toPush size so some blocks can be harder to push than others
 
     public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
                                                Direction facing, boolean extend) {
@@ -29,19 +31,24 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
     }
 
     public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                               Direction facing, boolean extend, int maxMovableBlocks) {
-        super(level, pos, facing, extend );
+                                               Direction facing, boolean extend, int maxMovableWeight) {
+        super(level, pos, facing, extend);
 
         this.piston = piston;
-        this.maxMovableBlocks = maxMovableBlocks;
+        this.maxMovableWeight = maxMovableWeight;
     }
 
     @Override
     public boolean resolve() {
+        // Reset resolver
         this.toPush.clear();
         this.toDestroy.clear();
+        this.movingWeight = 0;
+
+        // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
+            // Block directly int front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
                 ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
@@ -56,10 +63,12 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
                 return false;
             }
             return false;
-        } else {
+        } else { // Start block is not immovable, we can check if its possible to move. Also generates structure
             if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection))
                 return false;
         }
+
+        // Now that structure has been generated, we will check all the sticky blocks again?
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos blockPos = this.toPush.get(i);
             state = this.level.getBlockState(blockPos);
@@ -126,8 +135,9 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
         BlockState state = this.level.getBlockState(pos);
         if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
+        int weight = ((BlockStateBasePushReaction)state).getWeight();
+        if (weight + this.movingWeight > this.maxMovableWeight) return true;
         int i = 1;
-        if (i + this.toPush.size() > this.maxMovableBlocks) return true;
         Direction dir2 = this.pushDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
@@ -143,7 +153,9 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
                     blockPos.equals(this.pistonPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
                 break;
-            if (++i + this.toPush.size() > this.maxMovableBlocks) return true;
+            weight += ((BlockStateBasePushReaction)state).getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            ++i;
             if (stick.usesConfigurablePistonStickiness()) {
                 boolean StickyStick = stick.isSticky(state);
                 if (StickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal())
@@ -153,6 +165,7 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
                 isSticky = stick.hasStickyGroup();
             }
         }
+        this.movingWeight += weight;
         int j = 0, k;
         for(k = i - 1; k >= 0; --k) {
             this.toPush.add(pos.relative(dir2, k));
@@ -185,9 +198,9 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
                 return true;
             if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
-            ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
+            BlockStateBasePushReaction pistonBehavior = (BlockStateBasePushReaction)state;
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                if (pistonBehavior.canDestroy(state)) {
+                if (pistonBehavior.canDestroy()) {
                     this.toDestroy.add(pos2);
                     return false;
                 }
@@ -195,7 +208,9 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
                 this.toDestroy.add(pos2);
                 return false;
             }
-            if (this.toPush.size() >= this.maxMovableBlocks) return true;
+            weight = pistonBehavior.getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            this.movingWeight += weight;
             this.toPush.add(pos2);
             ++j;
             ++k;
@@ -216,6 +231,6 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
     }
 
     public int getMoveLimit() {
-        return this.maxMovableBlocks;
+        return this.maxMovableWeight;
     }
 }

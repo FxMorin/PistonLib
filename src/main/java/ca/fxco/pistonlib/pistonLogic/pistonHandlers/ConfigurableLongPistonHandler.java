@@ -13,6 +13,7 @@ import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -38,6 +39,8 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
     public boolean calculateLongPullPush(boolean isPull, Consumer<LongMovingBlockEntity> applySkip) {
         this.toPush.clear();
         this.toDestroy.clear();
+        this.movingWeight = 0;
+
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
             if (this.extending) {
@@ -130,8 +133,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
         if (!isExtensionBlock &&
                 !this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
             return false;
+        int weight = ((BlockStateBasePushReaction)state).getWeight();
+        if (weight + this.movingWeight > this.maxMovableWeight) return true;
         int i = 1;
-        if (i + this.toPush.size() > this.maxMovableBlocks) return true;
         Direction dir2 = this.pushDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)(isExtensionBlock ?
                 blockEntity.getMovedState().getBlock() : state.getBlock());
@@ -156,7 +160,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
             }
             if (!(isExtensionBlock && wasExtensionBlock &&
                     PistonUtils.areExtensionsMatching(this.level, oldState, state, lastPos, blockPos))) {
-                if (++i + this.toPush.size() > this.maxMovableBlocks) return true;
+                weight += ((BlockStateBasePushReaction)state).getWeight();
+                if (weight + this.movingWeight > this.maxMovableWeight) return true;
+                ++i;
                 continue;
             }
             if (isExtensionBlock) state = blockEntity.getMovedState();
@@ -165,7 +171,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
                     blockPos.equals(this.pistonPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
                 break;
-            if (++i + this.toPush.size() > this.maxMovableBlocks) return true;
+            weight += ((BlockStateBasePushReaction)state).getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            ++i;
             if (stick.usesConfigurablePistonStickiness()) {
                 boolean stickyStick = stick.isSticky(state);
                 if (stickyStick && stick.sideStickiness(state, dir2).ordinal() < StickyType.STICKY.ordinal()) break;
@@ -174,6 +182,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
                 isSticky = stick.hasStickyGroup();
             }
         }
+        this.movingWeight += weight;
         int j = 0, k;
         for(k = i - 1; k >= 0; --k) {
             this.toPush.add(pos.relative(dir2, k));
@@ -210,9 +219,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
                 return true;
             if (!this.piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
-            ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
+            BlockStateBasePushReaction pistonBehavior = (BlockStateBasePushReaction)state;
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                if (pistonBehavior.canDestroy(state)) {
+                if (pistonBehavior.canDestroy()) {
                     this.toDestroy.add(pos2);
                     return false;
                 }
@@ -220,7 +229,9 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
                 this.toDestroy.add(pos2);
                 return false;
             }
-            if (this.toPush.size() >= this.maxMovableBlocks) return true;
+            weight = pistonBehavior.getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            this.movingWeight += weight;
             this.toPush.add(pos2);
             ++j;
             ++k;
