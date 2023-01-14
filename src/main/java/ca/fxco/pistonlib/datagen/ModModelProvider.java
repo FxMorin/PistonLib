@@ -77,6 +77,7 @@ public class ModModelProvider extends FabricModelProvider {
         generator.createTrivialCube(ModBlocks.SLIPPERY_STONE_BLOCK);
         generator.createTrivialCube(ModBlocks.MOVE_COUNTING_BLOCK);
 		generator.createTrivialCube(ModBlocks.WEAK_REDSTONE_BLOCK);
+		generator.createTrivialCube(ModBlocks.QUASI_BLOCK);
 
 		generator.createTrivialBlock(ModBlocks.STICKY_TOP_BLOCK, new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.DEEPSLATE_BRICKS)).put(TextureSlot.TOP, TextureMapping.getBlockTexture(ModBlocks.STICKY_TOP_BLOCK)), ModelTemplates.CUBE_TOP);
 

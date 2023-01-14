@@ -4,24 +4,33 @@ import ca.fxco.pistonlib.impl.BlockQuasiPower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.PoweredBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WeakPoweredBlock extends PoweredBlock implements BlockQuasiPower {
+public class QuasiBlock extends Block implements BlockQuasiPower {
 
-    public WeakPoweredBlock(Properties properties) {
+    public QuasiBlock(Properties properties) {
         super(properties);
     }
 
+    @Override
+    public boolean isSignalSource(BlockState blockState) {
+        return false;
+    }
 
     @Override
-    public int getQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
+    public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
         return 0;
     }
 
     @Override
+    public int getQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
+        return 15;
+    }
+
+    @Override
     public boolean hasQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
-        return false;
+        return true;
     }
 
     @Override
