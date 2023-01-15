@@ -24,6 +24,11 @@ public abstract class SignBlockEntity_mergeMixin implements BlockEntityMerging {
     @Shadow public abstract Component getMessage(int i, boolean bl);
 
     @Override
+    public boolean shouldStoreSelf(MergeBlockEntity mergeBlockEntity) {
+        return true;
+    }
+
+    @Override
     public void onAdvancedFinalMerge(BlockEntity blockEntity) {
         SignBlockEntity signBlockEntity = (SignBlockEntity)blockEntity;
         if (this.hasGlowingText() && !signBlockEntity.hasGlowingText()) {
@@ -38,10 +43,5 @@ public abstract class SignBlockEntity_mergeMixin implements BlockEntityMerging {
                 signBlockEntity.setMessage(i, this.getMessage(i, false));
             }
         }
-    }
-
-    @Override
-    public boolean shouldStoreSelf(MergeBlockEntity mergeBlockEntity) {
-        return true;
     }
 }
