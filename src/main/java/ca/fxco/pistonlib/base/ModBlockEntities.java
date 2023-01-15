@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.base;
 
+import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
@@ -35,6 +36,7 @@ public class ModBlockEntities {
 
     // Other
     public static final BlockEntityType<MergeBlockEntity> MERGE_BLOCK_ENTITY;
+    public static final BlockEntityType<AutoCraftingBlockEntity> AUTO_CRAFTING_BLOCK_ENTITY;
 
     static {
         // Pistons
@@ -89,6 +91,11 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id("merge_entity"),
                 FabricBlockEntityTypeBuilder.create(MergeBlockEntity::new, ModBlocks.MERGE_BLOCK).build(null)
+        );
+        AUTO_CRAFTING_BLOCK_ENTITY = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                id("auto_crafting_entity"),
+                FabricBlockEntityTypeBuilder.create(AutoCraftingBlockEntity::new, ModBlocks.AUTO_CRAFTING_BLOCK).build(null)
         );
     }
 

@@ -46,7 +46,7 @@ public interface ConfigurablePistonMerging {
     }
 
     // Returns the merged state
-    default BlockState doMultiMerge(Map<Direction,BlockState> states, BlockState mergingIntoState) {
+    default BlockState doMultiMerge(Map<Direction, BlockState> states, BlockState mergingIntoState) {
         return mergingIntoState;
     }
 

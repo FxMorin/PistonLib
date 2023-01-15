@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.*;
+import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
 import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
@@ -201,6 +202,7 @@ public class ModBlocks {
     public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
 
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
+    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", AutoCraftingBlock::new, Blocks.CRAFTING_TABLE, true);
 
     //
     // Registration methods
