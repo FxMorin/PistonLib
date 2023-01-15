@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.mixin;
 
 import ca.fxco.pistonlib.impl.BlockQuasiPower;
+import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,7 +15,7 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import net.minecraft.world.level.block.Block;
 
 @Mixin(Block.class)
-public abstract class Block_customBehaviorMixin extends BlockBehaviour implements ConfigurablePistonBehavior, ConfigurablePistonStickiness, BlockQuasiPower {
+public abstract class Block_customBehaviorMixin extends BlockBehaviour implements ConfigurablePistonBehavior, ConfigurablePistonStickiness, ConfigurablePistonMerging, BlockQuasiPower {
 
     public Block_customBehaviorMixin(Properties properties) {
         super(properties);

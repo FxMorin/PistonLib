@@ -31,7 +31,7 @@ public class FastMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    protected float speed() {
+    public float speed() {
         // 2 is enough for the moving block
         // to reach 100% progress in one tick
         return 2.0F;

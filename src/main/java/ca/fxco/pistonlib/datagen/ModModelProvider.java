@@ -41,7 +41,7 @@ public class ModModelProvider extends FabricModelProvider {
 
 	public static final ModelTemplate TEMPLATE_PISTON_ARM = new ModelTemplate(Optional.of(PistonLib.id("block/template_piston_arm")), Optional.empty(), TextureSlot.TEXTURE);
 	public static final ModelTemplate TEMPLATE_PISTON_ARM_SHORT = new ModelTemplate(Optional.of(PistonLib.id("block/template_piston_arm_short")), Optional.empty(), TextureSlot.TEXTURE);
-	public static final ModelTemplate TEMPLATE_MOVING_PISTON = new ModelTemplate(Optional.of(PistonLib.id("block/template_moving_piston")), Optional.empty(), TextureSlot.PARTICLE);
+	public static final ModelTemplate TEMPLATE_PARTICLE_ONLY = new ModelTemplate(Optional.of(PistonLib.id("block/template_empty")), Optional.empty(), TextureSlot.PARTICLE);
 	public static final ModelTemplate TEMPLATE_HALF_BLOCK = new ModelTemplate(Optional.of(PistonLib.id("block/template_half_block")), Optional.empty(), TextureSlot.TOP, TextureSlot.SIDE);
 	public static final ModelTemplate PISTON_BASE = new ModelTemplate(Optional.of(new ResourceLocation("block/piston_extended")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.SIDE, TextureSlot.INSIDE);
 
@@ -107,8 +107,10 @@ public class ModModelProvider extends FabricModelProvider {
 		).with(BlockModelGenerators.createFacingDispatch()));
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.STICKY_CHAIN_BLOCK, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.STICKY_CHAIN_BLOCK))).with(BlockModelGenerators.createRotatedPillar()));
-
 		generator.createSimpleFlatItemModel(ModBlocks.STICKY_CHAIN_BLOCK.asItem());
+
+		TextureMapping particleOnlyTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(Blocks.PISTON, "_side")); //TODO
+		generator.createTrivialBlock(ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY);
 
 		LOGGER.info("Finished generating blockstate definitions and models!");
 	}
@@ -239,7 +241,7 @@ public class ModModelProvider extends FabricModelProvider {
 		if (movingPiston != null) {
 			TextureMapping movingPistonTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, sideTextureId);
 
-			generator.createTrivialBlock(movingPiston, movingPistonTextureMap, TEMPLATE_MOVING_PISTON);
+			generator.createTrivialBlock(movingPiston, movingPistonTextureMap, TEMPLATE_PARTICLE_ONLY);
 		}
 	}
 

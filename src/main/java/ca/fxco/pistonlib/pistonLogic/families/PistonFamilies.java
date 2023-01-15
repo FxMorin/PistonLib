@@ -26,6 +26,7 @@ public class PistonFamilies {
     public static final PistonFamily SLIPPERY = new PistonFamily("slippery", false);
     public static final PistonFamily SUPER = new PistonFamily("super", false);
     public static final PistonFamily MBE = new PistonFamily("mbe", false);
+    public static final PistonFamily MERGE = new PistonFamily("merge", false);
 
     public static Map<String, PistonFamily> getFamilyMap() {
         return ID_TO_FAMILY;

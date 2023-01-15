@@ -10,6 +10,8 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlo
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
@@ -192,15 +194,31 @@ public class ModBlocks {
     public static final MBEPistonBaseBlock MBE_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.DEFAULT));
     public static final MBEPistonBaseBlock MBE_STICKY_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.STICKY));
 
+    // Merge Piston
+    // A piston that can merge blocks together
+    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = registerPiston(MERGE, new BasicPistonHeadBlock());
+    public static final BasicPistonBaseBlock MERGE_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
+
+    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
+
     //
     // Registration methods
     //
 
     static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource) {
-        return register(blockId, block.apply(FabricBlockSettings.copyOf(propertySource)));
+        return register(blockId, block, propertySource, true);
+    }
+
+    static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource, boolean registerBlockItem) {
+        return register(blockId, block.apply(FabricBlockSettings.copyOf(propertySource)), registerBlockItem);
     }
 
     public static <T extends Block> T register(String name, T block) {
+        return register(name, block, true);
+    }
+
+    public static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
         ResourceLocation id = id(name);
         registerBlockItem(id, block);
         return Registry.register(BuiltInRegistries.BLOCK, id, block);
@@ -290,5 +308,8 @@ public class ModBlocks {
         CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
         CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
         CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
+
+        MERGE_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
+        MERGE_STICKY_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
     }
 }

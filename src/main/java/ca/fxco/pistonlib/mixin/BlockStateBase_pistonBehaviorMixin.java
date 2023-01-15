@@ -2,6 +2,9 @@ package ca.fxco.pistonlib.mixin;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.pistonlib.impl.BlockQuasiPower;
 import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
 import net.minecraft.core.BlockPos;
@@ -23,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BlockStateBase.class)
-public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateQuasiPower {
+public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
 
     @Shadow
     public Block getBlock() { return null; }
@@ -101,5 +104,40 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     @Override
     public boolean isQuasiConductor(BlockGetter blockGetter, BlockPos blockPos) {
         return ((BlockQuasiPower)this.getBlock()).isQuasiConductor(this.asState(), blockGetter, blockPos);
+    }
+
+    @Override
+    public boolean usesConfigurablePistonMerging() {
+        return ((ConfigurablePistonMerging)this.getBlock()).usesConfigurablePistonMerging();
+    }
+
+    @Override
+    public boolean canMultiMerge() {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMultiMerge();
+    }
+
+    @Override
+    public boolean canMergeFromSide(Direction pushDirection) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMergeFromSide(this.asState(), pushDirection);
+    }
+
+    @Override
+    public boolean canMerge(BlockState mergingIntoState, Direction dir) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMerge(this.asState(), mergingIntoState, dir);
+    }
+
+    @Override
+    public boolean canMultiMerge(BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMultiMerge(this.asState(), mergingIntoState, dir, currentlyMerging);
+    }
+
+    @Override
+    public BlockState doMerge(BlockState mergingIntoState, Direction dir) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doMerge(this.asState(), mergingIntoState, dir);
+    }
+
+    @Override
+    public BlockState doMultiMerge(Map<Direction, BlockState> states, BlockState mergingIntoState) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doMultiMerge(states, mergingIntoState);
     }
 }

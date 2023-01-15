@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.helpers;
 import ca.fxco.pistonlib.impl.ILevel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,5 +61,43 @@ public class Utils {
                                              BlockEntity blockEntity, int flags) {
         ((ILevel)level).prepareBlockEntityPlacement(blockPos, state, blockEntity);
         return level.setBlock(blockPos, state, flags);
+    }
+
+    // Ya pretend this is not here xD
+    public static DyeColor properDyeMixing(DyeColor col1, DyeColor col2) {
+        if (col1.equals(col2)) return col1;
+        return switch(col1) {
+            case WHITE -> switch(col2) {
+                    case BLUE -> DyeColor.LIGHT_BLUE;
+                    case GRAY -> DyeColor.LIGHT_GRAY;
+                    case BLACK -> DyeColor.GRAY;
+                    case GREEN -> DyeColor.LIME;
+                    case RED -> DyeColor.PINK;
+                    default -> col1;
+                };
+            case BLUE -> switch(col2) {
+                    case WHITE -> DyeColor.LIGHT_BLUE;
+                    case GREEN -> DyeColor.CYAN;
+                    case RED -> DyeColor.PURPLE;
+                    default -> col1;
+                };
+            case RED -> switch(col2) {
+                    case YELLOW -> DyeColor.ORANGE;
+                    case WHITE -> DyeColor.PINK;
+                    case BLUE -> DyeColor.PURPLE;
+                    default -> col1;
+                };
+            case GREEN -> switch(col2) {
+                    case BLUE -> DyeColor.CYAN;
+                    case WHITE -> DyeColor.LIME;
+                    default -> col1;
+                };
+            case YELLOW -> col2.equals(DyeColor.RED) ? DyeColor.ORANGE : col1;
+            case PURPLE -> col2.equals(DyeColor.PINK) ? DyeColor.MAGENTA : col1;
+            case PINK -> col2.equals(DyeColor.PURPLE) ? DyeColor.MAGENTA : col1;
+            case GRAY -> col2.equals(DyeColor.WHITE) ? DyeColor.LIGHT_GRAY : col1;
+            case BLACK -> col2.equals(DyeColor.WHITE) ? DyeColor.GRAY : col1;
+            default -> col1;
+        };
     }
 }

@@ -46,7 +46,7 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    protected float speed() {
+    public float speed() {
         return speed;
     }
 

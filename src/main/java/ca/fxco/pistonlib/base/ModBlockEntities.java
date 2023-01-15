@@ -5,6 +5,7 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongMovingBlockEntity;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
@@ -21,6 +22,7 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModBlockEntities {
 
+    // Pistons
     public static final BlockEntityType<BasicMovingBlockEntity> BASIC_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<LongMovingBlockEntity> LONG_MOVING_BLOCK_ENTITY;
@@ -31,7 +33,11 @@ public class ModBlockEntities {
     public static final BlockEntityType<SlipperyMovingBlockEntity> SLIPPERY_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<MBEMovingBlockEntity> MBE_MOVING_BLOCK_ENTITY;
 
+    // Other
+    public static final BlockEntityType<MergeBlockEntity> MERGE_BLOCK_ENTITY;
+
     static {
+        // Pistons
         BASIC_MOVING_BLOCK_ENTITY = register(
                 "basic",
                 BasicMovingBlockEntity::new,
@@ -77,12 +83,19 @@ public class ModBlockEntities {
                 MBEMovingBlockEntity::new,
                 ModBlocks.MBE_MOVING_BLOCK
         );
+
+        // Other
+        MERGE_BLOCK_ENTITY = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                id("merge_entity"),
+                FabricBlockEntityTypeBuilder.create(MergeBlockEntity::new, ModBlocks.MERGE_BLOCK).build(null)
+        );
     }
 
     public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             String name,
             FabricBlockEntityTypeBuilder.Factory<T> blockEntityFactory,
-            BasicMovingBlock movingBlock
+            BasicMovingBlock... movingBlock
     ) {
         return Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
