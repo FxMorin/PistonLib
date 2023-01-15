@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.*;
+import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
@@ -84,6 +85,8 @@ public class ModBlocks {
     public static final Block STICKY_CHAIN_BLOCK = register("sticky_chain", StickyChainBlock::new, Blocks.CHAIN);
     public static final Block AXIS_LOCKED_BLOCK = register("axis_locked_block", AxisLockedBlock::new, Blocks.DEEPSLATE_BRICKS);
     public static final Block MOVE_COUNTING_BLOCK = register("move_counting_block", MoveCountingBlock::new, Blocks.SCULK);
+    public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
@@ -126,6 +129,12 @@ public class ModBlocks {
     public static final BasicPistonHeadBlock STALE_PISTON_HEAD = registerPiston(STALE, new BasicPistonHeadBlock());
     public static final BasicPistonBaseBlock STALE_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock STALE_STICKY_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.STICKY));
+
+    // Very Quasi Piston
+    // A vanilla piston except it can be quasi-powered from 5 blocks up
+    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = registerPiston(QUASI, new BasicPistonHeadBlock());
+    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.STICKY));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)

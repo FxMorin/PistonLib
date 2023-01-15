@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.movableBlockEntities;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.interfaces.ILevel;
+import ca.fxco.pistonlib.impl.ILevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

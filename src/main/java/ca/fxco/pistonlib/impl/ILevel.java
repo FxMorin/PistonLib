@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.interfaces;
+package ca.fxco.pistonlib.impl;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
