@@ -129,6 +129,6 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
         if (group != null) {
             return StickyGroup.canStick(StickyGroup.SLIME, group);
         }
-        return false;
+        return true;
     }
 }
