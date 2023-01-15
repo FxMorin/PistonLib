@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.mergePiston;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.interfaces.BlockEntityMerging;
+import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

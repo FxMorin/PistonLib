@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.interfaces;
+package ca.fxco.pistonlib.impl;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import net.minecraft.core.Direction;

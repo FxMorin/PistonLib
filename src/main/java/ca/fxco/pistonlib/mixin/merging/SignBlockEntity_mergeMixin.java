@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.interfaces.BlockEntityMerging;
+import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;

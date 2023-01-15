@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.*;
+import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
@@ -79,13 +80,15 @@ public class ModBlocks {
     public static final Block DRAG_BLOCK = register("drag_block", new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f)));
     public static final Block STICKYLESS_BLOCK = register("stickyless_block", new StickylessBlock(FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f)));
     public static final Block STICKY_TOP_BLOCK = register("sticky_top_block", new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY)));
-    public static final Block SLIMY_REDSTONE_BLOCK = register("slimy_redstone_block", SlimyPoweredBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block SLIMY_REDSTONE_BLOCK = register("slimy_redstone_block", new SlimyPoweredBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK).noOcclusion()));
     public static final Block ALL_SIDED_OBSERVER = register("all_sided_observer", AllSidedObserverBlock::new, Blocks.OBSERVER);
     public static final Block GLUE_BLOCK = register("glue_block", GlueBlock::new, Blocks.END_STONE);
     public static final Block POWERED_STICKY_BLOCK = register("powered_sticky_block", PoweredStickyBlock::new, Blocks.OAK_PLANKS);
     public static final Block STICKY_CHAIN_BLOCK = register("sticky_chain", StickyChainBlock::new, Blocks.CHAIN);
     public static final Block AXIS_LOCKED_BLOCK = register("axis_locked_block", AxisLockedBlock::new, Blocks.DEEPSLATE_BRICKS);
     public static final Block MOVE_COUNTING_BLOCK = register("move_counting_block", MoveCountingBlock::new, Blocks.SCULK);
+    public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
@@ -128,6 +131,12 @@ public class ModBlocks {
     public static final BasicPistonHeadBlock STALE_PISTON_HEAD = registerPiston(STALE, new BasicPistonHeadBlock());
     public static final BasicPistonBaseBlock STALE_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock STALE_STICKY_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.STICKY));
+
+    // Very Quasi Piston
+    // A vanilla piston except it can be quasi-powered from 5 blocks up
+    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = registerPiston(QUASI, new BasicPistonHeadBlock());
+    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.STICKY));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
@@ -206,7 +215,7 @@ public class ModBlocks {
     }
 
     public static <T extends Block> T register(String name, T block) {
-        return register(name, block);
+        return register(name, block, true);
     }
 
     public static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
@@ -291,21 +300,14 @@ public class ModBlocks {
     public static void order() {}
 
     static {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
-                    .canExtendOnRetracting(true)
-                    .canRetractOnExtending(true)
-                    .speed(0.05F);
-            CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
-            CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
-            CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
-            CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
-        } else {
-            CONFIGURABLE_PISTON_HEAD = null;
-            CONFIGURABLE_MOVING_BLOCK = null;
-            CONFIGURABLE_PISTON = null;
-            CONFIGURABLE_STICKY_PISTON = null;
-        }
+        ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
+                .canExtendOnRetracting(true)
+                .canRetractOnExtending(true)
+                .speed(0.05F);
+        CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
+        CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
+        CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
+        CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
 
         MERGE_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
         MERGE_STICKY_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
