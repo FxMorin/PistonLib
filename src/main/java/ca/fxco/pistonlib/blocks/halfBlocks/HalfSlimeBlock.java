@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.SIDES_LIST;
 
@@ -99,6 +100,11 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
     @Override
     public boolean usesConfigurablePistonStickiness() {
         return true;
+    }
+
+    @Override
+    public @Nullable StickyGroup getStickyGroup() {
+        return StickyGroup.SLIME;
     }
 
     @Override
