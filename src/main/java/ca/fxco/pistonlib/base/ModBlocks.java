@@ -191,17 +191,25 @@ public class ModBlocks {
     public static final BasicPistonBaseBlock MERGE_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
 
-    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
+    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
 
     //
     // Registration methods
     //
 
     static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource) {
-        return register(blockId, block.apply(FabricBlockSettings.copyOf(propertySource)));
+        return register(blockId, block, propertySource, true);
+    }
+
+    static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource, boolean registerBlockItem) {
+        return register(blockId, block.apply(FabricBlockSettings.copyOf(propertySource)), registerBlockItem);
     }
 
     public static <T extends Block> T register(String name, T block) {
+        return register(name, block);
+    }
+
+    public static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
         ResourceLocation id = id(name);
         registerBlockItem(id, block);
         return Registry.register(BuiltInRegistries.BLOCK, id, block);
