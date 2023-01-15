@@ -77,7 +77,7 @@ public class ModBlocks {
     public static final Block DRAG_BLOCK = register("drag_block", new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f)));
     public static final Block STICKYLESS_BLOCK = register("stickyless_block", new StickylessBlock(FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f)));
     public static final Block STICKY_TOP_BLOCK = register("sticky_top_block", new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY)));
-    public static final Block SLIMY_REDSTONE_BLOCK = register("slimy_redstone_block", SlimyPoweredBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block SLIMY_REDSTONE_BLOCK = register("slimy_redstone_block", new SlimyPoweredBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK).noOcclusion()));
     public static final Block ALL_SIDED_OBSERVER = register("all_sided_observer", AllSidedObserverBlock::new, Blocks.OBSERVER);
     public static final Block GLUE_BLOCK = register("glue_block", GlueBlock::new, Blocks.END_STONE);
     public static final Block POWERED_STICKY_BLOCK = register("powered_sticky_block", PoweredStickyBlock::new, Blocks.OAK_PLANKS);
