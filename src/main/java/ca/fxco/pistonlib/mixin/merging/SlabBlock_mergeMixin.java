@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.mixin;
+package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.Direction;
