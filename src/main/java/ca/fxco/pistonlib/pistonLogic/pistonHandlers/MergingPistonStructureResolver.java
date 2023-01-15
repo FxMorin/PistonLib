@@ -83,6 +83,22 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
         if (1 + this.toPush.size() > this.maxMovableBlocks)
             return true;
         Direction pushDirOpposite = this.pushDirection.getOpposite();
+        boolean initialBlock = pos.relative(pushDirOpposite).equals(this.pistonPos);
+
+        // UnMerge checks on initial line blocks
+        if (!initialBlock) {
+            ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
+            if (merge.usesConfigurablePistonMerging() && merge.canUnMerge(state, this.pushDirection)) {
+                if (this.toUnMerge.contains(pos)) {
+                    // If multiple sticky blocks are moving the same block, don't unmerge
+                    this.ignore.add(pos);
+                } else {
+                    this.toUnMerge.add(pos);
+                }
+            }
+        }
+
+        // Do sticky checks on initial line blocks
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
         boolean isSticky = stick.usesConfigurablePistonStickiness() ?
                 (stick.isSticky(state) && stick.sideStickiness(state, pushDirOpposite).ordinal() >= StickyType.STICKY.ordinal()) :
