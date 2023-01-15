@@ -1,6 +1,8 @@
 package ca.fxco.pistonlib.blocks.pistons.mergePiston;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
+import ca.fxco.pistonlib.helpers.Utils;
+import ca.fxco.pistonlib.interfaces.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +17,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -33,15 +38,21 @@ public class MergeBlockEntity extends BlockEntity {
 
     protected final Map<Direction, MergeData> mergingBlocks = new HashMap<>();
     protected BlockState initialState;
+    protected @Nullable BlockEntity initialBlockEntity;
 
     public MergeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MERGE_BLOCK_ENTITY, pos, state);
     }
 
     public MergeBlockEntity(BlockPos pos, BlockState state, BlockState initialState) {
+        this(pos, state, initialState, null);
+    }
+
+    public MergeBlockEntity(BlockPos pos, BlockState state, BlockState initialState, BlockEntity initialBlockEntity) {
         super(ModBlockEntities.MERGE_BLOCK_ENTITY, pos, state);
 
         this.initialState = initialState;
+        this.initialBlockEntity = initialBlockEntity;
     }
 
     // Should always be called before calling `canMerge()`
@@ -60,6 +71,12 @@ public class MergeBlockEntity extends BlockEntity {
 
     public void doMerge(BlockState state, Direction dir, float speed) {
         MergeData data = new MergeData(state);
+        data.setSpeed(speed);
+        mergingBlocks.put(dir, data);
+    }
+
+    public void doMerge(BlockState state, BlockEntity blockEntity, Direction dir, float speed) {
+        MergeData data = new MergeData(blockEntity, state);
         data.setSpeed(speed);
         mergingBlocks.put(dir, data);
     }
@@ -97,15 +114,27 @@ public class MergeBlockEntity extends BlockEntity {
                     break;
                 }
             }
-            if (newState != null) {
-                BlockState blockState2 = Block.updateFromNeighbourShapes(newState, level, blockPos);
-                if (blockState2.isAir()) {
-                    level.setBlock(blockPos, newState, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
-                    Block.updateOrDestroy(newState, blockState2, level, blockPos, Block.UPDATE_ALL);
+            if (newState == null) {
+                newState = Blocks.AIR.defaultBlockState();
+            }
+            BlockState blockState2 = Block.updateFromNeighbourShapes(newState, level, blockPos);
+            if (blockState2.isAir()) {
+                level.setBlock(blockPos, newState, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+                Block.updateOrDestroy(newState, blockState2, level, blockPos, Block.UPDATE_ALL);
+            } else {
+                if (mergeBlockEntity.initialBlockEntity != null) {
+                    mergeBlockEntity.initialBlockEntity.setLevel(level);
+                    mergeBlockEntity.initialBlockEntity.setBlockState(blockState2);
+                    for (MergeData data : mergeBlockEntity.mergingBlocks.values()) {
+                        if (data.hasBlockEntity()) {
+                            ((BlockEntityMerging)data.getBlockEntity()).onAdvancedFinalMerge(mergeBlockEntity.initialBlockEntity);
+                        }
+                    }
+                    Utils.setBlockWithEntity(level, blockPos, blockState2, mergeBlockEntity.initialBlockEntity, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
-                    level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
                 }
+                level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
             }
         }
     }
@@ -248,7 +277,12 @@ public class MergeBlockEntity extends BlockEntity {
         super.load(compoundTag);
         HolderGetter<Block> holderGetter = this.level != null ?
                 this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-        this.initialState = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("initialState"));
+        this.initialState = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("state"));
+        if (compoundTag.contains("be", Tag.TAG_COMPOUND)) {
+            EntityBlock movedBlock = (EntityBlock)this.initialState.getBlock();
+            this.initialBlockEntity = movedBlock.newBlockEntity(BlockPos.ZERO, this.initialState);
+            this.initialBlockEntity.load(compoundTag.getCompound("be"));
+        }
         for (Direction dir : Direction.values()) {
             if (compoundTag.contains("dir" + dir.ordinal(), Tag.TAG_COMPOUND)) {
                 CompoundTag tag = compoundTag.getCompound("dir" + dir.ordinal());
@@ -259,7 +293,10 @@ public class MergeBlockEntity extends BlockEntity {
 
     protected void saveAdditional(CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        compoundTag.put("initialState", NbtUtils.writeBlockState(initialState));
+        compoundTag.put("state", NbtUtils.writeBlockState(initialState));
+        if (this.initialBlockEntity != null) {
+            compoundTag.put("be", this.initialBlockEntity.saveWithoutMetadata());
+        }
         for (Map.Entry<Direction, MergeData> entry : mergingBlocks.entrySet()) {
             compoundTag.put("dir" + entry.getKey().ordinal(), MergeData.writeNbt(entry.getValue()));
         }
@@ -268,16 +305,26 @@ public class MergeBlockEntity extends BlockEntity {
     public static class MergeData {
 
         private final BlockState state;
+        private final BlockEntity be;
         private float progress;
         private float lastProgress;
         private float speed = 1F;
 
         public MergeData(BlockState state) {
-            this.state = state;
+            this(null, state);
         }
 
-        public boolean isFinished() {
-            return progress >= 1.0F;
+        public MergeData(@Nullable BlockEntity blockEntity, BlockState state) {
+            this.state = state;
+            this.be = blockEntity;
+        }
+
+        public boolean hasBlockEntity() {
+            return be != null;
+        }
+
+        public BlockEntity getBlockEntity() {
+            return be;
         }
 
         public BlockState getState() {
@@ -315,6 +362,9 @@ public class MergeBlockEntity extends BlockEntity {
         public static CompoundTag writeNbt(MergeData data) {
             CompoundTag compoundTag = new CompoundTag();
             compoundTag.put("state", NbtUtils.writeBlockState(data.getState()));
+            if (data.hasBlockEntity()) {
+                compoundTag.put("be", data.getBlockEntity().saveWithoutMetadata());
+            }
             if (data.getProgress() == data.getLastProgress()) {
                 compoundTag.putFloat("progress", data.getProgress());
             } else {
@@ -329,7 +379,15 @@ public class MergeBlockEntity extends BlockEntity {
 
         public static MergeData loadNbt(HolderGetter<Block> holderGetter, CompoundTag compoundTag) {
             BlockState state = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("state"));
-            MergeData data = new MergeData(state);
+            BlockEntity entity;
+            if (compoundTag.contains("be", Tag.TAG_COMPOUND)) {
+                EntityBlock movedBlock = (EntityBlock)state.getBlock();
+                entity = movedBlock.newBlockEntity(BlockPos.ZERO, state);
+                entity.load(compoundTag.getCompound("be"));
+            } else {
+                entity = null;
+            }
+            MergeData data = new MergeData(entity, state);
             if (compoundTag.contains("lastProgress", Tag.TAG_FLOAT)) {
                 data.setProgress(compoundTag.getFloat("progress"));
                 data.setLastProgress(compoundTag.getFloat("lastProgress"));

@@ -188,7 +188,6 @@ public class ModBlocks {
     // Merge Piston
     // A piston that can merge blocks together
     public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = registerPiston(MERGE, new BasicPistonHeadBlock());
-    public static final SpeedMovingBlock MERGE_MOVING_BLOCK = registerPiston(MERGE, new SpeedMovingBlock(0.05F));
     public static final BasicPistonBaseBlock MERGE_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.DEFAULT));
     public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
 
@@ -299,5 +298,8 @@ public class ModBlocks {
             CONFIGURABLE_PISTON = null;
             CONFIGURABLE_STICKY_PISTON = null;
         }
+
+        MERGE_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
+        MERGE_STICKY_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
     }
 }

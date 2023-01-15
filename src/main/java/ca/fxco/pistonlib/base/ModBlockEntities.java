@@ -56,8 +56,7 @@ public class ModBlockEntities {
         SPEED_MOVING_BLOCK_ENTITY = register(
                 "speed",
                 SpeedMovingBlockEntity::new,
-                ModBlocks.STRONG_MOVING_BLOCK,
-                ModBlocks.MERGE_MOVING_BLOCK
+                ModBlocks.STRONG_MOVING_BLOCK
         );
         FAST_MOVING_BLOCK_ENTITY = register(
                 "fast",

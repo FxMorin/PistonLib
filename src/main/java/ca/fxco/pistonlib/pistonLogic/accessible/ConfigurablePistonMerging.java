@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.pistonLogic.accessible;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
@@ -39,12 +38,12 @@ public interface ConfigurablePistonMerging {
 
     // Returns the merged state
     default BlockState doMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
-        return Blocks.AIR.defaultBlockState();
+        return mergingIntoState;
     }
 
     // Returns the merged state
     default BlockState doMultiMerge(Map<Direction,BlockState> states, BlockState mergingIntoState) {
-        return Blocks.AIR.defaultBlockState();
+        return mergingIntoState;
     }
 
     //TODO: add a way to cancel merging or needed conditions for successful merging
