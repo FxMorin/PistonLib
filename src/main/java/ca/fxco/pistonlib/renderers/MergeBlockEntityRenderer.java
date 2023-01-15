@@ -39,7 +39,7 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
 
         BlockPos pos = mbe.getBlockPos();
 
-        this.renderBlock(pos, mbe.getInitialState(), stack, bufferSource, level, true, overlay);
+        this.renderBlock(pos, mbe.getInitialState(), stack, bufferSource, level, false, overlay);
 
         for (Map.Entry<Direction, MergeBlockEntity.MergeData> entry : mbe.getMergingBlocks().entrySet()) {
             Direction dir = entry.getKey();
