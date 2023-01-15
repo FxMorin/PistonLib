@@ -46,13 +46,6 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!level.isClientSide() && !newState.is(this) && !movedByPiston && state.getValue(POWERED)) {
-            updatePowered(state, level, pos, true);
-        }
-    }
-
-    @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!level.isClientSide() && !oldState.is(this) && state.getValue(POWERED)) {
             updatePowered(state, level, pos, true);
