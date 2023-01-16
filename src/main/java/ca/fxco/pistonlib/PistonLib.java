@@ -7,9 +7,9 @@ import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModCreativeModeTabs;
 import ca.fxco.pistonlib.base.ModItems;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -37,8 +37,8 @@ public class PistonLib implements ModInitializer {
     public void onInitialize() {
         // Don't mind these, they just make sure the classes are called at the right time
         ModRegistries.bootstrap();
-        PistonFamilies.bootstrap();
-        StickyGroups.bootstrap();
+        ModPistonFamilies.bootstrap();
+        ModStickyGroups.bootstrap();
         ModBlocks.bootstrap();
         ModBlockEntities.bootstrap();
         ModItems.boostrap();
@@ -46,7 +46,7 @@ public class PistonLib implements ModInitializer {
 
         // TODO: ensure that other mods register their custom pistons
         // before locking the piston families and sticky groups.
-        PistonFamilies.validate();
-        StickyGroups.validate();
+        ModPistonFamilies.validate();
+        ModStickyGroups.validate();
     }
 }

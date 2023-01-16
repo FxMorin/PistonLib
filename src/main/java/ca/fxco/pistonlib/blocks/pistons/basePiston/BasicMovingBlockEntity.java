@@ -5,9 +5,9 @@ import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
@@ -371,7 +371,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void load(CompoundTag nbt) {
-        this.setFamily(PistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
+        this.setFamily(ModPistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
@@ -386,7 +386,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
-        nbt.putString("family", PistonFamilies.getId(this.family).toString());
+        nbt.putString("family", ModPistonFamilies.getId(this.family).toString());
         nbt.put("blockState", NbtUtils.writeBlockState(this.movedState));
         nbt.putInt("facing", this.direction.get3DDataValue());
         if (PistonLib.PISTON_PROGRESS_FIX) {

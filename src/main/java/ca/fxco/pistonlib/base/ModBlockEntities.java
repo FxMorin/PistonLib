@@ -8,7 +8,6 @@ import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.translocationPiston.TranslocationMovingBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -42,46 +41,46 @@ public class ModBlockEntities {
                 "basic",
                 BasicMovingBlockEntity::new,
                 BasicMovingBlockEntity::new,
-                PistonFamilies.BASIC,
-                PistonFamilies.VERY_STICKY,
-                PistonFamilies.SLIPPERY
+                ModPistonFamilies.BASIC,
+                ModPistonFamilies.VERY_STICKY,
+                ModPistonFamilies.SLIPPERY
         );
         CONFIGURABLE_MOVING_BLOCK_ENTITY = register(
                 "configurable",
                 ConfigurableMovingBlockEntity::new,
                 ConfigurableMovingBlockEntity::new,
-                PistonFamilies.CONFIGURABLE
+                ModPistonFamilies.CONFIGURABLE
         );
         LONG_MOVING_BLOCK_ENTITY = register(
                 "long",
                 LongMovingBlockEntity::new,
                 LongMovingBlockEntity::new,
-                PistonFamilies.LONG
+                ModPistonFamilies.LONG
         );
         SPEED_MOVING_BLOCK_ENTITY = register(
                 "speed",
                 SpeedMovingBlockEntity::new,
                 SpeedMovingBlockEntity::new,
-                PistonFamilies.STRONG
+                ModPistonFamilies.STRONG
         );
         FAST_MOVING_BLOCK_ENTITY = register(
                 "fast",
                 FastMovingBlockEntity::new,
                 FastMovingBlockEntity::new,
-                PistonFamilies.FAST
+                ModPistonFamilies.FAST
         );
         TRANSLOCATION_MOVING_BLOCK_ENTITY = register(
                 "translocation",
                 TranslocationMovingBlockEntity::new,
                 TranslocationMovingBlockEntity::new,
-                PistonFamilies.TRANSLOCATION
+                ModPistonFamilies.TRANSLOCATION
         );
         MBE_MOVING_BLOCK_ENTITY = register(
                 "mbe",
                 MBEMovingBlockEntity::new,
                 MBEMovingBlockEntity::new,
-                PistonFamilies.MBE,
-                PistonFamilies.MERGE
+                ModPistonFamilies.MBE,
+                ModPistonFamilies.MERGE
         );
 
         // Other

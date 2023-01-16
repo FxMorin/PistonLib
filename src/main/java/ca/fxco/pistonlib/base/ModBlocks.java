@@ -59,8 +59,8 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.Material;
 
+import static ca.fxco.pistonlib.base.ModPistonFamilies.*;
 import static ca.fxco.pistonlib.PistonLib.id;
-import static ca.fxco.pistonlib.pistonLogic.families.PistonFamilies.*;
 
 public class ModBlocks {
 

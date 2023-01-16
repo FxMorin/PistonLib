@@ -2,10 +2,10 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.Util;
@@ -105,7 +105,7 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
         }
         StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
         if (group != null) {
-            return StickRules.test(StickyGroups.HONEY, group);
+            return StickRules.test(ModStickyGroups.HONEY, group);
         }
         return true;
     }

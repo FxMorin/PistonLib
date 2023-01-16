@@ -1,13 +1,14 @@
-package ca.fxco.pistonlib.pistonLogic.sticky;
+package ca.fxco.pistonlib.base;
 
-import ca.fxco.pistonlib.base.ModRegistries;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
-public class StickyGroups {
+public class ModStickyGroups {
 
     public static final StickyGroup SLIME = register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
     public static final StickyGroup HONEY = register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
@@ -35,12 +36,12 @@ public class StickyGroups {
     public static void validate() {
         if (!locked) {
             ModRegistries.STICKY_GROUP.forEach(group -> {
-                StickyGroup parent = group.parent;
+                StickyGroup parent = group.getParent();
 
                 while (parent != null) {
                     if (parent == group)
                         throw new IllegalStateException("a sticky group cannot inherit from itself!");
-                    parent = parent.parent;
+                    parent = parent.getParent();
                 }
             });
 

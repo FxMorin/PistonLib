@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 
@@ -33,13 +34,13 @@ public class PistonFamily {
         this(true);
     }
 
-    PistonFamily(boolean hasCustomTextures) {
+    public PistonFamily(boolean hasCustomTextures) {
         this.customTextures = hasCustomTextures;
     }
 
     @Override
     public String toString() {
-        return "PistonFamily{" + PistonFamilies.getId(this) + "}";
+        return "PistonFamily{" + ModPistonFamilies.getId(this) + "}";
     }
 
     public boolean hasCustomTextures() {
@@ -82,6 +83,10 @@ public class PistonFamily {
         return this.movingBlockEntityType;
     }
 
+    public BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> getMovingBlockEntityFactory() {
+        return this.movingBlockEntityFactory;
+    }
+
     public BasicMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                        BlockEntity movedBlockEntity, Direction facing,
                                                        boolean extending, boolean isSourcePiston) {
@@ -90,25 +95,25 @@ public class PistonFamily {
     }
 
     public void setBase(Block base) {
-        if (PistonFamilies.requireNotLocked()) {
+        if (ModPistonFamilies.requireNotLocked()) {
             this.base.put(((BasicPistonBaseBlock)base).type, base);
         }
     }
 
     public void setArm(Block arm) {
-        if (PistonFamilies.requireNotLocked()) {
+        if (ModPistonFamilies.requireNotLocked()) {
             this.arm = arm;
         }
     }
 
     public void setHead(Block head) {
-        if (PistonFamilies.requireNotLocked()) {
+        if (ModPistonFamilies.requireNotLocked()) {
             this.head = head;
         }
     }
 
     public void setMoving(Block moving) {
-        if (PistonFamilies.requireNotLocked()) {
+        if (ModPistonFamilies.requireNotLocked()) {
             this.moving = moving;
         }
     }
@@ -117,7 +122,7 @@ public class PistonFamily {
         BlockEntityType<? extends BasicMovingBlockEntity> type,
         BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> factory
     ) {
-        if (PistonFamilies.requireNotLocked()) {
+        if (ModPistonFamilies.requireNotLocked()) {
             this.movingBlockEntityType = type;
             this.movingBlockEntityFactory = factory;
         }

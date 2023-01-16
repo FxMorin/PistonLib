@@ -1,6 +1,6 @@
-package ca.fxco.pistonlib.pistonLogic.families;
+package ca.fxco.pistonlib.base;
 
-import ca.fxco.pistonlib.base.ModRegistries;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
-public class PistonFamilies {
+public class ModPistonFamilies {
 
     public static final PistonFamily BASIC = register("basic", new PistonFamily(false));
     public static final PistonFamily LONG = register("long", new PistonFamily(false));
@@ -44,9 +44,9 @@ public class PistonFamilies {
 
     public static void bootstrap() { }
 
-    static boolean locked;
+    private static boolean locked;
 
-    static boolean requireNotLocked() {
+    public static boolean requireNotLocked() {
         if (locked) {
             throw new IllegalStateException("cannot alter piston families after they have been locked!");
         }
@@ -57,12 +57,12 @@ public class PistonFamilies {
     public static void validate() {
         if (!locked) {
             ModRegistries.PISTON_FAMILY.forEach(family -> {
-                if (family.base.isEmpty())
+                if (family.getBases().isEmpty())
                     throw new IllegalStateException("each piston family must have at least one base block!");
-                Objects.requireNonNull(family.head);
-                Objects.requireNonNull(family.moving);
-                Objects.requireNonNull(family.movingBlockEntityType);
-                Objects.requireNonNull(family.movingBlockEntityFactory);
+                Objects.requireNonNull(family.getHead());
+                Objects.requireNonNull(family.getMoving());
+                Objects.requireNonNull(family.getMovingBlockEntityType());
+                Objects.requireNonNull(family.getMovingBlockEntityFactory());
             });
 
             locked = true;
