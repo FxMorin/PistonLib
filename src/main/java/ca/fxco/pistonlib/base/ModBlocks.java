@@ -98,7 +98,7 @@ public class ModBlocks {
     public static final Block SLIPPERY_STONE_BLOCK = register("slippery_stone_block", BaseSlipperyBlock::new, Blocks.STONE);
 
     // Obsidian Blocks
-    public static final Block OBSIDIAN_SLAB_BLOCK = register("obsidian_slab_block", SlabBlock::new, Blocks.OBSIDIAN);
+    public static final Block OBSIDIAN_SLAB_BLOCK = register("obsidian_slab_block", ObsidianSlabBlock::new, Blocks.OBSIDIAN);
     public static final Block OBSIDIAN_STAIR_BLOCK = register("obsidian_stair_block", new StairBlock(Blocks.OBSIDIAN.defaultBlockState(), FabricBlockSettings.copyOf(Blocks.OBSIDIAN)));
 
     // Piston Blocks should always be initialized in the following order:
