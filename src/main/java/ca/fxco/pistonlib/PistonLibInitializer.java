@@ -16,6 +16,9 @@ public interface PistonLibInitializer {
 
     /**
      * Initialize custom registries, blocks, items, etc.
+     * 
+     * It is recommended to register custom moving block entity types through
+     * {@linkplain ca.fxco.pistonlib.base.ModBlockEntities#register}
      */
     void bootstrap();
 

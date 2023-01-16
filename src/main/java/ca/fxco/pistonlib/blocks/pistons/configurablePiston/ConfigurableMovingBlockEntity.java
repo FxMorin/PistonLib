@@ -5,7 +5,6 @@ import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.block.Blocks;
@@ -20,8 +19,6 @@ import java.util.List;
 
 public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
 
-    protected boolean translocation;
-
     public ConfigurableMovingBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
     }
@@ -30,14 +27,12 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
                                          BlockEntity movedBlockEntity, Direction facing, boolean extending,
                                          boolean isSourcePiston) {
         super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
-
-        this.translocation = false;
     }
 
     @Override
     protected void moveCollidedEntities(float nextProgress) {
-        if (translocation) {
-            VoxelShape vs = movedState.getCollisionShape(this.level, this.worldPosition);
+        if (this.getFamily().isTranslocation()) {
+            VoxelShape vs = this.movedState.getCollisionShape(this.level, this.worldPosition);
             if (vs.isEmpty()) return;
             AABB box = vs.bounds().move(this.worldPosition).inflate(0.01D); // Cheating ;)
             List<Entity> list = this.level.getEntities(null, box);
@@ -75,19 +70,5 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
         } else {
             super.moveCollidedEntities(nextProgress); // Just speed
         }
-    }
-
-    @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
-
-        this.translocation = nbt.getBoolean("translocation");
-    }
-
-    @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
-
-        nbt.putBoolean("translocation", translocation);
     }
 }

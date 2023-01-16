@@ -21,7 +21,6 @@ import ca.fxco.pistonlib.blocks.halfBlocks.HalfPoweredBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfRedstoneLampBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfSlimeBlock;
 import ca.fxco.pistonlib.blocks.pistons.FrontPoweredPistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.PushLimitPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.StalePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
@@ -108,10 +107,10 @@ public class ModBlocks {
     // Configurable Piston - Testing only
     // The one and only configurable piston. It can do mostly everything that the other pistons can do, allowing you
     // to very easily enable and disable features in your pistons
-    public static final BasicPistonHeadBlock CONFIGURABLE_PISTON_HEAD;
-    public static final ConfigurableMovingBlock CONFIGURABLE_MOVING_BLOCK;
-    public static final BasicPistonBaseBlock CONFIGURABLE_PISTON;
-    public static final BasicPistonBaseBlock CONFIGURABLE_STICKY_PISTON;
+    public static final BasicPistonBaseBlock CONFIGURABLE_PISTON = register("configurable_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock CONFIGURABLE_STICKY_PISTON = register("configurable_sticky_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.STICKY));
+    public static final BasicPistonHeadBlock CONFIGURABLE_PISTON_HEAD = register("configurable_piston_head", new ConfigurablePistonHeadBlock(CONFIGURABLE));
+    public static final ConfigurableMovingBlock CONFIGURABLE_MOVING_BLOCK = register("configurable_moving_block", new ConfigurableMovingBlock(CONFIGURABLE));
 
     // Basic Long Piston
     // Can extend further than 1 block
@@ -130,22 +129,22 @@ public class ModBlocks {
 
     // Very Quasi Piston
     // A vanilla piston except it can be quasi-powered from 5 blocks up
-    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = register("very_quasi_piston", new VeryQuasiPistonBaseBlock(QUASI, PistonType.DEFAULT, 5));
-    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = register("very_quasi_sticky_piston", new VeryQuasiPistonBaseBlock(QUASI, PistonType.STICKY, 5));
-    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = register("very_quasi_piston_head", new BasicPistonHeadBlock(QUASI));
-    public static final BasicMovingBlock VERY_QUASI_MOVING_BLOCK = register("very_quasi_moving_block", new BasicMovingBlock(QUASI));
+    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = register("very_quasi_piston", new VeryQuasiPistonBaseBlock(VERY_QUASI, PistonType.DEFAULT, 5));
+    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = register("very_quasi_sticky_piston", new VeryQuasiPistonBaseBlock(VERY_QUASI, PistonType.STICKY, 5));
+    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = register("very_quasi_piston_head", new BasicPistonHeadBlock(VERY_QUASI));
+    public static final BasicMovingBlock VERY_QUASI_MOVING_BLOCK = register("very_quasi_moving_block", new BasicMovingBlock(VERY_QUASI));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
-    public static final BasicPistonBaseBlock STRONG_PISTON = register("strong_piston", new PushLimitPistonBaseBlock(STRONG, PistonType.DEFAULT, 24));
-    public static final BasicPistonBaseBlock STRONG_STICKY_PISTON = register("strong_sticky_piston", new PushLimitPistonBaseBlock(STRONG, PistonType.STICKY, 24));
+    public static final BasicPistonBaseBlock STRONG_PISTON = register("strong_piston", new BasicPistonBaseBlock(STRONG, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock STRONG_STICKY_PISTON = register("strong_sticky_piston", new BasicPistonBaseBlock(STRONG, PistonType.STICKY));
     public static final BasicPistonHeadBlock STRONG_PISTON_HEAD = register("strong_piston_head", new BasicPistonHeadBlock(STRONG));
     public static final BasicMovingBlock STRONG_MOVING_BLOCK = register("strong_moving_block", new BasicMovingBlock(STRONG));
 
     // Fast Piston
     // Can only push 2 block, although it's very fast
-    public static final BasicPistonBaseBlock FAST_PISTON = register("fast_piston", new PushLimitPistonBaseBlock(FAST, PistonType.DEFAULT, 8));
-    public static final BasicPistonBaseBlock FAST_STICKY_PISTON = register("fast_sticky_piston", new PushLimitPistonBaseBlock(FAST, PistonType.STICKY, 8));
+    public static final BasicPistonBaseBlock FAST_PISTON = register("fast_piston", new BasicPistonBaseBlock(FAST, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock FAST_STICKY_PISTON = register("fast_sticky_piston", new BasicPistonBaseBlock(FAST, PistonType.STICKY));
     public static final BasicPistonHeadBlock FAST_PISTON_HEAD = register("fast_piston_head", new BasicPistonHeadBlock(FAST));
     public static final BasicMovingBlock FAST_MOVING_BLOCK = register("fast_moving_block", new BasicMovingBlock(FAST));
 
@@ -181,8 +180,8 @@ public class ModBlocks {
 
     // Super Piston
     // What's push limit? What is super sticky?
-    public static final BasicPistonBaseBlock SUPER_PISTON = register("super_piston", new PushLimitPistonBaseBlock(SUPER, PistonType.DEFAULT, Integer.MAX_VALUE));
-    public static final BasicPistonBaseBlock SUPER_STICKY_PISTON = register("super_sticky_piston", new PushLimitPistonBaseBlock(SUPER, PistonType.STICKY, Integer.MAX_VALUE));
+    public static final BasicPistonBaseBlock SUPER_PISTON = register("super_piston", new BasicPistonBaseBlock(SUPER, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock SUPER_STICKY_PISTON = register("super_sticky_piston", new BasicPistonBaseBlock(SUPER, PistonType.STICKY));
     public static final BasicPistonHeadBlock SUPER_PISTON_HEAD = register("super_piston_head", new BasicPistonHeadBlock(SUPER));
     public static final BasicMovingBlock SUPER_MOVING_BLOCK = register("super_moving_block", new BasicMovingBlock(SUPER));
 
@@ -220,15 +219,4 @@ public class ModBlocks {
 
     public static void bootstrap() { }
 
-    static {
-        ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
-                .canExtendOnRetracting(true)
-                .canRetractOnExtending(true)
-                .speed(0.05F);
-        CONFIGURABLE_PISTON = register("configurable_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.DEFAULT, settings));
-        CONFIGURABLE_STICKY_PISTON = register("configurable_sticky_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.STICKY, settings));
-        CONFIGURABLE_PISTON_HEAD = register("configurable_piston_head", new ConfigurablePistonHeadBlock(CONFIGURABLE, settings));
-        CONFIGURABLE_MOVING_BLOCK = register("configurable_moving_block", new ConfigurableMovingBlock(CONFIGURABLE, settings));
-
-    }
 }

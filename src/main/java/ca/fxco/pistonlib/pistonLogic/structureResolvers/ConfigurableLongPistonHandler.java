@@ -22,12 +22,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
 
     public ConfigurableLongPistonHandler(LongPistonBaseBlock piston, Level level, BlockPos pos, Direction facing,
                                          boolean extend) {
-        this(piston, level, pos, facing, extend, MAX_PUSH_DEPTH);
-    }
-
-    public ConfigurableLongPistonHandler(LongPistonBaseBlock piston, Level level, BlockPos pos, Direction facing,
-                                         boolean extend, int maxMovableBlocks) {
-        super(piston, level, pos, facing, extend, maxMovableBlocks);
+        super(piston, level, pos, facing, extend);
     }
 
     public boolean calculateLongPullPush(boolean isPull, Consumer<LongMovingBlockEntity> applySkip) {

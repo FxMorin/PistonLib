@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class PistonFamily {
 
+    private final PistonBehavior behavior;
     private final boolean customTextures;
 
     protected Map<PistonType, Block> base = new EnumMap<>(PistonType.class);
@@ -30,11 +31,12 @@ public class PistonFamily {
     protected BlockEntityType<? extends BasicMovingBlockEntity> movingBlockEntityType;
     protected BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> movingBlockEntityFactory;
 
-    public PistonFamily() {
-        this(true);
+    public PistonFamily(PistonBehavior behavior) {
+        this(behavior, true);
     }
 
-    public PistonFamily(boolean hasCustomTextures) {
+    public PistonFamily(PistonBehavior behavior, boolean hasCustomTextures) {
+        this.behavior = behavior;
         this.customTextures = hasCustomTextures;
     }
 
@@ -126,5 +128,45 @@ public class PistonFamily {
             this.movingBlockEntityType = type;
             this.movingBlockEntityFactory = factory;
         }
+    }
+
+    public boolean isVerySticky() {
+        return this.behavior.verySticky;
+    }
+
+    public boolean isFrontPowered() {
+        return this.behavior.frontPowered;
+    }
+
+    public boolean isTranslocation() {
+        return this.behavior.translocation;
+    }
+
+    public boolean isSlippery() {
+        return this.behavior.slippery;
+    }
+
+    public boolean isQuasi() {
+        return this.behavior.quasi;
+    }
+
+    public int getPushLimit() {
+        return this.behavior.pushLimit;
+    }
+
+    public float getExtendingSpeed() {
+        return this.behavior.extendingSpeed;
+    }
+
+    public float getRetractingSpeed() {
+        return this.behavior.retractingSpeed;
+    }
+
+    public boolean canRetractOnExtending() {
+        return this.behavior.canRetractOnExtending;
+    }
+
+    public boolean canExtendOnRetracting() {
+        return this.behavior.canExtendOnRetracting;
     }
 }

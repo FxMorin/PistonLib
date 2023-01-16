@@ -24,24 +24,8 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
 
-    protected final boolean verySticky;
-    protected final boolean frontPowered;
-    protected final int pushLimit;
-    protected final boolean quasi;
-    protected final boolean slippery;
-    protected final boolean canRetractOnExtending;
-    protected final boolean canExtendOnRetracting;
-
-    public ConfigurablePistonBaseBlock(PistonFamily family, PistonType type, Settings settings) {
+    public ConfigurablePistonBaseBlock(PistonFamily family, PistonType type) {
         super(family, type);
-
-        verySticky = settings.verySticky;
-        frontPowered = settings.frontPowered;
-        pushLimit = settings.pushLimit;
-        quasi = settings.quasi;
-        slippery = settings.slippery;
-        canRetractOnExtending = settings.canRetractOnExtending;
-        canExtendOnRetracting = settings.canExtendOnRetracting;
     }
 
     @Override
@@ -51,21 +35,21 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return (frontPowered ? level.hasNeighborSignal(pos) :
+        return (this.family.isFrontPowered() ? level.hasNeighborSignal(pos) :
                 Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
-                (quasi && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
+                (this.family.isQuasi() && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override
     protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
-        return canRetractOnExtending ? super.getPullType(level, pos, facing) : MotionType.NONE;
+        return this.family.canRetractOnExtending() ? super.getPullType(level, pos, facing) : MotionType.NONE;
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(this) && level.getBlockEntity(pos) == null) {
             this.checkIfExtend(level, pos, state);
-            if (slippery && !level.isClientSide) {
+            if (this.family.isSlippery() && !level.isClientSide) {
                 level.scheduleTick(pos, this, SLIPPERY_DELAY);
             }
         }
@@ -74,86 +58,19 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (slippery && !level.isClientSide())
+        if (this.family.isSlippery() && !level.isClientSide())
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (slippery && BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE)
+        if (this.family.isSlippery() && BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE)
             FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !slippery || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
-    }
-
-    // All settings are by default the vanilla piston settings
-    public static class Settings {
-
-        protected boolean verySticky = false;
-        protected boolean frontPowered = false;
-        protected boolean translocation = false;
-        protected boolean slippery = false;
-        protected boolean quasi = true;
-        protected int pushLimit = 12;
-        protected float extendingSpeed = 1;
-        protected float retractingSpeed = 1;
-        protected boolean canRetractOnExtending = true;
-        protected boolean canExtendOnRetracting = false;
-
-        public Settings verySticky() {
-            this.verySticky = true;
-            return this;
-        }
-
-        public Settings frontPowered() {
-            this.frontPowered = true;
-            return this;
-        }
-
-        public Settings translocation() {
-            this.translocation = true;
-            return this;
-        }
-
-        public Settings slippery() {
-            this.slippery = true;
-            return this;
-        }
-
-        public Settings noQuasi() {
-            this.quasi = false;
-            return this;
-        }
-
-        public Settings pushLimit(int pushLimit) {
-            this.pushLimit = pushLimit;
-            return this;
-        }
-
-        public Settings speed(float generalSpeed) {
-            this.extendingSpeed = generalSpeed;
-            this.retractingSpeed = generalSpeed;
-            return this;
-        }
-
-        public Settings speed(float extendingSpeed, float retractingSpeed) {
-            this.extendingSpeed = extendingSpeed;
-            this.retractingSpeed = retractingSpeed;
-            return this;
-        }
-
-        public Settings canRetractOnExtending(boolean enable) {
-            this.canRetractOnExtending = enable;
-            return this;
-        }
-
-        public Settings canExtendOnRetracting(boolean enable) {
-            this.canExtendOnRetracting = enable;
-            return this;
-        }
+        return !this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 }

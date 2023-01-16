@@ -30,32 +30,17 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class ConfigurableMovingBlock extends BasicMovingBlock {
 
-    protected final boolean slippery;
-    protected final float extendingSpeed;
-    protected final float retractingSpeed;
-    protected final boolean translocation;
-    protected final boolean verySticky;
-    protected final boolean canExtendOnRetracting;
-
-    public ConfigurableMovingBlock(PistonFamily family, ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        this(family, BasicMovingBlock.createDefaultSettings(), pistonSettings);
+    public ConfigurableMovingBlock(PistonFamily family) {
+        this(family, BasicMovingBlock.createDefaultSettings());
     }
 
-    public ConfigurableMovingBlock(PistonFamily family, Properties properties,
-                                   ConfigurablePistonBaseBlock.Settings pistonSettings) {
+    public ConfigurableMovingBlock(PistonFamily family, Properties properties) {
         super(family, properties);
-
-        slippery = pistonSettings.slippery;
-        extendingSpeed = pistonSettings.extendingSpeed;
-        retractingSpeed = pistonSettings.retractingSpeed;
-        translocation = pistonSettings.translocation;
-        verySticky = pistonSettings.verySticky;
-        canExtendOnRetracting = pistonSettings.canExtendOnRetracting;
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        if (canExtendOnRetracting && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
+        if (this.family.canExtendOnRetracting() && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
             if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
                 if (!movingBlockEntity.isExtending()) {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
@@ -126,7 +111,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        if (slippery && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+        if (this.family.isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
@@ -134,7 +119,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
                                   BlockPos pos, BlockPos neighborPos) {
-        if (slippery && !level.isClientSide()) {
+        if (this.family.isSlippery() && !level.isClientSide()) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
@@ -142,7 +127,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (slippery) {
+        if (this.family.isSlippery()) {
             int i = BaseSlipperyBlock.calculateDistance(level, pos);
             BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
@@ -155,13 +140,13 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !slippery || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
+        return !this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE);
-        if (slippery) {
+        if (this.family.isSlippery()) {
             builder.add(SLIPPERY_DISTANCE);
         }
     }

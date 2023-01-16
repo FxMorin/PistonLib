@@ -27,16 +27,11 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
                                   Direction facing, boolean extend) {
-        this(piston, level, pos, facing, extend, MAX_PUSH_DEPTH);
-    }
-
-    public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                  Direction facing, boolean extend, int maxMovableBlocks) {
         super(level, pos, facing, extend );
 
         this.family = piston.family;
         this.piston = piston;
-        this.maxMovableBlocks = maxMovableBlocks;
+        this.maxMovableBlocks = this.family.getPushLimit();
     }
 
     @Override

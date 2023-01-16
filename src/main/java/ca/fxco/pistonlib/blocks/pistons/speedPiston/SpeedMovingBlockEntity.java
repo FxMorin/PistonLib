@@ -22,7 +22,7 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
                                   boolean isSourcePiston) {
         super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
-        this.setSpeed(speed);
+        this.setSpeed(this.extending ? this.getFamily().getExtendingSpeed() : this.getFamily().getRetractingSpeed());
     }
 
     private void setSpeed(float speed) {
