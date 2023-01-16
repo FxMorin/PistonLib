@@ -104,6 +104,6 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
         if (group != null) {
             return StickyGroup.canStick(StickyGroup.HONEY, group);
         }
-        return false;
+        return true;
     }
 }

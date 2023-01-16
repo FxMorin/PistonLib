@@ -104,7 +104,7 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
             BlockState state = mbe.getMovedState();
 
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
-                this.renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, true, overlay);
+                this.renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, false, overlay);
             }
         }
     }

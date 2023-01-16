@@ -103,6 +103,11 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
+    public int getDirectQuasiSignal(BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
+        return ((BlockQuasiPower)this.getBlock()).getDirectQuasiSignal(this.asState(), blockGetter, pos, dir, dist);
+    }
+
+    @Override
     public boolean isQuasiConductor(BlockGetter blockGetter, BlockPos blockPos) {
         return ((BlockQuasiPower)this.getBlock()).isQuasiConductor(this.asState(), blockGetter, blockPos);
     }
