@@ -19,8 +19,8 @@ public class ModPistonFamilies {
     public static final PistonFamily VERY_QUASI = register("very_quasi", new PistonFamily(new PistonBehavior(), false));
     public static final PistonFamily STRONG = register("strong", new PistonFamily(new PistonBehavior().pushLimit(24), false));
     public static final PistonFamily FAST = register("fast", new PistonFamily(new PistonBehavior().pushLimit(2), false));
-    public static final PistonFamily FRONT_POWERED = register("front_powered", new PistonFamily(new PistonBehavior(), false));
-    public static final PistonFamily TRANSLOCATION = register("translocation", new PistonFamily(new PistonBehavior(), false));
+    public static final PistonFamily FRONT_POWERED = register("front_powered", new PistonFamily(new PistonBehavior().frontPowered(), false));
+    public static final PistonFamily TRANSLOCATION = register("translocation", new PistonFamily(new PistonBehavior().translocation(), false));
     public static final PistonFamily SLIPPERY = register("slippery", new PistonFamily(new PistonBehavior(), false));
     public static final PistonFamily SUPER = register("super", new PistonFamily(new PistonBehavior().pushLimit(Integer.MAX_VALUE).verySticky(), false));
     public static final PistonFamily MBE = register("mbe", new PistonFamily(new PistonBehavior(), false));
@@ -58,12 +58,16 @@ public class ModPistonFamilies {
     public static void validate() {
         if (!locked) {
             ModRegistries.PISTON_FAMILY.forEach(family -> {
-                if (family.getBases().isEmpty())
-                    throw new IllegalStateException("each piston family must have at least one base block!");
-                Objects.requireNonNull(family.getHead());
-                Objects.requireNonNull(family.getMoving());
-                Objects.requireNonNull(family.getMovingBlockEntityType());
-                Objects.requireNonNull(family.getMovingBlockEntityFactory());
+                try {
+                    if (family.getBases().isEmpty())
+                        throw new IllegalStateException("missing base block");
+                    Objects.requireNonNull(family.getHead(), "head block");
+                    Objects.requireNonNull(family.getMoving(), "moving block");
+                    Objects.requireNonNull(family.getMovingBlockEntityType(), "moving block entity type");
+                    Objects.requireNonNull(family.getMovingBlockEntityFactory(), "moving block entity factory");
+                } catch (Exception e) {
+                    throw new IllegalStateException("piston family " + family + " is invalid!", e);
+                }
             });
 
             locked = true;

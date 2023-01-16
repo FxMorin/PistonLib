@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/slimy_redstone_block"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/stale_moving_block"
+    }
+  }
+}

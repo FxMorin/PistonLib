@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/translocation_moving_block"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/long_moving_block"
+    }
+  }
+}

@@ -36,12 +36,16 @@ public class ModStickyGroups {
     public static void validate() {
         if (!locked) {
             ModRegistries.STICKY_GROUP.forEach(group -> {
-                StickyGroup parent = group.getParent();
+                try {
+                    StickyGroup parent = group.getParent();
 
-                while (parent != null) {
-                    if (parent == group)
-                        throw new IllegalStateException("a sticky group cannot inherit from itself!");
-                    parent = parent.getParent();
+                    while (parent != null) {
+                        if (parent == group)
+                            throw new IllegalStateException("a sticky group cannot inherit from itself!");
+                        parent = parent.getParent();
+                    }
+                } catch (Exception e) {
+                    throw new IllegalStateException("sticky group " + group + " is invalid!", e);
                 }
             });
 

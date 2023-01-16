@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/weak_redstone_block"
+    }
+  }
+}

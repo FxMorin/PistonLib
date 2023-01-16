@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/very_sticky_moving_block"
+    }
+  }
+}

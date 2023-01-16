@@ -96,10 +96,7 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE, SHORT);
-        if (this.family.isSlippery()) {
-            builder.add(SLIPPERY_DISTANCE);
-        }
+        builder.add(FACING, TYPE, SHORT, SLIPPERY_DISTANCE);
     }
 
     @Override

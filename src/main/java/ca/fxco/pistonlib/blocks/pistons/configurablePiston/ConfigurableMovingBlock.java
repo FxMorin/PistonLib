@@ -145,9 +145,6 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE);
-        if (this.family.isSlippery()) {
-            builder.add(SLIPPERY_DISTANCE);
-        }
+        builder.add(FACING, TYPE, SLIPPERY_DISTANCE);
     }
 }

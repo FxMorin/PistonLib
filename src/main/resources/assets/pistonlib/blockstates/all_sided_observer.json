@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "pistonlib:block/all_sided_observer"
+    },
+    "powered=true": {
+      "model": "pistonlib:block/all_sided_observer_on"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:moving_piston",
+    "pistonlib:basic_moving_block",
+    "pistonlib:long_moving_block",
+    "pistonlib:configurable_moving_block",
+    "pistonlib:stale_moving_block",
+    "pistonlib:very_quasi_moving_block",
+    "pistonlib:strong_moving_block",
+    "pistonlib:fast_moving_block",
+    "pistonlib:front_powered_moving_block",
+    "pistonlib:translocation_moving_block",
+    "pistonlib:slippery_moving_block",
+    "pistonlib:super_moving_block",
+    "pistonlib:mbe_moving_block",
+    "pistonlib:merge_moving_block",
+    "pistonlib:very_sticky_moving_block"
+  ]
+}

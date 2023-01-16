@@ -70,6 +70,6 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, SHORT, SLIPPERY_DISTANCE);
+        builder.add(FACING, TYPE, SHORT, SLIPPERY_DISTANCE);
     }
 }

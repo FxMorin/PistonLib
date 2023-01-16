@@ -43,7 +43,11 @@ public class ModBlockEntities {
                 BasicMovingBlockEntity::new,
                 ModPistonFamilies.BASIC,
                 ModPistonFamilies.VERY_STICKY,
-                ModPistonFamilies.SLIPPERY
+                ModPistonFamilies.SLIPPERY,
+                ModPistonFamilies.STALE,
+                ModPistonFamilies.VERY_QUASI,
+                ModPistonFamilies.FRONT_POWERED,
+                ModPistonFamilies.SUPER
         );
         CONFIGURABLE_MOVING_BLOCK_ENTITY = register(
                 "configurable",
