@@ -62,8 +62,13 @@ public class MergeBlockEntity extends BlockEntity {
 
     public boolean canMerge(BlockState state, Direction dir) {
         ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
-        return merge.canMultiMerge() &&
-                merge.canMultiMerge(state, this.worldPosition, initialState, dir, mergingBlocks);
+        if (merge.canMultiMerge() && merge.canMultiMerge(state, worldPosition, initialState, dir, mergingBlocks)) {
+            if (initialBlockEntity != null && initialBlockEntity instanceof BlockEntityMerging bem) {
+                return bem.canMultiMerge(state, initialState, dir, mergingBlocks);
+            }
+            return true;
+        }
+        return false;
     }
 
     public void doMerge(BlockState state, Direction dir) {

@@ -3,14 +3,44 @@ package ca.fxco.pistonlib.impl;
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Map;
 
 /**
- * Block Entities cannot control block merging, that's done from the Block's
- *
  * This is for handling merging the block entities.
- * These methods are only called if the original block had a block entity, that block entity type will be used
  */
 public interface BlockEntityMerging {
+
+    //
+    // These methods are to control if merging should happen
+    //
+
+    /**
+     * Returns if it will be able to merge both states together
+     */
+    default boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+        return true;
+    }
+
+    /**
+     * While merging with a block, is this block able to merge with other blocks from other directions?
+     */
+    default boolean canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+        return true;
+    }
+
+    /**
+     * Returns if it will be able to unmerge into two different states
+     */
+    default boolean canUnMerge(BlockState state, Direction dir) {
+        return true;
+    }
+
+
+    //
+    // These methods are called to determine what to do with the block entity when merging
+    //
 
     /**
      * This method only gets called if this is the block entity of the block getting converted to a merge block
@@ -19,8 +49,6 @@ public interface BlockEntityMerging {
     default boolean doMerging() {
         return true;
     }
-
-    default void onMerge(MergeBlockEntity mergeBlockEntity, Direction direction) {}
 
     /**
      * Used for Advanced Final Merging. To use `onAdvancedFinalMerge` this method needs to return true.
@@ -31,6 +59,13 @@ public interface BlockEntityMerging {
     default boolean shouldStoreSelf(MergeBlockEntity mergeBlockEntity) {
         return false;
     }
+
+
+    //
+    // These methods are called when merging, think of them more as events
+    //
+
+    default void onMerge(MergeBlockEntity mergeBlockEntity, Direction direction) {}
 
     /**
      * When the merge is done, this method will be called for all saved block entities.
