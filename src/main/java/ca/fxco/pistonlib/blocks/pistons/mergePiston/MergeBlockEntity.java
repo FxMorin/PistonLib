@@ -62,7 +62,8 @@ public class MergeBlockEntity extends BlockEntity {
 
     public boolean canMerge(BlockState state, Direction dir) {
         ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
-        return merge.canMultiMerge() && merge.canMultiMerge(state, initialState, dir, mergingBlocks);
+        return merge.canMultiMerge() &&
+                merge.canMultiMerge(state, this.worldPosition, initialState, dir, mergingBlocks);
     }
 
     public void doMerge(BlockState state, Direction dir) {
@@ -107,10 +108,10 @@ public class MergeBlockEntity extends BlockEntity {
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
                     states.put(entry.getKey(), entry.getValue().getState());
                 }
-                newState = merge.doMultiMerge(states, initialState);
+                newState = merge.doMultiMerge(blockPos, states, initialState);
             } else {
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
-                    newState = merge.doMerge(entry.getValue().getState(), initialState, entry.getKey());
+                    newState = merge.doMerge(entry.getValue().getState(), blockPos, initialState, entry.getKey());
                     break;
                 }
             }

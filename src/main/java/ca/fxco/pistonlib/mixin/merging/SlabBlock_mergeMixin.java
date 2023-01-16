@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +19,7 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public boolean canMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         if (state.getBlock() != mergingIntoState.getBlock()) {
             return false;
         }
@@ -36,7 +37,7 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         return mergingIntoState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.DOUBLE);
     }
 
@@ -44,12 +45,12 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     // Slab blocks will need either half sticky blocks or half piston blocks to unmerge like this
 
     @Override
-    public boolean canUnMerge(BlockState state, Direction dir) {
+    public boolean canUnMerge(BlockState state, BlockPos blockPos, Direction dir) {
         return state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.DOUBLE;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockState pistonBlockState, Direction dir) {
+    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
         return new Pair<>(
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

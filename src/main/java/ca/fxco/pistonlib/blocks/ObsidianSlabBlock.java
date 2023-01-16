@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks;
 
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
-import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -22,7 +22,7 @@ public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMe
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public boolean canMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         if (state.getBlock() != mergingIntoState.getBlock() && state.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
             return false;
         }
@@ -40,7 +40,7 @@ public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMe
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         if (state.getBlock() == Blocks.SMOOTH_STONE_SLAB) {
             if (state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.BOTTOM) {
                 return ModBlocks.HALF_OBSIDIAN_BLOCK.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.UP);

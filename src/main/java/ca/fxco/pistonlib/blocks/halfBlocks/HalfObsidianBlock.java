@@ -9,6 +9,7 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
@@ -85,12 +86,12 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, Direction dir) {
+    public boolean canUnMerge(BlockState state, BlockPos blockPos, Direction dir) {
         return true;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockState pistonBlockState, Direction dir) {
+    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
         return new Pair<>(
                 Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

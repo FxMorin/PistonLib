@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.IceBlock;
@@ -24,22 +25,22 @@ public class IceBlock_compressMixin implements ConfigurablePistonMerging {
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public boolean canMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         return state.getBlock() == mergingIntoState.getBlock();
     }
 
     @Override
-    public boolean canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+    public boolean canMultiMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return currentlyMerging.size() <= 2; // max 3
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         return Blocks.ICE.defaultBlockState();
     }
 
     @Override
-    public BlockState doMultiMerge(Map<Direction, BlockState> states, BlockState mergingIntoState) {
+    public BlockState doMultiMerge(BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
         if (states.size() != 3) {
             return Blocks.ICE.defaultBlockState();
         }
