@@ -202,11 +202,10 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
             } else {
                 ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
                 if (merge.usesConfigurablePistonMerging()) {
-                    if (merge.canMergeFromSide(state, level, currentPos, this.pushDirection)) {
+                    if (merge.canMerge(state, level, currentPos, lastState, this.pushDirection)) {
                         ConfigurablePistonMerging lastMerge = (ConfigurablePistonMerging) lastState.getBlock();
-                        if (lastMerge.usesConfigurablePistonMerging() &&
-                                lastMerge.canMergeFromSide(lastState, level, lastBlockPos, pushDirOpposite) &&
-                                merge.canMerge(lastState, level, lastBlockPos, state, this.pushDirection) &&
+                        if ((!lastMerge.usesConfigurablePistonMerging() ||
+                                lastMerge.canMergeFromSide(lastState, level, lastBlockPos, pushDirOpposite)) &&
                                 (!merge.getBlockEntityMergeRules().checkMerge() ||
                                 (!(level.getBlockEntity(currentPos) instanceof BlockEntityMerging currentBem) ||
                                         currentBem.canMerge(state, lastState, this.pushDirection)))) {
