@@ -1,9 +1,11 @@
 package ca.fxco.pistonlib.impl;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public interface BlockEntityMerging {
     /**
      * Returns if it will be able to unmerge into two different states
      */
-    default boolean canUnMerge(BlockState state, Direction dir) {
+    default boolean canUnMerge(BlockState state, BlockState neighborState, Direction dir) {
         return true;
     }
 
@@ -41,14 +43,6 @@ public interface BlockEntityMerging {
     //
     // These methods are called to determine what to do with the block entity when merging
     //
-
-    /**
-     * This method only gets called if this is the block entity of the block getting converted to a merge block
-     * If false, the block entity is removed and the merge will finish like normally.
-     */
-    default boolean doMerging() {
-        return true;
-    }
 
     /**
      * Used for Advanced Final Merging. To use `onAdvancedFinalMerge` this method needs to return true.
@@ -62,7 +56,8 @@ public interface BlockEntityMerging {
 
 
     //
-    // These methods are called when merging, think of them more as events
+    // These methods are called when merging start (onMerge) and merging end (onAdvancedFinalMerge)
+    // They are only called for blocks merging into another block. Not initial blocks
     //
 
     default void onMerge(MergeBlockEntity mergeBlockEntity, Direction direction) {}
@@ -72,4 +67,41 @@ public interface BlockEntityMerging {
      * This is used to modify the block entity. If no block entity is present to modify, this method is not called!
      */
     default void onAdvancedFinalMerge(BlockEntity blockEntity) {}
+
+
+    //
+    // These methods are called when unmerging
+    //
+
+    /**
+     * Determines what blocks the block entity should unmerge into.
+     * Return null to call the blockstate `doUnMerge` method
+     * The first block in the pair is the block that will be pulled out
+     */
+    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, Direction direction) {
+        return null;
+    }
+
+
+    //
+    // These methods are only for initial block entities. For blocks that got other blocks merged into them
+    //
+
+    /**
+     * This method only gets called if this is the block entity of the block getting converted to a merge block
+     * If false, the block entity is removed and the merge will finish like normally.
+     */
+    default boolean doInitialMerging() {
+        return true;
+    }
+
+    /**
+     * When the merge is done, before all the other `onAdvancedFinalMerge` methods
+     */
+    default void beforeInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {}
+
+    /**
+     * When the merge is done, after all the other `onAdvancedFinalMerge` methods
+     */
+    default void afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {}
 }

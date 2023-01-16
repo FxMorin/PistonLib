@@ -64,7 +64,8 @@ public class MergeBlockEntity extends BlockEntity {
         ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
         if (merge.canMultiMerge() &&
                 merge.canMultiMerge(state, level, worldPosition, initialState, dir, mergingBlocks)) {
-            return initialBlockEntity == null || (initialBlockEntity instanceof BlockEntityMerging bem &&
+            return initialBlockEntity == null || (!merge.getBlockEntityMergeRules().checkMerge() ||
+                    initialBlockEntity instanceof BlockEntityMerging bem &&
                     bem.canMultiMerge(state, initialState, dir, mergingBlocks));
         }
         return false;
@@ -128,13 +129,16 @@ public class MergeBlockEntity extends BlockEntity {
                 Block.updateOrDestroy(newState, blockState2, level, blockPos, Block.UPDATE_ALL);
             } else {
                 if (mergeBlockEntity.initialBlockEntity != null) {
+                    BlockEntityMerging initialBem = (BlockEntityMerging)mergeBlockEntity.initialBlockEntity;
                     mergeBlockEntity.initialBlockEntity.setLevel(level);
                     mergeBlockEntity.initialBlockEntity.setBlockState(blockState2);
+                    initialBem.beforeInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
                     for (MergeData data : mergeBlockEntity.mergingBlocks.values()) {
                         if (data.hasBlockEntity()) {
                             ((BlockEntityMerging)data.getBlockEntity()).onAdvancedFinalMerge(mergeBlockEntity.initialBlockEntity);
                         }
                     }
+                    initialBem.afterInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
                     Utils.setBlockWithEntity(level, blockPos, blockState2, mergeBlockEntity.initialBlockEntity, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
@@ -142,6 +146,10 @@ public class MergeBlockEntity extends BlockEntity {
                 level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
             }
         }
+    }
+
+    public @Nullable BlockEntity getInitialBlockEntity() {
+        return this.initialBlockEntity;
     }
 
     protected void moveCollidedEntities(float nextProgress) {

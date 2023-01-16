@@ -30,4 +30,9 @@ public class SignBlock_mergeMixin implements ConfigurablePistonMerging, Configur
         }
         return state.getValues().equals(mergingIntoState.getValues());
     }
+
+    @Override
+    public MergeRule getBlockEntityMergeRules() {
+        return MergeRule.MERGING;
+    }
 }

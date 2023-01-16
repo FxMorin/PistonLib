@@ -54,13 +54,50 @@ public interface ConfigurablePistonMerging {
 
 
     // Returns if it will be able to unmerge into two different states
-    default boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
+    default boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState neighborState, Direction dir) {
         return false;
     }
 
     // Returns the blockstates that it should unmerge into.
     // The first block in the pair is the block that will be pulled out
-    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
+    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
         return null;
+    }
+
+    /**
+     * This method determines when the block entity should be used:
+     * -     NEVER = Block entity will be skipped completely
+     * -   MERGING = Block entity will be used to check merging conditions
+     * - UNMERGING = Block entity will be used to check unmerging conditions
+     * -    ALWAYS = Block entity will always be checked
+     * State checks will always happen before block entity checks
+     * Skipping won't get the block entity at all, this is done for performance reasons.
+     * It allows us to quickly know if the block entity should be loaded and checked against
+     */
+    default MergeRule getBlockEntityMergeRules() {
+        return MergeRule.NEVER;
+    }
+
+    enum MergeRule {
+        NEVER(false, false),
+        MERGING(true, false),
+        UNMERGING(false, true),
+        ALWAYS(true, true);
+
+        private final boolean merging;
+        private final boolean unmerging;
+
+        MergeRule(boolean merging, boolean unmerging) {
+            this.merging = merging;
+            this.unmerging = unmerging;
+        }
+
+        public boolean checkMerge() {
+            return this.merging;
+        }
+
+        public boolean checkUnMerge() {
+            return this.unmerging;
+        }
     }
 }

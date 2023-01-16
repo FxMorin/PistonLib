@@ -48,13 +48,14 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     // Slab blocks will need either half sticky blocks or half piston blocks to unmerge like this
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
+    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                              BlockState neighborState, Direction direction) {
         return state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.DOUBLE;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
-                                                  BlockState pistonBlockState, Direction direction) {
+    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
+                                                  BlockPos blockPos, Direction direction) {
         return new Pair<>(
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

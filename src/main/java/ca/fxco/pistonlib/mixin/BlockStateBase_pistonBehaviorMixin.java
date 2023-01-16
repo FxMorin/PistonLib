@@ -35,8 +35,6 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     @Shadow
     protected BlockState asState() { return null; }
 
-    @Shadow public abstract boolean isRedstoneConductor(BlockGetter blockGetter, BlockPos blockPos);
-
     @Override
     public boolean usesConfigurablePistonBehavior() {
         return ((ConfigurablePistonBehavior)this.getBlock()).usesConfigurablePistonBehavior();
@@ -148,12 +146,17 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
-    public boolean canUnMerge(BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).canUnMerge(this.asState(), blockGetter, blockPos, direction);
+    public boolean canUnMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState neighborState, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canUnMerge(this.asState(), blockGetter, blockPos, neighborState, direction);
     }
 
     @Override
-    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState pistonBlockState, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).doUnMerge(this.asState(), blockGetter, blockPos, pistonBlockState, direction);
+    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doUnMerge(this.asState(), blockGetter, blockPos, direction);
+    }
+
+    @Override
+    public ConfigurablePistonMerging.MergeRule getBlockEntityMergeRules() {
+        return ((ConfigurablePistonMerging)this.getBlock()).getBlockEntityMergeRules();
     }
 }

@@ -87,13 +87,14 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
+    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                              BlockState neighborState, Direction direction) {
         return true;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
-                                                  BlockState pistonBlockState, Direction direction) {
+    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
+                                                  BlockPos blockPos, Direction direction) {
         return new Pair<>(
                 Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

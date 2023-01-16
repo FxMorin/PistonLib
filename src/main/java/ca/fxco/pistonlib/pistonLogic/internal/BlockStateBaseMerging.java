@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.internal;
 
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,9 +38,12 @@ public interface BlockStateBaseMerging {
 
 
     // Returns if it will be able to unmerge into two different states
-    boolean canUnMerge(BlockGetter blockGetter, BlockPos blockPos, Direction dir);
+    boolean canUnMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState neighborState, Direction direction);
 
     // Returns the blockstates that it should unmerge into.
     // The first block in the pair is the block that will be pulled out
-    @Nullable Pair<BlockState, BlockState> doUnMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState pistonBlockState, Direction dir);
+    @Nullable Pair<BlockState, BlockState> doUnMerge(BlockGetter blockGetter, BlockPos blockPos, Direction direction);
+
+    // Read ConfigurablePistonMerging description
+    ConfigurablePistonMerging.MergeRule getBlockEntityMergeRules();
 }
