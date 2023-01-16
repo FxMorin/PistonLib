@@ -5,6 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.base.ModCreativeModeTabs;
+import ca.fxco.pistonlib.base.ModItems;
+import ca.fxco.pistonlib.base.ModRegistries;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroups;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -31,7 +36,17 @@ public class PistonLib implements ModInitializer {
     @Override
     public void onInitialize() {
         // Don't mind these, they just make sure the classes are called at the right time
-        ModBlocks.order();
-        ModBlockEntities.order();
+        ModRegistries.bootstrap();
+        PistonFamilies.bootstrap();
+        StickyGroups.bootstrap();
+        ModBlocks.bootstrap();
+        ModBlockEntities.bootstrap();
+        ModItems.boostrap();
+        ModCreativeModeTabs.bootstrap();
+
+        // TODO: ensure that other mods register their custom pistons
+        // before locking the piston families and sticky groups.
+        PistonFamilies.validate();
+        StickyGroups.validate();
     }
 }

@@ -1,33 +1,25 @@
 package ca.fxco.pistonlib.blocks.pistons.fastPiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class FastMovingBlockEntity extends BasicMovingBlockEntity {
 
     public FastMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.FAST_MOVING_BLOCK_ENTITY);
+        super(pos, state);
     }
 
-    public FastMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
-        super(pos, state, type);
-    }
-
-    public FastMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston) {
-        this(pos, state, movedState, facing, extending, isSourcePiston, ModBlockEntities.FAST_MOVING_BLOCK_ENTITY);
-    }
-
-    public FastMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, type);
+    public FastMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                 BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                 boolean isSourcePiston) {
+        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
     }
 
     @Override
@@ -43,7 +35,7 @@ public class FastMovingBlockEntity extends BasicMovingBlockEntity {
             this.level.removeBlockEntity(this.worldPosition);
             this.setRemoved();
 
-            if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
+            if (this.level.getBlockState(this.worldPosition).is(this.getFamily().getMoving())) {
                 BlockState state = this.isSourcePiston ?
                         Blocks.AIR.defaultBlockState() :
                         Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);

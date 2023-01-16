@@ -1,17 +1,16 @@
-package ca.fxco.pistonlib.pistonLogic.pistonHandlers;
+package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.PistonUtils;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,20 +18,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
-public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureResolver {
-
-    protected final BasicMovingBlock extensionBlock;
+public class ConfigurableLongPistonHandler extends BasicStructureResolver {
 
     public ConfigurableLongPistonHandler(LongPistonBaseBlock piston, Level level, BlockPos pos, Direction facing,
-                                         boolean extend, BasicMovingBlock movingBlock) {
-        this(piston, level, pos, facing, extend, movingBlock, MAX_PUSH_DEPTH);
+                                         boolean extend) {
+        this(piston, level, pos, facing, extend, MAX_PUSH_DEPTH);
     }
 
     public ConfigurableLongPistonHandler(LongPistonBaseBlock piston, Level level, BlockPos pos, Direction facing,
-                                         boolean extend, BasicMovingBlock movingBlock, int maxMovableBlocks) {
+                                         boolean extend, int maxMovableBlocks) {
         super(piston, level, pos, facing, extend, maxMovableBlocks);
-
-        this.extensionBlock = movingBlock;
     }
 
     public boolean calculateLongPullPush(boolean isPull, Consumer<LongMovingBlockEntity> applySkip) {
@@ -62,7 +57,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos pos = this.toPush.get(i);
             state = this.level.getBlockState(pos);
-            if (state.is(this.extensionBlock) &&
+            if (state.is(this.family.getMoving()) &&
                     this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
                 blockEntities.add(bpbe);
                 state = bpbe.getMovedState();
@@ -84,7 +79,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
 
     protected boolean cantMoveAdjacentBlocksWithBE(BlockPos pos) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.is(this.extensionBlock) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
+        if (state.is(this.family.getMoving()) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
             state = bpbe.getMovedState();
         for (Direction direction : Direction.values()) {
             if (direction.getAxis() != this.pushDirection.getAxis()) {
@@ -99,7 +94,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
 
     protected boolean cantMoveAdjacentStickyBlocksWithBE(Map<Direction, StickyType> sides, BlockPos pos) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.is(this.extensionBlock) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
+        if (state.is(this.family.getMoving()) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
             state = bpbe.getMovedState();
         for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
@@ -118,7 +113,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
     protected boolean cantMoveWithBE(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
         if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
-        boolean isExtensionBlock = state.is(this.extensionBlock);
+        boolean isExtensionBlock = state.is(this.family.getMoving());
         LongMovingBlockEntity blockEntity = null;
         if (isExtensionBlock) {
             if (this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
@@ -146,7 +141,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
             BlockState oldState = state;
             state = this.level.getBlockState(blockPos);
             if (state.isAir()) break;
-            isExtensionBlock = state.is(this.extensionBlock);
+            isExtensionBlock = state.is(this.family.getMoving());
             if (isExtensionBlock) {
                 if (this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
                     blockEntity = bpbe;
@@ -188,7 +183,7 @@ public class ConfigurableLongPistonHandler extends ConfigurablePistonStructureRe
                 for(int m = 0; m <= l + j; ++m) {
                     BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
-                    if (state.is(this.extensionBlock) &&
+                    if (state.is(this.family.getMoving()) &&
                             this.level.getBlockEntity(pos3) instanceof LongMovingBlockEntity bpbe) {
                         state = bpbe.getMovedState();
                     }

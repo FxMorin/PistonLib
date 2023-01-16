@@ -3,6 +3,8 @@ package ca.fxco.pistonlib.blocks.pistons;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.QLevel;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -12,8 +14,9 @@ public class VeryQuasiPistonBaseBlock extends BasicPistonBaseBlock {
 
     private final int quasiStrength; // Use 1 to replicate vanilla behaviour
 
-	public VeryQuasiPistonBaseBlock(int quasiStrength, PistonType type) {
-        super(type);
+	public VeryQuasiPistonBaseBlock(PistonFamily family, PistonType type, int quasiStrength) {
+        super(family, type);
+
         this.quasiStrength = quasiStrength;
     }
 

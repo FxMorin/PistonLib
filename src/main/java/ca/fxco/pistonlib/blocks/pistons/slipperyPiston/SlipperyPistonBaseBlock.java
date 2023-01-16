@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.slipperyPiston;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,8 +20,8 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class SlipperyPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public SlipperyPistonBaseBlock(PistonType type) {
-        super(type);
+    public SlipperyPistonBaseBlock(PistonFamily family, PistonType type) {
+        super(family, type);
     }
 
     @Override

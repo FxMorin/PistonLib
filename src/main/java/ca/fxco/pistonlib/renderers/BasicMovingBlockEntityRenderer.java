@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +23,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
 public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
@@ -85,11 +85,10 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
             }
         } else {
             if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonType type = base.type;
+                PistonFamily family = mbe.getFamily();
                 Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
-                BlockState headState = base.getHeadBlock().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, type)
+                BlockState headState = family.getHead().defaultBlockState()
                     .setValue(BasicPistonHeadBlock.FACING, facing)
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 

@@ -1,11 +1,12 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,12 +17,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -40,32 +37,20 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     protected final boolean verySticky;
     protected final boolean canExtendOnRetracting;
 
-    public ConfigurableMovingBlock(ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        this(BasicMovingBlock.createDefaultSettings(), pistonSettings);
+    public ConfigurableMovingBlock(PistonFamily family, ConfigurablePistonBaseBlock.Settings pistonSettings) {
+        this(family, BasicMovingBlock.createDefaultSettings(), pistonSettings);
     }
 
-    public ConfigurableMovingBlock(BlockBehaviour.Properties properties,
+    public ConfigurableMovingBlock(PistonFamily family, Properties properties,
                                    ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        super(properties);
+        super(family, properties);
+
         slippery = pistonSettings.slippery;
         extendingSpeed = pistonSettings.extendingSpeed;
         retractingSpeed = pistonSettings.retractingSpeed;
         translocation = pistonSettings.translocation;
         verySticky = pistonSettings.verySticky;
         canExtendOnRetracting = pistonSettings.canExtendOnRetracting;
-    }
-
-    @Override
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
-                                               boolean extending, boolean isSourcePiston) {
-        return new ConfigurableMovingBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
-                pos, state, movedState, facing, extending, isSourcePiston);
-    }
-
-    @Override @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
     }
 
     @Override
@@ -115,7 +100,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
             }
             BlockState neighborState = level.getBlockState(neighborPos);
 
-            if (neighborState.is(thisMbe.getMovingBlock())) {
+            if (neighborState.is(this.family.getMoving())) {
                 BlockEntity blockEntity = level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof ConfigurableMovingBlockEntity mbe) {

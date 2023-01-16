@@ -1,27 +1,28 @@
-package ca.fxco.pistonlib.pistonLogic.pistonHandlers;
+package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import com.google.common.collect.Lists;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
-import java.util.List;
+public class MergingPistonStructureResolver extends BasicStructureResolver {
 
-public class MergingPistonStructureResolver extends ConfigurablePistonStructureResolver {
+    public final List<BlockPos> toMerge = new ArrayList<>();
+    public final List<BlockPos> ignore = new ArrayList<>();
 
-    public final List<BlockPos> toMerge = Lists.newArrayList();
-    public final List<BlockPos> ignore = Lists.newArrayList();
-
-    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
+    public MergingPistonStructureResolver(MergePistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
         super(piston, level, pos, facing, extend);
     }
 

@@ -3,10 +3,13 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -33,12 +36,13 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     private final boolean slippery;
     private final boolean verySticky;
 
-    public ConfigurablePistonHeadBlock(ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD), pistonSettings);
+    public ConfigurablePistonHeadBlock(PistonFamily family, ConfigurablePistonBaseBlock.Settings pistonSettings) {
+        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD), pistonSettings);
     }
 
-    public ConfigurablePistonHeadBlock(Properties properties, ConfigurablePistonBaseBlock.Settings settings) {
-        super(properties);
+    public ConfigurablePistonHeadBlock(PistonFamily family, Properties properties, ConfigurablePistonBaseBlock.Settings settings) {
+        super(family, properties);
+
         slippery = settings.slippery;
         verySticky = settings.verySticky;
         if (slippery) {

@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.slipperyPiston;
 import ca.fxco.pistonlib.base.ModProperties;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 import static ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
@@ -26,12 +26,11 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     public static final IntegerProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
-    public SlipperyPistonHeadBlock() {
-        super();
+    public SlipperyPistonHeadBlock(PistonFamily family) {
+        super(family);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
-            .setValue(TYPE, PistonType.DEFAULT)
             .setValue(SHORT, false)
             .setValue(SLIPPERY_DISTANCE, 0));
     }
@@ -71,6 +70,6 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE, SHORT, SLIPPERY_DISTANCE);
+        builder.add(FACING, SHORT, SLIPPERY_DISTANCE);
     }
 }

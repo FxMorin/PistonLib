@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic;
+package ca.fxco.pistonlib.pistonLogic.sticky;
 
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 

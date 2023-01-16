@@ -1,81 +1,45 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.jetbrains.annotations.Nullable;
 
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonArmBlock;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class PistonFamily {
 
-    @Nullable
-    protected BasicPistonHeadBlock headBlock;
-    @Nullable
-    protected BasicPistonBaseBlock normalBaseBlock = null;
-    @Nullable
-    protected BasicPistonBaseBlock stickyBaseBlock = null;
-    @Nullable
-    protected BasicMovingBlock movingBlock = null;
-    @Nullable
-    protected LongPistonArmBlock armBlock = null;
+    private final boolean customTextures;
 
-    protected final boolean generateAutomatically;
-    protected final boolean customTextures;
-    private final String id;
+    protected Map<PistonType, Block> base = new EnumMap<>(PistonType.class);
+    @Nullable
+    protected Block arm;
+    protected Block head;
+    protected Block moving;
+    protected BlockEntityType<? extends BasicMovingBlockEntity> movingBlockEntityType;
+    protected BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> movingBlockEntityFactory;
 
-    PistonFamily(String id) {
-        this(id, true);
+    public PistonFamily() {
+        this(true);
     }
 
-    PistonFamily(String id, boolean hasCustomTextures) {
-        this(id, hasCustomTextures, true);
-    }
-
-    PistonFamily(String id, boolean hasCustomTextures, boolean shouldGenerateAutomatically) {
-        this.id = id;
+    PistonFamily(boolean hasCustomTextures) {
         this.customTextures = hasCustomTextures;
-        this.generateAutomatically = shouldGenerateAutomatically;
-        PistonFamilies.registerBlockId(id, this); // Adds the blockId to the quick lookup table
     }
 
-    public @Nullable BasicPistonHeadBlock getHeadBlock() {
-        return this.headBlock;
-    }
-
-    public @Nullable BasicPistonBaseBlock getBaseBlock(PistonType type) {
-        return switch (type) {
-            case DEFAULT -> normalBaseBlock;
-            case STICKY -> stickyBaseBlock;
-            default -> throw new IllegalArgumentException("unknown base type " + type);
-        };
-    }
-
-    public Block getBaseBlock() {
-        for (PistonType type : PistonType.values()) {
-            Block baseBlock = getBaseBlock(type);
-
-            if (baseBlock != null) {
-                return baseBlock;
-            }
-        }
-
-        return null;
-    }
-
-    public @Nullable BasicMovingBlock getMovingBlock() {
-        return this.movingBlock;
-    }
-
-    public @Nullable LongPistonArmBlock getArmBlock() {
-        return this.armBlock;
-    }
-
-    public boolean shouldGenerateAutomatically() {
-        return this.generateAutomatically;
+    @Override
+    public String toString() {
+        return "PistonFamily{" + PistonFamilies.getId(this) + "}";
     }
 
     public boolean hasCustomTextures() {
@@ -83,39 +47,79 @@ public class PistonFamily {
     }
 
     // Use this method to implement custom block types in families
-    public boolean hasCustomBlockLogic(Block block) {
+    public boolean hasCustomBlocks(Block block) {
         return false;
     }
 
-    public String getId() {
-        return this.id;
+    public Map<PistonType, Block> getBases() {
+        return Collections.unmodifiableMap(this.base);
     }
 
-    public boolean mustSetupHead() {
-        return this.headBlock == null;
+    public @Nullable Block getBase(PistonType type) {
+        return this.base.get(type);
     }
 
-    public void head(BasicPistonHeadBlock block) {
-        this.headBlock = block;
-        PistonFamilies.registerPistonHead(block, this); // Adds the piston head to the quick lookup table
+    /**
+     * @return an arbitrary base block
+     */
+    public Block getBase() {
+        return this.base.values().iterator().next();
     }
 
-    public void base(BasicPistonBaseBlock block) {
-        if (getBaseBlock(block.type) != null)
-            throw new IllegalStateException("base of type " + block.type + " has already been registered!");
-        switch (block.type) {
-            case DEFAULT -> normalBaseBlock = block;
-            case STICKY -> stickyBaseBlock = block;
-            default -> throw new IllegalArgumentException("unknown base type " + block.type);
-        };
+    public @Nullable Block getArm() {
+        return this.arm;
     }
 
-    public void moving(BasicMovingBlock block) {
-        this.movingBlock = block;
+    public Block getHead() {
+        return this.head;
     }
 
-    // For modded pistons that extend further than one block
-    public void arm(LongPistonArmBlock block) {
-        this.armBlock = block;
+    public Block getMoving() {
+        return moving;
+    }
+
+    public BlockEntityType<? extends BasicMovingBlockEntity> getMovingBlockEntityType() {
+        return this.movingBlockEntityType;
+    }
+
+    public BasicMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                                       BlockEntity movedBlockEntity, Direction facing,
+                                                       boolean extending, boolean isSourcePiston) {
+        return this.movingBlockEntityFactory
+            .create(this, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+    }
+
+    public void setBase(Block base) {
+        if (PistonFamilies.requireNotLocked()) {
+            this.base.put(((BasicPistonBaseBlock)base).type, base);
+        }
+    }
+
+    public void setArm(Block arm) {
+        if (PistonFamilies.requireNotLocked()) {
+            this.arm = arm;
+        }
+    }
+
+    public void setHead(Block head) {
+        if (PistonFamilies.requireNotLocked()) {
+            this.head = head;
+        }
+    }
+
+    public void setMoving(Block moving) {
+        if (PistonFamilies.requireNotLocked()) {
+            this.moving = moving;
+        }
+    }
+
+    public void setMovingBlockEntity(
+        BlockEntityType<? extends BasicMovingBlockEntity> type,
+        BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> factory
+    ) {
+        if (PistonFamilies.requireNotLocked()) {
+            this.movingBlockEntityType = type;
+            this.movingBlockEntityFactory = factory;
+        }
     }
 }

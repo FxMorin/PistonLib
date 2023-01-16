@@ -3,20 +3,18 @@ package ca.fxco.pistonlib.base;
 import java.util.Map;
 import java.util.function.Function;
 
-import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.blocks.*;
-import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
-import org.jetbrains.annotations.Nullable;
-
+import ca.fxco.pistonlib.blocks.AllSidedObserverBlock;
+import ca.fxco.pistonlib.blocks.AxisLockedBlock;
+import ca.fxco.pistonlib.blocks.GlueBlock;
+import ca.fxco.pistonlib.blocks.MoveCountingBlock;
+import ca.fxco.pistonlib.blocks.PoweredStickyBlock;
+import ca.fxco.pistonlib.blocks.PullOnlyBlock;
+import ca.fxco.pistonlib.blocks.QuasiBlock;
+import ca.fxco.pistonlib.blocks.SlimyPoweredBlock;
+import ca.fxco.pistonlib.blocks.StickyChainBlock;
+import ca.fxco.pistonlib.blocks.StickySidesBlock;
+import ca.fxco.pistonlib.blocks.StickylessBlock;
+import ca.fxco.pistonlib.blocks.WeakPoweredBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfObsidianBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfPoweredBlock;
@@ -25,45 +23,42 @@ import ca.fxco.pistonlib.blocks.halfBlocks.HalfSlimeBlock;
 import ca.fxco.pistonlib.blocks.pistons.FrontPoweredPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.PushLimitPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.StalePistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.pistonlib.blocks.pistons.VeryQuasiPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonArmBlock;
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonArmBlock;
+import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlock;
+import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBaseBlock;
+import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.longPiston.LongMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonHeadBlock;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEPistonBaseBlock;
-import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyMovingBlock;
+import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyPistonHeadBlock;
-import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.translocationPiston.TranslocationMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.StickyMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.StickyPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.VeryStickyPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperyRedstoneBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperySlimeBlock;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.Material;
 
-import static ca.fxco.pistonlib.PistonLib.CUSTOM_CREATIVE_MODE_TAB;
 import static ca.fxco.pistonlib.PistonLib.id;
 import static ca.fxco.pistonlib.pistonLogic.families.PistonFamilies.*;
 
@@ -105,10 +100,10 @@ public class ModBlocks {
 
     // Basic Piston
     // Acts exactly like a normal vanilla piston
-    public static final BasicPistonHeadBlock BASIC_PISTON_HEAD = registerPiston(BASIC, new BasicPistonHeadBlock());
-    public static final BasicMovingBlock BASIC_MOVING_BLOCK = registerPiston(BASIC, new BasicMovingBlock());
-    public static final BasicPistonBaseBlock BASIC_PISTON = registerPiston(BASIC, new BasicPistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock BASIC_STICKY_PISTON = registerPiston(BASIC, new BasicPistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock BASIC_PISTON = register("basic_piston", new BasicPistonBaseBlock(BASIC, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock BASIC_STICKY_PISTON = register("basic_sticky_piston", new BasicPistonBaseBlock(BASIC, PistonType.STICKY));
+    public static final BasicPistonHeadBlock BASIC_PISTON_HEAD = register("basic_piston_head", new BasicPistonHeadBlock(BASIC));
+    public static final BasicMovingBlock BASIC_MOVING_BLOCK = register("basic_moving_block", new BasicMovingBlock(BASIC));
 
     // Configurable Piston - Testing only
     // The one and only configurable piston. It can do mostly everything that the other pistons can do, allowing you
@@ -120,196 +115,120 @@ public class ModBlocks {
 
     // Basic Long Piston
     // Can extend further than 1 block
-    public static final LongPistonHeadBlock LONG_PISTON_HEAD = registerPiston(LONG, new LongPistonHeadBlock());
-    public static final LongMovingBlock LONG_MOVING_BLOCK = registerPiston(LONG, new LongMovingBlock());
-    public static final LongPistonBaseBlock LONG_PISTON = registerPiston(LONG, new LongPistonBaseBlock(PistonType.DEFAULT), null);
-    public static final LongPistonBaseBlock LONG_STICKY_PISTON = registerPiston(LONG, new LongPistonBaseBlock(PistonType.STICKY), null);
-    public static final LongPistonArmBlock LONG_PISTON_ARM = registerPiston(LONG, new LongPistonArmBlock());
+    public static final LongPistonBaseBlock LONG_PISTON = register("long_piston", new LongPistonBaseBlock(LONG, PistonType.DEFAULT));
+    public static final LongPistonBaseBlock LONG_STICKY_PISTON = register("long_sticky_piston", new LongPistonBaseBlock(LONG, PistonType.STICKY));
+    public static final BasicPistonArmBlock LONG_PISTON_ARM = register("long_piston_arm", new BasicPistonArmBlock(LONG));
+    public static final LongPistonHeadBlock LONG_PISTON_HEAD = register("long_piston_head", new LongPistonHeadBlock(LONG));
+    public static final BasicMovingBlock LONG_MOVING_BLOCK = register("long_moving_block", new BasicMovingBlock(LONG));
 
     // Stale Piston
     // A vanilla piston except it cannot be quasi-powered
-    public static final BasicPistonHeadBlock STALE_PISTON_HEAD = registerPiston(STALE, new BasicPistonHeadBlock());
-    public static final BasicPistonBaseBlock STALE_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock STALE_STICKY_PISTON = registerPiston(STALE, new StalePistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock STALE_PISTON = register("stale_piston", new StalePistonBaseBlock(STALE, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock STALE_STICKY_PISTON = register("stale_sticky_piston", new StalePistonBaseBlock(STALE, PistonType.STICKY));
+    public static final BasicPistonHeadBlock STALE_PISTON_HEAD = register("stale_piston_head", new BasicPistonHeadBlock(STALE));
+    public static final BasicMovingBlock STALE_MOVING_BLOCK = register("stale_moving_block", new BasicMovingBlock(STALE));
 
     // Very Quasi Piston
     // A vanilla piston except it can be quasi-powered from 5 blocks up
-    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = registerPiston(QUASI, new BasicPistonHeadBlock());
-    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = registerPiston(QUASI, new VeryQuasiPistonBaseBlock(5, PistonType.STICKY));
+    public static final BasicPistonBaseBlock VERY_QUASI_PISTON = register("very_quasi_piston", new VeryQuasiPistonBaseBlock(QUASI, PistonType.DEFAULT, 5));
+    public static final BasicPistonBaseBlock VERY_QUASI_STICKY_PISTON = register("very_quasi_sticky_piston", new VeryQuasiPistonBaseBlock(QUASI, PistonType.STICKY, 5));
+    public static final BasicPistonHeadBlock VERY_QUASI_PISTON_HEAD = register("very_quasi_piston_head", new BasicPistonHeadBlock(QUASI));
+    public static final BasicMovingBlock VERY_QUASI_MOVING_BLOCK = register("very_quasi_moving_block", new BasicMovingBlock(QUASI));
 
     // Strong Piston
     // Can push 24 blocks, although it takes a lot longer to push (0.05x slower)
-    public static final BasicPistonHeadBlock STRONG_PISTON_HEAD = registerPiston(STRONG, new BasicPistonHeadBlock());
-    public static final SpeedMovingBlock STRONG_MOVING_BLOCK = registerPiston(STRONG, new SpeedMovingBlock(0.05F));
-    public static final BasicPistonBaseBlock STRONG_PISTON = registerPiston(STRONG, new PushLimitPistonBaseBlock(PistonType.DEFAULT, 24));
-    public static final BasicPistonBaseBlock STRONG_STICKY_PISTON = registerPiston(STRONG, new PushLimitPistonBaseBlock(PistonType.STICKY, 24));
+    public static final BasicPistonBaseBlock STRONG_PISTON = register("strong_piston", new PushLimitPistonBaseBlock(STRONG, PistonType.DEFAULT, 24));
+    public static final BasicPistonBaseBlock STRONG_STICKY_PISTON = register("strong_sticky_piston", new PushLimitPistonBaseBlock(STRONG, PistonType.STICKY, 24));
+    public static final BasicPistonHeadBlock STRONG_PISTON_HEAD = register("strong_piston_head", new BasicPistonHeadBlock(STRONG));
+    public static final BasicMovingBlock STRONG_MOVING_BLOCK = register("strong_moving_block", new BasicMovingBlock(STRONG));
 
     // Fast Piston
     // Can only push 2 block, although it's very fast
-    public static final BasicPistonHeadBlock FAST_PISTON_HEAD = registerPiston(FAST, new BasicPistonHeadBlock());
-    public static final FastMovingBlock FAST_MOVING_BLOCK = registerPiston(FAST, new FastMovingBlock());
-    public static final BasicPistonBaseBlock FAST_PISTON = registerPiston(FAST, new PushLimitPistonBaseBlock(PistonType.DEFAULT, 8));
-    public static final BasicPistonBaseBlock FAST_STICKY_PISTON = registerPiston(FAST, new PushLimitPistonBaseBlock(PistonType.STICKY, 8));
+    public static final BasicPistonBaseBlock FAST_PISTON = register("fast_piston", new PushLimitPistonBaseBlock(FAST, PistonType.DEFAULT, 8));
+    public static final BasicPistonBaseBlock FAST_STICKY_PISTON = register("fast_sticky_piston", new PushLimitPistonBaseBlock(FAST, PistonType.STICKY, 8));
+    public static final BasicPistonHeadBlock FAST_PISTON_HEAD = register("fast_piston_head", new BasicPistonHeadBlock(FAST));
+    public static final BasicMovingBlock FAST_MOVING_BLOCK = register("fast_moving_block", new BasicMovingBlock(FAST));
 
     // Very Sticky Piston
     // It's face acts like a slime block, it can be pulled while extended.
     // Doing so will pull the moving piston with it as it retracts
-    public static final BasicPistonHeadBlock STICKY_PISTON_HEAD = registerPiston(STICKY, new StickyPistonHeadBlock());
-    public static final StickyMovingBlock STICKY_MOVING_BLOCK = registerPiston(STICKY, new StickyMovingBlock());
-    public static final BasicPistonBaseBlock VERY_STICKY_PISTON = registerPiston(STICKY, new VeryStickyPistonBaseBlock());
+    public static final BasicPistonBaseBlock VERY_STICKY_PISTON = register("very_sticky_piston", new VeryStickyPistonBaseBlock(VERY_STICKY));
+    public static final BasicPistonHeadBlock STICKY_PISTON_HEAD = register("very_sticky_piston_head", new StickyPistonHeadBlock(VERY_STICKY));
+    public static final BasicMovingBlock STICKY_MOVING_BLOCK = register("very_sticky_moving_block", new BasicMovingBlock(VERY_STICKY));
 
 
     // Front Powered Piston
     // Normal piston but can be powered through the front
-    public static final BasicPistonHeadBlock FRONT_POWERED_PISTON_HEAD = registerPiston(FRONT_POWERED, new BasicPistonHeadBlock());
-    public static final BasicPistonBaseBlock FRONT_POWERED_PISTON = registerPiston(FRONT_POWERED, new FrontPoweredPistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock FRONT_POWERED_STICKY_PISTON = registerPiston(FRONT_POWERED, new FrontPoweredPistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock FRONT_POWERED_PISTON = register("front_powered_piston", new FrontPoweredPistonBaseBlock(FRONT_POWERED, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock FRONT_POWERED_STICKY_PISTON = register("front_powered_sticky_piston", new FrontPoweredPistonBaseBlock(FRONT_POWERED, PistonType.STICKY));
+    public static final BasicPistonHeadBlock FRONT_POWERED_PISTON_HEAD = register("front_powered_piston_head", new BasicPistonHeadBlock(FRONT_POWERED));
+    public static final BasicMovingBlock FRONT_POWERED_MOVING_BLOCK = register("front_powered_moving_block", new BasicMovingBlock(FRONT_POWERED));
 
 
     // Translocation Piston
     // Normal piston but has 1.10 translocation
-    public static final BasicPistonHeadBlock TRANSLOCATION_PISTON_HEAD = registerPiston(TRANSLOCATION, new BasicPistonHeadBlock());
-    public static final TranslocationMovingBlock TRANSLOCATION_MOVING_BLOCK = registerPiston(TRANSLOCATION, new TranslocationMovingBlock());
-    public static final BasicPistonBaseBlock TRANSLOCATION_PISTON = registerPiston(TRANSLOCATION, new BasicPistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock TRANSLOCATION_STICKY_PISTON = registerPiston(TRANSLOCATION, new BasicPistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock TRANSLOCATION_PISTON = register("translocation_piston", new BasicPistonBaseBlock(TRANSLOCATION, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock TRANSLOCATION_STICKY_PISTON = register("translocation_sticky_piston", new BasicPistonBaseBlock(TRANSLOCATION, PistonType.STICKY));
+    public static final BasicPistonHeadBlock TRANSLOCATION_PISTON_HEAD = register("translocation_piston_head", new BasicPistonHeadBlock(TRANSLOCATION));
+    public static final BasicMovingBlock TRANSLOCATION_MOVING_BLOCK = register("translocation_moving_block", new BasicMovingBlock(TRANSLOCATION));
 
     // Slippery Piston
     // It's just a normal piston except its slippery
-    public static final BasicPistonHeadBlock SLIPPERY_PISTON_HEAD = registerPiston(SLIPPERY, new SlipperyPistonHeadBlock());
-    public static final SlipperyMovingBlock SLIPPERY_MOVING_BLOCK = registerPiston(SLIPPERY, new SlipperyMovingBlock());
-    public static final BasicPistonBaseBlock SLIPPERY_PISTON = registerPiston(SLIPPERY, new SlipperyPistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock SLIPPERY_STICKY_PISTON = registerPiston(SLIPPERY, new SlipperyPistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock SLIPPERY_PISTON = register("slippery_piston", new SlipperyPistonBaseBlock(SLIPPERY, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock SLIPPERY_STICKY_PISTON = register("slippery_sticky_piston", new SlipperyPistonBaseBlock(SLIPPERY, PistonType.STICKY));
+    public static final BasicPistonHeadBlock SLIPPERY_PISTON_HEAD = register("slippery_piston_head", new SlipperyPistonHeadBlock(SLIPPERY));
+    public static final SlipperyMovingBlock SLIPPERY_MOVING_BLOCK = register("slippery_moving_block", new SlipperyMovingBlock(SLIPPERY));
 
     // Super Piston
     // What's push limit? What is super sticky?
-    public static final BasicPistonHeadBlock SUPER_PISTON_HEAD = registerPiston(SUPER, new BasicPistonHeadBlock());
-    public static final BasicPistonBaseBlock SUPER_PISTON = registerPiston(SUPER, new PushLimitPistonBaseBlock(PistonType.DEFAULT, Integer.MAX_VALUE));
-    public static final BasicPistonBaseBlock SUPER_STICKY_PISTON = registerPiston(SUPER, new PushLimitPistonBaseBlock(PistonType.STICKY, Integer.MAX_VALUE));
+    public static final BasicPistonBaseBlock SUPER_PISTON = register("super_piston", new PushLimitPistonBaseBlock(SUPER, PistonType.DEFAULT, Integer.MAX_VALUE));
+    public static final BasicPistonBaseBlock SUPER_STICKY_PISTON = register("super_sticky_piston", new PushLimitPistonBaseBlock(SUPER, PistonType.STICKY, Integer.MAX_VALUE));
+    public static final BasicPistonHeadBlock SUPER_PISTON_HEAD = register("super_piston_head", new BasicPistonHeadBlock(SUPER));
+    public static final BasicMovingBlock SUPER_MOVING_BLOCK = register("super_moving_block", new BasicMovingBlock(SUPER));
 
     // MBE Piston
     // A piston that can move block entities
-    public static final BasicPistonHeadBlock MBE_PISTON_HEAD_BLOCK = registerPiston(MBE, new BasicPistonHeadBlock());
-    public static final MBEMovingBlock MBE_MOVING_BLOCK = registerPiston(MBE, new MBEMovingBlock());
-    public static final MBEPistonBaseBlock MBE_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.DEFAULT));
-    public static final MBEPistonBaseBlock MBE_STICKY_PISTON = registerPiston(MBE, new MBEPistonBaseBlock(PistonType.STICKY));
+    public static final MBEPistonBaseBlock MBE_PISTON = register("mbe_piston", new MBEPistonBaseBlock(MBE, PistonType.DEFAULT));
+    public static final MBEPistonBaseBlock MBE_STICKY_PISTON = register("mbe_sticky_piston", new MBEPistonBaseBlock(MBE, PistonType.STICKY));
+    public static final BasicPistonHeadBlock MBE_PISTON_HEAD_BLOCK = register("mbe_piston_head", new BasicPistonHeadBlock(MBE));
+    public static final MBEMovingBlock MBE_MOVING_BLOCK = register("mbe_moving_block", new MBEMovingBlock(MBE));
 
     // Merge Piston
     // A piston that can merge blocks together
-    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = registerPiston(MERGE, new BasicPistonHeadBlock());
-    public static final BasicPistonBaseBlock MERGE_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = registerPiston(MERGE, new MergePistonBaseBlock(PistonType.STICKY));
+    public static final BasicPistonBaseBlock MERGE_PISTON = register("merge_piston", new MergePistonBaseBlock(MERGE, PistonType.DEFAULT));
+    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = register("merge_sticky_piston", new MergePistonBaseBlock(MERGE, PistonType.STICKY));
+    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = register("merge_piston_head", new BasicPistonHeadBlock(MERGE));
+    public static final MBEMovingBlock MERGE_MOVING_BLOCK = register("merge_moving_block", new MBEMovingBlock(MERGE));
 
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
 
-    //
-    // Registration methods
-    //
-
-    static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource) {
-        return register(blockId, block, propertySource, true);
+    private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
+        return register(name, block, propertySource, true);
     }
 
-    static <T extends Block> T register(String blockId, Function<FabricBlockSettings, T> block, Block propertySource, boolean registerBlockItem) {
-        return register(blockId, block.apply(FabricBlockSettings.copyOf(propertySource)), registerBlockItem);
+    private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource, boolean registerBlockItem) {
+        return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)), registerBlockItem);
     }
 
-    public static <T extends Block> T register(String name, T block) {
+    private static <T extends Block> T register(String name, T block) {
         return register(name, block, true);
     }
 
-    public static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
-        ResourceLocation id = id(name);
-        registerBlockItem(id, block);
-        return Registry.register(BuiltInRegistries.BLOCK, id, block);
+    private static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
+        return Registry.register(BuiltInRegistries.BLOCK, id(name), block);
     }
 
-    static <T extends Block> T registerPiston(PistonFamily family, T block) {
-        return registerPiston(family, block, CUSTOM_CREATIVE_MODE_TAB);
-    }
-
-    public static <T extends Block> T registerPiston(PistonFamily family, T block, @Nullable CreativeModeTab creativeModeTab) {
-        if (family == null) {
-            throw new IllegalStateException("Valid Piston Family must be used! - " + BuiltInRegistries.BLOCK.getId(block));
-        }
-
-        String familyId = family.getId();
-
-        if (family.mustSetupHead()) { // FIRST BLOCK INITIALIZED SHOULD ALWAYS BE THE HEAD!!!
-            if (block instanceof BasicPistonHeadBlock headBlock) {
-                Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_head"), block);
-                family.head(headBlock);
-            } else {
-                throw new IllegalStateException(
-                    "First Piston Family block must be a basic piston head block! - Block: " +
-                        block + " - Family: " + family.getId()
-                );
-            }
-            return block;
-        }
-        if (block instanceof BasicPistonBaseBlock baseBlock) {
-            BasicMovingBlock movingBlock = family.getMovingBlock();
-            baseBlock.setMovingBlock(movingBlock != null ? movingBlock : BASIC_MOVING_BLOCK);
-            BasicPistonHeadBlock headBlock = family.getHeadBlock();
-            baseBlock.setHeadBlock(headBlock != null ? headBlock : ModBlocks.BASIC_PISTON_HEAD);
-            ResourceLocation id = switch (baseBlock.type) {
-                case DEFAULT -> id(familyId + "_piston");
-                case STICKY -> id(familyId + "_sticky_piston");
-            };
-            Registry.register(BuiltInRegistries.BLOCK, id, baseBlock);
-            family.base(baseBlock);
-            if (creativeModeTab != null) {
-                registerBlockItem(id, baseBlock);
-            }
-        } else if (block instanceof BasicMovingBlock movingBlock) {
-            Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_moving_piston"), movingBlock);
-            if (family.getBaseBlock() != null) {
-                throw new IllegalStateException(
-                    "Moving blocks must always be initialized before base blocks! - Block: " +
-                        BuiltInRegistries.BLOCK.getId(movingBlock) + " - Family: " + family.getId()
-                );
-            }
-            family.moving(movingBlock);
-        } else if (block instanceof LongPistonArmBlock armBlock) {
-            Registry.register(BuiltInRegistries.BLOCK, id(familyId + "_piston_arm"), armBlock);
-            BasicPistonHeadBlock headBlock = family.getHeadBlock();
-            if (headBlock instanceof LongPistonHeadBlock longHeadBlock) {
-                armBlock.setHeadBlock(longHeadBlock);
-            } else {
-                throw new IllegalStateException(
-                    "Pistons using the LongPistonArmBlock, must also use a LongPistonHeadBlock"
-                );
-            }
-            family.arm(armBlock);
-        } else {
-            if (!family.hasCustomBlockLogic(block)) {
-                throw new IllegalStateException(
-                    "This block cannot be initialized as part of a piston family! - Block: " +
-                        block + " - Family: " + family.getId()
-                );
-            }
-        }
-        return block;
-    }
-
-    public static void registerBlockItem(ResourceLocation id, Block block) {
-        Item item = Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, new Item.Properties()));
-        ItemGroupEvents.modifyEntriesEvent(CUSTOM_CREATIVE_MODE_TAB).register(content -> content.accept(item));
-    }
-
-    public static void order() {}
+    public static void bootstrap() { }
 
     static {
         ConfigurablePistonBaseBlock.Settings settings = new ConfigurablePistonBaseBlock.Settings()
                 .canExtendOnRetracting(true)
                 .canRetractOnExtending(true)
                 .speed(0.05F);
-        CONFIGURABLE_PISTON_HEAD = registerPiston(CONFIGURABLE, new ConfigurablePistonHeadBlock(settings));
-        CONFIGURABLE_MOVING_BLOCK = registerPiston(CONFIGURABLE, new ConfigurableMovingBlock(settings));
-        CONFIGURABLE_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.DEFAULT, settings));
-        CONFIGURABLE_STICKY_PISTON = registerPiston(CONFIGURABLE, new ConfigurablePistonBaseBlock(PistonType.STICKY, settings));
+        CONFIGURABLE_PISTON = register("configurable_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.DEFAULT, settings));
+        CONFIGURABLE_STICKY_PISTON = register("configurable_sticky_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.STICKY, settings));
+        CONFIGURABLE_PISTON_HEAD = register("configurable_piston_head", new ConfigurablePistonHeadBlock(CONFIGURABLE, settings));
+        CONFIGURABLE_MOVING_BLOCK = register("configurable_moving_block", new ConfigurableMovingBlock(CONFIGURABLE, settings));
 
-        MERGE_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
-        MERGE_STICKY_PISTON.setMovingBlock(MBE_MOVING_BLOCK);
     }
 }

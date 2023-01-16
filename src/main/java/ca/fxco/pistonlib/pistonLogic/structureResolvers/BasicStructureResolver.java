@@ -1,15 +1,16 @@
-package ca.fxco.pistonlib.pistonLogic.pistonHandlers;
+package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.pistonlib.pistonLogic.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,20 +19,22 @@ import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
-public class ConfigurablePistonStructureResolver extends PistonStructureResolver {
+public class BasicStructureResolver extends PistonStructureResolver {
 
+    protected final PistonFamily family;
     protected final BasicPistonBaseBlock piston;
     protected final int maxMovableBlocks;
 
-    public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                               Direction facing, boolean extend) {
+    public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+                                  Direction facing, boolean extend) {
         this(piston, level, pos, facing, extend, MAX_PUSH_DEPTH);
     }
 
-    public ConfigurablePistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                               Direction facing, boolean extend, int maxMovableBlocks) {
+    public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+                                  Direction facing, boolean extend, int maxMovableBlocks) {
         super(level, pos, facing, extend );
 
+        this.family = piston.family;
         this.piston = piston;
         this.maxMovableBlocks = maxMovableBlocks;
     }
@@ -119,7 +122,7 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
             }
             return type != StickyType.NO_STICK;
         }
-        return StickyGroup.canStick(((BlockStateBaseExpandedSticky)state).getStickyGroup(), stick.getStickyGroup());
+        return StickRules.test(((BlockStateBaseExpandedSticky)state).getStickyGroup(), stick.getStickyGroup());
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
@@ -217,5 +220,12 @@ public class ConfigurablePistonStructureResolver extends PistonStructureResolver
 
     public int getMoveLimit() {
         return this.maxMovableBlocks;
+    }
+
+    @FunctionalInterface
+    public interface Factory<T extends BasicStructureResolver> {
+
+        T create(Level level, BlockPos pos, Direction facing, boolean extend);
+
     }
 }

@@ -1,14 +1,15 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
@@ -22,24 +23,15 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
     protected boolean translocation;
 
     public ConfigurableMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
+        super(pos, state);
     }
 
-    public ConfigurableMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
-        super(pos, state, type);
-    }
+    public ConfigurableMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                         BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                         boolean isSourcePiston) {
+        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
-    public ConfigurableMovingBlockEntity(float speed, boolean translocation, BlockPos pos, BlockState state,
-                                         BlockState pushedBlock, Direction facing, boolean extending, boolean source) {
-        this(speed, translocation, pos, state, pushedBlock, facing, extending, source,
-                ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
-    }
-    public ConfigurableMovingBlockEntity(float speed, boolean translocation, BlockPos pos, BlockState state,
-                                         BlockState pushedBlock, Direction facing, boolean extending, boolean source,
-                                         BlockEntityType<?> type) {
-        super(speed, pos, state, pushedBlock, facing, extending, source, type);
-
-        this.translocation = translocation;
+        this.translocation = false;
     }
 
     @Override

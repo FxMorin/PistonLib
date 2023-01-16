@@ -1,66 +1,71 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import ca.fxco.pistonlib.base.ModRegistries;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import java.util.Objects;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+
+import static ca.fxco.pistonlib.PistonLib.id;
 
 public class PistonFamilies {
 
-    private static final Map<String, PistonFamily> ID_TO_FAMILY = new HashMap<>();
-    private static final Map<BasicPistonHeadBlock, PistonFamily> PISTON_HEAD_TO_FAMILY = new HashMap<>();
+    public static final PistonFamily BASIC = register("basic", new PistonFamily(false));
+    public static final PistonFamily LONG = register("long", new PistonFamily(false));
+    public static final PistonFamily CONFIGURABLE = register("configurable", new PistonFamily(false));
+    public static final PistonFamily STALE = register("stale", new PistonFamily(false));
+    public static final PistonFamily QUASI = register("quasi", new PistonFamily(false));
+    public static final PistonFamily STRONG = register("strong", new PistonFamily(false));
+    public static final PistonFamily FAST = register("fast", new PistonFamily(false));
+    public static final PistonFamily FRONT_POWERED = register("front_powered", new PistonFamily(false));
+    public static final PistonFamily TRANSLOCATION = register("translocation", new PistonFamily(false));
+    public static final PistonFamily SLIPPERY = register("slippery", new PistonFamily(false));
+    public static final PistonFamily SUPER = register("super", new PistonFamily(false));
+    public static final PistonFamily MBE = register("mbe", new PistonFamily(false));
+    public static final PistonFamily MERGE = register("merge", new PistonFamily(false));
+    public static final PistonFamily VERY_STICKY = register("very_sticky", new PistonFamily(false));
 
-    public static final PistonFamily BASIC = new PistonFamily("basic", false);
-    public static final PistonFamily LONG = new PistonFamily("long", false);
-    public static final PistonFamily CONFIGURABLE = new PistonFamily("configurable", false);
-    public static final PistonFamily STALE = new PistonFamily("stale", false);
-    public static final PistonFamily QUASI = new PistonFamily("quasi", false);
-    public static final PistonFamily STRONG = new PistonFamily("strong");
-    public static final PistonFamily FAST = new PistonFamily("fast", false);
-    public static final PistonFamily STICKY = new PistonFamily("sticky", false);
-    public static final PistonFamily FRONT_POWERED = new PistonFamily("front_powered", false);
-    public static final PistonFamily TRANSLOCATION = new PistonFamily("translocation", false);
-    public static final PistonFamily SLIPPERY = new PistonFamily("slippery", false);
-    public static final PistonFamily SUPER = new PistonFamily("super", false);
-    public static final PistonFamily MBE = new PistonFamily("mbe", false);
-    public static final PistonFamily MERGE = new PistonFamily("merge", false);
-
-    public static Map<String, PistonFamily> getFamilyMap() {
-        return ID_TO_FAMILY;
+    private static PistonFamily register(String name, PistonFamily family) {
+        return register(id(name), family);
     }
 
-    public static Collection<PistonFamily> getFamilies() {
-        return ID_TO_FAMILY.values();
+    public static PistonFamily register(ResourceLocation id, PistonFamily family) {
+        return Registry.register(ModRegistries.PISTON_FAMILY, id, family);
     }
 
-    public static PistonFamily getFamily(String familyId) {
-        return ID_TO_FAMILY.get(familyId);
+    public static PistonFamily get(ResourceLocation id) {
+        return ModRegistries.PISTON_FAMILY.get(id);
     }
 
-    public static PistonFamily getFamily(BasicPistonHeadBlock headBlock) {
-        return PISTON_HEAD_TO_FAMILY.get(headBlock);
+    public static ResourceLocation getId(PistonFamily family) {
+        return ModRegistries.PISTON_FAMILY.getKey(family);
     }
 
-    public static void registerBlockId(String familyId, PistonFamily family) {
-        PistonFamily blockFamily = ID_TO_FAMILY.put(familyId, family);
-        if (blockFamily != null) {
-            throw new IllegalStateException("Duplicate piston family definition for: " + familyId);
+    public static void bootstrap() { }
+
+    static boolean locked;
+
+    static boolean requireNotLocked() {
+        if (locked) {
+            throw new IllegalStateException("cannot alter piston families after they have been locked!");
         }
+
+        return true;
     }
 
-    public static void registerPistonHead(BasicPistonHeadBlock headBlock, PistonFamily family) {
-        PistonFamily blockFamily = PISTON_HEAD_TO_FAMILY.put(headBlock, family);
-        if (blockFamily != null) {
-            throw new IllegalStateException(
-                    "Duplicate piston family definition for: " + BuiltInRegistries.BLOCK.getId(headBlock)
-            );
+    public static void validate() {
+        if (!locked) {
+            ModRegistries.PISTON_FAMILY.forEach(family -> {
+                if (family.base.isEmpty())
+                    throw new IllegalStateException("each piston family must have at least one base block!");
+                Objects.requireNonNull(family.head);
+                Objects.requireNonNull(family.moving);
+                Objects.requireNonNull(family.movingBlockEntityType);
+                Objects.requireNonNull(family.movingBlockEntityFactory);
+            });
+
+            locked = true;
         }
-    }
-
-    public static PistonFamily createFamily(String id) {
-        return new PistonFamily(id);
     }
 }

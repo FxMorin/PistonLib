@@ -5,7 +5,9 @@ import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.MotionType;
-import ca.fxco.pistonlib.pistonLogic.pistonHandlers.ConfigurablePistonStructureResolver;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +16,6 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
@@ -31,8 +32,9 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     protected final boolean canRetractOnExtending;
     protected final boolean canExtendOnRetracting;
 
-    public ConfigurablePistonBaseBlock(PistonType type, Settings settings) {
-        super(type);
+    public ConfigurablePistonBaseBlock(PistonFamily family, PistonType type, Settings settings) {
+        super(family, type);
+
         verySticky = settings.verySticky;
         frontPowered = settings.frontPowered;
         pushLimit = settings.pushLimit;
@@ -43,8 +45,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    public PistonStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new ConfigurablePistonStructureResolver(this, level, pos, facing, extend);
+    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
+        return new BasicStructureResolver(this, level, pos, facing, extend);
     }
 
     @Override

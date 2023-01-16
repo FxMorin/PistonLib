@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.pistonlib.pistonLogic.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.Direction;
 
