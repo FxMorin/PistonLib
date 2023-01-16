@@ -118,18 +118,18 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
-    public boolean canMerge(BlockPos blockPos, BlockState mergingIntoState, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).canMerge(this.asState(), blockPos, mergingIntoState, direction);
+    public boolean canMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMerge(this.asState(), blockGetter, blockPos, mergingIntoState, direction);
     }
 
     @Override
-    public boolean canMergeFromSide(BlockPos blockPos, Direction pushDirection) {
-        return ((ConfigurablePistonMerging)this.getBlock()).canMergeFromSide(this.asState(), blockPos, pushDirection);
+    public boolean canMergeFromSide(BlockGetter blockGetter, BlockPos blockPos, Direction pushDirection) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMergeFromSide(this.asState(), blockGetter, blockPos, pushDirection);
     }
 
     @Override
-    public BlockState doMerge(BlockPos blockPos, BlockState mergingIntoState, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).doMerge(this.asState(), blockPos, mergingIntoState, direction);
+    public BlockState doMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doMerge(this.asState(), blockGetter, blockPos, mergingIntoState, direction);
     }
 
     @Override
@@ -138,22 +138,22 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
-    public boolean canMultiMerge(BlockPos blockPos, BlockState mergingIntoState, Direction direction, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
-        return ((ConfigurablePistonMerging)this.getBlock()).canMultiMerge(this.asState(), blockPos, mergingIntoState, direction, currentlyMerging);
+    public boolean canMultiMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction direction, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canMultiMerge(this.asState(), blockGetter, blockPos, mergingIntoState, direction, currentlyMerging);
     }
 
     @Override
-    public BlockState doMultiMerge(BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
-        return ((ConfigurablePistonMerging)this.getBlock()).doMultiMerge(blockPos, states, mergingIntoState);
+    public BlockState doMultiMerge(BlockGetter blockGetter, BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doMultiMerge(blockGetter, blockPos, states, mergingIntoState);
     }
 
     @Override
-    public boolean canUnMerge(BlockPos blockPos, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).canUnMerge(this.asState(), blockPos, direction);
+    public boolean canUnMerge(BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).canUnMerge(this.asState(), blockGetter, blockPos, direction);
     }
 
     @Override
-    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockPos blockPos, BlockState pistonBlockState, Direction direction) {
-        return ((ConfigurablePistonMerging)this.getBlock()).doUnMerge(this.asState(), blockPos, pistonBlockState, direction);
+    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockGetter blockGetter, BlockPos blockPos, BlockState pistonBlockState, Direction direction) {
+        return ((ConfigurablePistonMerging)this.getBlock()).doUnMerge(this.asState(), blockGetter, blockPos, pistonBlockState, direction);
     }
 }

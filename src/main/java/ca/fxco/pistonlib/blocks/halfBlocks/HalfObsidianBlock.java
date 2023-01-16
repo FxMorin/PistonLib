@@ -12,6 +12,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
@@ -86,12 +87,13 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockPos blockPos, Direction dir) {
+    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
         return true;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
+    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                                                  BlockState pistonBlockState, Direction direction) {
         return new Pair<>(
                 Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

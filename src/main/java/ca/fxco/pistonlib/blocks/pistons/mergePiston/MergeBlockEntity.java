@@ -62,11 +62,10 @@ public class MergeBlockEntity extends BlockEntity {
 
     public boolean canMerge(BlockState state, Direction dir) {
         ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
-        if (merge.canMultiMerge() && merge.canMultiMerge(state, worldPosition, initialState, dir, mergingBlocks)) {
-            if (initialBlockEntity != null && initialBlockEntity instanceof BlockEntityMerging bem) {
-                return bem.canMultiMerge(state, initialState, dir, mergingBlocks);
-            }
-            return true;
+        if (merge.canMultiMerge() &&
+                merge.canMultiMerge(state, level, worldPosition, initialState, dir, mergingBlocks)) {
+            return initialBlockEntity == null || (initialBlockEntity instanceof BlockEntityMerging bem &&
+                    bem.canMultiMerge(state, initialState, dir, mergingBlocks));
         }
         return false;
     }
@@ -113,10 +112,10 @@ public class MergeBlockEntity extends BlockEntity {
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
                     states.put(entry.getKey(), entry.getValue().getState());
                 }
-                newState = merge.doMultiMerge(blockPos, states, initialState);
+                newState = merge.doMultiMerge(level, blockPos, states, initialState);
             } else {
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
-                    newState = merge.doMerge(entry.getValue().getState(), blockPos, initialState, entry.getKey());
+                    newState = merge.doMerge(entry.getValue().getState(), level, blockPos, initialState, entry.getKey());
                     break;
                 }
             }

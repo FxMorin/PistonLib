@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -21,7 +22,8 @@ public class EraseBlock extends Block implements ConfigurablePistonMerging {
 
 
     @Override
-    public BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
+    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                              BlockState mergingIntoState, Direction direction) {
         return mergingIntoState;
     }
 
@@ -32,12 +34,14 @@ public class EraseBlock extends Block implements ConfigurablePistonMerging {
     }
 
     @Override
-    public boolean canMultiMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+    public boolean canMultiMerge(BlockState state, BlockGetter getter, BlockPos blockPos, BlockState mergingIntoState,
+                                 Direction direction, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return true;
     }
 
     @Override
-    public BlockState doMultiMerge(BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
+    public BlockState doMultiMerge(BlockGetter blockGetter, BlockPos blockPos,
+                                   Map<Direction, BlockState> states, BlockState mergingIntoState) {
         return mergingIntoState;
     }
 }

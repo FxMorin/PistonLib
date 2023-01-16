@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,17 +22,17 @@ public interface ConfigurablePistonMerging {
 
 
     // Returns if it will be able to merge both states together
-    default boolean canMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
+    default boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         return true;
     }
 
     // If the block can be merged from a given side or can be merged from that side. Usually opposite of pushDirection
-    default boolean canMergeFromSide(BlockState state, BlockPos blockPos, Direction pushDirection) {
+    default boolean canMergeFromSide(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction pushDirection) {
         return true;
     }
 
     // Returns the merged state
-    default BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
+    default BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
         return mergingIntoState;
     }
 
@@ -42,24 +43,24 @@ public interface ConfigurablePistonMerging {
     }
 
     // While merging with a block, is this block able to merge with other blocks from other directions?
-    default boolean canMultiMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+    default boolean canMultiMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return false;
     }
 
     // Returns the merged state
-    default BlockState doMultiMerge(BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
+    default BlockState doMultiMerge(BlockGetter blockGetter, BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
         return mergingIntoState;
     }
 
 
     // Returns if it will be able to unmerge into two different states
-    default boolean canUnMerge(BlockState state, BlockPos blockPos, Direction dir) {
+    default boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
         return false;
     }
 
     // Returns the blockstates that it should unmerge into.
     // The first block in the pair is the block that will be pulled out
-    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
+    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState pistonBlockState, Direction dir) {
         return null;
     }
 }

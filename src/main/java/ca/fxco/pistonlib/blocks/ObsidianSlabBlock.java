@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +23,8 @@ public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMe
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
+    public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                            BlockState mergingIntoState, Direction direction) {
         if (state.getBlock() != mergingIntoState.getBlock() && state.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
             return false;
         }
@@ -31,16 +33,17 @@ public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMe
         if (type1 == type2 || type1 == SlabType.DOUBLE || type2 == SlabType.DOUBLE) {
             return false;
         }
-        if (dir == Direction.UP) {
+        if (direction == Direction.UP) {
             return type2 != SlabType.BOTTOM && type1 == SlabType.BOTTOM;
-        } else if (dir == Direction.DOWN) {
+        } else if (direction == Direction.DOWN) {
             return type2 != SlabType.TOP && type1 == SlabType.TOP;
         }
         return true;
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
+    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+                              BlockState mergingIntoState, Direction direction) {
         if (state.getBlock() == Blocks.SMOOTH_STONE_SLAB) {
             if (state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.BOTTOM) {
                 return ModBlocks.HALF_OBSIDIAN_BLOCK.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.UP);

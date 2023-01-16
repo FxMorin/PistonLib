@@ -89,7 +89,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
         // UnMerge checks on initial line blocks
         if (!initialBlock) {
             ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
-            if (merge.usesConfigurablePistonMerging() && merge.canUnMerge(state, pos, this.pushDirection) &&
+            if (merge.usesConfigurablePistonMerging() && merge.canUnMerge(state, level, pos, this.pushDirection) &&
                     (!(level.getBlockEntity(pos) instanceof BlockEntityMerging bem) ||
                     bem.canUnMerge(state, this.pushDirection))) {
                 if (this.toUnMerge.contains(pos)) {
@@ -134,7 +134,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
 
             // UnMerge checks
             ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
-            if (merge.usesConfigurablePistonMerging() && merge.canUnMerge(state, blockPos, this.pushDirection)
+            if (merge.usesConfigurablePistonMerging() && merge.canUnMerge(state, level, blockPos, this.pushDirection)
                     && !this.toPush.contains(lastBlockPos) &&
                     (!(level.getBlockEntity(blockPos) instanceof BlockEntityMerging bem) ||
                     bem.canUnMerge(state, this.pushDirection))) {
@@ -183,7 +183,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
             if (state.getBlock() instanceof MergeBlock) { // MultiMerge
                 ConfigurablePistonMerging merge = (ConfigurablePistonMerging) lastState.getBlock();
                 if (merge.usesConfigurablePistonMerging() &&
-                        merge.canMergeFromSide(lastState, lastBlockPos, pushDirOpposite) &&
+                        merge.canMergeFromSide(lastState, level, lastBlockPos, pushDirOpposite) &&
                         level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity &&
                         mergeBlockEntity.canMergeFromSide(this.pushDirection) &&
                         mergeBlockEntity.canMerge(state, this.pushDirection)) {
@@ -195,11 +195,11 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
             } else {
                 ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
                 if (merge.usesConfigurablePistonMerging()) {
-                    if (merge.canMergeFromSide(state, currentPos, this.pushDirection)) {
+                    if (merge.canMergeFromSide(state, level, currentPos, this.pushDirection)) {
                         ConfigurablePistonMerging lastMerge = (ConfigurablePistonMerging) lastState.getBlock();
                         if (lastMerge.usesConfigurablePistonMerging() &&
-                                lastMerge.canMergeFromSide(lastState, lastBlockPos, pushDirOpposite) &&
-                                merge.canMerge(lastState, lastBlockPos, state, this.pushDirection) &&
+                                lastMerge.canMergeFromSide(lastState, level, lastBlockPos, pushDirOpposite) &&
+                                merge.canMerge(lastState, level, lastBlockPos, state, this.pushDirection) &&
                                 (!(level.getBlockEntity(currentPos) instanceof BlockEntityMerging currentBem) ||
                                         currentBem.canMerge(state, lastState, this.pushDirection))) {
                             this.toMerge.add(lastBlockPos);
@@ -209,7 +209,7 @@ public class MergingPistonStructureResolver extends ConfigurablePistonStructureR
                         }
                     }
                     if (!this.toPush.contains(lastBlockPos) &&
-                            merge.canUnMerge(state, currentPos, this.pushDirection) &&
+                            merge.canUnMerge(state, level, currentPos, this.pushDirection) &&
                             (!(level.getBlockEntity(currentPos) instanceof BlockEntityMerging bem) ||
                             bem.canUnMerge(state, this.pushDirection))) {
                         if (this.toUnMerge.contains(currentPos)) {

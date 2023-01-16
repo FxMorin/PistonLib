@@ -160,7 +160,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             // UnMerge blocks
             boolean move = true;
             if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
-                Pair<BlockState, BlockState> unmergedStates = bsbm.doUnMerge(posToMove, baseState, moveDir);
+                Pair<BlockState, BlockState> unmergedStates = bsbm.doUnMerge(level, posToMove, baseState, moveDir);
                 if (unmergedStates != null) {
                     unMergingStates[unMergingIndex++] = stateToMove;
                     stateToMove = unmergedStates.getFirst();
