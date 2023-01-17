@@ -32,8 +32,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
-import static net.minecraft.data.models.BlockModelGenerators.createSimpleBlock;
-import static net.minecraft.data.models.BlockModelGenerators.createSlab;
+import static net.minecraft.data.models.BlockModelGenerators.*;
 
 public class ModModelProvider extends FabricModelProvider {
 
@@ -62,10 +61,10 @@ public class ModModelProvider extends FabricModelProvider {
 
 		registerHalfBlock(generator, ModBlocks.HALF_OBSIDIAN_BLOCK, Blocks.OBSIDIAN);
 		registerHalfBlock(generator, ModBlocks.HALF_REDSTONE_BLOCK, Blocks.REDSTONE_BLOCK);
-		registerHalfBlockWithCustomModel(generator, ModBlocks.HALF_HONEY_BLOCK);
-		registerHalfBlockWithCustomModel(generator, ModBlocks.HALF_SLIME_BLOCK);
+		registerBlockWithCustomModel(generator, ModBlocks.HALF_HONEY_BLOCK);
+		registerBlockWithCustomModel(generator, ModBlocks.HALF_SLIME_BLOCK);
 
-		registerHalfBlockWithCustomStates(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK,
+		registerBlockWithCustomStates(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK,
 			createLitFacingBlockState(
 				ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK),
 				ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK, "_on")));
@@ -90,13 +89,7 @@ public class ModModelProvider extends FabricModelProvider {
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIMY_REDSTONE_BLOCK)));
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
 
-		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.ALL_SIDED_OBSERVER).with(
-			PropertyDispatch.property(BlockStateProperties.POWERED)
-				.select(false, Variant.variant().with(
-					VariantProperties.MODEL, TexturedModel.CUBE.create(ModBlocks.ALL_SIDED_OBSERVER, generator.modelOutput)))
-				.select(true, Variant.variant().with(
-					VariantProperties.MODEL, TexturedModel.CUBE.createWithSuffix(ModBlocks.ALL_SIDED_OBSERVER, "_on", generator.modelOutput)))
-		));
+		registerPoweredBlock(generator, ModBlocks.ALL_SIDED_OBSERVER);
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.POWERED_STICKY_BLOCK).with(
 			PropertyDispatch.property(BlockStateProperties.POWERED)
@@ -119,6 +112,16 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateItemModels(ItemModelGenerators generator) {
 	}
 
+	public static void registerCubeTextureMap(BlockModelGenerators generator, Block block,
+											  ResourceLocation baseTexture, @Nullable String suffix) {
+		TextureMapping halfBlockTextureMap = new TextureMapping().put(TextureSlot.ALL, baseTexture);
+		if (suffix == null) {
+			ModelTemplates.CUBE_ALL.create(block, halfBlockTextureMap, generator.modelOutput);
+		} else {
+			ModelTemplates.CUBE_ALL.createWithSuffix(block, suffix, halfBlockTextureMap, generator.modelOutput);
+		}
+	}
+
 	public static void registerHalfBlockTextureMap(BlockModelGenerators generator, Block halfBlock, ResourceLocation baseTexture) {
         registerHalfBlockTextureMap(generator, halfBlock, baseTexture, null);
     }
@@ -132,11 +135,11 @@ public class ModModelProvider extends FabricModelProvider {
         }
     }
 
-	public static void registerHalfBlockWithCustomModel(BlockModelGenerators generator, Block halfBlock) {
+	public static void registerBlockWithCustomModel(BlockModelGenerators generator, Block halfBlock) {
 		registerHalfBlock(generator, halfBlock, null);
 	}
 
-	public static void registerHalfBlockWithCustomStates(BlockModelGenerators generator, Block halfBlock, PropertyDispatch customStates) {
+	public static void registerBlockWithCustomStates(BlockModelGenerators generator, Block halfBlock, PropertyDispatch customStates) {
         generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(halfBlock, Variant.variant()
                 .with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(halfBlock))).with(customStates)
         );
@@ -245,60 +248,71 @@ public class ModModelProvider extends FabricModelProvider {
 		}
 	}
 
+	public static void registerPoweredBlock(BlockModelGenerators generator, Block block) {
+		ResourceLocation powerOff = ModelLocationUtils.getModelLocation(block);
+		ResourceLocation powerOn = ModelLocationUtils.getModelLocation(block, "_on");
+		registerBlockWithCustomStates(generator, block,
+				PropertyDispatch.property(BlockStateProperties.POWERED)
+						.select(false, Variant.variant().with(VariantProperties.MODEL, powerOff))
+						.select(true, Variant.variant().with(VariantProperties.MODEL, powerOn)));
+		registerCubeTextureMap(generator, block, powerOff, null);
+		registerCubeTextureMap(generator, block, powerOn, "_on");
+	}
+
 	public static PropertyDispatch createLitFacingBlockState(ResourceLocation offModelId, ResourceLocation onModelId) {
 		return PropertyDispatch
-			.properties(BlockStateProperties.FACING, BlockStateProperties.LIT)
-			.select(Direction.NORTH, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-			.select(Direction.SOUTH, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-			.select(Direction.EAST, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-			.select(Direction.WEST, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-			.select(Direction.DOWN, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-			.select(Direction.UP, false,
-				Variant.variant()
-					.with(VariantProperties.MODEL, offModelId))
-			.select(Direction.NORTH, true,
-				Variant.variant()
-					.with(VariantProperties.MODEL, onModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-			.select(Direction.SOUTH, true,
-				Variant.variant()
-					.with(VariantProperties.MODEL, onModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-			.select(Direction.EAST, true,
-				Variant.variant()
-					.with(VariantProperties.MODEL, onModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-			.select(Direction.WEST, true,
-				Variant.variant()
-					.with(VariantProperties.MODEL, onModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-					.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-			.select(Direction.DOWN, true,
-				Variant.variant()
-					.with(VariantProperties.MODEL, onModelId)
-					.with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-			.select(Direction.UP, true,
-				Variant.variant()
-				    .with(VariantProperties.MODEL, onModelId));
+				.properties(BlockStateProperties.FACING, BlockStateProperties.LIT)
+				.select(Direction.NORTH, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+				.select(Direction.SOUTH, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+				.select(Direction.EAST, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+				.select(Direction.WEST, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+				.select(Direction.DOWN, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+				.select(Direction.UP, false,
+						Variant.variant()
+								.with(VariantProperties.MODEL, offModelId))
+				.select(Direction.NORTH, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+				.select(Direction.SOUTH, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+				.select(Direction.EAST, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+				.select(Direction.WEST, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+								.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+				.select(Direction.DOWN, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId)
+								.with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+				.select(Direction.UP, true,
+						Variant.variant()
+								.with(VariantProperties.MODEL, onModelId));
 	}
 }
