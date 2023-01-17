@@ -1,7 +1,0 @@
-{
-  "parent": "pistonlib:block/template_half_block",
-  "textures": {
-    "side": "minecraft:block/redstone_lamp_on",
-    "top": "minecraft:block/redstone_lamp_on"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "": {
-      "model": "pistonlib:block/move_counting_block"
-    }
-  }
-}

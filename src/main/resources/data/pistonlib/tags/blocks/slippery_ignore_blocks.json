@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:observer",
-    "minecraft:redstone_block",
-    "#pistonlib:pistons",
-    "#pistonlib:moving_pistons"
-  ]
-}
