@@ -169,4 +169,13 @@ public class PistonFamily {
     public boolean canExtendOnRetracting() {
         return this.behavior.canExtendOnRetracting;
     }
+
+
+    public static PistonFamily of(PistonBehavior behavior) {
+        return new PistonFamily(behavior);
+    }
+
+    public static PistonFamily of(PistonBehavior behavior, boolean hasCustomTextures) {
+        return new PistonFamily(behavior, hasCustomTextures);
+    }
 }
