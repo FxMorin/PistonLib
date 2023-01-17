@@ -31,4 +31,8 @@ public class StickyGroup {
     public StickRule getStickRule() {
         return this.rule;
     }
+
+    public boolean test(StickyGroup stickyGroup) {
+        return this.rule.test(this, stickyGroup);
+    }
 }

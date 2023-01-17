@@ -26,6 +26,6 @@ public class StickRules {
     public static boolean test(StickyGroup group1, StickyGroup group2) {
         if (group1 == null || group2 == null)
             return true;
-        return group1.getStickRule().test(group1, group2) && group2.getStickRule().test(group2, group1);
+        return group1.test(group2) && group2.test(group1);
     }
 }
