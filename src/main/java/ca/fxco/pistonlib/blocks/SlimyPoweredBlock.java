@@ -1,7 +1,8 @@
 package ca.fxco.pistonlib.blocks;
 
-import ca.fxco.pistonlib.pistonLogic.StickyGroup;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 
 import net.minecraft.world.level.block.PoweredBlock;
 
@@ -13,6 +14,6 @@ public class SlimyPoweredBlock extends PoweredBlock implements ConfigurablePisto
 
     @Override
     public StickyGroup getStickyGroup() {
-        return StickyGroup.SLIME;
+        return ModStickyGroups.SLIME;
     }
 }

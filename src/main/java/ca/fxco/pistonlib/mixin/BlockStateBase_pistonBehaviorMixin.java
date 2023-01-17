@@ -2,25 +2,25 @@ package ca.fxco.pistonlib.mixin;
 
 import java.util.Map;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
-import ca.fxco.pistonlib.impl.BlockQuasiPower;
-import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import ca.fxco.pistonlib.pistonLogic.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
+import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.impl.BlockQuasiPower;
+import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;

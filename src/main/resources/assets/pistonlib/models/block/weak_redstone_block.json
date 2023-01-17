@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "pistonlib:block/weak_redstone_block"
+  }
+}

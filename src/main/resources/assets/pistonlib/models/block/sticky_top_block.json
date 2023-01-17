@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_top",
+  "textures": {
+    "side": "minecraft:block/deepslate_bricks",
+    "top": "pistonlib:block/sticky_top_block"
+  }
+}

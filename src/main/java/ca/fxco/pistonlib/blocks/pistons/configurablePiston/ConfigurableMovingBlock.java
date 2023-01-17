@@ -1,11 +1,12 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,12 +17,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -33,44 +30,17 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class ConfigurableMovingBlock extends BasicMovingBlock {
 
-    protected final boolean slippery;
-    protected final float extendingSpeed;
-    protected final float retractingSpeed;
-    protected final boolean translocation;
-    protected final boolean verySticky;
-    protected final boolean canExtendOnRetracting;
-
-    public ConfigurableMovingBlock(ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        this(BasicMovingBlock.createDefaultSettings(), pistonSettings);
+    public ConfigurableMovingBlock(PistonFamily family) {
+        this(family, BasicMovingBlock.createDefaultSettings());
     }
 
-    public ConfigurableMovingBlock(BlockBehaviour.Properties properties,
-                                   ConfigurablePistonBaseBlock.Settings pistonSettings) {
-        super(properties);
-        slippery = pistonSettings.slippery;
-        extendingSpeed = pistonSettings.extendingSpeed;
-        retractingSpeed = pistonSettings.retractingSpeed;
-        translocation = pistonSettings.translocation;
-        verySticky = pistonSettings.verySticky;
-        canExtendOnRetracting = pistonSettings.canExtendOnRetracting;
-    }
-
-    @Override
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
-                                               boolean extending, boolean isSourcePiston) {
-        return new ConfigurableMovingBlockEntity(extending ? extendingSpeed : retractingSpeed, translocation,
-                pos, state, movedState, facing, extending, isSourcePiston);
-    }
-
-    @Override @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY);
+    public ConfigurableMovingBlock(PistonFamily family, Properties properties) {
+        super(family, properties);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        if (canExtendOnRetracting && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
+        if (this.family.canExtendOnRetracting() && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
             if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
                 if (!movingBlockEntity.isExtending()) {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
@@ -115,7 +85,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
             }
             BlockState neighborState = level.getBlockState(neighborPos);
 
-            if (neighborState.is(thisMbe.getMovingBlock())) {
+            if (neighborState.is(this.family.getMoving())) {
                 BlockEntity blockEntity = level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof ConfigurableMovingBlockEntity mbe) {
@@ -141,7 +111,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        if (slippery && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+        if (this.family.isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
@@ -149,7 +119,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
                                   BlockPos pos, BlockPos neighborPos) {
-        if (slippery && !level.isClientSide()) {
+        if (this.family.isSlippery() && !level.isClientSide()) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
@@ -157,7 +127,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (slippery) {
+        if (this.family.isSlippery()) {
             int i = BaseSlipperyBlock.calculateDistance(level, pos);
             BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
@@ -170,14 +140,11 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !slippery || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
+        return !this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE);
-        if (slippery) {
-            builder.add(SLIPPERY_DISTANCE);
-        }
+        builder.add(FACING, TYPE, SLIPPERY_DISTANCE);
     }
 }

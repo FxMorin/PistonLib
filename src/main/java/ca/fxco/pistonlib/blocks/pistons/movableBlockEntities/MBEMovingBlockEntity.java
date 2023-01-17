@@ -1,15 +1,14 @@
 package ca.fxco.pistonlib.blocks.pistons.movableBlockEntities;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.impl.ILevel;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
@@ -17,21 +16,14 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
     protected BlockEntity movedBlockEntity;
 
     public MBEMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.MBE_MOVING_BLOCK_ENTITY);
+        super(pos, state);
     }
 
-    public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
-        super(pos, state, type);
-    }
+    public MBEMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                boolean isSourcePiston) {
+        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
-    public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-                                Direction facing, boolean extending, boolean isSourcePiston) {
-        this(pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston,
-                ModBlockEntities.MBE_MOVING_BLOCK_ENTITY);
-    }
-    public MBEMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
-                                Direction facing, boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, type);
         this.movedBlockEntity = movedBlockEntity;
     }
 

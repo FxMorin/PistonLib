@@ -1,0 +1,6 @@
+{
+  "parent": "pistonlib:block/template_piston_arm_short",
+  "textures": {
+    "texture": "minecraft:block/piston_side"
+  }
+}

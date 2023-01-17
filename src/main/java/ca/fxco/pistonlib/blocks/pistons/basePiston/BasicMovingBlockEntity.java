@@ -4,17 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -22,11 +24,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -35,44 +37,34 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
-    protected final BasicMovingBlock MOVING_BLOCK;
+    protected final PistonType type;
+
+    private PistonFamily family;
 
     /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
-    }
-
-    /** This is only used to register the moving block entities, where none of the values are required **/
-    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
         super(pos, state);
 
-        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
-            MOVING_BLOCK = basicMovingBlock;
-        } else {
-            MOVING_BLOCK = null; // Shouldn't be possible?
-        }
-        ((BlockEntityAccessor)this).setType(type);
+        this.type = state.getValue(BasicMovingBlock.TYPE);
     }
 
-    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston) {
-        this(pos, state, movedState, facing, extending, isSourcePiston, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
-    }
-
-    public BasicMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
+    public BasicMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                  BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                  boolean isSourcePiston) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
-        if (state.getBlock() instanceof BasicMovingBlock basicMovingBlock) {
-            MOVING_BLOCK = basicMovingBlock;
-        } else {
-            MOVING_BLOCK = null; // Shouldn't be possible?
-        }
-        ((BlockEntityAccessor)this).setType(type);
+        this.type = state.getValue(BasicMovingBlock.TYPE);
+
+        this.setFamily(family);
     }
 
-    public BasicMovingBlock getMovingBlock() {
-        return MOVING_BLOCK;
+    private void setFamily(PistonFamily family) {
+        this.family = family;
+        ((BlockEntityAccessor)this).setType(this.family.getMovingBlockEntityType());
+    }
+
+    public PistonFamily getFamily() {
+        return this.family;
     }
 
     public float speed() {
@@ -282,7 +274,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             BlockPos neighborPos = this.worldPosition.relative(dir);
             BlockState neighborState = this.level.getBlockState(neighborPos);
 
-            if (neighborState.is(MOVING_BLOCK)) {
+            if (neighborState.is(this.family.getMoving())) {
                 BlockEntity blockEntity = this.level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof BasicMovingBlockEntity mbe) {
@@ -346,7 +338,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         this.level.removeBlockEntity(this.worldPosition);
         this.setRemoved();
 
-        if (this.level.getBlockState(this.worldPosition).is(MOVING_BLOCK)) {
+        if (this.level.getBlockState(this.worldPosition).is(this.family.getMoving())) {
             this.placeAndUpdateMovedBlock(removeSource);
         }
     }
@@ -379,6 +371,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void load(CompoundTag nbt) {
+        this.setFamily(ModPistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
@@ -393,6 +386,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
+        nbt.putString("family", ModPistonFamilies.getId(this.family).toString());
         nbt.put("blockState", NbtUtils.writeBlockState(this.movedState));
         nbt.putInt("facing", this.direction.get3DDataValue());
         if (PistonLib.PISTON_PROGRESS_FIX) {
@@ -448,5 +442,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     @Override
     public long getLastTicked() {
         return this.lastTicked;
+    }
+
+    @FunctionalInterface
+    public interface Factory<T extends BasicMovingBlockEntity> {
+
+        T create(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                 BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                 boolean isSourcePiston);
+
     }
 }

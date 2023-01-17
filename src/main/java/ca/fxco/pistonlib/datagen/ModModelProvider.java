@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.datagen;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
@@ -7,7 +8,7 @@ import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.pistonlib.base.ModRegistries;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -25,6 +26,7 @@ import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.data.models.model.TexturedModel;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -53,10 +55,14 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateBlockStateModels(BlockModelGenerators generator) {
 		LOGGER.info("Generating blockstate definitions and models...");
 
-		for(PistonFamily family : PistonFamilies.getFamilies()) {
-			LOGGER.info("Generating blockstate definitions and models for piston family " + family.getId()+"...");
-			registerPistonFamily(generator, family);
-		}
+		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
+            ResourceKey<PistonFamily> key = entry.getKey();
+            PistonFamily family = entry.getValue();
+
+            LOGGER.info("Generating blockstate definitions and models for piston family " + key.location()+"...");
+
+            registerPistonFamily(generator, family);
+        }
 
 		LOGGER.info("Finished generating blockstate definitions and models for pistons, generating for other blocks...");
 
@@ -174,14 +180,14 @@ public class ModModelProvider extends FabricModelProvider {
 
 	public static void registerPistonFamily(BlockModelGenerators generator, PistonFamily family) {
 		boolean customTextures = family.hasCustomTextures();
-		Block textureBaseBlock = customTextures ? family.getBaseBlock() : Blocks.PISTON;
+		Block textureBaseBlock = customTextures ? family.getBase() : Blocks.PISTON;
 
-		Block base = family.getBaseBlock();
-		Block normalBase = family.getBaseBlock(PistonType.DEFAULT);
-		Block stickyBase = family.getBaseBlock(PistonType.STICKY);
-		Block pistonHead = family.getHeadBlock();
-		Block pistonArm = family.getArmBlock();
-		Block movingPiston = family.getMovingBlock();
+		Block base = family.getBase();
+		Block normalBase = family.getBase(PistonType.DEFAULT);
+		Block stickyBase = family.getBase(PistonType.STICKY);
+		Block arm = family.getArm();
+		Block head = family.getHead();
+		Block moving = family.getMoving();
 
 		ResourceLocation sideTextureId = TextureMapping.getBlockTexture(textureBaseBlock, "_side");
 
@@ -208,12 +214,12 @@ public class ModModelProvider extends FabricModelProvider {
 			if (stickyBase.asItem() != Items.AIR) generator.delegateItemModel(stickyBase, stickyInventoryModelId);
 		}
 
-		if (pistonHead != null) {
+		if (head != null) {
 			TextureMapping baseHeadTextureMap = new TextureMapping().put(TextureSlot.UNSTICKY, topRegularTextureId).put(TextureSlot.SIDE, sideTextureId);
 			TextureMapping regularHeadTextureMap = baseHeadTextureMap.copyAndUpdate(TextureSlot.PLATFORM, topRegularTextureId);
 			TextureMapping stickyHeadTextureMap = baseHeadTextureMap.copyAndUpdate(TextureSlot.PLATFORM, topStickyTextureId);
 
-			generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(pistonHead).with(
+			generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(head).with(
 				PropertyDispatch.properties(BlockStateProperties.SHORT, BlockStateProperties.PISTON_TYPE)
 					.select(false, PistonType.DEFAULT, Variant.variant().with(
 						VariantProperties.MODEL, ModelTemplates.PISTON_HEAD.createWithSuffix(base, "_head", regularHeadTextureMap, generator.modelOutput)))
@@ -226,10 +232,10 @@ public class ModModelProvider extends FabricModelProvider {
 			).with(BlockModelGenerators.createFacingDispatch()));
 		}
 
-		if (pistonArm != null) {
+		if (arm != null) {
 			TextureMapping armTextureMap = new TextureMapping().put(TextureSlot.TEXTURE, sideTextureId);
 
-			generator.blockStateOutput.accept((MultiVariantGenerator.multiVariant(pistonArm).with(
+			generator.blockStateOutput.accept((MultiVariantGenerator.multiVariant(arm).with(
 				PropertyDispatch.property(BlockStateProperties.SHORT)
 					.select(false, Variant.variant().with(
 						VariantProperties.MODEL, TEMPLATE_PISTON_ARM.createWithSuffix(base, "_arm", armTextureMap, generator.modelOutput)))
@@ -238,10 +244,10 @@ public class ModModelProvider extends FabricModelProvider {
 			).with(BlockModelGenerators.createFacingDispatch())));
 		}
 
-		if (movingPiston != null) {
+		if (moving != null) {
 			TextureMapping movingPistonTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, sideTextureId);
 
-			generator.createTrivialBlock(movingPiston, movingPistonTextureMap, TEMPLATE_PARTICLE_ONLY);
+			generator.createTrivialBlock(moving, movingPistonTextureMap, TEMPLATE_PARTICLE_ONLY);
 		}
 	}
 

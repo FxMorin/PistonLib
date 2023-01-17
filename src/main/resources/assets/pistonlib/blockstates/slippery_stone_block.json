@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pistonlib:block/slippery_stone_block"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "pistonlib:slippery_piston",
+    "pistonlib:slippery_sticky_piston"
+  ]
+}
