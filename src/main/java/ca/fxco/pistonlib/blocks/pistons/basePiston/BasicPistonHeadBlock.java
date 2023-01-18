@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.Arrays;
 
-import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -141,7 +140,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState behindState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-        return this.isFittingBase(state, behindState) || behindState.is(ModTags.MOVING_PISTONS) &&
+        return this.isFittingBase(state, behindState) || behindState.is(this.family.getMoving()) &&
                 behindState.getValue(FACING) == state.getValue(FACING);
     }
 

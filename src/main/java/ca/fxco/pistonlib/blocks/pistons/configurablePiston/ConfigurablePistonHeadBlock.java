@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
-import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
@@ -83,13 +82,13 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
         if (!this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE) {
             if (this.family.isVerySticky()) {
                 BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-                return this.isFittingBase(state, blockState) || blockState.is(ModTags.MOVING_PISTONS);
+                return this.isFittingBase(state, blockState) || blockState.is(this.family.getMoving());
             }
             return super.canSurvive(state, level, pos);
         }
         if (this.family.isVerySticky()) {
             BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-            return this.isFittingBase(state, blockState) || blockState.is(ModTags.MOVING_PISTONS);
+            return this.isFittingBase(state, blockState) || blockState.is(this.family.getMoving());
         }
         return super.canSurvive(state, level, pos);
     }
