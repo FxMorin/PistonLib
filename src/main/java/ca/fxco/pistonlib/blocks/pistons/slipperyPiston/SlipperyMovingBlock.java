@@ -31,6 +31,10 @@ public class SlipperyMovingBlock extends BasicMovingBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(SLIPPERY_DISTANCE, 0));
     }
 
+    public SlipperyMovingBlock(PistonFamily family, Properties properties) {
+        super(family, properties);
+    }
+
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.is(this) && !level.isClientSide() && level.getBlockEntity(pos) == null)
