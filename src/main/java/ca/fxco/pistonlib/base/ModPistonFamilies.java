@@ -17,7 +17,7 @@ public class ModPistonFamilies {
     public static final PistonFamily CONFIGURABLE = register("configurable", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily STALE = register("stale", PistonFamily.of(PistonBehavior.Builder().noQuasi().build(), false));
     public static final PistonFamily VERY_QUASI = register("very_quasi", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily STRONG = register("strong", PistonFamily.of(PistonBehavior.Builder().pushLimit(24).build()));
+    public static final PistonFamily STRONG = register("strong", PistonFamily.of(PistonBehavior.Builder().speed(0.05F).pushLimit(24).build()));
     public static final PistonFamily FAST = register("fast", PistonFamily.of(PistonBehavior.Builder().pushLimit(2).build(), false));
     public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamily.of(PistonBehavior.Builder().frontPowered().build(), false));
     public static final PistonFamily TRANSLOCATION = register("translocation", PistonFamily.of(PistonBehavior.Builder().translocation().build(), false));
