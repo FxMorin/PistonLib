@@ -22,6 +22,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+import ca.fxco.pistonlib.PistonLib;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModPistonFamilies;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 public class PistonFamily {
 
     private final PistonBehavior behavior;
-    private final boolean customTextures;
 
     protected Map<PistonType, Block> base = new EnumMap<>(PistonType.class);
     @Nullable
@@ -32,12 +32,7 @@ public class PistonFamily {
     protected BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> movingBlockEntityFactory;
 
     public PistonFamily(PistonBehavior behavior) {
-        this(behavior, true);
-    }
-
-    public PistonFamily(PistonBehavior behavior, boolean hasCustomTextures) {
         this.behavior = behavior;
-        this.customTextures = hasCustomTextures;
     }
 
     @Override
@@ -46,7 +41,7 @@ public class PistonFamily {
     }
 
     public boolean hasCustomTextures() {
-        return this.customTextures;
+        return true; // Handled in DataGenPistonFamily
     }
 
     // Use this method to implement custom block types in families
@@ -172,10 +167,16 @@ public class PistonFamily {
 
 
     public static PistonFamily of(PistonBehavior behavior) {
+        if (PistonLib.DATAGEN_ACTIVE) {
+            return new DataGenPistonFamily(behavior);
+        }
         return new PistonFamily(behavior);
     }
 
     public static PistonFamily of(PistonBehavior behavior, boolean hasCustomTextures) {
-        return new PistonFamily(behavior, hasCustomTextures);
+        if (PistonLib.DATAGEN_ACTIVE) {
+            return new DataGenPistonFamily(behavior, hasCustomTextures);
+        }
+        return new PistonFamily(behavior);
     }
 }
