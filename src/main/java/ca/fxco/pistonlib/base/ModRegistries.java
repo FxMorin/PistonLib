@@ -11,7 +11,7 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModRegistries {
 
-    public static final Registry<PistonFamily> PISTON_FAMILY = FabricRegistryBuilder.createSimple(PistonFamily.class, id("piston_type")).buildAndRegister();
+    public static final Registry<PistonFamily> PISTON_FAMILY = FabricRegistryBuilder.createSimple(PistonFamily.class, id("piston_family")).buildAndRegister();
     public static final Registry<StickyGroup>  STICKY_GROUP  = FabricRegistryBuilder.createSimple(StickyGroup.class, id("sticky_group")).buildAndRegister();
 
     public static void bootstrap() { }
