@@ -77,6 +77,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         int affectedIndex = 0;
 
         Direction moveDir = extend ? facing : facing.getOpposite();
+        float speed = extend ? this.family.getExtendingSpeed() : this.family.getRetractingSpeed();
 
         // Merge Blocks
         for (int i = toMerge.size() - 1; i >= 0; i--) {
@@ -93,12 +94,12 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
                         if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
                                 bem2.shouldStoreSelf(mergeBlockEntity)) {
                             bem2.onMerge(mergeBlockEntity, moveDir);
-                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {
-                            mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                         }
                     }
-                    mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                    mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                 }
             } else {
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
@@ -112,13 +113,13 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
                     if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
                             bem2.shouldStoreSelf(mergeBlockEntity)) {
                         bem2.onMerge(mergeBlockEntity, moveDir);
-                        mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                        mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                     } else {
-                        mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                        mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                     }
                 } else {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState);
-                    mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                    mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                 }
 
                 level.setBlock(posToMerge, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
