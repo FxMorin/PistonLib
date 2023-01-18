@@ -444,6 +444,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         if (extend) {
             BlockPos headPos = pos.relative(facing);
             BlockState headState = this.family.getHead().defaultBlockState()
+                .setValue(BasicPistonHeadBlock.TYPE, type)
                 .setValue(BasicPistonHeadBlock.FACING, facing);
 
             toRemove.remove(headPos);
