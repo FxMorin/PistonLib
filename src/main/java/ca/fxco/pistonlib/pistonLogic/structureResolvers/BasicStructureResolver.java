@@ -7,7 +7,6 @@ import java.util.Map;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
@@ -21,17 +20,15 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class BasicStructureResolver extends PistonStructureResolver {
 
-    protected final PistonFamily family;
     protected final BasicPistonBaseBlock piston;
     protected final int maxMovableBlocks;
 
     public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
                                   Direction facing, boolean extend) {
-        super(level, pos, facing, extend );
+        super(level, pos, facing, extend);
 
-        this.family = piston.family;
         this.piston = piston;
-        this.maxMovableBlocks = this.family.getPushLimit();
+        this.maxMovableBlocks = piston.family.getPushLimit();
     }
 
     @Override

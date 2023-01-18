@@ -15,14 +15,19 @@ import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
 public class ConfigurableLongPistonHandler extends BasicStructureResolver {
 
+    protected final Block movingBlock;
+
     public ConfigurableLongPistonHandler(LongPistonBaseBlock piston, Level level, BlockPos pos, Direction facing,
                                          boolean extend) {
         super(piston, level, pos, facing, extend);
+
+        this.movingBlock = piston.family.getMoving();
     }
 
     public boolean calculateLongPullPush(boolean isPull, Consumer<LongMovingBlockEntity> applySkip) {
@@ -52,7 +57,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos pos = this.toPush.get(i);
             state = this.level.getBlockState(pos);
-            if (state.is(this.family.getMoving()) &&
+            if (state.is(this.movingBlock) &&
                     this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
                 blockEntities.add(bpbe);
                 state = bpbe.getMovedState();
@@ -74,7 +79,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
 
     protected boolean cantMoveAdjacentBlocksWithBE(BlockPos pos) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.is(this.family.getMoving()) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
+        if (state.is(this.movingBlock) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
             state = bpbe.getMovedState();
         for (Direction direction : Direction.values()) {
             if (direction.getAxis() != this.pushDirection.getAxis()) {
@@ -89,7 +94,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
 
     protected boolean cantMoveAdjacentStickyBlocksWithBE(Map<Direction, StickyType> sides, BlockPos pos) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.is(this.family.getMoving()) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
+        if (state.is(this.movingBlock) && this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe)
             state = bpbe.getMovedState();
         for (Map.Entry<Direction,StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
@@ -108,7 +113,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
     protected boolean cantMoveWithBE(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
         if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
-        boolean isExtensionBlock = state.is(this.family.getMoving());
+        boolean isExtensionBlock = state.is(this.movingBlock);
         LongMovingBlockEntity blockEntity = null;
         if (isExtensionBlock) {
             if (this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
@@ -136,7 +141,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
             BlockState oldState = state;
             state = this.level.getBlockState(blockPos);
             if (state.isAir()) break;
-            isExtensionBlock = state.is(this.family.getMoving());
+            isExtensionBlock = state.is(this.movingBlock);
             if (isExtensionBlock) {
                 if (this.level.getBlockEntity(pos) instanceof LongMovingBlockEntity bpbe) {
                     blockEntity = bpbe;
@@ -178,7 +183,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
                 for(int m = 0; m <= l + j; ++m) {
                     BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
-                    if (state.is(this.family.getMoving()) &&
+                    if (state.is(this.movingBlock) &&
                             this.level.getBlockEntity(pos3) instanceof LongMovingBlockEntity bpbe) {
                         state = bpbe.getMovedState();
                     }
