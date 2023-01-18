@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.base;
 
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -74,6 +75,7 @@ public class ModItems {
     }
 
     private static <T extends Item> T register(ResourceLocation id, T item) {
+        ItemGroupEvents.modifyEntriesEvent(ModCreativeModeTabs.GENERAL).register(content -> content.accept(item));
         return Registry.register(BuiltInRegistries.ITEM, id, item);
     }
 
