@@ -218,7 +218,15 @@ public class BasicPistonArmBlock extends DirectionalBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        return new ItemStack(this.family.getBase());
+        Direction dir = state.getValue(FACING);
+        BlockPos nextBlockPos = pos.relative(dir);
+        BlockState nextState = level.getBlockState(nextBlockPos);
+        while (nextState.is(this)) {
+            nextBlockPos = nextBlockPos.relative(dir);
+            nextState = level.getBlockState(nextBlockPos);
+        }
+        return nextState.is(this.family.getHead()) ?
+                new ItemStack(this.family.getBase(nextState.getValue(BasicPistonHeadBlock.TYPE))) : ItemStack.EMPTY;
     }
 
     @Override
