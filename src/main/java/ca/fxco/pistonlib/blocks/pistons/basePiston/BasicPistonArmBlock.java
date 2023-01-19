@@ -1,11 +1,9 @@
-package ca.fxco.pistonlib.blocks.pistons.longPiston;
+package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -27,18 +25,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class LongPistonArmBlock extends DirectionalBlock {
+public class BasicPistonArmBlock extends DirectionalBlock {
 
     // This is the BASIC ARM BLOCK that you should be extending to create your own arm blocks
 
     public static final BooleanProperty SHORT = BlockStateProperties.SHORT;
-    public static final EnumProperty<PistonType> TYPE = BlockStateProperties.PISTON_TYPE;
 
     // TODO: Grab there directly instead of using a lookup since it should be faster now that there is no union
     protected static final VoxelShape UP_ARM_SHAPE = Block.box(6.0, -4.0, 6.0, 10.0, 12.0, 10.0);
@@ -59,7 +55,7 @@ public class LongPistonArmBlock extends DirectionalBlock {
     BiPredicate<BlockState,BlockState> OR_IS_ATTACHED = (state, selfState) ->
             state.is(ModTags.MOVING_PISTONS) && state.getValue(FACING) == selfState.getValue(FACING);
 
-    private LongPistonHeadBlock HEAD_BLOCK;
+    public final PistonFamily family;
 
     public static VoxelShape getArmShape(Direction direction, boolean shortArm) {
         return switch (direction) {
@@ -76,36 +72,19 @@ public class LongPistonArmBlock extends DirectionalBlock {
         return Arrays.stream(Direction.values()).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
     }
 
-    public LongPistonArmBlock() {
-        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
+    public BasicPistonArmBlock(PistonFamily family) {
+        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
     }
 
-    public LongPistonArmBlock(Properties properties) {
+    public BasicPistonArmBlock(PistonFamily family, Properties properties) {
         super(properties);
+
+        this.family = family;
+        this.family.setArm(this);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
-            .setValue(TYPE, PistonType.DEFAULT)
             .setValue(SHORT, false));
-    }
-
-    public LongPistonArmBlock(Properties properties, LongPistonHeadBlock headBlock) {
-        super(properties);
-
-        HEAD_BLOCK = headBlock;
-
-        this.registerDefaultState(this.stateDefinition.any()
-            .setValue(FACING, Direction.NORTH)
-            .setValue(TYPE, PistonType.DEFAULT)
-            .setValue(SHORT, false));
-    }
-
-    public LongPistonHeadBlock getHeadBlock() {
-        return HEAD_BLOCK;
-    }
-
-    public void setHeadBlock(LongPistonHeadBlock headBlock) {
-        HEAD_BLOCK = headBlock;
     }
 
     @Override
@@ -120,28 +99,26 @@ public class LongPistonArmBlock extends DirectionalBlock {
 
     public boolean isAttached(BlockState state, BlockState behindState, BlockState frontState) {
         // Must be BasicPistonArmBlock or BasicPistonHeadBlock in front
-        if (!frontState.is(HEAD_BLOCK) && !frontState.is(this)) {
+        if (!frontState.is(this.family.getHead()) && !frontState.is(this)) {
             return false;
         }
 
-        PistonType type = state.getValue(TYPE);
         Direction facing = state.getValue(FACING);
 
         // Head or Arm in front of arm is valid
-        if (type != frontState.getValue(TYPE) || facing != frontState.getValue(FACING)) {
+        if (facing != frontState.getValue(FACING)) {
             return false;
         }
 
         // If arm is behind, make sure it's a valid arm
         if (behindState.is(this)) {
-            return type == behindState.getValue(TYPE) && facing == behindState.getValue(FACING);
+            return facing == behindState.getValue(FACING);
         }
 
         // If it's not an arm than it must be a piston base, and a valid one
-        PistonFamily family = PistonFamilies.getFamily(HEAD_BLOCK);
-        Block base = family.getBaseBlock(type);
-
-        return behindState.is(base) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+        return (behindState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                behindState.is(this.family.getBase(PistonType.STICKY))) &&
+                behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
             facing == behindState.getValue(FACING);
     }
 
@@ -149,15 +126,15 @@ public class LongPistonArmBlock extends DirectionalBlock {
         boolean validFront, validBack;
         BlockState frontState = level.getBlockState(frontPos);
         // Must be BasicPistonArmBlock or BasicPistonHeadBlock in front
-        validFront = (frontState.is(HEAD_BLOCK) || frontState.is(this)) &&
-                (state.getValue(TYPE) == frontState.getValue(TYPE) && state.getValue(FACING) == frontState.getValue(FACING));
+        validFront = (frontState.is(this.family.getHead()) || frontState.is(this)) &&
+                (state.getValue(FACING) == frontState.getValue(FACING));
         BlockState backState = level.getBlockState(behindPos);
         if (backState.is(this)) { // If arm is behind, make sure it's a valid arm
-            validBack = state.getValue(TYPE) == backState.getValue(TYPE) && backState.getValue(FACING) == state.getValue(FACING);
+            validBack = backState.getValue(FACING) == state.getValue(FACING);
         } else { // If it's not an arm than it must be a piston base, and a valid one
-            PistonFamily f = PistonFamilies.getFamily(HEAD_BLOCK);
-            Block piston = f.getBaseBlock(state.getValue(TYPE));
-            validBack = backState.is(piston) && backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+            validBack = (backState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                    backState.is(this.family.getBase(PistonType.STICKY))) &&
+                    backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
                     backState.getValue(FACING) == backState.getValue(FACING);
         }
         if (!validBack || !validFront) {
@@ -178,18 +155,18 @@ public class LongPistonArmBlock extends DirectionalBlock {
     ) {
         BlockState frontState = world.getBlockState(frontPos);
         // Must be BasicPistonArmBlock or BasicPistonHeadBlock in front
-        if (frontOr.test(frontState, armState) || ((frontState.is(HEAD_BLOCK) || frontState.is(this)) &&
-                (armState.getValue(TYPE) == frontState.getValue(TYPE) && armState.getValue(FACING) == frontState.getValue(FACING)))) {
+        if (frontOr.test(frontState, armState) || ((frontState.is(this.family.getHead()) || frontState.is(this)) &&
+                armState.getValue(FACING) == frontState.getValue(FACING))) {
             BlockState backState = world.getBlockState(backPos);
             if (backOr.test(backState, armState)) {
                 return true;
             } else if (backState.is(this)) { // If arm is behind, make sure it's a valid arm
-                return armState.getValue(TYPE) == backState.getValue(TYPE) && backState.getValue(FACING) == armState.getValue(FACING);
+                return backState.getValue(FACING) == armState.getValue(FACING);
             } else { // If it's not an arm than it must be a piston base, and a valid one
-                PistonFamily f = PistonFamilies.getFamily(HEAD_BLOCK);
-                Block piston = f.getBaseBlock(armState.getValue(TYPE));
-                return backState.is(piston) && backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
-                        backState.getValue(FACING) == backState.getValue(FACING);
+                return backState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                        backState.is(this.family.getBase(PistonType.STICKY)) &&
+                                backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+                                backState.getValue(FACING) == backState.getValue(FACING);
             }
         }
         return false;
@@ -241,8 +218,15 @@ public class LongPistonArmBlock extends DirectionalBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        PistonFamily family = PistonFamilies.getFamily(HEAD_BLOCK);
-        return new ItemStack(family.getBaseBlock(state.getValue(TYPE)));
+        Direction dir = state.getValue(FACING);
+        BlockPos nextBlockPos = pos.relative(dir);
+        BlockState nextState = level.getBlockState(nextBlockPos);
+        while (nextState.is(this)) {
+            nextBlockPos = nextBlockPos.relative(dir);
+            nextState = level.getBlockState(nextBlockPos);
+        }
+        return nextState.is(this.family.getHead()) ?
+                new ItemStack(this.family.getBase(nextState.getValue(BasicPistonHeadBlock.TYPE))) : ItemStack.EMPTY;
     }
 
     @Override
@@ -257,7 +241,7 @@ public class LongPistonArmBlock extends DirectionalBlock {
 
     @Override
     public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE, SHORT);
+        builder.add(FACING, SHORT);
     }
 
     @Override

@@ -1,14 +1,17 @@
 package ca.fxco.pistonlib.datagen;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceKey;
+
 import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.pistonlib.base.ModRegistries;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -31,16 +34,19 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 	public void buildRecipes(Consumer<FinishedRecipe> exporter) {
 		LOGGER.info("Generating recipes...");
 
-		for(PistonFamily family : PistonFamilies.getFamilies()) {
-			LOGGER.info("Generating recipes for piston family "+family.getId()+"...");
+		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
+            ResourceKey<PistonFamily> key = entry.getKey();
+            PistonFamily family = entry.getValue();
 
-			Block normalBase = family.getBaseBlock(PistonType.DEFAULT);
-			Block stickyBase = family.getBaseBlock(PistonType.STICKY);
+            LOGGER.info("Generating recipes for piston family "+key.location()+"...");
 
-			if(normalBase != null && stickyBase != null && normalBase.asItem() != Items.AIR && stickyBase.asItem() != Items.AIR) {
-				offerStickyPistonRecipe(exporter, stickyBase, normalBase);
-			}
-		}
+            Block normalBase = family.getBase(PistonType.DEFAULT);
+            Block stickyBase = family.getBase(PistonType.STICKY);
+
+            if(normalBase != null && stickyBase != null && normalBase.asItem() != Items.AIR && stickyBase.asItem() != Items.AIR) {
+                offerStickyPistonRecipe(exporter, stickyBase, normalBase);
+            }
+        }
 
 		LOGGER.info("Finished generating recipes for pistons, generating for other items...");
 

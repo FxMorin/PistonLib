@@ -1,14 +1,12 @@
 package ca.fxco.pistonlib.blocks.pistons.longPiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -23,23 +21,20 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     public boolean skipCheck = false;
 
     public LongMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
-    }
+        super(pos, state);
 
-    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
-        super(pos, state, type);
         maxLength = 0;
     }
 
-    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm) {
-        this(pos, state, movedState, facing, extending, isSourcePiston, maxLength, length, isArm,
-                ModBlockEntities.LONG_MOVING_BLOCK_ENTITY);
+    public LongMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                 BlockEntity movedBlockEntity, Direction facing, boolean extending, boolean isSourcePiston) {
+        this(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, MAX_ARM_LENGTH, 0, false);
     }
-    public LongMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm,
-                                 BlockEntityType<?> type) {
-        super(pos, state, movedState, facing, extending, isSourcePiston, type);
+
+    public LongMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                 BlockEntity movedBlockEntity, Direction facing, boolean extending, boolean isSourcePiston,
+                                 int maxLength, int length, boolean isArm) {
+        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
         this.maxLength = maxLength;
         this.length = length;
@@ -56,16 +51,16 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
 
     @Override
     protected BlockState getStateForMovingEntities() {
-        if (!this.isExtending()) {
-            return this.isSourcePiston() && this.movedState.getBlock() instanceof BasicPistonBaseBlock ?
-                ModBlocks.BASIC_PISTON_HEAD.defaultBlockState()
+        if (!this.extending) {
+            return this.isSourcePiston && this.movedState.is(this.getFamily().getBase(this.type)) ?
+                this.getFamily().getHead().defaultBlockState()
                     .setValue(BlockStateProperties.SHORT, this.progress > 0.25F)
                     .setValue(BlockStateProperties.FACING, this.movedState.getValue(BlockStateProperties.FACING)) :
                 this.movedState;
         } else {
-            return this.isArm() && this.movedState.getBlock() instanceof BasicPistonBaseBlock ?
-                ModBlocks.LONG_PISTON_ARM.defaultBlockState()
-                    .setValue(BlockStateProperties.SHORT, this.isSourcePiston() && this.progress > 0.25F)
+            return this.isArm && this.movedState.is(this.getFamily().getBase(this.type)) ?
+                this.getFamily().getArm().defaultBlockState()
+                    .setValue(BlockStateProperties.SHORT, this.isSourcePiston && this.progress > 0.25F)
                     .setValue(BlockStateProperties.FACING, this.movedState.getValue(BlockStateProperties.FACING)) :
                 this.movedState;
         }
@@ -135,11 +130,11 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
     protected BlockState getMovingStateForCollisionShape() {
         if (this.isSourcePiston) {
             if (this.isArm) {
-                return ModBlocks.LONG_PISTON_ARM.defaultBlockState()
+                return this.getFamily().getArm().defaultBlockState()
                     .setValue(PistonHeadBlock.FACING, this.direction)
                     .setValue(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
             } else {
-                return ModBlocks.BASIC_PISTON_HEAD.defaultBlockState()
+                return this.getFamily().getHead().defaultBlockState()
                     .setValue(PistonHeadBlock.FACING, this.direction)
                     .setValue(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
             }

@@ -3,15 +3,13 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -40,48 +39,28 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BasicMovingBlock extends MovingPistonBlock {
 
-    private static boolean never(BlockState state, BlockGetter level, BlockPos pos) {
-        return false;
+    public final PistonFamily family;
+
+    public BasicMovingBlock(PistonFamily family) {
+        this(family, createDefaultSettings());
     }
 
-    public BasicMovingBlock() {
-        this(createDefaultSettings());
-    }
-
-    public BasicMovingBlock(BlockBehaviour.Properties properties) {
+    public BasicMovingBlock(PistonFamily family, Properties properties) {
         super(properties);
-    }
 
-    public BlockEntity createMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                               @Nullable BlockEntity movedBlockEntity, Direction facing,
-                                               boolean extending, boolean isSourcePiston) {
-        return new BasicMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
+        this.family = family;
+        this.family.setMoving(this);
     }
 
     @Override @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY);
-    }
-
-    @Nullable
-    protected static <T extends BlockEntity, B extends BasicMovingBlockEntity> BlockEntityTicker<T> createTicker(BlockEntityType<T> targetType, BlockEntityType<B>... movingBlockEntityType) {
-        return createTickerHelper((l, p, s, mbe) -> mbe.tick(), targetType, movingBlockEntityType);
-    }
-
-    @Nullable
-    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityTicker<? super E> blockEntityTicker, BlockEntityType<A> blockEntityType, BlockEntityType<E>... blockEntityTypes) {
-        for (BlockEntityType<E> type : blockEntityTypes) {
-            if (type == blockEntityType) {
-                return (BlockEntityTicker<A>) blockEntityTicker;
-            }
-        }
-        return null;
+        return createTickerHelper(type, this.family.getMovingBlockEntityType(), (l, p, s, mbe) -> mbe.tick());
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!newState.is(this)) {
-            BasicMovingBlockEntity mbe = getMovingBlockEntity(level, pos);
+            BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, pos);
 
             if (mbe != null) {
                 mbe.finalTick();
@@ -91,17 +70,18 @@ public class BasicMovingBlock extends MovingPistonBlock {
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        PistonType type = state.getValue(TYPE);
         BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
         BlockState behindState = level.getBlockState(behindPos);
 
-        if (behindState.getBlock() instanceof BasicPistonBaseBlock && behindState.getValue(BasicPistonBaseBlock.EXTENDED)) {
+        if (behindState.is(this.family.getBase(type)) && behindState.getValue(BasicPistonBaseBlock.EXTENDED)) {
             level.removeBlock(behindPos, false);
         }
     }
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!level.isClientSide() && getMovingBlockEntity(level, pos) == null) {
+        if (!level.isClientSide() && this.getMovingBlockEntity(level, pos) == null) {
             level.removeBlock(pos, false);
             return InteractionResult.CONSUME;
         }
@@ -158,7 +138,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
         return false;
     }
 
-    public static BlockBehaviour.Properties createDefaultSettings() {
+    public static Properties createDefaultSettings() {
         return FabricBlockSettings.of(Material.PISTON)
                 .strength(-1.0f)
                 .dynamicBounds()
@@ -167,5 +147,9 @@ public class BasicMovingBlock extends MovingPistonBlock {
                 .solidBlock(BasicMovingBlock::never)
                 .suffocates(BasicMovingBlock::never)
                 .blockVision(BasicMovingBlock::never);
+    }
+
+    private static boolean never(BlockState state, BlockGetter level, BlockPos pos) {
+        return false;
     }
 }

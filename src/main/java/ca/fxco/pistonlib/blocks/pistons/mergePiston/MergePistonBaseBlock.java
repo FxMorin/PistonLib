@@ -6,7 +6,9 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
-import ca.fxco.pistonlib.pistonLogic.pistonHandlers.MergingPistonStructureResolver;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
+import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +16,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
@@ -25,27 +26,27 @@ import java.util.Map;
 
 public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
-	public MergePistonBaseBlock(PistonType type) {
-        super(type);
+	public MergePistonBaseBlock(PistonFamily family, PistonType type) {
+        super(family, type);
     }
 
     @Override
-    public PistonStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
+    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
         return new MergingPistonStructureResolver(this, level, pos, facing, extend);
     }
 
     @Override
-    public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend, StructureResolverProvider structureProvider) {
+    public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
         if (!extend) {
             BlockPos headPos = pos.relative(facing);
             BlockState headState = level.getBlockState(headPos);
 
-            if (headState.is(HEAD_BLOCK)) {
+            if (headState.is(this.family.getHead())) {
                 level.setBlock(headPos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
             }
         }
 
-        MergingPistonStructureResolver structure = (MergingPistonStructureResolver) structureProvider.provide(level, pos, facing, extend);
+        MergingPistonStructureResolver structure = (MergingPistonStructureResolver) structureProvider.create(level, pos, facing, extend);
 
         if (!structure.resolve()) {
             return false;
@@ -76,6 +77,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         }
 
         Direction moveDir = extend ? facing : facing.getOpposite();
+        float speed = extend ? this.family.getExtendingSpeed() : this.family.getRetractingSpeed();
 
         // Merge Blocks
         for (int i = toMerge.size() - 1; i >= 0; i--) {
@@ -93,12 +95,12 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
                         if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
                                 bem2.shouldStoreSelf(mergeBlockEntity)) {
                             bem2.onMerge(mergeBlockEntity, moveDir);
-                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {
-                            mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                         }
                     } else {
-                        mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                        mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                     }
                 }
             } else {
@@ -114,16 +116,16 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
                         if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
                                 bem2.shouldStoreSelf(mergeBlockEntity)) {
                             bem2.onMerge(mergeBlockEntity, moveDir);
-                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {
-                            mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                            mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                         }
                     } else {
-                        mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                        mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                     }
                 } else {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState);
-                    mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                    mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
                 }
 
                 level.setBlock(posToMerge, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
@@ -185,9 +187,9 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
             toRemove.remove(dstPos);
 
-            BlockState movingBlock = MOVING_BLOCK.defaultBlockState().setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = MOVING_BLOCK
-                    .createMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+            BlockState movingBlock = this.family.getMoving().defaultBlockState().setValue(BasicMovingBlock.FACING, facing);
+            BlockEntity movingBlockEntity = this.family
+                    .newMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
             level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBlockEntity);
@@ -200,17 +202,17 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         // Place extending head
         if (extend) {
             BlockPos headPos = pos.relative(facing);
-            BlockState headState = HEAD_BLOCK.defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, this.type)
+            BlockState headState = this.family.getHead().defaultBlockState()
+                    .setValue(BasicPistonHeadBlock.TYPE, type)
                     .setValue(BasicPistonHeadBlock.FACING, facing);
 
             toRemove.remove(headPos);
 
-            BlockState movingBlock = MOVING_BLOCK.defaultBlockState()
+            BlockState movingBlock = this.family.getMoving().defaultBlockState()
                     .setValue(BasicMovingBlock.TYPE, this.type)
                     .setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = MOVING_BLOCK
-                    .createMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
+            BlockEntity movingBlockEntity = this.family
+                    .newMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
 
             level.setBlock(headPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBlockEntity);
@@ -271,7 +273,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         }
 
         if (extend) {
-            level.updateNeighborsAt(pos.relative(facing), HEAD_BLOCK);
+            level.updateNeighborsAt(pos.relative(facing), this.family.getHead());
         }
 
         return true;

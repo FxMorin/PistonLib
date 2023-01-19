@@ -25,6 +25,9 @@
     ],
     "fabric-datagen": [
       "ca.fxco.pistonlib.datagen.PistonLibDatagen"
+    ],
+    "pistonlib": [
+      "ca.fxco.pistonlib.PistonLib"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",

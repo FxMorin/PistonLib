@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.blocks;
 import java.util.Map;
 
 import ca.fxco.pistonlib.impl.QLevel;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

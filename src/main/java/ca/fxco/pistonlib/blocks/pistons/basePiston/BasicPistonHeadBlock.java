@@ -2,8 +2,6 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.Arrays;
 
-import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -57,6 +55,8 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     private static final VoxelShape[] SHORT_HEAD_SHAPES;
     private static final VoxelShape[] HEAD_SHAPES;
 
+    public final PistonFamily family;
+
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
         return Arrays.stream(Direction.values()).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
     }
@@ -73,16 +73,18 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         };
     }
 
-    public BasicPistonHeadBlock() {
-        this(FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
+    public BasicPistonHeadBlock(PistonFamily family) {
+        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
     }
 
-    public BasicPistonHeadBlock(Properties properties) {
+    public BasicPistonHeadBlock(PistonFamily family, Properties properties) {
         super(properties);
+
+        this.family = family;
+        this.family.setHead(this);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
-            .setValue(TYPE, PistonType.DEFAULT)
             .setValue(SHORT, false));
     }
 
@@ -97,10 +99,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     public boolean isFittingBase(BlockState headState, BlockState behindState) {
-        PistonFamily family = PistonFamilies.getFamily(this);
-        Block base = family.getBaseBlock(headState.getValue(TYPE));
-
-        return behindState.is(base) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+        return behindState.is(family.getBase(headState.getValue(TYPE))) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
                 behindState.getValue(FACING) == headState.getValue(FACING);
     }
 
@@ -141,7 +140,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState behindState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-        return this.isFittingBase(state, behindState) || behindState.is(ModTags.MOVING_PISTONS) &&
+        return this.isFittingBase(state, behindState) || behindState.is(this.family.getMoving()) &&
                 behindState.getValue(FACING) == state.getValue(FACING);
     }
 
@@ -155,8 +154,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        PistonFamily family = PistonFamilies.getFamily(this);
-        return new ItemStack(family.getBaseBlock(state.getValue(TYPE)));
+        return new ItemStack(family.getBase(state.getValue(TYPE)));
     }
 
     @Override
@@ -180,6 +178,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     static {
+
         TYPE = BlockStateProperties.PISTON_TYPE;
         SHORT = BlockStateProperties.SHORT;
         EAST_HEAD_SHAPE = Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
@@ -202,5 +201,6 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         SHORT_WEST_ARM_SHAPE = Block.box(4.0, 6.0, 6.0, 16.0, 10.0, 10.0);
         SHORT_HEAD_SHAPES = getHeadShapes(true);
         HEAD_SHAPES = getHeadShapes(false);
+
     }
 }
