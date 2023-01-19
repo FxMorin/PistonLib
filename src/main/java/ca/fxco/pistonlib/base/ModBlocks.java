@@ -3,18 +3,7 @@ package ca.fxco.pistonlib.base;
 import java.util.Map;
 import java.util.function.Function;
 
-import ca.fxco.pistonlib.blocks.AllSidedObserverBlock;
-import ca.fxco.pistonlib.blocks.AxisLockedBlock;
-import ca.fxco.pistonlib.blocks.GlueBlock;
-import ca.fxco.pistonlib.blocks.MoveCountingBlock;
-import ca.fxco.pistonlib.blocks.PoweredStickyBlock;
-import ca.fxco.pistonlib.blocks.PullOnlyBlock;
-import ca.fxco.pistonlib.blocks.QuasiBlock;
-import ca.fxco.pistonlib.blocks.SlimyPoweredBlock;
-import ca.fxco.pistonlib.blocks.StickyChainBlock;
-import ca.fxco.pistonlib.blocks.StickySidesBlock;
-import ca.fxco.pistonlib.blocks.StickylessBlock;
-import ca.fxco.pistonlib.blocks.WeakPoweredBlock;
+import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfObsidianBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfPoweredBlock;
@@ -53,7 +42,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.Material;
@@ -83,6 +71,7 @@ public class ModBlocks {
     public static final Block MOVE_COUNTING_BLOCK = register("move_counting_block", MoveCountingBlock::new, Blocks.SCULK);
     public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block ERASE_BLOCK = register("erase_block", EraseBlock::new, Blocks.REDSTONE_BLOCK);
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
@@ -91,7 +80,7 @@ public class ModBlocks {
     public static final Block SLIPPERY_STONE_BLOCK = register("slippery_stone_block", BaseSlipperyBlock::new, Blocks.STONE);
 
     // Obsidian Blocks
-    public static final Block OBSIDIAN_SLAB_BLOCK = register("obsidian_slab_block", SlabBlock::new, Blocks.OBSIDIAN);
+    public static final Block OBSIDIAN_SLAB_BLOCK = register("obsidian_slab_block", ObsidianSlabBlock::new, Blocks.OBSIDIAN);
     public static final Block OBSIDIAN_STAIR_BLOCK = register("obsidian_stair_block", new StairBlock(Blocks.OBSIDIAN.defaultBlockState(), FabricBlockSettings.copyOf(Blocks.OBSIDIAN)));
 
     // Piston Blocks should always be initialized in the following order:
