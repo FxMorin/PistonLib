@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -35,7 +34,6 @@ public class BasicPistonArmBlock extends DirectionalBlock {
 
     // This is the BASIC ARM BLOCK that you should be extending to create your own arm blocks
 
-    public static final EnumProperty<PistonType> TYPE = BlockStateProperties.PISTON_TYPE;
     public static final BooleanProperty SHORT = BlockStateProperties.SHORT;
 
     // TODO: Grab there directly instead of using a lookup since it should be faster now that there is no union
@@ -106,20 +104,21 @@ public class BasicPistonArmBlock extends DirectionalBlock {
         }
 
         Direction facing = state.getValue(FACING);
-        PistonType type = state.getValue(TYPE);
 
         // Head or Arm in front of arm is valid
-        if (facing != frontState.getValue(FACING) || type != frontState.getValue(TYPE)) {
+        if (facing != frontState.getValue(FACING)) {
             return false;
         }
 
         // If arm is behind, make sure it's a valid arm
         if (behindState.is(this)) {
-            return facing == behindState.getValue(FACING) && type == behindState.getValue(TYPE);
+            return facing == behindState.getValue(FACING);
         }
 
         // If it's not an arm than it must be a piston base, and a valid one
-        return behindState.is(this.family.getBase(type)) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+        return (behindState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                behindState.is(this.family.getBase(PistonType.STICKY))) &&
+                behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
             facing == behindState.getValue(FACING);
     }
 
@@ -128,12 +127,14 @@ public class BasicPistonArmBlock extends DirectionalBlock {
         BlockState frontState = level.getBlockState(frontPos);
         // Must be BasicPistonArmBlock or BasicPistonHeadBlock in front
         validFront = (frontState.is(this.family.getHead()) || frontState.is(this)) &&
-                (state.getValue(FACING) == frontState.getValue(FACING) && state.getValue(TYPE) == frontState.getValue(TYPE));
+                (state.getValue(FACING) == frontState.getValue(FACING));
         BlockState backState = level.getBlockState(behindPos);
         if (backState.is(this)) { // If arm is behind, make sure it's a valid arm
-            validBack = backState.getValue(FACING) == state.getValue(FACING) && backState.getValue(TYPE) == state.getValue(TYPE);
+            validBack = backState.getValue(FACING) == state.getValue(FACING);
         } else { // If it's not an arm than it must be a piston base, and a valid one
-            validBack = backState.is(this.family.getBase(state.getValue(TYPE))) && backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+            validBack = (backState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                    backState.is(this.family.getBase(PistonType.STICKY))) &&
+                    backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
                     backState.getValue(FACING) == backState.getValue(FACING);
         }
         if (!validBack || !validFront) {
@@ -160,10 +161,12 @@ public class BasicPistonArmBlock extends DirectionalBlock {
             if (backOr.test(backState, armState)) {
                 return true;
             } else if (backState.is(this)) { // If arm is behind, make sure it's a valid arm
-                return backState.getValue(FACING) == armState.getValue(FACING) && backState.getValue(TYPE) == armState.getValue(TYPE);
+                return backState.getValue(FACING) == armState.getValue(FACING);
             } else { // If it's not an arm than it must be a piston base, and a valid one
-                return backState.is(this.family.getBase(armState.getValue(TYPE))) && backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
-                        backState.getValue(FACING) == backState.getValue(FACING);
+                return backState.is(this.family.getBase(PistonType.DEFAULT)) ||
+                        backState.is(this.family.getBase(PistonType.STICKY)) &&
+                                backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+                                backState.getValue(FACING) == backState.getValue(FACING);
             }
         }
         return false;
@@ -215,7 +218,7 @@ public class BasicPistonArmBlock extends DirectionalBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        return new ItemStack(this.family.getBase(state.getValue(TYPE)));
+        return new ItemStack(this.family.getBase());
     }
 
     @Override
