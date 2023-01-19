@@ -7,6 +7,7 @@
     "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
+    "RedStoneWireBlockMixin",
     "accessors.BlockEntityAccessor",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",

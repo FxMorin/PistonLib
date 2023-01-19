@@ -1,21 +1,20 @@
 package ca.fxco.pistonlib.blocks.halfBlocks;
 
+import ca.fxco.pistonlib.impl.BlockPowerRedirection;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.redstone.Redstone;
 
-public class HalfPoweredBlock extends Block implements ConfigurablePistonStickiness {
+public class HalfPoweredBlock extends Block implements ConfigurablePistonStickiness, BlockPowerRedirection {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -50,6 +49,24 @@ public class HalfPoweredBlock extends Block implements ConfigurablePistonStickin
 
     @Override
     public int getSignal(BlockState state, BlockGetter world, BlockPos pos, Direction dir) {
-        return dir.getOpposite() == state.getValue(FACING) ? Redstone.SIGNAL_MAX : Redstone.SIGNAL_NONE;
+        Direction directionFrom = dir.getOpposite();
+        Direction facing = state.getValue(FACING);
+        if (directionFrom == facing) { // front
+            return Redstone.SIGNAL_MAX;
+        }
+        if (facing != dir && facing != Direction.UP) { // side
+            Block block = world.getBlockState(pos.relative(directionFrom)).getBlock();
+            if (block instanceof DiodeBlock || block instanceof RedStoneWireBlock) {
+                return facing.getAxis() != Direction.Axis.Y ? 8 : Redstone.SIGNAL_MAX;
+            }
+        }
+        return Redstone.SIGNAL_NONE;
+    }
+
+    @Override
+    public boolean canRedirectRedstone(BlockState state, Direction direction) {
+        Direction facing = state.getValue(FACING);
+        return direction != null && (direction.getOpposite() == facing) ||
+                (facing != direction && facing != Direction.UP && direction.getAxis() != Direction.Axis.Y);
     }
 }
