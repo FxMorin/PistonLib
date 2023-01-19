@@ -5,7 +5,9 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.pistonlib.pistonLogic.pistonHandlers.MergingPistonStructureResolver;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -50,13 +52,15 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         }
 
         Map<BlockPos, BlockState> toRemove = new LinkedHashMap<>();
+        Map<BlockPos, BlockState> toKeep = new LinkedHashMap<>();
         List<BlockPos> toMove = structure.getToPush();
         List<BlockPos> toDestroy = structure.getToDestroy();
         List<BlockPos> toMerge = structure.getToMerge();
+        List<BlockPos> toUnMerge = structure.getToUnMerge();
         List<BlockState> statesToMove = new ArrayList<>();
         List<BlockEntity> blockEntitiesToMove = new ArrayList<>();
 
-        // collect blocks to move
+        // Collect blocks to move
         for (BlockPos posToMove : toMove) {
             BlockState stateToMove = level.getBlockState(posToMove);
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
@@ -71,9 +75,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             toRemove.put(posToMove, stateToMove);
         }
 
-        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
-        int affectedIndex = 0;
-
         Direction moveDir = extend ? facing : facing.getOpposite();
 
         // Merge Blocks
@@ -86,7 +87,8 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
             if (mergeIntoState.getBlock() instanceof MergeBlock) { // MultiMerge
                 if (level.getBlockEntity(mergeIntoPos) instanceof MergeBlockEntity mergeBlockEntity) {
-                    if (mergeBlockEntity.initialBlockEntity != null) {
+                    if (((BlockStateBaseMerging)stateToMerge).getBlockEntityMergeRules().checkMerge() &&
+                            mergeBlockEntity.initialBlockEntity != null) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
                         if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
                                 bem2.shouldStoreSelf(mergeBlockEntity)) {
@@ -95,22 +97,27 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
                         } else {
                             mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
                         }
+                    } else {
+                        mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
                     }
-                    mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
                 }
             } else {
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
                 MergeBlockEntity mergeBlockEntity;
                 BlockEntity mergeIntoBlockEntity = level.getBlockEntity(mergeIntoPos);
-                if (mergeIntoBlockEntity instanceof BlockEntityMerging bem && bem.doMerging()) {
+                if (mergeIntoBlockEntity instanceof BlockEntityMerging bem && bem.doInitialMerging()) {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity);
                     bem.onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
 
-                    BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                    if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
-                            bem2.shouldStoreSelf(mergeBlockEntity)) {
-                        bem2.onMerge(mergeBlockEntity, moveDir);
-                        mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                    if (((BlockStateBaseMerging)stateToMerge).getBlockEntityMergeRules().checkMerge()) {
+                        BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
+                        if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
+                                bem2.shouldStoreSelf(mergeBlockEntity)) {
+                            bem2.onMerge(mergeBlockEntity, moveDir);
+                            mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, 1); //TODO: Add speed
+                        } else {
+                            mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
+                        }
                     } else {
                         mergeBlockEntity.doMerge(stateToMerge, moveDir, 1); //TODO: Add speed
                     }
@@ -126,7 +133,10 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             }
         }
 
-        // destroy blocks
+        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
+        int affectedIndex = 0;
+
+        // Destroy blocks
         for (int i = toDestroy.size() - 1; i >= 0; i--) {
             BlockPos posToDestroy = toDestroy.get(i);
             BlockState stateToDestroy = level.getBlockState(posToDestroy);
@@ -141,27 +151,53 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             affectedStates[affectedIndex++] = stateToDestroy;
         }
 
-        // move blocks
+        BlockState[] unMergingStates = new BlockState[toUnMerge.size()];
+        int unMergingIndex = 0;
+
+        // Move blocks
         for (int i = toMove.size() - 1; i >= 0; i--) {
             BlockPos posToMove = toMove.get(i);
             BlockPos dstPos = posToMove.relative(moveDir);
             BlockState stateToMove = statesToMove.get(i);
             BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
 
+            // UnMerge blocks
+            boolean move = true;
+            if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
+                Pair<BlockState, BlockState> unmergedStates = null;
+                if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
+                        level.getBlockEntity(posToMove) instanceof BlockEntityMerging bem) {
+                    unmergedStates = bem.doUnMerge(stateToMove, moveDir);
+                }
+                if (unmergedStates == null) {
+                    unmergedStates = bsbm.doUnMerge(level, posToMove, moveDir);
+                }
+                if (unmergedStates != null) {
+                    unMergingStates[unMergingIndex++] = stateToMove;
+                    stateToMove = unmergedStates.getFirst();
+                    BlockState stateToKeep = unmergedStates.getSecond();
+                    toKeep.put(posToMove, stateToKeep);
+                    affectedStates[affectedIndex++] = stateToKeep;
+                    toRemove.remove(posToMove);
+                    move = false;
+                }
+            }
+
             toRemove.remove(dstPos);
 
-            BlockState movingBlock = MOVING_BLOCK.defaultBlockState()
-                    .setValue(BasicMovingBlock.FACING, facing);
+            BlockState movingBlock = MOVING_BLOCK.defaultBlockState().setValue(BasicMovingBlock.FACING, facing);
             BlockEntity movingBlockEntity = MOVING_BLOCK
                     .createMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
             level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBlockEntity);
 
-            affectedStates[affectedIndex++] = stateToMove;
+            if (move) {
+                affectedStates[affectedIndex++] = stateToMove;
+            }
         }
 
-        // place extending head
+        // Place extending head
         if (extend) {
             BlockPos headPos = pos.relative(facing);
             BlockState headState = HEAD_BLOCK.defaultBlockState()
@@ -180,14 +216,14 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             level.setBlockEntity(movingBlockEntity);
         }
 
-        // remove left over blocks
+        // Remove left over blocks
         BlockState air = Blocks.AIR.defaultBlockState();
 
         for (BlockPos posToRemove : toRemove.keySet()) {
             level.setBlock(posToRemove, air, UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
         }
 
-        // do neighbor updates
+        // Do neighbor updates at the removed positions once all the blocks have been removed
         for (Map.Entry<BlockPos, BlockState> entry : toRemove.entrySet()) {
             BlockPos removedPos = entry.getKey();
             BlockState removedState = entry.getValue();
@@ -199,6 +235,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
         affectedIndex = 0;
 
+        // Do neighbor updates at the destroyed positions
         for (int i = toDestroy.size() - 1; i >= 0; i--) {
             BlockPos destroyedPos = toDestroy.get(i);
             BlockState destroyedState = affectedStates[affectedIndex++];
@@ -206,12 +243,33 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             destroyedState.updateIndirectNeighbourShapes(level, destroyedPos, UPDATE_CLIENTS);
             level.updateNeighborsAt(destroyedPos, destroyedState.getBlock());
         }
+
+        // Do neighbor updates at the moved block positions
         for (int i = toMove.size() - 1; i >= 0; i--) {
             BlockPos movedPos = toMove.get(i);
             BlockState movedState = affectedStates[affectedIndex++];
 
             level.updateNeighborsAt(movedPos, movedState.getBlock());
         }
+
+        unMergingIndex = 0;
+
+        // Keep these blocks as they unmerged, just change there state to the new one
+        for (Map.Entry<BlockPos, BlockState> entry : toKeep.entrySet()) {
+            level.setBlock(entry.getKey(), entry.getValue(), UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
+        }
+
+        // Do neighbor updates at the unmerged positions once all the blocks have been changed
+        for (Map.Entry<BlockPos, BlockState> entry : toKeep.entrySet()) {
+            BlockPos keepPos = entry.getKey();
+            BlockState keepState = entry.getValue();
+            BlockState lastState = unMergingStates[unMergingIndex++];
+
+            lastState.updateIndirectNeighbourShapes(level, keepPos, UPDATE_CLIENTS);
+            keepState.updateNeighbourShapes(level, keepPos, UPDATE_CLIENTS);
+            keepState.updateIndirectNeighbourShapes(level, keepPos, UPDATE_CLIENTS);
+        }
+
         if (extend) {
             level.updateNeighborsAt(pos.relative(facing), HEAD_BLOCK);
         }

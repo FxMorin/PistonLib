@@ -1,28 +1,31 @@
-package ca.fxco.pistonlib.mixin.merging;
+package ca.fxco.pistonlib.blocks;
 
+import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(SlabBlock.class)
-public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
+public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMerging {
+
+    public ObsidianSlabBlock(Properties properties) {
+        super(properties);
+    }
 
     @Override
     public boolean usesConfigurablePistonMerging() {
-        return true; //TODO: Add config toggles for vanilla changing mechanics
+        return true;
     }
 
     @Override
     public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
                             BlockState mergingIntoState, Direction direction) {
-        if (state.getBlock() != mergingIntoState.getBlock()) {
+        if (state.getBlock() != mergingIntoState.getBlock() && state.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
             return false;
         }
         SlabType type1 = state.getValue(BlockStateProperties.SLAB_TYPE);
@@ -41,24 +44,13 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     @Override
     public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
                               BlockState mergingIntoState, Direction direction) {
+        if (state.getBlock() == Blocks.SMOOTH_STONE_SLAB) {
+            if (state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.BOTTOM) {
+                return ModBlocks.HALF_OBSIDIAN_BLOCK.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.UP);
+            } else {
+                return ModBlocks.HALF_OBSIDIAN_BLOCK.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.DOWN);
+            }
+        }
         return mergingIntoState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.DOUBLE);
-    }
-
-    //TODO: This is temporary for testing!
-    // Slab blocks will need either half sticky blocks or half piston blocks to unmerge like this
-
-    @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
-                              BlockState neighborState, Direction direction) {
-        return state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.DOUBLE;
-    }
-
-    @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
-                                                  BlockPos blockPos, Direction direction) {
-        return new Pair<>(
-                state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
-                state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)
-        );
     }
 }
