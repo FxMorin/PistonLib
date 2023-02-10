@@ -5,6 +5,10 @@ import ca.fxco.api.pistonlib.config.Category;
 
 public class PistonLibConfig {
 
+    // ===========
+    //  Mechanics
+    // ===========
+
     @ConfigValue(
             desc = "Adds a mechanic to create packed ice by mering multiple ice blocks together",
             keyword = {"ice", "merging", "packed"},
@@ -25,4 +29,15 @@ public class PistonLibConfig {
             category = {Category.MECHANIC, Category.MERGING}
     )
     public static boolean doSlabMerging = true;
+
+    // ===========
+    //    Fixes
+    // ===========
+
+    @ConfigValue(
+            desc = "Fixes piston progress not being saved correctly, cause some pistons to get out of sync",
+            keyword = {"progress", "sync"},
+            category = Category.FIX
+    )
+    public static boolean pistonProgressFix = true;
 }

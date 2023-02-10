@@ -24,8 +24,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         return new ResourceLocation(MOD_ID, path);
     }
 
-    public static final boolean PISTON_PROGRESS_FIX = true;
-
     @Override
     public void onInitialize() {
         ModRegistries.bootstrap();
