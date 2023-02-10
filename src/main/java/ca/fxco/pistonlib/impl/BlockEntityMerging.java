@@ -83,9 +83,8 @@ public interface BlockEntityMerging {
     }
 
     /**
-     * Determines what blocks the block entity should unmerge into.
-     * Return null to call the blockstate `doUnMerge` method
-     * The first block in the pair is the block that will be pulled out
+     * If the block entity should unmerge also or if it should stay where it is.
+     * If it stays it won't replace the block entity
      */
     default boolean shouldUnMergeBlockEntity(BlockState state, Direction direction) {
         return true;
