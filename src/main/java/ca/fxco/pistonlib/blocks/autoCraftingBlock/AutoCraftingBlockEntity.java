@@ -159,8 +159,13 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
     public boolean isEmpty() {
-        return this.resultItemStack.isEmpty() && items.isEmpty();
+        return (this.resultItemStack.isEmpty() || !this.hasPaid) && items.isEmpty();
     }
 
     @Override
@@ -176,10 +181,14 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
                 this.items.clearContent();
             }
             this.lastSuccessfulRecipe = this.lastRecipe;
-            return this.resultItemStack.split(amt);
+            ItemStack stack = this.resultItemStack.split(amt);
+            if (this.resultItemStack.isEmpty()) {
+                this.resultItemStack = craft();
+            }
+            return stack;
         }
         ItemStack stack = this.items.removeItem(slot, amt);
-        if (this.resultItemStack.isEmpty()) {
+        if (this.resultItemStack.isEmpty() || !this.hasPaid) {
             this.resultItemStack = craft();
         }
         return stack;
@@ -198,7 +207,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
             return result;
         }
         ItemStack stack = this.items.removeItemNoUpdate(slot);
-        if (this.resultItemStack.isEmpty()) {
+        if (this.resultItemStack.isEmpty() || !this.hasPaid) {
             this.resultItemStack = craft();
         }
         return stack;
@@ -208,12 +217,12 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     public void setItem(int slot, ItemStack itemStack) {
         if (slot == RESULT_SLOT) {
             this.resultItemStack = itemStack;
-            if (this.resultItemStack.isEmpty() && !this.items.isEmpty()) {
+            if (this.resultItemStack.isEmpty()) {
                 this.resultItemStack = craft();
             }
         } else {
             items.setItem(slot, itemStack);
-            if (this.resultItemStack.isEmpty()) {
+            if (this.resultItemStack.isEmpty() || !this.hasPaid) {
                 this.resultItemStack = craft();
             }
             this.setChanged();
@@ -234,6 +243,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     public void clearContent() {
         this.items.clearContent();
         this.resultItemStack = ItemStack.EMPTY;
+        this.hasPaid = false;
     }
 
     private CraftingRecipe getBestRecipe() {
@@ -257,6 +267,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     private ItemStack craft() {
+        this.hasPaid = false;
         if (this.level == null) {
             return ItemStack.EMPTY;
         }
@@ -264,7 +275,6 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (recipe == null) {
             return ItemStack.EMPTY;
         }
-        this.hasPaid = false;
         return recipe.assemble(this.items);
     }
 

@@ -1,15 +1,19 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
+import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -39,6 +43,32 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
             player.openMenu(blockState.getMenuProvider(level, blockPos));
             return InteractionResult.CONSUME;
         }
+    }
+
+    @Override
+    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+        if (!blockState.is(blockState2.getBlock())) {
+            if (!blockState2.is(ModBlocks.MERGE_BLOCK)) {
+                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                if (blockEntity instanceof AutoCraftingBlockEntity autoCraftingBlockEntity) {
+                    autoCraftingBlockEntity.resultItemStack = ItemStack.EMPTY; // Prevent dupe xD
+                    Containers.dropContents(level, blockPos, autoCraftingBlockEntity);
+                    level.updateNeighbourForOutputSignal(blockPos, this);
+                }
+            }
+
+            super.onRemove(blockState, level, blockPos, blockState2, bl);
+        }
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState blockState) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 
     @Nullable

@@ -7,16 +7,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 
 public class AutoCraftingMenu extends AbstractContainerMenu {
 
-    //private final CraftingContainer craftSlots;
-    //private final ResultContainer resultSlots;
-    //private final ContainerLevelAccess access;
     private final Container container;
     private final Player player;
 
@@ -26,10 +21,7 @@ public class AutoCraftingMenu extends AbstractContainerMenu {
 
     public AutoCraftingMenu(int containerId, Inventory inventory, Container container) {
         super(ModMenus.AUTO_CRAFTING, containerId);
-        //this.craftSlots = new CraftingContainer(this, 3, 3);
-        //this.resultSlots = new ResultContainer();
         this.container = container;
-        //this.access = ContainerLevelAccess.NULL;
         this.player = inventory.player;
         this.addSlot(new ReadOnlySlot(this.container, 9, 124, 35, false));
 
@@ -60,7 +52,7 @@ public class AutoCraftingMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return true; // Not sure about this yet
+        return true;
     }
 
     @Override
@@ -71,12 +63,5 @@ public class AutoCraftingMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void removed(Player player) {
-        //ItemStack cursorStack = this.player.containerMenu.getCarried();
-        //if (!cursorStack.isEmpty()) {
-        //    player.drop(cursorStack, false);
-        //    this.player.containerMenu.setCarried(ItemStack.EMPTY);
-        //}
-        //this.blockEntity.onMenuClose(this);
-    }
+    public void removed(Player player) {}
 }
