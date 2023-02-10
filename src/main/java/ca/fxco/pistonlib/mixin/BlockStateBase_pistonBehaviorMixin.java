@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.mixin;
 
 import java.util.Map;
 
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,18 +42,18 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
-    public boolean isMovable() {
-        return ((ConfigurablePistonBehavior)this.getBlock()).isMovable(this.asState());
+    public boolean isMovable(Level level, BlockPos pos) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).isMovable(level, pos, this.asState());
     }
 
     @Override
-    public boolean canPistonPush(Direction direction) {
-        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPush(this.asState(), direction);
+    public boolean canPistonPush(Level level, BlockPos pos, Direction direction) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPush(level, pos, this.asState(), direction);
     }
 
     @Override
-    public boolean canPistonPull(Direction direction) {
-        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPull(this.asState(), direction);
+    public boolean canPistonPull(Level level, BlockPos pos, Direction direction) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).canPistonPull(level, pos, this.asState(), direction);
     }
 
     @Override
@@ -61,8 +62,8 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
-    public boolean canDestroy() {
-        return ((ConfigurablePistonBehavior)this.getBlock()).canDestroy(this.asState());
+    public boolean canDestroy(Level level, BlockPos pos) {
+        return ((ConfigurablePistonBehavior)this.getBlock()).canDestroy(level, pos, this.asState());
     }
 
     @Override

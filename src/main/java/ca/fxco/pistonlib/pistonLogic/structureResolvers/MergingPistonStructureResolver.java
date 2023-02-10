@@ -40,7 +40,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             if (this.extending) {
                 ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                    if (pistonBehavior.canDestroy(state)) {
+                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
                         this.toDestroy.add(this.startPos);
                         return true;
                     }
@@ -241,7 +241,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             }
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                if (pistonBehavior.canDestroy(state)) {
+                if (pistonBehavior.canDestroy(this.level, currentPos, state)) {
                     this.toDestroy.add(currentPos);
                     return false;
                 }
