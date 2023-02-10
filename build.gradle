@@ -46,6 +46,10 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // Toml
+    modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
+    include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
 }
 
 processResources {

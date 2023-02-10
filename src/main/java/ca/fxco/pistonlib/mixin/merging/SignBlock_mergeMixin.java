@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.mixin.merging;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
@@ -14,7 +15,7 @@ public class SignBlock_mergeMixin implements ConfigurablePistonMerging, Configur
 
     @Override
     public boolean usesConfigurablePistonMerging() {
-        return true;
+        return PistonLibConfig.doSignMerging;
     }
 
     @Override
