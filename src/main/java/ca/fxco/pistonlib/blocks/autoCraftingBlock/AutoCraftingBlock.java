@@ -10,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +59,6 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
                     level.updateNeighbourForOutputSignal(blockPos, this);
                 }
             }
-
             super.onRemove(blockState, level, blockPos, blockState2, bl);
         }
     }
@@ -75,6 +77,16 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new AutoCraftingBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    public void onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (entity instanceof ItemEntity itemEntity) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof AutoCraftingBlockEntity autoCraftingBlockEntity) {
+                HopperBlockEntity.addItem(autoCraftingBlockEntity, itemEntity);
+            }
+        }
     }
 
     @Override

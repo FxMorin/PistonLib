@@ -144,7 +144,9 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack itemStack, @Nullable Direction direction) {
-        return false; // No item input, this will be handled by the block merging api
+        // Allow items to be pushed into the block if they are not block items
+        return slot != RESULT_SLOT && this.getItem(slot).isEmpty() && direction == null &&
+                !(itemStack.getItem() instanceof BlockItem);
     }
 
     @Override
