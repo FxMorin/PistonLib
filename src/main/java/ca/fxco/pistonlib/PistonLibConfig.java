@@ -38,6 +38,19 @@ public class PistonLibConfig {
     )
     public static boolean autoCraftingBlock = true;
 
+
+    // ===============
+    //    Mechanics
+    // ===============
+
+    @ConfigValue(
+            desc = "Toggle the merging API, this will prevent all merging-based features from working!",
+            keyword = "merging",
+            category = {Category.MECHANIC, Category.MERGING}
+    )
+    public static boolean mergingApi = true;
+
+
     // ===========
     //    Fixes
     // ===========

@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.blocks.pistons.mergePiston;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
@@ -32,11 +33,16 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new MergingPistonStructureResolver(this, level, pos, facing, extend);
+        return PistonLibConfig.mergingApi ?
+                new MergingPistonStructureResolver(this, level, pos, facing, extend) :
+                super.newStructureResolver(level, pos, facing, extend);
     }
 
     @Override
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+        if (!PistonLibConfig.mergingApi) {
+            return super.moveBlocks(level, pos, facing, extend, structureProvider);
+        }
         if (!extend) {
             BlockPos headPos = pos.relative(facing);
             BlockState headState = level.getBlockState(headPos);
@@ -287,6 +293,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public boolean canMoveBlock(BlockState state) {
-        return true;
+        return PistonLibConfig.mergingApi || super.canMoveBlock(state);
     }
 }
