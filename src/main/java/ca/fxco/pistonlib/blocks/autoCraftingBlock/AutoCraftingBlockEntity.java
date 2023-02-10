@@ -40,6 +40,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     protected final CraftingContainer items;
     protected ItemStack resultItemStack;
     protected CraftingRecipe lastRecipe;
+    protected CraftingRecipe lastSuccessfulRecipe;
     protected boolean hasPaid = false;
 
     public AutoCraftingBlockEntity(BlockPos pos, BlockState state) {
@@ -174,6 +175,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
                 this.hasPaid = true;
                 this.items.clearContent();
             }
+            this.lastSuccessfulRecipe = this.lastRecipe;
             return this.resultItemStack.split(amt);
         }
         ItemStack stack = this.items.removeItem(slot, amt);
@@ -188,6 +190,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (slot == RESULT_SLOT) {
             ItemStack result = this.resultItemStack;
             this.resultItemStack = ItemStack.EMPTY;
+            this.lastSuccessfulRecipe = this.lastRecipe;
             if (!this.hasPaid) {
                 this.hasPaid = true;
                 this.items.clearContent();
@@ -237,7 +240,10 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (this.level == null || this.items.isEmpty()) {
             return null;
         }
-        if (lastRecipe != null && lastRecipe.matches(this.items, this.level)) {
+        if (lastSuccessfulRecipe != null && lastSuccessfulRecipe.matches(this.items, this.level)) {
+            return lastSuccessfulRecipe;
+        }
+        if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items, this.level)) {
             return lastRecipe;
         }
         List<CraftingRecipe> recipeList = this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
