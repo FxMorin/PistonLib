@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.mixin.merging;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,7 @@ public class IceBlock_compressMixin implements ConfigurablePistonMerging {
 
     @Override
     public boolean usesConfigurablePistonMerging() {
-        return true;
+        return PistonLibConfig.doIceMerging;
     }
 
     @Override

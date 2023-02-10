@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.mixin.merging;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,7 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
 
     @Override
     public boolean usesConfigurablePistonMerging() {
-        return true; //TODO: Add config toggles for vanilla changing mechanics
+        return PistonLibConfig.doSlabMerging;
     }
 
     @Override

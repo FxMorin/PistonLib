@@ -2,6 +2,7 @@ package ca.fxco.pistonlib;
 
 import java.util.function.Consumer;
 
+import ca.fxco.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
+
+    private static final ConfigManager configManager = new ConfigManager(MOD_ID);
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -33,6 +36,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
+
+        configManager.loadConfigClass(PistonLibConfig.class);
     }
 
     @Override
