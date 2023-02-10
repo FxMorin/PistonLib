@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
@@ -76,7 +77,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new AutoCraftingBlockEntity(blockPos, blockState);
+        return PistonLibConfig.autoCraftingBlock ? new AutoCraftingBlockEntity(blockPos, blockState) : null;
     }
 
     @Override
@@ -91,7 +92,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
 
     @Override
     public boolean usesConfigurablePistonMerging() {
-        return true;
+        return PistonLibConfig.autoCraftingBlock;
     }
 
     @Override
@@ -125,7 +126,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
 
     @Override
     public boolean usesConfigurablePistonBehavior() {
-        return true;
+        return PistonLibConfig.autoCraftingBlock;
     }
 
     @Override
