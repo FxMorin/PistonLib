@@ -44,6 +44,13 @@ public class PistonLibConfig {
     // ===============
 
     @ConfigValue(
+            desc = "Toggle the strong sticky type block dropping mechanic where all strong sticky types block drop together",
+            keyword = {"block", "dropping"},
+            category = Category.MECHANIC
+    )
+    public static boolean strongBlockDropping = true;
+
+    @ConfigValue(
             desc = "Toggle the merging API, this will prevent all merging-based features from working!",
             keyword = "merging",
             category = {Category.MECHANIC, Category.MERGING}

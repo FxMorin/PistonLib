@@ -300,7 +300,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
             this.finishMovement(removeSource);
 
-            if (!skipStickiness) {
+            if (!skipStickiness && PistonLibConfig.strongBlockDropping) {
                 ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
 
                 if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
