@@ -291,7 +291,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
             compoundTag.put("items", itemTag);
         }
         if (!this.resultItemStack.isEmpty()) {
-            compoundTag.put("resultStack", this.resultItemStack.save(new CompoundTag()));
+            compoundTag.put("result", this.resultItemStack.save(new CompoundTag()));
         }
         if (this.hasPaid) {
             compoundTag.putBoolean("paid", true);
