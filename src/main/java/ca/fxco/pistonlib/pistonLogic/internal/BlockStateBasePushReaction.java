@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.pistonLogic.internal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public interface BlockStateBasePushReaction {
@@ -18,4 +19,5 @@ public interface BlockStateBasePushReaction {
     boolean canPistonPull(Level level, BlockPos pos, Direction direction);
     boolean canBypassFused();
     boolean canDestroy(Level level, BlockPos pos);
+    void onPushEntityInto(Level level, BlockPos pos, Entity entity);
 }

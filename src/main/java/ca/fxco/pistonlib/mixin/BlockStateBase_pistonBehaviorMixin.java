@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.mixin;
 
 import java.util.Map;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -64,6 +65,11 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     @Override
     public boolean canDestroy(Level level, BlockPos pos) {
         return ((ConfigurablePistonBehavior)this.getBlock()).canDestroy(level, pos, this.asState());
+    }
+
+    @Override
+    public void onPushEntityInto(Level level, BlockPos pos, Entity entity) {
+        ((ConfigurablePistonBehavior)this.getBlock()).onPushEntityInto(level, pos, this.asState(), entity);
     }
 
     @Override

@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.pistonLogic.accessible;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -38,4 +39,7 @@ public interface ConfigurablePistonBehavior {
     default boolean canDestroy(Level level, BlockPos pos, BlockState state) {
         return false;
     }
+
+    // This is called whenever an entity is pushed into a block by a piston.
+    default void onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {}
 }
