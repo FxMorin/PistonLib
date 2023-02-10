@@ -176,7 +176,11 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
             }
             return this.resultItemStack.split(amt);
         }
-        return ItemStack.EMPTY;
+        ItemStack stack = this.items.removeItem(slot, amt);
+        if (this.resultItemStack.isEmpty()) {
+            this.resultItemStack = craft();
+        }
+        return stack;
     }
 
     @Override
@@ -190,7 +194,11 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
             }
             return result;
         }
-        return this.items.removeItemNoUpdate(slot);
+        ItemStack stack = this.items.removeItemNoUpdate(slot);
+        if (this.resultItemStack.isEmpty()) {
+            this.resultItemStack = craft();
+        }
+        return stack;
     }
 
     @Override
