@@ -42,24 +42,27 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
         this.renderBlock(pos, mbe.getInitialState(), stack, bufferSource, level, false, overlay);
 
         for (Map.Entry<Direction, MergeBlockEntity.MergeData> entry : mbe.getMergingBlocks().entrySet()) {
-            Direction dir = entry.getKey();
             MergeBlockEntity.MergeData data = entry.getValue();
-            float progress = data.getProgress();
-            float lastProgress = data.getLastProgress();
+            BlockState state = data.getState();
+            if (state == null) {
+                float progress = data.getProgress();
+                float lastProgress = data.getLastProgress();
 
-            stack.pushPose();
-            stack.translate(
-                    mbe.getXOff(dir, partialTick, progress, lastProgress),
-                    mbe.getYOff(dir, partialTick, progress, lastProgress),
-                    mbe.getZOff(dir, partialTick, progress, lastProgress)
-            );
+                Direction dir = entry.getKey();
+                stack.pushPose();
+                stack.translate(
+                        mbe.getXOff(dir, partialTick, progress, lastProgress),
+                        mbe.getYOff(dir, partialTick, progress, lastProgress),
+                        mbe.getZOff(dir, partialTick, progress, lastProgress)
+                );
 
-            Direction moveDir = dir.getOpposite();
-            BlockPos fromPos = pos.relative(moveDir);
+                Direction moveDir = dir.getOpposite();
+                BlockPos fromPos = pos.relative(moveDir);
 
-            this.renderBlock(fromPos, data.getState(), stack, bufferSource, level, false, overlay);
+                this.renderBlock(fromPos, state, stack, bufferSource, level, false, overlay);
 
-            stack.popPose();
+                stack.popPose();
+            }
         }
     }
 
