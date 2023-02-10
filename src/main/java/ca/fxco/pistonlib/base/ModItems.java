@@ -65,6 +65,8 @@ public class ModItems {
     public static final BlockItem MERGE_PISTON = registerBlock(ModBlocks.MERGE_PISTON);
     public static final BlockItem MERGE_STICKY_PISTON = registerBlock(ModBlocks.MERGE_STICKY_PISTON);
 
+    public static final BlockItem AUTO_CRAFTING_BLOCK = registerBlock(ModBlocks.AUTO_CRAFTING_BLOCK);
+
     private static BlockItem registerBlock(Block block) {
         return register(BuiltInRegistries.BLOCK.getKey(block), new BlockItem(block, new Item.Properties()));
     }

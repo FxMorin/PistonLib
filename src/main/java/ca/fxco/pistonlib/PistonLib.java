@@ -2,16 +2,9 @@ package ca.fxco.pistonlib;
 
 import java.util.function.Consumer;
 
+import ca.fxco.pistonlib.base.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.fxco.pistonlib.base.ModBlockEntities;
-import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.base.ModCreativeModeTabs;
-import ca.fxco.pistonlib.base.ModItems;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
-import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.base.ModStickyGroups;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
@@ -58,6 +51,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModBlockEntities.bootstrap();
         ModItems.boostrap();
         ModCreativeModeTabs.bootstrap();
+        ModMenus.boostrap();
+        ModScreens.boostrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {

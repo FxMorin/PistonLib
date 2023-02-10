@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import ca.fxco.pistonlib.blocks.*;
+import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfObsidianBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfPoweredBlock;
@@ -189,6 +190,8 @@ public class ModBlocks {
     public static final MBEMovingBlock MERGE_MOVING_BLOCK = register("merge_moving_block", new MBEMovingBlock(MERGE));
 
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
+
+    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", AutoCraftingBlock::new, Blocks.CRAFTING_TABLE);
 
     private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
         return register(name, block, propertySource, true);
