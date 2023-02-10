@@ -61,14 +61,18 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         List<BlockState> statesToMove = new ArrayList<>();
         List<BlockEntity> blockEntitiesToMove = new ArrayList<>();
 
+        Direction moveDir = extend ? facing : facing.getOpposite();
+
         // Collect blocks to move
         for (BlockPos posToMove : toMove) {
             BlockState stateToMove = level.getBlockState(posToMove);
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
 
             if (blockEntityToMove != null) {
-                level.removeBlockEntity(posToMove);
-                blockEntityToMove.setChanged();
+                if (!(blockEntityToMove instanceof BlockEntityMerging bem) || bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                    level.removeBlockEntity(posToMove);
+                    blockEntityToMove.setChanged();
+                }
             }
 
             statesToMove.add(stateToMove);
@@ -76,7 +80,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             toRemove.put(posToMove, stateToMove);
         }
 
-        Direction moveDir = extend ? facing : facing.getOpposite();
         float speed = extend ? this.family.getExtendingSpeed() : this.family.getRetractingSpeed();
 
         // Merge Blocks
@@ -168,8 +171,11 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
                 Pair<BlockState, BlockState> unmergedStates = null;
                 if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
-                        level.getBlockEntity(posToMove) instanceof BlockEntityMerging bem) {
+                        blockEntityToMove instanceof BlockEntityMerging bem) {
                     unmergedStates = bem.doUnMerge(stateToMove, moveDir);
+                    if (!bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                        blockEntityToMove = null;
+                    }
                 }
                 if (unmergedStates == null) {
                     unmergedStates = bsbm.doUnMerge(level, posToMove, moveDir);
