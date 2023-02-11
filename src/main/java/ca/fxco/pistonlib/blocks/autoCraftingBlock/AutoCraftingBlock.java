@@ -77,7 +77,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return PistonLibConfig.autoCraftingBlock ? new AutoCraftingBlockEntity(blockPos, blockState) : null;
+        return new AutoCraftingBlockEntity(blockPos, blockState);
     }
 
     @Override
