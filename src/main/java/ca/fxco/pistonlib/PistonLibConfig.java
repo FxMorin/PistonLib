@@ -45,6 +45,13 @@ public class PistonLibConfig {
     )
     public static boolean movableAutoCraftingBlock = true;
 
+    @ConfigValue(
+            desc = "Allow pistons to pull blocks out of slots other than the output slot",
+            keyword = {"auto", "crafting", "extract"},
+            category = Category.FEATURE
+    )
+    public static boolean extractBlocksFromAutoCrafting = true;
+
 
     // ===============
     //    Mechanics
