@@ -23,3 +23,6 @@ accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity 
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getExtendedProgress (F)F
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getCollisionRelatedBlockState ()Lnet/minecraft/world/level/block/state/BlockState;
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity isStickyForEntities ()Z
+
+# Recipes
+accessible field net/minecraft/world/item/crafting/SingleItemRecipe serializer Lnet/minecraft/world/item/crafting/RecipeSerializer;
