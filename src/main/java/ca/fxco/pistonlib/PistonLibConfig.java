@@ -38,6 +38,13 @@ public class PistonLibConfig {
     )
     public static boolean autoCraftingBlock = true;
 
+    @ConfigValue(
+            desc = "Allows the auto crafting table to be movable",
+            keyword = {"auto", "crafting", "moving"},
+            category = Category.FEATURE
+    )
+    public static boolean movableAutoCraftingBlock = true;
+
 
     // ===============
     //    Mechanics

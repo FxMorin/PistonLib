@@ -50,9 +50,9 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     }
 
     @Override
-    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean moved) {
         if (!blockState.is(blockState2.getBlock())) {
-            if (!blockState2.is(ModBlocks.MERGE_BLOCK)) {
+            if (!blockState2.is(ModBlocks.MERGE_BLOCK) && !moved) {
                 BlockEntity blockEntity = level.getBlockEntity(blockPos);
                 if (blockEntity instanceof AutoCraftingBlockEntity autoCraftingBlockEntity) {
                     autoCraftingBlockEntity.resultItemStack = ItemStack.EMPTY; // Prevent dupe xD
@@ -60,7 +60,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
                     level.updateNeighbourForOutputSignal(blockPos, this);
                 }
             }
-            super.onRemove(blockState, level, blockPos, blockState2, bl);
+            super.onRemove(blockState, level, blockPos, blockState2, moved);
         }
     }
 
@@ -131,7 +131,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
 
     @Override
     public boolean canPistonPush(Level level, BlockPos pos, BlockState state, Direction direction) {
-        return false;
+        return PistonLibConfig.movableAutoCraftingBlock;
     }
 
     @Override
