@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
@@ -70,11 +71,33 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     @Override
     public boolean canUnMerge(BlockState state, BlockState neighborState, Direction dir) {
+        if (PistonLibConfig.extractBlocksFromAutoCrafting) {
+            for (int i = 0; i < this.items.getContainerSize(); i++) {
+                ItemStack stack = this.items.getItem(i);
+                if (!stack.isEmpty() && stack.getItem() instanceof BlockItem) {
+                    return true;
+                }
+            }
+        }
         return !this.resultItemStack.isEmpty() && this.resultItemStack.getItem() instanceof BlockItem;
     }
 
     @Override
     public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, Direction direction) {
+        if (PistonLibConfig.extractBlocksFromAutoCrafting) {
+            for (int slot : EXTRACTION_SLOTS) {
+                ItemStack stack = getItem(slot);
+                if (!stack.isEmpty() && stack.getItem() instanceof BlockItem) {
+                    Pair<BlockState, BlockState> unmergedStates = new Pair<>(
+                            ((BlockItem)removeItem(slot, 1).getItem()).getBlock().defaultBlockState(),
+                            state
+                    );
+                    this.setChanged();
+                    return unmergedStates;
+                }
+            }
+            return null;
+        }
         Pair<BlockState, BlockState> unmergedStates = new Pair<>(
                 ((BlockItem)removeItem(RESULT_SLOT, 1).getItem()).getBlock().defaultBlockState(),
                 state
