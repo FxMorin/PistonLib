@@ -3,10 +3,10 @@ package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
@@ -24,7 +24,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
     public final List<BlockPos> toUnMerge = new ArrayList<>();
     public final List<BlockPos> ignore = new ArrayList<>();
 
-    public MergingPistonStructureResolver(MergePistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
+    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
         super(piston, level, pos, facing, extend);
     }
 

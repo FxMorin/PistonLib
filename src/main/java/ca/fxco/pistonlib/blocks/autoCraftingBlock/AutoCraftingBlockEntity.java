@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import com.mojang.datafixers.util.Pair;
