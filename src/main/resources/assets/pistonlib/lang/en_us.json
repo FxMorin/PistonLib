@@ -33,5 +33,6 @@
   "block.pistonlib.half_slime": "Half Slime",
   "block.pistonlib.half_obsidian": "Half Obsidian",
   "block.pistonlib.half_redstone": "Half Redstone",
-  "block.pistonlib.half_redstone_lamp": "Half Redstone Lamp"
+  "block.pistonlib.half_redstone_lamp": "Half Redstone Lamp",
+  "container.pistonlib.auto_crafting_block": "Auto Crafting Block"
 }

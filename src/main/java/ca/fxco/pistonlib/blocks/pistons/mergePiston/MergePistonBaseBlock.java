@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.blocks.pistons.mergePiston;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
@@ -32,11 +33,16 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new MergingPistonStructureResolver(this, level, pos, facing, extend);
+        return PistonLibConfig.mergingApi ?
+                new MergingPistonStructureResolver(this, level, pos, facing, extend) :
+                super.newStructureResolver(level, pos, facing, extend);
     }
 
     @Override
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+        if (!PistonLibConfig.mergingApi) {
+            return super.moveBlocks(level, pos, facing, extend, structureProvider);
+        }
         if (!extend) {
             BlockPos headPos = pos.relative(facing);
             BlockState headState = level.getBlockState(headPos);
@@ -61,14 +67,18 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         List<BlockState> statesToMove = new ArrayList<>();
         List<BlockEntity> blockEntitiesToMove = new ArrayList<>();
 
+        Direction moveDir = extend ? facing : facing.getOpposite();
+
         // Collect blocks to move
         for (BlockPos posToMove : toMove) {
             BlockState stateToMove = level.getBlockState(posToMove);
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
 
             if (blockEntityToMove != null) {
-                level.removeBlockEntity(posToMove);
-                blockEntityToMove.setChanged();
+                if (!(blockEntityToMove instanceof BlockEntityMerging bem) || bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                    level.removeBlockEntity(posToMove);
+                    blockEntityToMove.setChanged();
+                }
             }
 
             statesToMove.add(stateToMove);
@@ -76,7 +86,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             toRemove.put(posToMove, stateToMove);
         }
 
-        Direction moveDir = extend ? facing : facing.getOpposite();
         float speed = extend ? this.family.getExtendingSpeed() : this.family.getRetractingSpeed();
 
         // Merge Blocks
@@ -168,8 +177,11 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
                 Pair<BlockState, BlockState> unmergedStates = null;
                 if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
-                        level.getBlockEntity(posToMove) instanceof BlockEntityMerging bem) {
+                        blockEntityToMove instanceof BlockEntityMerging bem) {
                     unmergedStates = bem.doUnMerge(stateToMove, moveDir);
+                    if (!bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                        blockEntityToMove = null;
+                    }
                 }
                 if (unmergedStates == null) {
                     unmergedStates = bsbm.doUnMerge(level, posToMove, moveDir);
@@ -281,6 +293,6 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public boolean canMoveBlock(BlockState state) {
-        return true;
+        return PistonLibConfig.mergingApi || super.canMoveBlock(state);
     }
 }

@@ -38,7 +38,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
             if (this.extending) {
                 ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                    if (pistonBehavior.canDestroy(state)) {
+                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
                         this.toDestroy.add(this.startPos);
                         return true;
                     }
@@ -207,7 +207,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
                 return true;
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                if (pistonBehavior.canDestroy(state)) {
+                if (pistonBehavior.canDestroy(this.level, pos2, state)) {
                     this.toDestroy.add(pos2);
                     return false;
                 }

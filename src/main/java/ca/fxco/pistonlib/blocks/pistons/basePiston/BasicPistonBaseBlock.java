@@ -307,16 +307,16 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
 
         if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
-            if (!customBehavior.isMovable(state))
+            if (!customBehavior.isMovable(level, pos, state))
                 return false;
             if (moveDir == pistonFacing) {
-                if (!customBehavior.canPistonPush(state, moveDir))
+                if (!customBehavior.canPistonPush(level, pos, state, moveDir))
                     return false;
             } else {
-                if (!customBehavior.canPistonPull(state, moveDir))
+                if (!customBehavior.canPistonPull(level, pos, state, moveDir))
                     return false;
             }
-            if (customBehavior.canDestroy(state) && !allowDestroy)
+            if (customBehavior.canDestroy(level, pos, state) && !allowDestroy)
                 return false;
         } else {
             if (state.is(ModTags.UNPUSHABLE))

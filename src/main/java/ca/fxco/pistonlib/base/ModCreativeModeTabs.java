@@ -39,6 +39,8 @@ public class ModCreativeModeTabs {
 
             output.accept(ModItems.OBSIDIAN_SLAB_BLOCK);
             output.accept(ModItems.OBSIDIAN_STAIR_BLOCK);
+
+            output.accept(ModItems.AUTO_CRAFTING_BLOCK);
         })
         .build();
 

@@ -23,3 +23,6 @@ accessible field net/minecraft/world/level/block/piston/PistonMovingBlockEntity 
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getExtendedProgress (F)F
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity getCollisionRelatedBlockState ()Lnet/minecraft/world/level/block/state/BlockState;
 extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity isStickyForEntities ()Z
+
+# Set FeatureFlag constructor to public
+accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/world/flag/FeatureFlagUniverse;I)V

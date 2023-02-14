@@ -85,6 +85,7 @@ public class ModModelProvider extends FabricModelProvider {
         generator.createTrivialCube(ModBlocks.SLIPPERY_STONE_BLOCK);
         generator.createTrivialCube(ModBlocks.MOVE_COUNTING_BLOCK);
 		generator.createTrivialCube(ModBlocks.WEAK_REDSTONE_BLOCK);
+		generator.createTrivialCube(ModBlocks.AUTO_CRAFTING_BLOCK);
 		generator.createTrivialCube(ModBlocks.QUASI_BLOCK);
 		generator.createTrivialCube(ModBlocks.ERASE_BLOCK);
 

@@ -1,0 +1,27 @@
+package ca.fxco.pistonlib.mixin.toggle;
+
+import ca.fxco.pistonlib.impl.toggle.Toggleable;
+import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import net.minecraft.world.item.Item;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.function.BooleanSupplier;
+
+@Mixin(Item.Properties.class)
+public class Properties_itemMixin implements ToggleableProperties<Item.Properties>, Toggleable {
+
+    @Unique
+    BooleanSupplier isDisabled = () -> false;
+
+    @Override
+    public Item.Properties setDisabled(BooleanSupplier isDisabled) {
+        this.isDisabled = isDisabled;
+        return (Item.Properties)(Object)this;
+    }
+
+    @Override
+    public BooleanSupplier getIsDisabled() {
+        return this.isDisabled;
+    }
+}

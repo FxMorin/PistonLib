@@ -82,6 +82,14 @@ public interface BlockEntityMerging {
         return null;
     }
 
+    /**
+     * If the block entity should unmerge also or if it should stay where it is.
+     * If it stays it won't replace the block entity
+     */
+    default boolean shouldUnMergeBlockEntity(BlockState state, Direction direction) {
+        return true;
+    }
+
 
     //
     // These methods are only for initial block entities. For blocks that got other blocks merged into them

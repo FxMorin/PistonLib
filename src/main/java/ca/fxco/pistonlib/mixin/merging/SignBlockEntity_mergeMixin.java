@@ -30,17 +30,18 @@ public abstract class SignBlockEntity_mergeMixin implements BlockEntityMerging {
 
     @Override
     public void onAdvancedFinalMerge(BlockEntity blockEntity) {
-        SignBlockEntity signBlockEntity = (SignBlockEntity)blockEntity;
-        if (this.hasGlowingText() && !signBlockEntity.hasGlowingText()) {
-            signBlockEntity.setHasGlowingText(true);
-        }
-        if (this.getColor() != signBlockEntity.getColor() && signBlockEntity.getColor() != DyeColor.BLACK) {
-            signBlockEntity.setColor(Utils.properDyeMixing(this.getColor(), signBlockEntity.getColor()));
-        }
-        for (int i = 0; i < LINES; i++) {
-            Component comp = signBlockEntity.getMessage(i, false);
-            if (comp == CommonComponents.EMPTY || comp.getString().isEmpty()) {
-                signBlockEntity.setMessage(i, this.getMessage(i, false));
+        if (blockEntity instanceof SignBlockEntity signBlockEntity) {
+            if (this.hasGlowingText() && !signBlockEntity.hasGlowingText()) {
+                signBlockEntity.setHasGlowingText(true);
+            }
+            if (this.getColor() != signBlockEntity.getColor() && signBlockEntity.getColor() != DyeColor.BLACK) {
+                signBlockEntity.setColor(Utils.properDyeMixing(this.getColor(), signBlockEntity.getColor()));
+            }
+            for (int i = 0; i < LINES; i++) {
+                Component comp = signBlockEntity.getMessage(i, false);
+                if (comp == CommonComponents.EMPTY || comp.getString().isEmpty()) {
+                    signBlockEntity.setMessage(i, this.getMessage(i, false));
+                }
             }
         }
     }
