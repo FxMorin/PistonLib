@@ -38,6 +38,11 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     protected BlockState asState() { return null; }
 
     @Override
+    public int getWeight() {
+        return ((ConfigurablePistonBehavior)this.getBlock()).getWeight(this.asState());
+    }
+
+    @Override
     public boolean usesConfigurablePistonBehavior() {
         return ((ConfigurablePistonBehavior)this.getBlock()).usesConfigurablePistonBehavior();
     }

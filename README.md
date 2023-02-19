@@ -42,6 +42,7 @@ I don't have much time to work on this, so any time your willing to give to help
 - axis_locked_block
 - move_counting_block
 - quasi_block
+- weight_block
 - most pistons
   
 ### Mods to make/update using the API

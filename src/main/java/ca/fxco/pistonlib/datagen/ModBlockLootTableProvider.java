@@ -64,6 +64,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         dropSelf(ModBlocks.AUTO_CRAFTING_BLOCK);
 		dropSelf(ModBlocks.QUASI_BLOCK);
 		dropSelf(ModBlocks.ERASE_BLOCK);
+		dropSelf(ModBlocks.HEAVY_BLOCK);
 
         dropSelf(ModBlocks.SLIPPERY_SLIME_BLOCK);
         dropSelf(ModBlocks.SLIPPERY_REDSTONE_BLOCK);

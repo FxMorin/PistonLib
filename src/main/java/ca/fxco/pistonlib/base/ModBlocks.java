@@ -76,6 +76,7 @@ public class ModBlocks {
     public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block ERASE_BLOCK = register("erase_block", EraseBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.of(Material.METAL), 2));
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
