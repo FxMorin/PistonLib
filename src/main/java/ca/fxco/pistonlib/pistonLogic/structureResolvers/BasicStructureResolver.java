@@ -203,7 +203,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 this.toDestroy.add(pos2);
                 return false;
             }
-            weight = pistonBehavior.getWeight();
+            weight = pistonBehavior.getWeight(state);
             if (weight + this.movingWeight > this.maxMovableWeight) return true;
             this.movingWeight += weight;
             this.toPush.add(pos2);

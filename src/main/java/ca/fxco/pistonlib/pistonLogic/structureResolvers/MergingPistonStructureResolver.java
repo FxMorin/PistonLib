@@ -82,7 +82,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         }
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
             return false;
-        if (1 + this.toPush.size() > this.maxMovableBlocks)
+        if (1 + this.toPush.size() > this.maxMovableWeight)
             return true;
         Direction pushDirOpposite = this.pushDirection.getOpposite();
         boolean initialBlock = pos.relative(pushDirOpposite).equals(this.pistonPos);
@@ -126,7 +126,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     this.ignore.contains(blockPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite))
                 break;
-            if (++distance + this.toPush.size() > this.maxMovableBlocks)
+            if (++distance + this.toPush.size() > this.maxMovableWeight)
                 return true;
             if (stick.usesConfigurablePistonStickiness()) {
                 boolean StickyStick = stick.isSticky(state);
@@ -249,7 +249,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 this.toDestroy.add(currentPos);
                 return false;
             }
-            if (this.toPush.size() >= this.maxMovableBlocks)
+            if (this.toPush.size() >= this.maxMovableWeight)
                 return true;
 
             ++distance;

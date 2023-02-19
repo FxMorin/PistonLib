@@ -214,9 +214,9 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
                 return true;
             if (!this.piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
-            BlockStateBasePushReaction pistonBehavior = (BlockStateBasePushReaction)state;
+            BlockStateBasePushReaction pistonBehavior = (BlockStateBasePushReaction) state;
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                if (pistonBehavior.canDestroy(this.level, pos2, state)) {
+                if (pistonBehavior.canDestroy(this.level, pos2)) {
                     this.toDestroy.add(pos2);
                     return false;
                 }
