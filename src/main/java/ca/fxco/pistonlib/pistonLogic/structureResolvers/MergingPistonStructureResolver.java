@@ -10,6 +10,7 @@ import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
@@ -82,8 +83,10 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         }
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
             return false;
-        if (1 + this.toPush.size() > this.maxMovableWeight)
+        int weight = ((BlockStateBasePushReaction)state).getWeight();
+        if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;
+        }
         Direction pushDirOpposite = this.pushDirection.getOpposite();
         boolean initialBlock = pos.relative(pushDirOpposite).equals(this.pistonPos);
 
@@ -126,8 +129,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     this.ignore.contains(blockPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite))
                 break;
-            if (++distance + this.toPush.size() > this.maxMovableWeight)
-                return true;
+            weight += ((BlockStateBasePushReaction)state).getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            ++distance;
             if (stick.usesConfigurablePistonStickiness()) {
                 boolean StickyStick = stick.isSticky(state);
                 if (StickyStick && stick.sideStickiness(state, pushDirOpposite).ordinal() < StickyType.STICKY.ordinal())
@@ -155,6 +159,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
 
             lastBlockPos = blockPos;
         }
+        this.movingWeight += weight;
         for(int k = distance - 1; k >= 0; --k) {
             this.toPush.add(pos.relative(pushDirOpposite, k));
         }
@@ -249,8 +254,11 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 this.toDestroy.add(currentPos);
                 return false;
             }
-            if (this.toPush.size() >= this.maxMovableWeight)
+            weight = pistonBehavior.getWeight(state);
+            if (weight + this.movingWeight > this.maxMovableWeight) {
                 return true;
+            }
+            this.movingWeight += weight;
 
             ++distance;
             ++nextIndex;
