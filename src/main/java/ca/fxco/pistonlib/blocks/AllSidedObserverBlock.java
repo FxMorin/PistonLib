@@ -39,11 +39,22 @@ public class AllSidedObserverBlock extends Block {
 
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!state.getValue(POWERED) && !neighborState.isSignalSource()) {
+        if (!state.getValue(POWERED) && shouldNeighborTrigger(neighborState)) {
             this.startSignal(level, pos);
         }
 
         return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+    }
+
+    private boolean shouldNeighborTrigger(BlockState neighborState) {
+        if (neighborState.hasProperty(BlockStateProperties.POWERED)) {
+            return neighborState.getValue(BlockStateProperties.POWERED);
+        } else if (neighborState.hasProperty(BlockStateProperties.POWER)) {
+            return neighborState.getValue(BlockStateProperties.POWER) != Redstone.SIGNAL_NONE;
+        } else if (neighborState.hasProperty(BlockStateProperties.LIT)) {
+            return neighborState.getValue(BlockStateProperties.LIT);
+        }
+        return true;
     }
 
     private void startSignal(LevelAccessor level, BlockPos pos) {

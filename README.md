@@ -11,8 +11,6 @@ I don't have much time to work on this, so any time your willing to give to help
 - CONFIG (ability to toggle individual features)
 - Long piston's & Piston arms
 - Blocks that can be placed on slime but break when the slime moves should not break if the block below has the `fused` sticky property
-- Piston block compression
-- Slab merging
 - Dual-sided piston
 - Quarter Slime blocks
 - [Obsidian Slabs & Stairs](https://www.curseforge.com/minecraft/mc-mods/redstoneplusplus)
@@ -43,6 +41,7 @@ I don't have much time to work on this, so any time your willing to give to help
 ### Blocks that need textures
 - axis_locked_block
 - move_counting_block
+- quasi_block
 - weight_block
 - most pistons
   

@@ -25,6 +25,9 @@
     ],
     "fabric-datagen": [
       "ca.fxco.pistonlib.datagen.PistonLibDatagen"
+    ],
+    "pistonlib": [
+      "ca.fxco.pistonlib.PistonLib"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",
@@ -34,6 +37,7 @@
   "depends": {
     "minecraft": "1.19.3",
     "fabricloader": ">=0.14.0",
+    "fabric": ">=0.71.0",
     "java": ">=17"
   },
   "custom": {

@@ -2,8 +2,9 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
-import ca.fxco.pistonlib.pistonLogic.StickyType;
+import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +27,7 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
 
     public void updatePowered(BlockState state, Level level, BlockPos pos, boolean force) {
     	boolean isPowered = state.getValue(POWERED);
-        boolean shouldBePowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
+        boolean shouldBePowered = level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
 
         if (isPowered != shouldBePowered) {
             level.setBlock(pos, state.setValue(POWERED, shouldBePowered), UPDATE_ALL);
@@ -46,13 +47,6 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!level.isClientSide() && !newState.is(this) && movedByPiston && state.getValue(POWERED)) {
-            updatePowered(state, level, pos, true);
-        }
-    }
-
-    @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!level.isClientSide() && !oldState.is(this) && state.getValue(POWERED)) {
             updatePowered(state, level, pos, true);
@@ -61,7 +55,7 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection());
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 
     @Override

@@ -1,12 +1,12 @@
 package ca.fxco.pistonlib.blocks.pistons.speedPiston;
 
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
@@ -14,24 +14,15 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
     private float speed = 1.0F;
 
     public SpeedMovingBlockEntity(BlockPos pos, BlockState state) {
-        this(pos, state, ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY);
+        super(pos, state);
     }
 
-    public SpeedMovingBlockEntity(BlockPos pos, BlockState state, BlockEntityType<?> type) {
-        super(pos, state, type);
-    }
+    public SpeedMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
+                                  BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                                  boolean isSourcePiston) {
+        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
-    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState, Direction facing,
-                                  boolean extending, boolean isSourcePiston) {
-        this(speed, pos, state, movedState, facing, extending, isSourcePiston,
-                ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY);
-    }
-
-    public SpeedMovingBlockEntity(float speed, BlockPos pos, BlockState state, BlockState movedState, Direction dir,
-                                  boolean extending, boolean isSourcePiston, BlockEntityType<?> type) {
-        super(pos, state, movedState, dir, extending, isSourcePiston, type);
-
-        this.setSpeed(speed);
+        this.setSpeed(this.extending ? this.getFamily().getExtendingSpeed() : this.getFamily().getRetractingSpeed());
     }
 
     private void setSpeed(float speed) {
@@ -46,7 +37,7 @@ public class SpeedMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    protected float speed() {
+    public float speed() {
         return speed;
     }
 

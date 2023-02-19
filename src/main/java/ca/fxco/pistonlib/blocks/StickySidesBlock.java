@@ -2,8 +2,8 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;

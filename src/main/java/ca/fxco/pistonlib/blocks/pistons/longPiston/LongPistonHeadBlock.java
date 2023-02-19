@@ -1,23 +1,24 @@
 package ca.fxco.pistonlib.blocks.pistons.longPiston;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.world.level.block.state.BlockState;
 
 public class LongPistonHeadBlock extends BasicPistonHeadBlock {
 
-    public LongPistonHeadBlock() {
-        super();
+    public LongPistonHeadBlock(PistonFamily family) {
+        super(family);
     }
 
-    public LongPistonHeadBlock(Properties settings) {
-        super(settings);
+    public LongPistonHeadBlock(PistonFamily family, Properties settings) {
+        super(family, settings);
     }
 
     @Override
     public boolean isFittingBase(BlockState headState, BlockState behindState) {
-        return behindState.getBlock() instanceof LongPistonArmBlock ?
-                headState.getValue(TYPE) == behindState.getValue(TYPE) && behindState.getValue(FACING) == headState.getValue(FACING) :
+        return behindState.is(this.family.getArm()) ?
+                behindState.getValue(FACING) == headState.getValue(FACING) :
                 super.isFittingBase(headState, behindState);
     }
 }

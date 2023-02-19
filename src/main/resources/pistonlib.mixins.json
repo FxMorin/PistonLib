@@ -4,18 +4,30 @@
   "package": "ca.fxco.pistonlib.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "Block_pistonBehaviorMixin",
+    "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
+    "accessors.BlockEntityAccessor",
+    "entity.Entity_pushIntoMixin",
+    "merging.IceBlock_compressMixin",
+    "merging.SignBlock_mergeMixin",
+    "merging.SignBlockEntity_mergeMixin",
+    "merging.SlabBlock_mergeMixin",
     "movableBlockEntities.LevelChunkMixin",
     "movableBlockEntities.LevelMixin",
     "movingPiston.BlockCollisions_movingPistonMixin",
     "movingPiston.Factory_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",
     "movingPiston.Shulker_movingPistonMixin",
+    "quasi.DispenserBlock_quasiMixin",
+    "quasi.Level_quasiMixin",
+    "quasi.PistonBaseBlock_quasiMixin",
     "stickyGroup.HoneyBlock_slimeMixin",
     "stickyGroup.SlimeBlock_honeyMixin",
-    "accessors.BlockEntityAccessor"
+    "toggle.BlockBehaviour_toggleMixin",
+    "toggle.Item_toggleMixin",
+    "toggle.Properties_blockMixin",
+    "toggle.Properties_itemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

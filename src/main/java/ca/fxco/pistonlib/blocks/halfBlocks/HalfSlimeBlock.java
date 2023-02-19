@@ -2,10 +2,14 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.Nullable;
+
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
-import ca.fxco.pistonlib.pistonLogic.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.StickyType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -102,6 +106,11 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
     }
 
     @Override
+    public @Nullable StickyGroup getStickyGroup() {
+        return ModStickyGroups.SLIME;
+    }
+
+    @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
         return SIDES_LIST[state.getValue(FACING).ordinal()];
     }
@@ -127,8 +136,8 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
         }
         StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
         if (group != null) {
-            return StickyGroup.canStick(StickyGroup.SLIME, group);
+            return StickRules.test(ModStickyGroups.SLIME, group);
         }
-        return false;
+        return true;
     }
 }

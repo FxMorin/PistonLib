@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongMovingBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
 public class LongMovingBlockEntityRenderer<T extends LongMovingBlockEntity> extends BasicMovingBlockEntityRenderer<T> {
@@ -37,17 +36,16 @@ public class LongMovingBlockEntityRenderer<T extends LongMovingBlockEntity> exte
             }
         } else {
             if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonType type = base.type;
+                PistonFamily family = mbe.getFamily();
                 Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
                 BlockState renderState;
 
                 if (mbe.isArm()) {
-                    renderState = PistonFamilies.LONG.getArmBlock().defaultBlockState()
+                    renderState = family.getArm().defaultBlockState()
                         .setValue(BasicPistonHeadBlock.FACING, facing);
                 } else {
-                    renderState = base.getHeadBlock().defaultBlockState()
-                        .setValue(BasicPistonHeadBlock.TYPE, type)
+                    renderState = family.getHead().defaultBlockState()
                         .setValue(BasicPistonHeadBlock.FACING, facing)
                         .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
                 }

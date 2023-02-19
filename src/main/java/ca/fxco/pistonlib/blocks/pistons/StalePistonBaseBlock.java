@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.Utils;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,8 +11,8 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 
 public class StalePistonBaseBlock extends BasicPistonBaseBlock {
 
-    public StalePistonBaseBlock(PistonType type) {
-        super(type);
+    public StalePistonBaseBlock(PistonFamily family, PistonType type) {
+        super(family, type);
     }
 
     @Override
