@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.impl;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;

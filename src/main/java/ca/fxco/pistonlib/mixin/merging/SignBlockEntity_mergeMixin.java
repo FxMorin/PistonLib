@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.merging;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import net.minecraft.network.chat.CommonComponents;

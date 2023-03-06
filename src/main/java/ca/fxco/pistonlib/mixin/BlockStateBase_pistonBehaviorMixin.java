@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.impl.BlockQuasiPower;
 import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
