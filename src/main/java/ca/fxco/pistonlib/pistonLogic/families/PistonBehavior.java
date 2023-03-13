@@ -14,10 +14,13 @@ public class PistonBehavior {
     final float retractingSpeed;
     final boolean canRetractOnExtending;
     final boolean canExtendOnRetracting;
+    final int minLength;
+    final int maxLength;
 
     public PistonBehavior(boolean verySticky, boolean frontPowered, boolean translocation, boolean slippery,
                           boolean quasi, int pushLimit, float extendingSpeed, float retractingSpeed,
-                          boolean canRetractOnExtending, boolean canExtendOnRetracting) {
+                          boolean canRetractOnExtending, boolean canExtendOnRetracting, int minLength,
+                          int maxLength) {
         this.verySticky = verySticky;
         this.frontPowered = frontPowered;
         this.translocation = translocation;
@@ -28,6 +31,8 @@ public class PistonBehavior {
         this.retractingSpeed = retractingSpeed;
         this.canRetractOnExtending = canRetractOnExtending;
         this.canExtendOnRetracting = canExtendOnRetracting;
+        this.minLength = minLength;
+        this.maxLength = maxLength;
     }
 
     public static Builder Builder() {
@@ -46,6 +51,8 @@ public class PistonBehavior {
         float retractingSpeed = 1;
         boolean canRetractOnExtending = true;
         boolean canExtendOnRetracting = false;
+        int minLength = 0;
+        int maxLength = 1;
 
         public Builder verySticky() {
             this.verySticky = true;
@@ -99,9 +106,20 @@ public class PistonBehavior {
             return this;
         }
 
+        public Builder minLength(int length) {
+            this.minLength = length;
+            return this;
+        }
+
+        public Builder maxLength(int length) {
+            this.maxLength = length;
+            return this;
+        }
+
         public PistonBehavior build() {
             return new PistonBehavior(verySticky, frontPowered, translocation, slippery, quasi, pushLimit,
-                    extendingSpeed, retractingSpeed, canRetractOnExtending, canExtendOnRetracting);
+                    extendingSpeed, retractingSpeed, canRetractOnExtending, canExtendOnRetracting, minLength,
+                    maxLength);
         }
     }
 }

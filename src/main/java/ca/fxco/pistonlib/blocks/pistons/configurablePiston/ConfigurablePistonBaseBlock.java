@@ -29,8 +29,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new BasicStructureResolver(this, level, pos, facing, extend);
+    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, int length, boolean extend) {
+        return new BasicStructureResolver(this, level, pos, facing, length, extend);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
-        return this.family.canRetractOnExtending() ? super.getPullType(level, pos, facing) : MotionType.NONE;
+    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+        return this.family.canRetractOnExtending() ? super.getPullType(level, pos, facing, length) : MotionType.NONE;
     }
 
     @Override

@@ -24,8 +24,8 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
     public final List<BlockPos> toUnMerge = new ArrayList<>();
     public final List<BlockPos> ignore = new ArrayList<>();
 
-    public MergingPistonStructureResolver(MergePistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
-        super(piston, level, pos, facing, extend);
+    public MergingPistonStructureResolver(MergePistonBaseBlock piston, Level level, BlockPos pos, Direction facing, int length, boolean extend) {
+        super(piston, level, pos, facing, length, extend);
     }
 
     @Override

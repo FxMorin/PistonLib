@@ -23,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 @Environment(EnvType.CLIENT)
 public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
@@ -94,6 +95,12 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 
                 this.renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
+            } else
+            if (state.getBlock() instanceof BasicPistonHeadBlock head) {
+                BlockState headState = state
+                    .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
+
+                this.renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
             }
         }
     }
@@ -105,6 +112,18 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
 
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
                 this.renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, false, overlay);
+            } else
+            if (state.getBlock() instanceof BasicPistonHeadBlock) {
+                PistonFamily family = mbe.getFamily();
+                PistonType type = state.getValue(BasicPistonHeadBlock.TYPE);
+                Direction facing = state.getValue(BasicPistonHeadBlock.FACING);
+
+                BlockState armState = family.getArm().defaultBlockState()
+                    .setValue(BasicPistonHeadBlock.TYPE, type)
+                    .setValue(BasicPistonHeadBlock.FACING, facing)
+                    .setValue(BasicPistonHeadBlock.SHORT, false);
+
+                this.renderBlock(fromPos, armState, stack, bufferSource, level, false, overlay);
             }
         }
     }

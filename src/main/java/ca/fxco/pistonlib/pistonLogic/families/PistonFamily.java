@@ -165,6 +165,14 @@ public class PistonFamily {
         return this.behavior.canExtendOnRetracting;
     }
 
+    public int getMinLength() {
+        return this.behavior.minLength;
+    }
+
+    public int getMaxLength() {
+        return this.behavior.maxLength;
+    }
+
 
     public static PistonFamily of(PistonBehavior behavior) {
         if (PistonLib.DATAGEN_ACTIVE) {

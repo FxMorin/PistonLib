@@ -21,14 +21,18 @@ import net.minecraft.world.level.material.PushReaction;
 public class BasicStructureResolver extends PistonStructureResolver {
 
     protected final BasicPistonBaseBlock piston;
+    protected final int length;
     protected final int maxMovableBlocks;
 
     public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                  Direction facing, boolean extend) {
+                                  Direction facing, int length, boolean extend) {
         super(level, pos, facing, extend);
 
         this.piston = piston;
+        this.length = length;
         this.maxMovableBlocks = piston.family.getPushLimit();
+
+        this.startPos = this.pistonPos.relative(this.pistonDirection, this.length + 1);
     }
 
     @Override
@@ -68,6 +72,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
         }
         return true;
+    }
+
+    protected boolean isPiston(BlockPos pos) {
+        for (int i = 0; i <= this.length; i++)
+            if (this.pistonPos.relative(this.pistonDirection, i).equals(pos))
+                return true;
+    	return false;
     }
 
     protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
@@ -119,7 +130,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
+        if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) return false;
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
         int i = 1;
         if (i + this.toPush.size() > this.maxMovableBlocks) return true;
@@ -135,7 +146,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             stick = (ConfigurablePistonStickiness)state.getBlock();
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
-                    blockPos.equals(this.pistonPos) ||
+                    isPiston(blockPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
                 break;
             if (++i + this.toPush.size() > this.maxMovableBlocks) return true;
@@ -176,7 +187,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             state = this.level.getBlockState(pos2);
             if (state.isAir())
                 return false;
-            if (pos2.equals(this.pistonPos))
+            if (isPiston(pos2))
                 return true;
             if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
@@ -217,7 +228,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     @FunctionalInterface
     public interface Factory<T extends BasicStructureResolver> {
 
-        T create(Level level, BlockPos pos, Direction facing, boolean extend);
+        T create(Level level, BlockPos pos, Direction facing, int length, boolean extend);
 
     }
 }

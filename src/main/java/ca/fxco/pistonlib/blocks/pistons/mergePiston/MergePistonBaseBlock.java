@@ -32,19 +32,19 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
+    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, int length, boolean extend) {
         return PistonLibConfig.mergingApi ?
-                new MergingPistonStructureResolver(this, level, pos, facing, extend) :
-                super.newStructureResolver(level, pos, facing, extend);
+                new MergingPistonStructureResolver(this, level, pos, facing, length, extend) :
+                super.newStructureResolver(level, pos, facing, length, extend);
     }
 
     @Override
-    public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+    public boolean moveBlocks(Level level, BlockPos pos, Direction facing, int length, boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
         if (!PistonLibConfig.mergingApi) {
-            return super.moveBlocks(level, pos, facing, extend, structureProvider);
+            return super.moveBlocks(level, pos, facing, length, extend, structureProvider);
         }
         if (!extend) {
-            BlockPos headPos = pos.relative(facing);
+            BlockPos headPos = pos.relative(facing, length);
             BlockState headState = level.getBlockState(headPos);
 
             if (headState.is(this.family.getHead())) {
@@ -52,7 +52,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
             }
         }
 
-        MergingPistonStructureResolver structure = (MergingPistonStructureResolver) structureProvider.create(level, pos, facing, extend);
+        MergingPistonStructureResolver structure = (MergingPistonStructureResolver) structureProvider.create(level, pos, facing, length, extend);
 
         if (!structure.resolve()) {
             return false;
@@ -213,7 +213,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
 
         // Place extending head
         if (extend) {
-            BlockPos headPos = pos.relative(facing);
+            BlockPos headPos = pos.relative(facing, length + 1);
             BlockState headState = this.family.getHead().defaultBlockState()
                     .setValue(BasicPistonHeadBlock.TYPE, type)
                     .setValue(BasicPistonHeadBlock.FACING, facing);
@@ -285,7 +285,7 @@ public class MergePistonBaseBlock extends BasicPistonBaseBlock {
         }
 
         if (extend) {
-            level.updateNeighborsAt(pos.relative(facing), this.family.getHead());
+            level.updateNeighborsAt(pos.relative(facing, length + 1), this.family.getHead());
         }
 
         return true;
