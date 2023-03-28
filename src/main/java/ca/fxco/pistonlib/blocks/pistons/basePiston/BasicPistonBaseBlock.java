@@ -210,8 +210,9 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 mbe.finalTick();
             }
 
-            BlockPos sourcePos = pos.relative(facing, length - 1);
-            BlockState sourceState = (length > 0)
+            int newLength = length - 1;
+            BlockPos sourcePos = pos.relative(facing, newLength);
+            BlockState sourceState = (newLength > 0)
                 ? this.family.getHead().defaultBlockState()
                     .setValue(BasicPistonHeadBlock.FACING, Direction.from3DDataValue(data & 7))
                     .setValue(BasicPistonHeadBlock.TYPE, this.type)
