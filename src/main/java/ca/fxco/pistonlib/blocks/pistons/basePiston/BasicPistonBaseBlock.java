@@ -445,7 +445,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             BlockEntity blockEntityToDestroy = level.getBlockEntity(posToDestroy);
 
             dropResources(stateToDestroy, level, posToDestroy, blockEntityToDestroy);
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
+            level.setBlock(posToDestroy, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
             if (!stateToDestroy.is(BlockTags.FIRE)) {
                 level.addDestroyBlockEffect(posToDestroy, stateToDestroy);
             }
