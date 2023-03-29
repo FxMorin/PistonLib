@@ -29,6 +29,18 @@ if (!project.file("src/generated").exists()) {
     runClient.dependsOn runDatagenClient
 }
 
+repositories {
+    allprojects {
+        repositories {
+            maven {
+                name 'JitPack'
+                url 'https://jitpack.io'
+            }
+        }
+    }
+    mavenCentral()
+}
+
 
 sourceSets {
     main {
@@ -50,6 +62,9 @@ dependencies {
     // Toml
     modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
     include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
+
+    // MixinExtras
+    include(implementation(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixinextras_version}")))
 }
 
 processResources {
