@@ -147,6 +147,17 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+        // make sure the piston doesn't try to retract while it's already retracting
+        BlockPos headPos = pos.relative(facing, length);
+        BlockState headState = level.getBlockState(headPos);
+
+        if (headState.is(this.family.getMoving())) {
+            if (level.getBlockEntity(headPos) instanceof PistonMovingBlockEntity mbe &&
+                mbe.isSourcePiston() && !mbe.isExtending() && mbe.getDirection() == facing) {
+                return MotionType.NONE;
+            }
+        }
+
         BlockPos frontPos = pos.relative(facing, length + 1);
         BlockState frontState = level.getBlockState(frontPos);
 
@@ -231,7 +242,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 false,
                 true
             );
-            level.setBlock(sourcePos, movingBaseState, UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
+            level.setBlock(sourcePos, movingBaseState, UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
             level.setBlockEntity(movingBaseBlockEntity);
 
             level.updateNeighborsAt(sourcePos, movingBaseState.getBlock());

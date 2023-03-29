@@ -187,8 +187,10 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!newState.is(this)) {
             super.onRemove(state, level, pos, newState, moved);
-            Direction facing = state.getValue(FACING);
-            this.isAttachedOrBreak(level, state, pos.relative(facing.getOpposite()), pos.relative(facing));
+            if (!moved) {
+                Direction facing = state.getValue(FACING);
+                this.isAttachedOrBreak(level, state, pos.relative(facing.getOpposite()), pos.relative(facing));
+            }
         }
     }
 

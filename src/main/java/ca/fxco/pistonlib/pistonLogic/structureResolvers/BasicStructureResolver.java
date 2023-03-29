@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -39,6 +40,19 @@ public class BasicStructureResolver extends PistonStructureResolver {
     public boolean resolve() {
         this.toPush.clear();
         this.toDestroy.clear();
+        // make sure the piston doesn't try to extend while it's already extending
+        // or retract while it's already retracting
+        BlockPos headPos = this.pistonPos.relative(this.pistonDirection, this.length);
+        BlockState headState = this.level.getBlockState(headPos);
+        if (headState.is(this.piston.family.getMoving())) {
+            BlockEntity blockEntity = this.level.getBlockEntity(headPos);
+            if (blockEntity.getType() == this.piston.family.getMovingBlockEntityType()) {
+                BasicMovingBlockEntity mbe = (BasicMovingBlockEntity)blockEntity;
+                if (mbe.isSourcePiston && mbe.extending == this.extending && mbe.direction == this.pistonDirection) {
+                    return false;
+                }
+            }
+        }
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
             if (this.extending) {

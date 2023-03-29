@@ -121,12 +121,14 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         if (!newState.is(this)) {
             super.onRemove(state, level, pos, newState, movedByPiston);
 
-            Direction facing = state.getValue(FACING);
-            BlockPos behindPos = pos.relative(facing.getOpposite());
+            if (!movedByPiston) {
+                Direction facing = state.getValue(FACING);
+                BlockPos behindPos = pos.relative(facing.getOpposite());
 
-            if (this.isFittingBase(state, level.getBlockState(behindPos)) &&
+                if (this.isFittingBase(state, level.getBlockState(behindPos)) &&
                     !(newState.is(this.family.getArm()) && newState.getValue(FACING) == facing)) {
-                level.destroyBlock(behindPos, true);
+                    level.destroyBlock(behindPos, true);
+                }
             }
         }
     }
