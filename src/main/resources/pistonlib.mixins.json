@@ -6,7 +6,6 @@
   "mixins": [
     "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
-    "LevelChunk_testingMixin",
     "PistonBaseBlock_tagsMixin",
     "accessors.BlockEntityAccessor",
     "entity.Entity_pushIntoMixin",
