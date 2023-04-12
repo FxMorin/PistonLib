@@ -38,6 +38,10 @@ sourceSets {
     }
 }
 
+repositories {
+    maven { url = "https://jitpack.io" }
+}
+
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -50,6 +54,9 @@ dependencies {
     // Toml
     modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
     include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
+
+    // MixinExtras
+    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinExtras_Version}")))
 }
 
 processResources {
@@ -68,8 +75,6 @@ tasks.withType(JavaCompile).configureEach {
         it.options.release = targetJavaVersion
     }
 }
-
-repositories {}
 
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)

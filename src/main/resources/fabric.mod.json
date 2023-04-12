@@ -28,6 +28,9 @@
     ],
     "pistonlib": [
       "ca.fxco.pistonlib.PistonLib"
+    ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",
