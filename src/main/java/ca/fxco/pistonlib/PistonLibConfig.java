@@ -52,6 +52,13 @@ public class PistonLibConfig {
     )
     public static boolean extractBlocksFromAutoCrafting = true;
 
+    @ConfigValue(
+            desc = "Continues ticking furnace type blocks as they are moving",
+            keyword = {"ticking", "furnace", "cooking"},
+            category = Category.FEATURE
+    )
+    public static boolean cookWhileMoving = true;
+
 
     // ===============
     //    Mechanics
@@ -66,10 +73,17 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Toggle the merging API, this will prevent all merging-based features from working!",
-            keyword = "merging",
+            keyword = {"merging", "api"},
             category = {Category.MECHANIC, Category.MERGING}
     )
     public static boolean mergingApi = true;
+
+    @ConfigValue(
+            desc = "Toggle the ticking API, this will prevent all ticking-based features from working!",
+            keyword = {"ticking", "api"},
+            category = Category.MECHANIC
+    )
+    public static boolean tickingApi = true;
 
 
     // ===========

@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.List;
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
@@ -322,7 +323,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 this.finishMovement(false);
             }
         } else {
-            float nextProgress = this.progress + 0.5F * this.speed();
+            float speed = this.speed();
+            float nextProgress = this.progress + 0.5F * speed;
 
             this.moveCollidedEntities(nextProgress);
             this.moveStuckEntities(nextProgress);
@@ -331,6 +333,15 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             if (this.progress >= 1.0F) {
                 this.progress = 1.0F;
             }
+            if (PistonLibConfig.tickingApi) {
+                onMovingTick(this.getMovementDirection(), speed);
+            }
+        }
+    }
+
+    protected void onMovingTick(Direction movingDirection, float speed) {
+        if (this.movedState.getBlock() instanceof PistonTicking pistonTicking) {
+            pistonTicking.onMovingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
         }
     }
 
