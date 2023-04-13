@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

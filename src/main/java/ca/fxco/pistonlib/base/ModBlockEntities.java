@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.translocationPiston.TranslocationMovingBlockEntity;
@@ -78,8 +78,7 @@ public class ModBlockEntities {
                 "mbe",
                 MBEMovingBlockEntity::new,
                 MBEMovingBlockEntity::new,
-                ModPistonFamilies.MBE,
-                ModPistonFamilies.MERGE
+                ModPistonFamilies.MBE
         );
 
         // Other

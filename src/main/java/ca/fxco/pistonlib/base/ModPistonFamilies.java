@@ -24,7 +24,6 @@ public class ModPistonFamilies {
     public static final PistonFamily SLIPPERY = register("slippery", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily SUPER = register("super", PistonFamily.of(PistonBehavior.Builder().pushLimit(Integer.MAX_VALUE).verySticky().build(), false));
     public static final PistonFamily MBE = register("mbe", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily MERGE = register("merge", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamily.of(PistonBehavior.Builder().verySticky().build(), false));
 
     private static PistonFamily register(String name, PistonFamily family) {

@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModPistonFamilies;
@@ -88,7 +89,15 @@ public class PistonFamily {
                                                        BlockEntity movedBlockEntity, Direction facing,
                                                        boolean extending, boolean isSourcePiston) {
         return this.movingBlockEntityFactory
-            .create(this, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+            .create(this, null, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+    }
+
+    public BasicMovingBlockEntity newMovingBlockEntity(StructureGroup structureGroup, BlockPos pos, BlockState state,
+                                                       BlockState movedState, BlockEntity movedBlockEntity,
+                                                       Direction facing, boolean extending, boolean isSourcePiston) {
+        return this.movingBlockEntityFactory
+                .create(this, structureGroup, pos, state, movedState, movedBlockEntity, facing,
+                        extending, isSourcePiston);
     }
 
     public void setBase(Block base) {

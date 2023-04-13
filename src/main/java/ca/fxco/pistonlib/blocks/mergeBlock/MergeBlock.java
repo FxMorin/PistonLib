@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.blocks.pistons.mergePiston;
+package ca.fxco.pistonlib.blocks.mergeBlock;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import net.minecraft.core.BlockPos;

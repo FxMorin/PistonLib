@@ -1,5 +1,7 @@
 package ca.fxco.pistonlib.renderers;
 
+import ca.fxco.pistonlib.helpers.BlockAndTintWrapper;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -21,6 +23,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -36,7 +39,6 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
     @Override
     public void render(T mbe, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         Level level = mbe.getLevel();
-
         if (level == null) {
             return;
         }
@@ -80,75 +82,85 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
 
         if (mbe.isExtending()) {
             if (state.getBlock() instanceof BasicPistonHeadBlock) {
-                this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
-                    bufferSource, level, false, overlay);
+                this.renderBlock(mbe, fromPos, state.setValue(BasicPistonHeadBlock.SHORT,
+                                mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource, level, false, overlay);
             }
-        } else {
-            if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonFamily family = mbe.getFamily();
-                Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
+        } else if (state.getBlock() instanceof BasicPistonBaseBlock base) {
+            PistonFamily family = mbe.getFamily();
+            Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
-                BlockState headState = family.getHead().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, base.type)
-                    .setValue(BasicPistonHeadBlock.FACING, facing)
+            BlockState headState = family.getHead().defaultBlockState()
+                .setValue(BasicPistonHeadBlock.TYPE, base.type)
+                .setValue(BasicPistonHeadBlock.FACING, facing)
+                .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
+
+            this.renderBlock(mbe, fromPos, headState, stack, bufferSource, level, false, overlay);
+        } else if (state.getBlock() instanceof BasicPistonHeadBlock) {
+            BlockState headState = state
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 
-                this.renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
-            } else
-            if (state.getBlock() instanceof BasicPistonHeadBlock head) {
-                BlockState headState = state
-                    .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
-
-                this.renderBlock(fromPos, headState, stack, bufferSource, level, false, overlay);
-            }
+            this.renderBlock(mbe, fromPos, headState, stack, bufferSource, level, false, overlay);
         }
     }
 
-    protected void renderStaticSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
-                                      MultiBufferSource bufferSource, int light, int overlay) {
+    protected void renderStaticSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick,
+                                      PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         if (!mbe.isExtending()) {
             BlockState state = mbe.getMovedState();
-
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
-                this.renderBlock(fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true), stack, bufferSource, level, false, overlay);
-            } else
-            if (state.getBlock() instanceof BasicPistonHeadBlock) {
+                this.renderBlock(mbe, fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true),
+                        stack, bufferSource, level, false, overlay);
+            } else if (state.getBlock() instanceof BasicPistonHeadBlock) {
                 PistonFamily family = mbe.getFamily();
                 Direction facing = state.getValue(BasicPistonHeadBlock.FACING);
 
                 BlockState armState = family.getArm().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.FACING, facing)
-                    .setValue(BasicPistonHeadBlock.SHORT, false);
+                        .setValue(BasicPistonHeadBlock.FACING, facing)
+                        .setValue(BasicPistonHeadBlock.SHORT, false);
 
-                this.renderBlock(fromPos, armState, stack, bufferSource, level, false, overlay);
+                this.renderBlock(mbe, fromPos, armState, stack, bufferSource, level, false, overlay);
             }
         }
     }
 
-    protected void renderMovingBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
-                                     MultiBufferSource bufferSource, int light, int overlay) {
+    protected void renderMovingBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick,
+                                     PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         BlockState state = mbe.getMovedState();
 
         if (state.getBlock() instanceof BasicPistonHeadBlock) {
-            this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
-                bufferSource, level, false, overlay);
+            this.renderBlock(mbe, fromPos, state.setValue(BasicPistonHeadBlock.SHORT,
+                            mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource, level, false, overlay);
         } else {
-            this.renderBlock(fromPos, state, stack, bufferSource, level, false, overlay);
+            this.renderBlock(mbe, fromPos, state, stack, bufferSource, level, false, overlay);
         }
     }
 
-    protected void renderStaticBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
-                                     MultiBufferSource bufferSource, int light, int overlay) {
+    protected void renderStaticBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick,
+                                     PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
 
     }
 
-    protected void renderBlock(BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource, Level level,
-                               boolean cull, int overlay) {
+    protected void renderBlock(T mbe, BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource,
+                               Level level, boolean cull, int overlay) {
         RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
         VertexConsumer consumer = bufferSource.getBuffer(type);
 
-        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, stack,
-            consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
+        BlockAndTintGetter getter;
+        StructureGroup structureGroup = mbe.getStructureGroup();
+        if (structureGroup != null) {
+            getter = new BlockAndTintWrapper(level) {
+                @Override
+                public BlockState getBlockState(BlockPos blockPos) {
+                    return structureGroup.getState(blockPos);
+                }
+            };
+            cull = true;
+        } else {
+            getter = level;
+        }
+
+        this.blockRenderer.getModelRenderer().tesselateBlock(getter, this.blockRenderer.getBlockModel(state), state,
+                pos, stack, consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
 
     

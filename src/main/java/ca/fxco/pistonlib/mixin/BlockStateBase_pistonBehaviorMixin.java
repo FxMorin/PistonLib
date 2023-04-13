@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.impl.BlockQuasiPower;
 import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
@@ -36,6 +36,11 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
 
     @Shadow
     protected BlockState asState() { return null; }
+
+    @Override
+    public int getWeight() {
+        return ((ConfigurablePistonBehavior)this.getBlock()).getWeight(this.asState());
+    }
 
     @Override
     public boolean usesConfigurablePistonBehavior() {

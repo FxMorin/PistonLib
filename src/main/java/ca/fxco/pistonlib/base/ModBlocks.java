@@ -23,8 +23,7 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBas
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonHeadBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyMovingBlock;
@@ -75,6 +74,7 @@ public class ModBlocks {
     public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block ERASE_BLOCK = register("erase_block", EraseBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.of(Material.METAL), 2));
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
@@ -183,13 +183,6 @@ public class ModBlocks {
     public static final MBEPistonBaseBlock MBE_STICKY_PISTON = register("mbe_sticky_piston", new MBEPistonBaseBlock(MBE, PistonType.STICKY));
     public static final BasicPistonHeadBlock MBE_PISTON_HEAD_BLOCK = register("mbe_piston_head", new BasicPistonHeadBlock(MBE));
     public static final MBEMovingBlock MBE_MOVING_BLOCK = register("mbe_moving_block", new MBEMovingBlock(MBE));
-
-    // Merge Piston
-    // A piston that can merge blocks together
-    public static final BasicPistonBaseBlock MERGE_PISTON = register("merge_piston", new MergePistonBaseBlock(MERGE, PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = register("merge_sticky_piston", new MergePistonBaseBlock(MERGE, PistonType.STICKY));
-    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = register("merge_piston_head", new BasicPistonHeadBlock(MERGE));
-    public static final MBEMovingBlock MERGE_MOVING_BLOCK = register("merge_moving_block", new MBEMovingBlock(MERGE));
 
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
 
