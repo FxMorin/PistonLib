@@ -1,16 +1,18 @@
 package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
+import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,6 +36,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
@@ -41,21 +44,35 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     private PistonFamily family;
 
+    private final @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
+    private final boolean isGroupController;
+
     /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
 
         this.type = state.getValue(BasicMovingBlock.TYPE);
+
+        this.structureGroup = null;
+        this.isGroupController = false;
     }
 
-    public BasicMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
-                                  BlockEntity movedBlockEntity, Direction facing, boolean extending,
-                                  boolean isSourcePiston) {
+    public BasicMovingBlockEntity(PistonFamily family, @Nullable StructureGroup structureGroup,
+                                  BlockPos pos, BlockState state, BlockState movedState, BlockEntity movedBlockEntity,
+                                  Direction facing, boolean extending, boolean isSourcePiston) {
         super(pos, state, movedState, facing, extending, isSourcePiston);
 
         this.type = state.getValue(BasicMovingBlock.TYPE);
 
         this.setFamily(family);
+
+        this.structureGroup = structureGroup;
+        if (this.structureGroup != null) {
+            this.isGroupController = this.structureGroup.size() == 0;
+            this.structureGroup.add(this); // Add self to the structure group
+        } else {
+            isGroupController = false;
+        }
     }
 
     private void setFamily(PistonFamily family) {
@@ -65,6 +82,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     public PistonFamily getFamily() {
         return this.family;
+    }
+
+    public @Nullable StructureGroup getStructureGroup() {
+        return this.structureGroup;
+    }
+
+    public boolean hasControl() {
+        return this.structureGroup == null || this.isGroupController;
     }
 
     public float speed() {
@@ -104,31 +129,68 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     protected void moveCollidedEntities(float nextProgress) {
-        Direction moveDir = this.getMovementDirection();
-        double deltaProgress = nextProgress - this.progress;
+        if (this.isGroupController) {
+            VoxelShape blockShape = this.getStateForMovingEntities().getCollisionShape(this.level, this.worldPosition);
+            Direction moveDir = this.getMovementDirection();
+            double deltaProgress = nextProgress - this.progress;
+            Map<BlockEntity, Pair<List<AABB>, AABB>> blockShapes = new HashMap<>();
+            AABB initialBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
+            initialBounds = PistonMath.getMovementArea(initialBounds, moveDir, deltaProgress).minmax(initialBounds);
+            IonicReference<AABB> combinedBounds = new IonicReference<>(initialBounds);
+            if (!blockShape.isEmpty()) {
+                blockShapes.put(this, Pair.of(blockShape.toAabbs(), initialBounds));
+            }
 
-        VoxelShape blockShape = this.getStateForMovingEntities().getCollisionShape(this.level, this.worldPosition);
-
-        if (blockShape.isEmpty()) {
-            return;
+            this.structureGroup.forNonControllers(be -> {
+                VoxelShape blockShape2 = be.getStateForMovingEntities().getCollisionShape(be.level, be.worldPosition);
+                if (blockShape2.isEmpty()) {
+                    return;
+                }
+                AABB bound = moveByPositionAndProgress(be.worldPosition, blockShape2.bounds());
+                bound = PistonMath.getMovementArea(bound, moveDir, deltaProgress).minmax(bound);
+                combinedBounds.set(combinedBounds.get().minmax(bound));
+                blockShapes.put(be, Pair.of(blockShape2.toAabbs(), bound));
+            });
+            List<Entity> entities = this.level.getEntities(null, combinedBounds.get());
+            entities.removeIf(entity -> entity.getPistonPushReaction() == PushReaction.IGNORE);
+            if (entities.isEmpty()) {
+                return;
+            }
+            this.structureGroup.forEach(be -> {
+                List<Entity> affectedEntities = new ArrayList<>();
+                AABB blockBounds = blockShapes.get(be).second();
+                for (Entity entity : entities) {
+                    if (entity.getBoundingBox().intersects(blockBounds)) {
+                        affectedEntities.add(entity);
+                    }
+                }
+                if (!affectedEntities.isEmpty()) {
+                    be.moveCollidedEntities(moveDir, deltaProgress, blockShapes.get(be).first(), affectedEntities);
+                }
+            });
+        } else if (this.structureGroup == null) {
+            VoxelShape blockShape = this.getStateForMovingEntities().getCollisionShape(this.level, this.worldPosition);
+            Direction moveDir = this.getMovementDirection();
+            double deltaProgress = nextProgress - this.progress;
+            if (blockShape.isEmpty()) {
+                return;
+            }
+            AABB totalBlockBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
+            AABB totalMovementArea = PistonMath.getMovementArea(totalBlockBounds, moveDir, deltaProgress).minmax(totalBlockBounds);
+            List<Entity> entities = this.level.getEntities(null, totalMovementArea);
+            entities.removeIf(entity -> entity.getPistonPushReaction() == PushReaction.IGNORE);
+            if (entities.isEmpty()) {
+                return;
+            }
+            moveCollidedEntities(moveDir, deltaProgress, blockShape.toAabbs(), entities);
         }
+    }
 
-        AABB totalBlockBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
-        AABB totalMovementArea = PistonMath.getMovementArea(totalBlockBounds, moveDir, deltaProgress).minmax(totalBlockBounds);
-        List<Entity> entities = this.level.getEntities(null, totalMovementArea);
-
-        if (entities.isEmpty()) {
-            return;
-        }
-
-        List<AABB> blockAabbs = blockShape.toAabbs();
+    protected void moveCollidedEntities(Direction moveDir, double deltaProgress, List<AABB> blockAabbs, List<Entity> entities) {
         boolean shouldBounceEntities = this.movedState.is(Blocks.SLIME_BLOCK);
         float speed = this.speed();
 
         for (Entity entity : entities) {
-            if (entity.getPistonPushReaction() == PushReaction.IGNORE) {
-                continue;
-            }
             if (shouldBounceEntities) {
                 if (entity instanceof ServerPlayer) {
                     continue;
@@ -237,7 +299,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         );
     }
 
-    protected static void moveEntity(Direction noclipDir, Entity entity, double amount, Direction moveDir) {
+    protected void moveEntity(Direction noclipDir, Entity entity, double amount, Direction moveDir) {
         NOCLIP.set(noclipDir);
         entity.move(MoverType.PISTON, new Vec3(
             amount * moveDir.getStepX(),
@@ -289,10 +351,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void finalTick() {
+        if (this.isGroupController && PistonLibConfig.combinedBlockDropping) {
+            this.structureGroup.forEach(t -> t.finalTick(true, true));
+            return;
+        }
         finalTick(false, true);
     }
 
-    public void finalTick(boolean skipStickiness, boolean removeSource) {
+    public void finalTick(boolean skipStickiness, boolean removeSource) { // Only used by `finalTickStuckNeighbors` & structure groups
         if (this.level != null && (this.progressO < 1.0F || this.level.isClientSide())) {
 
             this.progressO = this.progress;
@@ -313,6 +379,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     public void tick() {
+        tickStart();
+        tickMovement();
+    }
+
+    /**
+     * @return true if it finished movement
+     */
+    public void tickStart() {
         this.lastTicked = this.level.getGameTime();
         this.progressO = this.progress;
         if (this.progressO >= 1.0F) {
@@ -321,7 +395,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             } else {
                 this.finishMovement(false);
             }
-        } else {
+        }
+        if (this.isGroupController) {
+            this.structureGroup.forNonControllers(BasicMovingBlockEntity::tickStart);
+        }
+    }
+
+    public void tickMovement() {
+        if (this.progressO < 1.0F) {
             float nextProgress = this.progress + 0.5F * this.speed();
 
             this.moveCollidedEntities(nextProgress);
@@ -330,6 +411,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             this.progress = nextProgress;
             if (this.progress >= 1.0F) {
                 this.progress = 1.0F;
+            }
+            if (this.isGroupController) {
+                this.structureGroup.forNonControllers(t -> {
+                    t.progress = this.progress;
+                });
             }
         }
     }
@@ -447,8 +533,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     @FunctionalInterface
     public interface Factory<T extends BasicMovingBlockEntity> {
 
-        T create(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
-                 BlockEntity movedBlockEntity, Direction facing, boolean extending,
+        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
+                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
                  boolean isSourcePiston);
 
     }

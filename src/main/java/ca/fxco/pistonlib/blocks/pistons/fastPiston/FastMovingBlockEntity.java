@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.fastPiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
@@ -16,10 +17,10 @@ public class FastMovingBlockEntity extends BasicMovingBlockEntity {
         super(pos, state);
     }
 
-    public FastMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
-                                 BlockEntity movedBlockEntity, Direction facing, boolean extending,
-                                 boolean isSourcePiston) {
-        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+    public FastMovingBlockEntity(PistonFamily family, StructureGroup group, BlockPos pos, BlockState state,
+                                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing,
+                                 boolean extending, boolean isSourcePiston) {
+        super(family, group, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
     }
 
     @Override

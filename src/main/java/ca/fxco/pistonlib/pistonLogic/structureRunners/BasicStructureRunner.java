@@ -1,8 +1,10 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import net.minecraft.core.BlockPos;
@@ -80,23 +82,30 @@ public class BasicStructureRunner {
     protected void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
                                   boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
                                   AtomicInteger affectedIndex, Direction moveDir) {
-        for (int i = toMove.size() - 1; i >= 0; i--) {
-            BlockPos posToMove = toMove.get(i);
-            BlockPos dstPos = posToMove.relative(moveDir);
-            BlockState stateToMove = statesToMove.get(i);
-            BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
+        int moveSize = toMove.size();
+        if (moveSize > 0) {
+            StructureGroup structureGroup = null;
+            if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
+                structureGroup = StructureGroup.create(level);
+            }
+            for (int i = moveSize - 1; i >= 0; i--) {
+                BlockPos posToMove = toMove.get(i);
+                BlockPos dstPos = posToMove.relative(moveDir);
+                BlockState stateToMove = statesToMove.get(i);
+                BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
 
-            toRemove.remove(dstPos);
+                toRemove.remove(dstPos);
 
-            BlockState movingBlock = this.family.getMoving().defaultBlockState()
-                    .setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = this.family
-                    .newMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                        .setValue(BasicMovingBlock.FACING, facing);
+                BasicMovingBlockEntity movingBlockEntity = this.family
+                        .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
-            level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
-            level.setBlockEntity(movingBlockEntity);
+                level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                level.setBlockEntity(movingBlockEntity);
 
-            affectedStates[affectedIndex.getAndIncrement()] = stateToMove;
+                affectedStates[affectedIndex.getAndIncrement()] = stateToMove;
+            }
         }
     }
 
