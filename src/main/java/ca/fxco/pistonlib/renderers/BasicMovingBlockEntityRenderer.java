@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 @Environment(EnvType.CLIENT)
 public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
 
-    private static final boolean DEBUG_CONTROLLERS = true;
+    private static final boolean DEBUG_CONTROLLERS = false;
     private static final boolean DEBUG_AS_OVERLAY = true;
 
     protected final BlockRenderDispatcher blockRenderer;
@@ -172,7 +172,7 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
 
     protected void renderBlock(T mbe, BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource,
                                Level level, boolean cull, int overlay) {
-        RenderType type = mbe.isSourcePiston() ? RenderType.solid() : ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
         VertexConsumer consumer = bufferSource.getBuffer(type);
 
         BlockAndTintGetter getter;

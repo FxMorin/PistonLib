@@ -182,6 +182,10 @@ public class PistonFamily {
         return this.behavior.maxLength;
     }
 
+    public boolean hasCustomLength() {
+        return this.behavior.minLength != 0 || this.behavior.maxLength != 1;
+    }
+
 
     public static PistonFamily of(PistonBehavior behavior) {
         if (PistonLib.DATAGEN_ACTIVE) {

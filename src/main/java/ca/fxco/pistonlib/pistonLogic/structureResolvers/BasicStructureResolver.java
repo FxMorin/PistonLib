@@ -39,19 +39,33 @@ public class BasicStructureResolver extends PistonStructureResolver {
         this.startPos = this.pistonPos.relative(this.pistonDirection, this.length + 1);
     }
 
-    @Override
-    public boolean resolve() {
-        // Reset resolver
+    protected void resetResolver() {
         this.toPush.clear();
         this.toDestroy.clear();
         this.movingWeight = 0;
+    }
 
+    @Override
+    public boolean resolve() {
+        resetResolver();
+
+        if (this.piston.family.hasCustomLength() && !resolveLongPiston()) {
+            return false;
+        }
+
+        return runStructureGeneration();
+    }
+
+    protected boolean resolveLongPiston() {
         // make sure the piston doesn't try to extend while it's already extending
         // or retract while it's already retracting
         BlockPos headPos = this.pistonPos.relative(this.pistonDirection, this.length);
         BlockState headState = this.level.getBlockState(headPos);
         if (headState.is(this.piston.family.getMoving())) {
             BlockEntity blockEntity = this.level.getBlockEntity(headPos);
+            if (blockEntity == null) {
+                return false;
+            }
             if (blockEntity.getType() == this.piston.family.getMovingBlockEntityType()) {
                 BasicMovingBlockEntity mbe = (BasicMovingBlockEntity)blockEntity;
                 if (mbe.isSourcePiston && mbe.extending == this.extending && mbe.direction == this.pistonDirection) {
@@ -59,6 +73,10 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 }
             }
         }
+        return true;
+    }
+
+    protected boolean runStructureGeneration() {
         // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
