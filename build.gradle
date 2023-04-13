@@ -29,6 +29,18 @@ if (!project.file("src/generated").exists()) {
     runClient.dependsOn runDatagenClient
 }
 
+repositories {
+    allprojects {
+        repositories {
+            maven {
+                name 'JitPack'
+                url 'https://jitpack.io'
+            }
+        }
+    }
+    mavenCentral()
+}
+
 
 sourceSets {
     main {
@@ -36,10 +48,6 @@ sourceSets {
             srcDir "src/generated/resources"
         }
     }
-}
-
-repositories {
-    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
@@ -56,7 +64,7 @@ dependencies {
     include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
 
     // MixinExtras
-    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinExtras_Version}")))
+    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
 }
 
 processResources {
@@ -75,6 +83,8 @@ tasks.withType(JavaCompile).configureEach {
         it.options.release = targetJavaVersion
     }
 }
+
+repositories {}
 
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)

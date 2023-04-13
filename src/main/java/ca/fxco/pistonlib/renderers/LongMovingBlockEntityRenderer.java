@@ -31,8 +31,8 @@ public class LongMovingBlockEntityRenderer<T extends LongMovingBlockEntity> exte
 
         if (mbe.isExtending()) {
             if (state.getBlock() instanceof BasicPistonHeadBlock) {
-                this.renderBlock(fromPos, state.setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) <= 0.5F), stack,
-                    bufferSource, level, false, overlay);
+                this.renderBlock(mbe, fromPos, state.setValue(BasicPistonHeadBlock.SHORT,
+                                mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource, level, false, overlay);
             }
         } else {
             if (state.getBlock() instanceof BasicPistonBaseBlock base) {
@@ -50,7 +50,7 @@ public class LongMovingBlockEntityRenderer<T extends LongMovingBlockEntity> exte
                         .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
                 }
 
-                this.renderBlock(fromPos, renderState, stack, bufferSource, level, false, overlay);
+                this.renderBlock(mbe, fromPos, renderState, stack, bufferSource, level, false, overlay);
             }
         }
     }
