@@ -135,6 +135,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             double deltaProgress = nextProgress - this.progress;
             Map<BlockEntity, Pair<List<AABB>, AABB>> blockShapes = new HashMap<>();
             AABB initialBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
+            initialBounds = PistonMath.getMovementArea(initialBounds, moveDir, deltaProgress).minmax(initialBounds);
             IonicReference<AABB> combinedBounds = new IonicReference<>(initialBounds);
             if (!blockShape.isEmpty()) {
                 blockShapes.put(this, Pair.of(blockShape.toAabbs(), initialBounds));
@@ -146,12 +147,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                     return;
                 }
                 AABB bound = moveByPositionAndProgress(be.worldPosition, blockShape2.bounds());
+                bound = PistonMath.getMovementArea(bound, moveDir, deltaProgress).minmax(bound);
                 combinedBounds.set(combinedBounds.get().minmax(bound));
                 blockShapes.put(be, Pair.of(blockShape2.toAabbs(), bound));
             });
-            AABB totalBlockBounds = combinedBounds.get();
-            AABB totalMovementArea = PistonMath.getMovementArea(totalBlockBounds, moveDir, deltaProgress).minmax(totalBlockBounds);
-            List<Entity> entities = this.level.getEntities(null, totalMovementArea);
+            List<Entity> entities = this.level.getEntities(null, combinedBounds.get());
             entities.removeIf(entity -> entity.getPistonPushReaction() == PushReaction.IGNORE);
             if (entities.isEmpty()) {
                 return;
