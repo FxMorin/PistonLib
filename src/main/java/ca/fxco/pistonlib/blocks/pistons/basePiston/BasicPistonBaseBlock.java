@@ -11,6 +11,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
@@ -43,6 +44,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@Getter
 public class BasicPistonBaseBlock extends DirectionalBlock {
 
 	public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
@@ -53,8 +55,8 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     protected static final VoxelShape EXTENDED_UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.box(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
 
-    public final PistonFamily family;
-    public final PistonType type;
+    private final PistonFamily family;
+    private final PistonType type;
 
     public BasicPistonBaseBlock(PistonFamily family, PistonType type) {
         this(family, type, FabricBlockSettings.copyOf(Blocks.PISTON));

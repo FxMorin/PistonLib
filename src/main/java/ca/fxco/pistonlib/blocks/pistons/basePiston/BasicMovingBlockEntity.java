@@ -13,6 +13,7 @@ import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -42,8 +43,10 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected final PistonType type;
 
+    @Getter
     private PistonFamily family;
 
+    @Getter
     private final @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
     private final boolean isGroupController;
 
@@ -78,14 +81,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     private void setFamily(PistonFamily family) {
         this.family = family;
         ((BlockEntityAccessor)this).setType(this.family.getMovingBlockEntityType());
-    }
-
-    public PistonFamily getFamily() {
-        return this.family;
-    }
-
-    public @Nullable StructureGroup getStructureGroup() {
-        return this.structureGroup;
     }
 
     public boolean hasControl() {

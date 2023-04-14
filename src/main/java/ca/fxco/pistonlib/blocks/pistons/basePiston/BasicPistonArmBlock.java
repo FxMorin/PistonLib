@@ -6,6 +6,7 @@ import java.util.function.BiPredicate;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
+import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
@@ -55,8 +56,6 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     BiPredicate<BlockState,BlockState> OR_IS_ATTACHED = (state, selfState) ->
             state.is(ModTags.MOVING_PISTONS) && state.getValue(FACING) == selfState.getValue(FACING);
 
-    public final PistonFamily family;
-
     public static VoxelShape getArmShape(Direction direction, boolean shortArm) {
         return switch (direction) {
             default -> shortArm ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE;
@@ -71,6 +70,9 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     public static VoxelShape[] getArmShapes(boolean shortArm) {
         return Arrays.stream(Direction.values()).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
     }
+
+    @Getter
+    private final PistonFamily family;
 
     public BasicPistonArmBlock(PistonFamily family) {
         this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));

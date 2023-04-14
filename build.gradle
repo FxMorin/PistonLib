@@ -63,6 +63,9 @@ dependencies {
     modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
     include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
 
+    // Lombok
+    compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
+
     // MixinExtras
     include(implementation(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixinextras_version}")))
 }
