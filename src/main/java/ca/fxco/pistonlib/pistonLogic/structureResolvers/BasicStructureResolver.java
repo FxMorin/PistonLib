@@ -30,7 +30,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         super(level, pos, facing, extend);
 
         this.piston = piston;
-        this.maxMovableWeight = piston.family.getPushLimit();
+        this.maxMovableWeight = piston.getFamily().getPushLimit();
     }
 
     @Override

@@ -28,7 +28,7 @@ public class ConfigurableLongPistonHandler extends BasicStructureResolver {
                                          boolean extend) {
         super(piston, level, pos, facing, extend);
 
-        this.movingBlock = piston.family.getMoving();
+        this.movingBlock = piston.getFamily().getMoving();
     }
 
     public boolean calculateLongPullPush(boolean isPull, Consumer<LongMovingBlockEntity> applySkip) {

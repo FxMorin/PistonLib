@@ -1,7 +1,9 @@
 package ca.fxco.pistonlib.helpers;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 
+@UtilityClass
 public class BlockPosUtils {
 
     public static boolean isBetween(BlockPos pos, BlockPos start, BlockPos end) {

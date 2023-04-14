@@ -22,7 +22,7 @@ public class StickyPistonHeadBlock extends BasicPistonHeadBlock implements Confi
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState behindState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-        return this.isFittingBase(state, behindState) || behindState.is(this.family.getMoving());
+        return this.isFittingBase(state, behindState) || behindState.is(this.getFamily().getMoving());
     }
 
     @Override
