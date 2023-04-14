@@ -34,7 +34,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
         this.piston = piston;
         this.length = length;
-        this.maxMovableWeight = piston.family.getPushLimit();
+        this.maxMovableWeight = piston.getFamily().getPushLimit();
 
         this.startPos = this.pistonPos.relative(this.pistonDirection, this.length + 1);
     }
@@ -49,7 +49,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     public boolean resolve() {
         resetResolver();
 
-        if (this.piston.family.hasCustomLength() && !resolveLongPiston()) {
+        if (this.piston.getFamily().hasCustomLength() && !resolveLongPiston()) {
             return false;
         }
 
@@ -61,12 +61,12 @@ public class BasicStructureResolver extends PistonStructureResolver {
         // or retract while it's already retracting
         BlockPos headPos = this.pistonPos.relative(this.pistonDirection, this.length);
         BlockState headState = this.level.getBlockState(headPos);
-        if (headState.is(this.piston.family.getMoving())) {
+        if (headState.is(this.piston.getFamily().getMoving())) {
             BlockEntity blockEntity = this.level.getBlockEntity(headPos);
             if (blockEntity == null) {
                 return false;
             }
-            if (blockEntity.getType() == this.piston.family.getMovingBlockEntityType()) {
+            if (blockEntity.getType() == this.piston.getFamily().getMovingBlockEntityType()) {
                 BasicMovingBlockEntity mbe = (BasicMovingBlockEntity)blockEntity;
                 if (mbe.isSourcePiston && mbe.extending == this.extending && mbe.direction == this.pistonDirection) {
                     return false;

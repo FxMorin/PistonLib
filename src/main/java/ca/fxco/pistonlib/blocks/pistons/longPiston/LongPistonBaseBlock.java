@@ -26,20 +26,20 @@ public class LongPistonBaseBlock extends BasicPistonBaseBlock {
     protected int getLength(Level level, BlockPos pos, BlockState state) {
         if (state.getValue(EXTENDED)) {
             Direction facing = state.getValue(FACING);
-            int length = this.family.getMinLength();
+            int length = this.getFamily().getMinLength();
 
-            while (length++ < this.family.getMaxLength()) {
+            while (length++ < this.getFamily().getMaxLength()) {
                 BlockPos frontPos = pos.relative(facing, length);
                 BlockState frontState = level.getBlockState(frontPos);
 
-                if (!frontState.is(this.family.getArm())) {
+                if (!frontState.is(this.getFamily().getArm())) {
                     break;
                 }
             }
 
             return length;
         } else {
-            return this.family.getMinLength();
+            return this.getFamily().getMinLength();
         }
     }
 }

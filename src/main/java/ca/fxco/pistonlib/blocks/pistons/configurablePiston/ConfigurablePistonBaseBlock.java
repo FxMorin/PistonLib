@@ -35,21 +35,21 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
 
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return (this.family.isFrontPowered() ? level.hasNeighborSignal(pos) :
+        return (this.getFamily().isFrontPowered() ? level.hasNeighborSignal(pos) :
                 Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
-                (this.family.isQuasi() && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
+                (this.getFamily().isQuasi() && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override
     protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
-        return this.family.canRetractOnExtending() ? super.getPullType(level, pos, facing, length) : MotionType.NONE;
+        return this.getFamily().isRetractOnExtending() ? super.getPullType(level, pos, facing, length) : MotionType.NONE;
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(this) && level.getBlockEntity(pos) == null) {
             this.checkIfExtend(level, pos, state);
-            if (this.family.isSlippery() && !level.isClientSide) {
+            if (this.getFamily().isSlippery() && !level.isClientSide) {
                 level.scheduleTick(pos, this, SLIPPERY_DELAY);
             }
         }
@@ -58,19 +58,19 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (this.family.isSlippery() && !level.isClientSide())
+        if (this.getFamily().isSlippery() && !level.isClientSide())
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (this.family.isSlippery() && BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE)
+        if (this.getFamily().isSlippery() && BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE)
             FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
+        return !this.getFamily().isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 }

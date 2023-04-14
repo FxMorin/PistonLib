@@ -39,14 +39,14 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     public ConfigurablePistonHeadBlock(PistonFamily family, Properties properties) {
         super(family, properties);
 
-        if (this.family.isSlippery()) {
+        if (this.getFamily().isSlippery()) {
             this.registerDefaultState(this.defaultBlockState().setValue(SLIPPERY_DISTANCE, 0));
         }
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        if (this.family.isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+        if (this.getFamily().isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         super.onPlace(state, level, pos, oldState, movedByPiston);
@@ -55,14 +55,14 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (this.family.isSlippery() && !level.isClientSide())
+        if (this.getFamily().isSlippery() && !level.isClientSide())
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (this.family.isSlippery()) {
+        if (this.getFamily().isSlippery()) {
             int i = BaseSlipperyBlock.calculateDistance(level, pos);
             BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
@@ -79,16 +79,16 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        if (!this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE) {
-            if (this.family.isVerySticky()) {
+        if (!this.getFamily().isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE) {
+            if (this.getFamily().isVerySticky()) {
                 BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-                return this.isFittingBase(state, blockState) || blockState.is(this.family.getMoving());
+                return this.isFittingBase(state, blockState) || blockState.is(this.getFamily().getMoving());
             }
             return super.canSurvive(state, level, pos);
         }
-        if (this.family.isVerySticky()) {
+        if (this.getFamily().isVerySticky()) {
             BlockState blockState = level.getBlockState(pos.relative(state.getValue(FACING).getOpposite()));
-            return this.isFittingBase(state, blockState) || blockState.is(this.family.getMoving());
+            return this.isFittingBase(state, blockState) || blockState.is(this.getFamily().getMoving());
         }
         return super.canSurvive(state, level, pos);
     }
@@ -100,12 +100,12 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
 
     @Override
     public boolean usesConfigurablePistonBehavior() {
-        return this.family.isVerySticky(); // Makes the piston head movable by bypassing vanilla checks
+        return this.getFamily().isVerySticky(); // Makes the piston head movable by bypassing vanilla checks
     }
 
     @Override
     public boolean usesConfigurablePistonStickiness() {
-        return this.family.isVerySticky();
+        return this.getFamily().isVerySticky();
     }
 
     // Returns a list of directions that are sticky, and the stickyType.

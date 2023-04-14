@@ -4,21 +4,23 @@ import ca.fxco.api.pistonlib.config.Category;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
+import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Set;
 
+@Getter
 public class ParsedValue<T> {
 
-    public final Field field;
-    public final String name;
-    public final String description;
-    public final String[] moreInfo;
-    public final Set<String> keywords;
-    public final Set<Category> categories;
-    public final ImmutableIntArray fixes;
-    public final T defaultValue; // Set by the recommended option
+    protected final Field field;
+    protected final String name;
+    protected final String description;
+    protected final String[] moreInfo;
+    protected final Set<String> keywords;
+    protected final Set<Category> categories;
+    protected final ImmutableIntArray fixes;
+    protected final T defaultValue; // Set by the recommended option
     //public boolean requiresClient;
     //public final boolean clientOnly;
 

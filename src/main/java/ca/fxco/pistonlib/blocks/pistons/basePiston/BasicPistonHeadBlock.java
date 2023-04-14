@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
+import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@Getter
 public class BasicPistonHeadBlock extends DirectionalBlock {
 
     public static final EnumProperty<PistonType> TYPE;
@@ -55,7 +57,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     private static final VoxelShape[] SHORT_HEAD_SHAPES;
     private static final VoxelShape[] HEAD_SHAPES;
 
-    public final PistonFamily family;
+    private final PistonFamily family;
 
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
         return Arrays.stream(Direction.values()).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);

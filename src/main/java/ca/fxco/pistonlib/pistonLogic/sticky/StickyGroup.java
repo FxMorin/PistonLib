@@ -1,22 +1,24 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
+import lombok.Getter;
+import lombok.experimental.Delegate;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
 
+@Getter
 public class StickyGroup {
 
-    @Nullable
-    private final StickyGroup parent;
-    private final StickRule rule;
+    private final @Nullable StickyGroup parent;
+    private final StickRule stickRule;
 
-    public StickyGroup(StickRule rule) {
-        this(null, rule);
+    public StickyGroup(StickRule stickRule) {
+        this(null, stickRule);
     }
 
-    public StickyGroup(@Nullable StickyGroup parent, StickRule rule) {
+    public StickyGroup(@Nullable StickyGroup parent, StickRule stickRule) {
         this.parent = parent;
-        this.rule = rule;
+        this.stickRule = stickRule;
     }
 
     @Override
@@ -24,15 +26,7 @@ public class StickyGroup {
         return "StickyGroup{" + ModStickyGroups.getId(this) + "}";
     }
 
-    public @Nullable StickyGroup getParent() {
-        return this.parent;
-    }
-
-    public StickRule getStickRule() {
-        return this.rule;
-    }
-
     public boolean test(StickyGroup stickyGroup) {
-        return this.rule.test(this, stickyGroup);
+        return this.stickRule.test(this, stickyGroup);
     }
 }

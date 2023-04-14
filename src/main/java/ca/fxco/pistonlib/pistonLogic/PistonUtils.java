@@ -4,11 +4,13 @@ import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+@UtilityClass
 public class PistonUtils {
 
     // Does the state checks for you, although matches any moving piston instead of specific ones
