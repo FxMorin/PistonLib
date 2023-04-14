@@ -25,10 +25,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Environment(EnvType.CLIENT)
 public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
+
+    private static final boolean DEBUG_CONTROLLERS = true;
+    private static final boolean DEBUG_AS_OVERLAY = true;
 
     protected final BlockRenderDispatcher blockRenderer;
 
@@ -56,6 +61,31 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         Direction moveDir = mbe.getMovementDirection();
         BlockPos toPos = mbe.getBlockPos();
         BlockPos fromPos = toPos.relative(moveDir.getOpposite());
+
+        if (DEBUG_CONTROLLERS) {
+            if (mbe.hasControl()) {
+                if (DEBUG_AS_OVERLAY) {
+                    stack.pushPose();
+                    stack.translate(-0.05F, -0.05F, -0.05F);
+                    stack.scale(1.1F, 1.1F, 1.1F);
+                    if (mbe.getStructureGroup() == null) { // This block is alone
+                        renderDebugBlock(level, Blocks.ORANGE_STAINED_GLASS, fromPos, stack, bufferSource, overlay);
+                    } else {
+                        renderDebugBlock(level, Blocks.LIME_STAINED_GLASS, fromPos, stack, bufferSource, overlay);
+                    }
+                    stack.popPose();
+                } else {
+                    if (mbe.getStructureGroup() == null) { // This block is alone
+                        renderDebugBlock(level, Blocks.ORANGE_CONCRETE, fromPos, stack, bufferSource, overlay);
+                    } else {
+                        renderDebugBlock(level, Blocks.LIME_CONCRETE, fromPos, stack, bufferSource, overlay);
+                    }
+                    stack.popPose();
+                    ModelBlockRenderer.clearCache();
+                    return;
+                }
+            }
+        }
 
         if (mbe.isSourcePiston()) {
             this.renderMovingSource(mbe, level, fromPos, toPos, partialTick, stack, bufferSource, light, overlay);
@@ -127,6 +157,15 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
     protected void renderStaticBlock(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick,
                                      PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
 
+    }
+
+    protected void renderDebugBlock(Level level, Block block, BlockPos pos, PoseStack stack,
+                                    MultiBufferSource bufferSource, int overlay) {
+        BlockState state = block.defaultBlockState();
+        RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        VertexConsumer consumer = bufferSource.getBuffer(type);
+        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state,
+                pos, stack, consumer, false, RandomSource.create(), state.getSeed(pos), overlay);
     }
 
     protected void renderBlock(T mbe, BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource,

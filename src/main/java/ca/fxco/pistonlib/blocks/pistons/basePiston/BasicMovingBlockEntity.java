@@ -11,9 +11,12 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
+import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +27,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -46,11 +50,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     @Getter
     private PistonFamily family;
 
+    @Setter
     @Getter
-    private final @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
-    private final boolean isGroupController;
+    private @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
+    private boolean isGroupController;
 
-    /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
 
@@ -374,6 +378,16 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     public void tick() {
+        if (this.structureGroup != null && !this.structureGroup.hasInitialized()) { // only ticks the controller
+            if (this.isGroupController) {
+                ServerStructureGroup controllerStructure = StructureGroup.create(this.level, structureGroup.hashCode());
+                this.structureGroup = controllerStructure;
+                controllerStructure.onLoad(this.level, this.worldPosition, this.getFamily().getPushLimit());
+            } else {
+                System.out.println("This should be impossible!");
+                this.structureGroup = findStructureGroup(structureGroup.hashCode());
+            }
+        }
         tickStart();
         tickMovement();
     }
@@ -450,6 +464,29 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
     }
 
+    // Used if this block entity is loaded after the controller
+    private @Nullable StructureGroup findStructureGroup(int structureHash) {
+        //System.out.println("THIS SHOULD NEVER HAPPEN!!!! -----------------------------------------------------------------------------------");
+        //System.err.println("THIS SHOULD NEVER HAPPEN!!!!");
+        for (Direction dir : Direction.values()) {
+            BlockPos pos = new BlockPos(this.worldPosition.getX() + dir.getStepX(), this.worldPosition.getY() + dir.getStepY(), this.worldPosition.getZ() + dir.getStepZ());
+            BlockEntity be = this.level.getBlockEntity(pos);
+            if (be instanceof BasicMovingBlockEntity bmbe) {
+                StructureGroup structure = bmbe.getStructureGroup();
+                if (structure != null && structure.hasInitialized() && structure.hashCode() == structureHash) {
+                    structure.add(this); // todo: check if order even matters here
+                    return structure;
+                }
+            }
+        }
+        return null;//new LoadingStructureGroup(structureHash);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+    }
+
     @Override
     public void load(CompoundTag nbt) {
         this.setFamily(ModPistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
@@ -463,6 +500,20 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         this.extending = nbt.getBoolean("extending");
         this.isSourcePiston = nbt.getBoolean("source");
+        if (nbt.contains("structure")) {
+            //int structureHash = nbt.getInt("structure");
+            /*if (nbt.contains("controller")) {
+                ServerStructureGroup controllerStructure = StructureGroup.create(this.level, structureHash);
+                this.structureGroup = controllerStructure;
+                controllerStructure.onLoad(this.level, this.worldPosition, this.getFamily().getPushLimit());
+                this.isGroupController = true;
+            } else {
+                this.structureGroup = findStructureGroup(structureHash);
+                this.isGroupController = false;
+            }*/
+            this.structureGroup = new LoadingStructureGroup(nbt.getInt("structure"));
+            this.isGroupController = nbt.contains("controller");
+        }
     }
 
     @Override
@@ -478,6 +529,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         nbt.putBoolean("extending", this.extending);
         nbt.putBoolean("source", this.isSourcePiston);
+        if (this.structureGroup != null) {
+            if (this.isGroupController) {
+                nbt.putBoolean("controller", true);
+            }
+            nbt.putInt("structure", this.structureGroup.hashCode());
+        }
     }
 
     @Override
