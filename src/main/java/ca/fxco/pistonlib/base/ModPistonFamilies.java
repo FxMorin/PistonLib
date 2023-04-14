@@ -15,17 +15,16 @@ public class ModPistonFamilies {
     public static final PistonFamily BASIC = register("basic", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily LONG = register("long", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily CONFIGURABLE = register("configurable", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily STALE = register("stale", PistonFamily.of(PistonBehavior.Builder().noQuasi().build(), false));
+    public static final PistonFamily STALE = register("stale", PistonFamily.of(PistonBehavior.builder().noQuasi().build(), false));
     public static final PistonFamily VERY_QUASI = register("very_quasi", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily STRONG = register("strong", PistonFamily.of(PistonBehavior.Builder().speed(0.05F).pushLimit(24).build()));
-    public static final PistonFamily FAST = register("fast", PistonFamily.of(PistonBehavior.Builder().pushLimit(2).build(), false));
-    public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamily.of(PistonBehavior.Builder().frontPowered().build(), false));
-    public static final PistonFamily TRANSLOCATION = register("translocation", PistonFamily.of(PistonBehavior.Builder().translocation().build(), false));
+    public static final PistonFamily STRONG = register("strong", PistonFamily.of(PistonBehavior.builder().speed(0.05F).pushLimit(24).build()));
+    public static final PistonFamily FAST = register("fast", PistonFamily.of(PistonBehavior.builder().pushLimit(2).build(), false));
+    public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamily.of(PistonBehavior.builder().frontPowered().build(), false));
+    public static final PistonFamily TRANSLOCATION = register("translocation", PistonFamily.of(PistonBehavior.builder().translocation().build(), false));
     public static final PistonFamily SLIPPERY = register("slippery", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily SUPER = register("super", PistonFamily.of(PistonBehavior.Builder().pushLimit(Integer.MAX_VALUE).verySticky().build(), false));
+    public static final PistonFamily SUPER = register("super", PistonFamily.of(PistonBehavior.builder().pushLimit(Integer.MAX_VALUE).verySticky().build(), false));
     public static final PistonFamily MBE = register("mbe", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily MERGE = register("merge", PistonFamily.of(PistonBehavior.DEFAULT, false));
-    public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamily.of(PistonBehavior.Builder().verySticky().build(), false));
+    public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamily.of(PistonBehavior.builder().verySticky().build(), false));
 
     private static PistonFamily register(String name, PistonFamily family) {
         return register(id(name), family);

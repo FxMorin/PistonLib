@@ -65,6 +65,13 @@ public class PistonLibConfig {
     public static boolean strongBlockDropping = true;
 
     @ConfigValue(
+            desc = "All blocks now block drop together, `strongBlockDropping` does nothing if this is true",
+            keyword = {"block", "dropping"},
+            category = Category.MECHANIC
+    )
+    public static boolean combinedBlockDropping = true;
+
+    @ConfigValue(
             desc = "Toggle the merging API, this will prevent all merging-based features from working!",
             keyword = "merging",
             category = {Category.MECHANIC, Category.MERGING}

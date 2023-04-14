@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.base;
 import java.util.Map;
 import java.util.function.Function;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
@@ -22,8 +23,7 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonBas
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurablePistonHeadBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.longPiston.LongPistonHeadBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlock;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergePistonBaseBlock;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.slipperyPiston.SlipperyMovingBlock;
@@ -34,6 +34,7 @@ import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.VeryStickyPistonBaseBlo
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperyRedstoneBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperySlimeBlock;
+import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -73,6 +74,7 @@ public class ModBlocks {
     public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block ERASE_BLOCK = register("erase_block", EraseBlock::new, Blocks.REDSTONE_BLOCK);
+    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.of(Material.METAL), 2));
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface
@@ -182,30 +184,15 @@ public class ModBlocks {
     public static final BasicPistonHeadBlock MBE_PISTON_HEAD_BLOCK = register("mbe_piston_head", new BasicPistonHeadBlock(MBE));
     public static final MBEMovingBlock MBE_MOVING_BLOCK = register("mbe_moving_block", new MBEMovingBlock(MBE));
 
-    // Merge Piston
-    // A piston that can merge blocks together
-    public static final BasicPistonBaseBlock MERGE_PISTON = register("merge_piston", new MergePistonBaseBlock(MERGE, PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock MERGE_STICKY_PISTON = register("merge_sticky_piston", new MergePistonBaseBlock(MERGE, PistonType.STICKY));
-    public static final BasicPistonHeadBlock MERGE_PISTON_HEAD_BLOCK = register("merge_piston_head", new BasicPistonHeadBlock(MERGE));
-    public static final MBEMovingBlock MERGE_MOVING_BLOCK = register("merge_moving_block", new MBEMovingBlock(MERGE));
+    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
 
-    public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON, false);
-
-    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", AutoCraftingBlock::new, Blocks.CRAFTING_TABLE);
+    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", new AutoCraftingBlock(((ToggleableProperties<Block.Properties>)FabricBlockSettings.copyOf(Blocks.CRAFTING_TABLE)).setDisabled(() -> !PistonLibConfig.autoCraftingBlock)));
 
     private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
-        return register(name, block, propertySource, true);
-    }
-
-    private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource, boolean registerBlockItem) {
-        return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)), registerBlockItem);
+        return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)));
     }
 
     private static <T extends Block> T register(String name, T block) {
-        return register(name, block, true);
-    }
-
-    private static <T extends Block> T register(String name, T block, boolean registerBlockItem) {
         return Registry.register(BuiltInRegistries.BLOCK, id(name), block);
     }
 

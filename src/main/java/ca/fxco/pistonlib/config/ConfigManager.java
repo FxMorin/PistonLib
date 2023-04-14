@@ -64,7 +64,7 @@ public class ConfigManager {
                             configValue.category(),
                             configValue.fixes()
                     );
-                    parsedValues.put(parsedValue.name, parsedValue);
+                    parsedValues.put(parsedValue.getName(), parsedValue);
                 }
             }
         }

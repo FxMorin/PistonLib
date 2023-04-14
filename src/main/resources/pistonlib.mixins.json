@@ -6,6 +6,7 @@
   "mixins": [
     "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
+    "LevelChunk_blockEntityMixin",
     "PistonBaseBlock_tagsMixin",
     "accessors.BlockEntityAccessor",
     "entity.Entity_pushIntoMixin",
@@ -24,7 +25,11 @@
     "quasi.Level_quasiMixin",
     "quasi.PistonBaseBlock_quasiMixin",
     "stickyGroup.HoneyBlock_slimeMixin",
-    "stickyGroup.SlimeBlock_honeyMixin"
+    "stickyGroup.SlimeBlock_honeyMixin",
+    "toggle.BlockBehaviour_toggleMixin",
+    "toggle.Item_toggleMixin",
+    "toggle.Properties_blockMixin",
+    "toggle.Properties_itemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

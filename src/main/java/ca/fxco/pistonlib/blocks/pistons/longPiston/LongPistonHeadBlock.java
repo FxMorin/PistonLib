@@ -17,7 +17,7 @@ public class LongPistonHeadBlock extends BasicPistonHeadBlock {
 
     @Override
     public boolean isFittingBase(BlockState headState, BlockState behindState) {
-        return behindState.is(this.family.getArm()) ?
+        return behindState.is(this.getFamily().getArm()) ?
                 behindState.getValue(FACING) == headState.getValue(FACING) :
                 super.isFittingBase(headState, behindState);
     }

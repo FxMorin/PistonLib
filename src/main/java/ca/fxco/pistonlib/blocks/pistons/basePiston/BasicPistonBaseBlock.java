@@ -1,18 +1,18 @@
 package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.blocks.pistons.mergePiston.MergeBlockEntity;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
+import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
+import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
+import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
@@ -20,7 +20,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -34,7 +33,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -47,6 +45,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@Getter
 public class BasicPistonBaseBlock extends DirectionalBlock {
 
 	public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
@@ -57,8 +56,8 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     protected static final VoxelShape EXTENDED_UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
     protected static final VoxelShape EXTENDED_DOWN_SHAPE = Block.box(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
 
-    public final PistonFamily family;
-    public final PistonType type;
+    private final PistonFamily family;
+    private final PistonType type;
 
     public BasicPistonBaseBlock(PistonFamily family, PistonType type) {
         this(family, type, FabricBlockSettings.copyOf(Blocks.PISTON));
@@ -119,7 +118,15 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new BasicStructureResolver(this, level, pos, facing, extend);
+        return PistonLibConfig.mergingApi ?
+                new MergingPistonStructureResolver(this, level, pos, facing, extend) :
+                new BasicStructureResolver(this, level, pos, facing, extend);
+    }
+
+    public BasicStructureRunner newStructureRunner() {
+        return PistonLibConfig.mergingApi ?
+                new MergingStructureRunner(this.family, this.type) :
+                new BasicStructureRunner(this.family, this.type);
     }
 
     public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
@@ -362,143 +369,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return moveBlocks(level, pos, facing, extend, this::newStructureResolver);
-    }
-
-    public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend,
-                              BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider
-    ) {
-        if (!extend) {
-            BlockPos headPos = pos.relative(facing);
-            BlockState headState = level.getBlockState(headPos);
-
-            if (headState.is(this.family.getHead())) {
-                level.setBlock(headPos, Blocks.AIR.defaultBlockState(),
-                    UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
-            }
-        }
-
-        PistonStructureResolver structure = structureProvider.create(level, pos, facing, extend);
-
-        if (!structure.resolve()) {
-            return false;
-        }
-
-        Map<BlockPos, BlockState> toRemove = new LinkedHashMap<>();
-        List<BlockPos> toMove = structure.getToPush();
-        List<BlockPos> toDestroy = structure.getToDestroy();
-        List<BlockState> statesToMove = new ArrayList<>();
-        List<BlockEntity> blockEntitiesToMove = new ArrayList<>();
-
-        // collect blocks to move
-        for (BlockPos posToMove : toMove) {
-            BlockState stateToMove = level.getBlockState(posToMove);
-            BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
-
-            if (blockEntityToMove != null) {
-                level.removeBlockEntity(posToMove);
-                blockEntityToMove.setChanged();
-            }
-
-            statesToMove.add(stateToMove);
-            blockEntitiesToMove.add(blockEntityToMove);
-            toRemove.put(posToMove, stateToMove);
-        }
-
-        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
-        int affectedIndex = 0;
-
-        // destroy blocks
-        for (int i = toDestroy.size() - 1; i >= 0; i--) {
-            BlockPos posToDestroy = toDestroy.get(i);
-            BlockState stateToDestroy = level.getBlockState(posToDestroy);
-            BlockEntity blockEntityToDestroy = level.getBlockEntity(posToDestroy);
-
-            dropResources(stateToDestroy, level, posToDestroy, blockEntityToDestroy);
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
-            if (!stateToDestroy.is(BlockTags.FIRE)) {
-                level.addDestroyBlockEffect(posToDestroy, stateToDestroy);
-            }
-
-            affectedStates[affectedIndex++] = stateToDestroy;
-        }
-
-        Direction moveDir = extend ? facing : facing.getOpposite();
-
-        // move blocks
-        for (int i = toMove.size() - 1; i >= 0; i--) {
-            BlockPos posToMove = toMove.get(i);
-            BlockPos dstPos = posToMove.relative(moveDir);
-            BlockState stateToMove = statesToMove.get(i);
-            BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
-
-            toRemove.remove(dstPos);
-
-            BlockState movingBlock = this.family.getMoving().defaultBlockState()
-                .setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = this.family
-                .newMovingBlockEntity(dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
-
-            level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
-            level.setBlockEntity(movingBlockEntity);
-
-            affectedStates[affectedIndex++] = stateToMove;
-        }
-
-        // place extending head
-        if (extend) {
-            BlockPos headPos = pos.relative(facing);
-            BlockState headState = this.family.getHead().defaultBlockState()
-                .setValue(BasicPistonHeadBlock.TYPE, type)
-                .setValue(BasicPistonHeadBlock.FACING, facing);
-
-            toRemove.remove(headPos);
-
-            BlockState movingBlock = this.family.getMoving().defaultBlockState()
-                .setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = this.family
-                .newMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
-
-            level.setBlock(headPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
-            level.setBlockEntity(movingBlockEntity);
-        }
-
-        // remove left over blocks
-        BlockState air = Blocks.AIR.defaultBlockState();
-
-        for (BlockPos posToRemove : toRemove.keySet()) {
-            level.setBlock(posToRemove, air, UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
-        }
-
-        // do neighbor updates
-        for (Map.Entry<BlockPos, BlockState> entry : toRemove.entrySet()) {
-            BlockPos removedPos = entry.getKey();
-            BlockState removedState = entry.getValue();
-
-            removedState.updateIndirectNeighbourShapes(level, removedPos, UPDATE_CLIENTS);
-            air.updateNeighbourShapes(level, removedPos, UPDATE_CLIENTS);
-            air.updateIndirectNeighbourShapes(level, removedPos, UPDATE_CLIENTS);
-        }
-
-        affectedIndex = 0;
-
-        for (int i = toDestroy.size() - 1; i >= 0; i--) {
-            BlockPos destroyedPos = toDestroy.get(i);
-            BlockState destroyedState = affectedStates[affectedIndex++];
-
-            destroyedState.updateIndirectNeighbourShapes(level, destroyedPos, UPDATE_CLIENTS);
-            level.updateNeighborsAt(destroyedPos, destroyedState.getBlock());
-        }
-        for (int i = toMove.size() - 1; i >= 0; i--) {
-            BlockPos movedPos = toMove.get(i);
-            BlockState movedState = affectedStates[affectedIndex++];
-
-            level.updateNeighborsAt(movedPos, movedState.getBlock());
-        }
-        if (extend) {
-            level.updateNeighborsAt(pos.relative(facing), this.family.getHead());
-        }
-
-        return true;
+        BasicStructureRunner structureRunner = newStructureRunner();
+        return structureRunner.run(level, pos, facing, extend, this::newStructureResolver);
     }
 }

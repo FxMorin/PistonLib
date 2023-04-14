@@ -40,7 +40,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        if (this.family.canExtendOnRetracting() && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
+        if (this.getFamily().isExtendOnRetracting() && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
             if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
                 if (!movingBlockEntity.isExtending()) {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
@@ -85,7 +85,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
             }
             BlockState neighborState = level.getBlockState(neighborPos);
 
-            if (neighborState.is(this.family.getMoving())) {
+            if (neighborState.is(this.getFamily().getMoving())) {
                 BlockEntity blockEntity = level.getBlockEntity(neighborPos);
 
                 if (blockEntity instanceof ConfigurableMovingBlockEntity mbe) {
@@ -111,7 +111,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        if (this.family.isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
+        if (this.getFamily().isSlippery() && !oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) == null) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
@@ -119,7 +119,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     @Override
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
                                   BlockPos pos, BlockPos neighborPos) {
-        if (this.family.isSlippery() && !level.isClientSide()) {
+        if (this.getFamily().isSlippery() && !level.isClientSide()) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
@@ -127,7 +127,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (this.family.isSlippery()) {
+        if (this.getFamily().isSlippery()) {
             int i = BaseSlipperyBlock.calculateDistance(level, pos);
             BlockState blockState = state.setValue(SLIPPERY_DISTANCE, i);
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE) {
@@ -140,7 +140,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return !this.family.isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
+        return !this.getFamily().isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
 
     @Override

@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
+import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,15 +27,16 @@ public class LongMovingBlockEntity extends BasicMovingBlockEntity {
         maxLength = 0;
     }
 
-    public LongMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
-                                 BlockEntity movedBlockEntity, Direction facing, boolean extending, boolean isSourcePiston) {
-        this(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, MAX_ARM_LENGTH, 0, false);
+    public LongMovingBlockEntity(PistonFamily family, StructureGroup group, BlockPos pos, BlockState state,
+                                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing,
+                                 boolean extending, boolean isSourcePiston) {
+        this(family, group, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston, MAX_ARM_LENGTH, 0, false);
     }
 
-    public LongMovingBlockEntity(PistonFamily family, BlockPos pos, BlockState state, BlockState movedState,
-                                 BlockEntity movedBlockEntity, Direction facing, boolean extending, boolean isSourcePiston,
-                                 int maxLength, int length, boolean isArm) {
-        super(family, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+    public LongMovingBlockEntity(PistonFamily family, StructureGroup group, BlockPos pos, BlockState state,
+                                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing,
+                                 boolean extending, boolean isSourcePiston, int maxLength, int length, boolean isArm) {
+        super(family, group, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
 
         this.maxLength = maxLength;
         this.length = length;

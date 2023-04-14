@@ -1,7 +1,10 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
+import lombok.Getter;
+
 public class DataGenPistonFamily extends PistonFamily {
 
+    @Getter
     private final boolean customTextures;
 
     public DataGenPistonFamily(PistonBehavior behavior) {
@@ -12,10 +15,5 @@ public class DataGenPistonFamily extends PistonFamily {
         super(behavior);
 
         this.customTextures = hasCustomTextures;
-    }
-
-    @Override
-    public boolean hasCustomTextures() {
-        return this.customTextures;
     }
 }

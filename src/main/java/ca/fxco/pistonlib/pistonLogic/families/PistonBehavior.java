@@ -1,107 +1,72 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+@AllArgsConstructor
 public class PistonBehavior {
 
-    public static final PistonBehavior DEFAULT = PistonBehavior.Builder().build();
+    public static final PistonBehavior DEFAULT = PistonBehavior.builder().build();
 
-    final boolean verySticky;
-    final boolean frontPowered;
-    final boolean translocation;
-    final boolean slippery;
-    final boolean quasi;
-    final int pushLimit;
-    final float extendingSpeed;
-    final float retractingSpeed;
-    final boolean canRetractOnExtending;
-    final boolean canExtendOnRetracting;
+    private final boolean verySticky;
+    private final boolean frontPowered;
+    private final boolean translocation;
+    private final boolean slippery;
+    private final boolean quasi;
+    @Builder.Default private final int pushLimit = 12;
+    private final float extendingSpeed;
+    private final float retractingSpeed;
+    private final boolean retractOnExtending;
+    private final boolean extendOnRetracting;
 
-    public PistonBehavior(boolean verySticky, boolean frontPowered, boolean translocation, boolean slippery,
-                          boolean quasi, int pushLimit, float extendingSpeed, float retractingSpeed,
-                          boolean canRetractOnExtending, boolean canExtendOnRetracting) {
-        this.verySticky = verySticky;
-        this.frontPowered = frontPowered;
-        this.translocation = translocation;
-        this.slippery = slippery;
-        this.quasi = quasi;
-        this.pushLimit = pushLimit;
-        this.extendingSpeed = extendingSpeed;
-        this.retractingSpeed = retractingSpeed;
-        this.canRetractOnExtending = canRetractOnExtending;
-        this.canExtendOnRetracting = canExtendOnRetracting;
-    }
-
-    public static Builder Builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
+    public static class PistonBehaviorBuilder {
 
         boolean verySticky = false;
         boolean frontPowered = false;
         boolean translocation = false;
         boolean slippery = false;
         boolean quasi = true;
-        int pushLimit = 12;
         float extendingSpeed = 1;
         float retractingSpeed = 1;
-        boolean canRetractOnExtending = true;
-        boolean canExtendOnRetracting = false;
 
-        public Builder verySticky() {
+        public PistonBehaviorBuilder verySticky() {
             this.verySticky = true;
             return this;
         }
 
-        public Builder frontPowered() {
+        public PistonBehaviorBuilder frontPowered() {
             this.frontPowered = true;
             return this;
         }
 
-        public Builder translocation() {
+        public PistonBehaviorBuilder translocation() {
             this.translocation = true;
             return this;
         }
 
-        public Builder slippery() {
+        public PistonBehaviorBuilder slippery() {
             this.slippery = true;
             return this;
         }
 
-        public Builder noQuasi() {
+        public PistonBehaviorBuilder noQuasi() {
             this.quasi = false;
             return this;
         }
 
-        public Builder pushLimit(int pushLimit) {
-            this.pushLimit = pushLimit;
-            return this;
-        }
-
-        public Builder speed(float generalSpeed) {
+        public PistonBehaviorBuilder speed(float generalSpeed) {
             this.extendingSpeed = generalSpeed;
             this.retractingSpeed = generalSpeed;
             return this;
         }
 
-        public Builder speed(float extendingSpeed, float retractingSpeed) {
+        public PistonBehaviorBuilder speed(float extendingSpeed, float retractingSpeed) {
             this.extendingSpeed = extendingSpeed;
             this.retractingSpeed = retractingSpeed;
             return this;
-        }
-
-        public Builder canRetractOnExtending(boolean enable) {
-            this.canRetractOnExtending = enable;
-            return this;
-        }
-
-        public Builder canExtendOnRetracting(boolean enable) {
-            this.canExtendOnRetracting = enable;
-            return this;
-        }
-
-        public PistonBehavior build() {
-            return new PistonBehavior(verySticky, frontPowered, translocation, slippery, quasi, pushLimit,
-                    extendingSpeed, retractingSpeed, canRetractOnExtending, canExtendOnRetracting);
         }
     }
 }
