@@ -88,14 +88,23 @@ public class ServerStructureGroup implements StructureGroup {
     // Attempt to find other block entities from your structure
     public void load(Level level, List<BlockPos> blockPosList) {
         for (BlockPos blockPos : blockPosList) {
-            addBlockEntity(level, blockPos);
+            BlockEntity be = level.getBlockEntity(blockPos);
+            if (be instanceof BasicMovingBlockEntity bmbe) {
+                this.blockEntities.add(bmbe);
+                bmbe.setStructureGroup(this);
+            } else {
+                System.out.println("Failed to find structure block at: " + blockPos + " - " + be);
+            }
         }
     }
 
     // This is what data compression looks like xD
     public void saveAdditional(CompoundTag nbt) {
         if (blockEntities.size() == 0) {
-            System.out.println("ServerStructureGroup.saveAdditional) This shouldn't be possible");
+            // This happens when a player joins the server and loads the chunks.
+            // Resulting in the player not seeing the block entities. Not sure why
+            //System.out.println("ServerStructureGroup.saveAdditional) This shouldn't be possible");
+            //Arrays.asList(Thread.currentThread().getStackTrace()).forEach(System.out::println);
             return;
         }
         BasicMovingBlockEntity controller = blockEntities.get(0);
@@ -132,16 +141,6 @@ public class ServerStructureGroup implements StructureGroup {
                 positions[intPos++] = pos.getZ() - basePos.getZ();
             }
             nbt.putIntArray("controller", positions);
-        }
-    }
-
-    private void addBlockEntity(Level level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof BasicMovingBlockEntity bmbe) {
-            this.blockEntities.add(bmbe);
-            bmbe.setStructureGroup(this);
-        } else {
-            System.out.println("Failed to find structure block at: " + pos + " - " + be);
         }
     }
 }
