@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
@@ -39,7 +40,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BasicMovingBlock extends MovingPistonBlock {
 
-    public final PistonFamily family;
+    @Getter
+    private final PistonFamily family;
 
     public BasicMovingBlock(PistonFamily family) {
         this(family, createDefaultSettings());

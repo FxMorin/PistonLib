@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.helpers;
 
 import ca.fxco.pistonlib.impl.ILevel;
+import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.core.Direction.*;
 
+@UtilityClass
 public class Utils {
 
     public static Direction applyFacing(Direction dir, Direction facing) {

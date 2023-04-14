@@ -1,10 +1,12 @@
 package ca.fxco.pistonlib.helpers;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
+@UtilityClass
 public class NbtUtils {
 
     public static void loadAllItems(CompoundTag compoundTag, Container container) {

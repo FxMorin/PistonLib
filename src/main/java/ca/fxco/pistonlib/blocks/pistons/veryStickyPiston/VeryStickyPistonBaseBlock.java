@@ -27,7 +27,7 @@ public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock implements C
         BlockPos offsetPos = pos.relative(state.getValue(FACING));
         BlockPos offsetPos2 = offsetPos.relative(state.getValue(FACING));
         BlockState blockState = world.getBlockState(offsetPos2);
-        if (blockState.getBlock() == this.family.getHead()) {
+        if (blockState.getBlock() == this.getFamily().getHead()) {
             world.setBlock(offsetPos, blockState, UPDATE_CLIENTS | UPDATE_KNOWN_SHAPE | UPDATE_MOVE_BY_PISTON);
             world.setBlock(offsetPos2, Blocks.AIR.defaultBlockState(),
                 UPDATE_CLIENTS | UPDATE_KNOWN_SHAPE | UPDATE_MOVE_BY_PISTON);

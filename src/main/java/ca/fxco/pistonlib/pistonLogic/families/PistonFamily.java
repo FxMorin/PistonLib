@@ -6,6 +6,9 @@ import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModPistonFamilies;
@@ -20,21 +23,23 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
+@RequiredArgsConstructor
 public class PistonFamily {
 
+    @Delegate(types=PistonBehavior.class, excludes=PistonBehavior.PistonBehaviorBuilder.class)
     private final PistonBehavior behavior;
 
     protected Map<PistonType, Block> base = new EnumMap<>(PistonType.class);
-    @Nullable
-    protected Block arm;
+    @Getter
+    protected @Nullable Block arm;
+    @Getter
     protected Block head;
+    @Getter
     protected Block moving;
+    @Getter
     protected BlockEntityType<? extends BasicMovingBlockEntity> movingBlockEntityType;
+    @Getter
     protected BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> movingBlockEntityFactory;
-
-    public PistonFamily(PistonBehavior behavior) {
-        this.behavior = behavior;
-    }
 
     @Override
     public String toString() {
@@ -65,26 +70,6 @@ public class PistonFamily {
         return this.base.values().iterator().next();
     }
 
-    public @Nullable Block getArm() {
-        return this.arm;
-    }
-
-    public Block getHead() {
-        return this.head;
-    }
-
-    public Block getMoving() {
-        return moving;
-    }
-
-    public BlockEntityType<? extends BasicMovingBlockEntity> getMovingBlockEntityType() {
-        return this.movingBlockEntityType;
-    }
-
-    public BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> getMovingBlockEntityFactory() {
-        return this.movingBlockEntityFactory;
-    }
-
     public BasicMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
                                                        BlockEntity movedBlockEntity, Direction facing,
                                                        boolean extending, boolean isSourcePiston) {
@@ -102,7 +87,7 @@ public class PistonFamily {
 
     public void setBase(Block base) {
         if (ModPistonFamilies.requireNotLocked()) {
-            this.base.put(((BasicPistonBaseBlock)base).type, base);
+            this.base.put(((BasicPistonBaseBlock)base).getType(), base);
         }
     }
 
@@ -134,58 +119,11 @@ public class PistonFamily {
         }
     }
 
-    public boolean isVerySticky() {
-        return this.behavior.verySticky;
-    }
-
-    public boolean isFrontPowered() {
-        return this.behavior.frontPowered;
-    }
-
-    public boolean isTranslocation() {
-        return this.behavior.translocation;
-    }
-
-    public boolean isSlippery() {
-        return this.behavior.slippery;
-    }
-
-    public boolean isQuasi() {
-        return this.behavior.quasi;
-    }
-
-    public int getPushLimit() {
-        return this.behavior.pushLimit;
-    }
-
-    public float getExtendingSpeed() {
-        return this.behavior.extendingSpeed;
-    }
-
-    public float getRetractingSpeed() {
-        return this.behavior.retractingSpeed;
-    }
-
-    public boolean canRetractOnExtending() {
-        return this.behavior.canRetractOnExtending;
-    }
-
-    public boolean canExtendOnRetracting() {
-        return this.behavior.canExtendOnRetracting;
-    }
-
-
     public static PistonFamily of(PistonBehavior behavior) {
-        if (PistonLib.DATAGEN_ACTIVE) {
-            return new DataGenPistonFamily(behavior);
-        }
-        return new PistonFamily(behavior);
+        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior) : new PistonFamily(behavior);
     }
 
     public static PistonFamily of(PistonBehavior behavior, boolean hasCustomTextures) {
-        if (PistonLib.DATAGEN_ACTIVE) {
-            return new DataGenPistonFamily(behavior, hasCustomTextures);
-        }
-        return new PistonFamily(behavior);
+        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior) : new PistonFamily(behavior);
     }
 }

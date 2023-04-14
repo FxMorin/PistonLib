@@ -91,7 +91,7 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
                 Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
                 BlockState headState = family.getHead().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, base.type)
+                    .setValue(BasicPistonHeadBlock.TYPE, base.getType())
                     .setValue(BasicPistonHeadBlock.FACING, facing)
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 

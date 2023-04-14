@@ -6,6 +6,7 @@ import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
@@ -36,6 +37,7 @@ import java.util.*;
 
 import static net.minecraft.world.level.block.piston.PistonMovingBlockEntity.*;
 
+@Getter
 public class MergeBlockEntity extends BlockEntity {
 
     protected final Map<Direction, MergeData> mergingBlocks = new HashMap<>();
@@ -153,10 +155,6 @@ public class MergeBlockEntity extends BlockEntity {
                 level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
             }
         }
-    }
-
-    public @Nullable BlockEntity getInitialBlockEntity() {
-        return this.initialBlockEntity;
     }
 
     protected void moveCollidedEntities(float nextProgress) {
@@ -283,14 +281,6 @@ public class MergeBlockEntity extends BlockEntity {
 
     public float getZOff(Direction dir, float f, float progress, float lastProgress) {
         return (float)dir.getStepZ() * (this.getProgress(f, progress, lastProgress) - 1);
-    }
-
-    public BlockState getInitialState() {
-        return this.initialState;
-    }
-
-    public Map<Direction, MergeData> getMergingBlocks() {
-        return this.mergingBlocks;
     }
 
     public void load(CompoundTag compoundTag) {
