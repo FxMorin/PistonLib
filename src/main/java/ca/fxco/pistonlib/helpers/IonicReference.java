@@ -10,7 +10,6 @@ public class IonicReference<I> {
 
     private I value;
 
-
     /**
      * Creates a new IonicReference with the given initial value.
      *
