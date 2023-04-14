@@ -378,15 +378,10 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     public void tick() {
-        if (this.structureGroup != null && !this.structureGroup.hasInitialized()) { // only ticks the controller
-            if (this.isGroupController) {
-                ServerStructureGroup controllerStructure = StructureGroup.create(this.level, structureGroup.hashCode());
-                this.structureGroup = controllerStructure;
-                controllerStructure.onLoad(this.level, this.worldPosition, this.getFamily().getPushLimit());
-            } else {
-                System.out.println("This should be impossible!");
-                this.structureGroup = findStructureGroup(structureGroup.hashCode());
-            }
+        if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
+            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
+            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
+            this.structureGroup = controllerStructure;
         }
         tickStart();
         tickMovement();
@@ -464,24 +459,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
     }
 
-    // Used if this block entity is loaded after the controller
-    private @Nullable StructureGroup findStructureGroup(int structureHash) {
-        //System.out.println("THIS SHOULD NEVER HAPPEN!!!! -----------------------------------------------------------------------------------");
-        //System.err.println("THIS SHOULD NEVER HAPPEN!!!!");
-        for (Direction dir : Direction.values()) {
-            BlockPos pos = new BlockPos(this.worldPosition.getX() + dir.getStepX(), this.worldPosition.getY() + dir.getStepY(), this.worldPosition.getZ() + dir.getStepZ());
-            BlockEntity be = this.level.getBlockEntity(pos);
-            if (be instanceof BasicMovingBlockEntity bmbe) {
-                StructureGroup structure = bmbe.getStructureGroup();
-                if (structure != null && structure.hasInitialized() && structure.hashCode() == structureHash) {
-                    structure.add(this); // todo: check if order even matters here
-                    return structure;
-                }
-            }
-        }
-        return null;//new LoadingStructureGroup(structureHash);
-    }
-
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
@@ -500,19 +477,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         this.extending = nbt.getBoolean("extending");
         this.isSourcePiston = nbt.getBoolean("source");
-        if (nbt.contains("structure")) {
-            //int structureHash = nbt.getInt("structure");
-            /*if (nbt.contains("controller")) {
-                ServerStructureGroup controllerStructure = StructureGroup.create(this.level, structureHash);
-                this.structureGroup = controllerStructure;
-                controllerStructure.onLoad(this.level, this.worldPosition, this.getFamily().getPushLimit());
-                this.isGroupController = true;
-            } else {
-                this.structureGroup = findStructureGroup(structureHash);
-                this.isGroupController = false;
-            }*/
-            this.structureGroup = new LoadingStructureGroup(nbt.getInt("structure"));
-            this.isGroupController = nbt.contains("controller");
+        if (nbt.contains("controller")) {
+            LoadingStructureGroup loadingStructureGroup = new LoadingStructureGroup();
+            this.structureGroup = loadingStructureGroup;
+            loadingStructureGroup.onLoad(nbt, this.worldPosition, this.family.getPushLimit());
+            this.isGroupController = true;
         }
     }
 
@@ -529,11 +498,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         nbt.putBoolean("extending", this.extending);
         nbt.putBoolean("source", this.isSourcePiston);
-        if (this.structureGroup != null) {
-            if (this.isGroupController) {
-                nbt.putBoolean("controller", true);
-            }
-            nbt.putInt("structure", this.structureGroup.hashCode());
+        if (this.isGroupController && this.structureGroup != null && this.structureGroup.hasInitialized()) {
+            this.structureGroup.saveAdditional(nbt);
         }
     }
 

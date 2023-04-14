@@ -1,26 +1,23 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.ShortTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Vector3i;
 
 import java.util.*;
 import java.util.function.Consumer;
 
-@AllArgsConstructor
 @NoArgsConstructor
 public class ServerStructureGroup implements StructureGroup {
 
     // The order they are added to the group is the order they should run in
     private final List<BasicMovingBlockEntity> blockEntities = new ArrayList<>();
-    private int structureHash;
 
     @Override
     public boolean hasInitialized() {
@@ -88,49 +85,63 @@ public class ServerStructureGroup implements StructureGroup {
     // Saving / Loading
     //
 
-    @Override
-    public int hashCode() {
-        if (structureHash == 0) {
-            structureHash = blockEntities.hashCode();
+    // Attempt to find other block entities from your structure
+    public void load(Level level, List<BlockPos> blockPosList) {
+        for (BlockPos blockPos : blockPosList) {
+            addBlockEntity(level, blockPos);
         }
-        return structureHash;
     }
 
-    // Attempt to find other block entities from your structure
-    public void onLoad(Level level, BlockPos pos, int max) {
-        Queue<BlockPos> queue = new LinkedList<>();
-        List<BasicMovingBlockEntity> tempBlockEntities = new ArrayList<>(); // Could add them directly to the structure however I may want to sort them
-        HashSet<BlockPos> visited = new HashSet<>();
-
-        queue.add(pos);
-        visited.add(pos);
-
-        while (!queue.isEmpty()) {
-            BlockPos current = queue.poll();
-            for (Direction dir : Direction.values()) {
-                BlockPos neighborPos = new BlockPos(current.getX() + dir.getStepX(), current.getY() + dir.getStepY(), current.getZ() + dir.getStepZ());
-                if (visited.contains(neighborPos)) {
-                    continue;
-                }
-                visited.add(neighborPos);
-                BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
-                if (neighborBlockEntity == null) {
-                    continue;
-                }
-                if (neighborBlockEntity instanceof BasicMovingBlockEntity bmbe) {
-                    StructureGroup structure = bmbe.getStructureGroup();
-                    if (structure != null && !structure.hasInitialized() && structure.hashCode() == structureHash) {
-                        bmbe.setStructureGroup(this);
-                        tempBlockEntities.add(bmbe);
-                        if (tempBlockEntities.size() == max) {
-                            queue.clear();
-                            continue;
-                        }
-                        queue.add(neighborPos);
-                    }
-                }
-            }
+    // This is what data compression looks like xD
+    public void saveAdditional(CompoundTag nbt) {
+        if (blockEntities.size() == 0) {
+            System.out.println("ServerStructureGroup.saveAdditional) This shouldn't be possible");
+            return;
         }
-        this.blockEntities.addAll(tempBlockEntities);
+        BasicMovingBlockEntity controller = blockEntities.get(0);
+        BlockPos basePos = controller.getBlockPos();
+        int storeSize = blockEntities.size() - 1;
+        int pushLimit = controller.getFamily().getPushLimit();
+        if (pushLimit <= 126) { // relative block positions fit within bytes
+            byte[] positions = new byte[storeSize * 3];
+            int bytePos = 0;
+            for (int i = 0; i < storeSize; i++) {
+                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
+                positions[bytePos++] = (byte)(pos.getX() - basePos.getX());
+                positions[bytePos++] = (byte)(pos.getY() - basePos.getY());
+                positions[bytePos++] = (byte)(pos.getZ() - basePos.getZ());
+            }
+            nbt.putByteArray("controller", positions);
+        } else if (pushLimit <= 32766) { // Fits into short
+            ListTag positions = new ListTag();
+            int shortPos = 0;
+            for (int i = 0; i < storeSize; i++) {
+                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
+                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getX() - basePos.getX())));
+                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getY() - basePos.getY())));
+                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getZ() - basePos.getZ())));
+            }
+            nbt.put("controller", positions);
+        } else { // just use ints
+            int[] positions = new int[storeSize * 3];
+            int intPos = 0;
+            for (int i = 0; i < storeSize; i++) {
+                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
+                positions[intPos++] = pos.getX() - basePos.getX();
+                positions[intPos++] = pos.getY() - basePos.getY();
+                positions[intPos++] = pos.getZ() - basePos.getZ();
+            }
+            nbt.putIntArray("controller", positions);
+        }
+    }
+
+    private void addBlockEntity(Level level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BasicMovingBlockEntity bmbe) {
+            this.blockEntities.add(bmbe);
+            bmbe.setStructureGroup(this);
+        } else {
+            System.out.println("Failed to find structure block at: " + pos + " - " + be);
+        }
     }
 }

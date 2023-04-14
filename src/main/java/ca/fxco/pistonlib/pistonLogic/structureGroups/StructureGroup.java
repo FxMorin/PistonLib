@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -41,17 +42,12 @@ public interface StructureGroup {
      */
     void forNonControllers(Consumer<BasicMovingBlockEntity> action);
 
+    void saveAdditional(CompoundTag nbt);
+
     static ServerStructureGroup create(Level level) {
         if (level.isClientSide) {
             return new ClientStructureGroup(); // Holds rendering cache
         }
         return new ServerStructureGroup();
-    }
-
-    static ServerStructureGroup create(Level level, int structureHash) {
-        if (level.isClientSide) {
-            return new ClientStructureGroup(structureHash); // Holds rendering cache
-        }
-        return new ServerStructureGroup(structureHash);
     }
 }

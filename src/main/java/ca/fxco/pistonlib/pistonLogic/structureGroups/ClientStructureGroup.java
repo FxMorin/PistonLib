@@ -14,10 +14,6 @@ public class ClientStructureGroup extends ServerStructureGroup {
 
     private final Map<BlockPos, BlockState> fastStateLookup = new HashMap<>();
 
-    public ClientStructureGroup(int structureHash) {
-        super(structureHash);
-    }
-
     @Override
     public void add(BasicMovingBlockEntity blockEntity) {
         super.add(blockEntity);
