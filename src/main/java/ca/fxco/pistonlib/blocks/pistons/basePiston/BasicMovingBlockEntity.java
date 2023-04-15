@@ -6,14 +6,18 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.helpers.IonicReference;
+import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
+import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,18 +43,18 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
+public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements BlockEntityPostLoad {
 
     protected final PistonType type;
 
     @Getter
     private PistonFamily family;
 
+    @Setter
     @Getter
-    private final @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
-    private final boolean isGroupController;
+    private @Nullable StructureGroup structureGroup;
+    private boolean isGroupController;
 
-    /** This is only used to register the moving block entities, where none of the values are required **/
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
 
@@ -69,12 +73,17 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
         this.setFamily(family);
 
-        this.structureGroup = structureGroup;
-        if (this.structureGroup != null) {
-            this.isGroupController = this.structureGroup.size() == 0;
-            this.structureGroup.add(this); // Add self to the structure group
+        if (PistonLibConfig.pistonStructureGrouping) {
+            this.structureGroup = structureGroup;
+            if (this.structureGroup != null) {
+                this.isGroupController = this.structureGroup.size() == 0;
+                this.structureGroup.add(this); // Add self to the structure group
+            } else {
+                isGroupController = false;
+            }
         } else {
-            isGroupController = false;
+            this.structureGroup = null;
+            this.isGroupController = false;
         }
     }
 
@@ -451,6 +460,20 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     @Override
+    public boolean shouldPostLoad() {
+        return this.isGroupController && this.structureGroup != null && !this.structureGroup.hasInitialized();
+    }
+
+    @Override
+    public void onPostLoad() {
+        if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
+            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
+            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
+            this.structureGroup = controllerStructure;
+        }
+    }
+
+    @Override
     public void load(CompoundTag nbt) {
         this.setFamily(ModPistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
@@ -463,6 +486,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         this.extending = nbt.getBoolean("extending");
         this.isSourcePiston = nbt.getBoolean("source");
+        if (PistonLibConfig.pistonStructureGrouping && nbt.contains("controller")) {
+            LoadingStructureGroup loadingStructureGroup = new LoadingStructureGroup();
+            this.structureGroup = loadingStructureGroup;
+            loadingStructureGroup.onLoad(nbt, this.worldPosition, this.family.getPushLimit());
+            this.isGroupController = true;
+        }
     }
 
     @Override
@@ -478,6 +507,9 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         nbt.putBoolean("extending", this.extending);
         nbt.putBoolean("source", this.isSourcePiston);
+        if (this.isGroupController && this.structureGroup != null && this.structureGroup.hasInitialized()) {
+            this.structureGroup.saveAdditional(nbt);
+        }
     }
 
     @Override
