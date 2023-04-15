@@ -52,7 +52,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Setter
     @Getter
-    private @Nullable StructureGroup structureGroup; // TODO: Saving/Loading - Critical!
+    private @Nullable StructureGroup structureGroup;
     private boolean isGroupController;
 
     public BasicMovingBlockEntity(BlockPos pos, BlockState state) {
@@ -462,11 +462,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     protected boolean placeMovedBlock() {
         return this.level.setBlock(this.worldPosition, this.movedState,
             Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
-    }
-
-    @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
     }
 
     @Override

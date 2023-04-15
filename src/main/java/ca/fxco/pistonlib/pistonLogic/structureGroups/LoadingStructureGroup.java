@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This structure group holds a hashcode temporarily till the structure controller loads and sets the real structure group
+ * This structure group temporarily holds a blockPos list till the block entity ticks for the first time and sets the real structure group
  */
 @AllArgsConstructor
 public class LoadingStructureGroup implements StructureGroup {
