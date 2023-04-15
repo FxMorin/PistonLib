@@ -108,39 +108,13 @@ public class ServerStructureGroup implements StructureGroup {
             return;
         }
         BasicMovingBlockEntity controller = blockEntities.get(0);
-        BlockPos basePos = controller.getBlockPos();
-        int storeSize = blockEntities.size() - 1;
-        int pushLimit = controller.getFamily().getPushLimit();
-        if (pushLimit <= 126) { // relative block positions fit within bytes
-            byte[] positions = new byte[storeSize * 3];
-            int bytePos = 0;
-            for (int i = 0; i < storeSize; i++) {
-                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
-                positions[bytePos++] = (byte)(pos.getX() - basePos.getX());
-                positions[bytePos++] = (byte)(pos.getY() - basePos.getY());
-                positions[bytePos++] = (byte)(pos.getZ() - basePos.getZ());
-            }
-            nbt.putByteArray("controller", positions);
-        } else if (pushLimit <= 32766) { // Fits into short
-            ListTag positions = new ListTag();
-            int shortPos = 0;
-            for (int i = 0; i < storeSize; i++) {
-                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getX() - basePos.getX())));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getY() - basePos.getY())));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getZ() - basePos.getZ())));
-            }
-            nbt.put("controller", positions);
-        } else { // just use ints
-            int[] positions = new int[storeSize * 3];
-            int intPos = 0;
-            for (int i = 0; i < storeSize; i++) {
-                BlockPos pos = blockEntities.get(i + 1).getBlockPos();
-                positions[intPos++] = pos.getX() - basePos.getX();
-                positions[intPos++] = pos.getY() - basePos.getY();
-                positions[intPos++] = pos.getZ() - basePos.getZ();
-            }
-            nbt.putIntArray("controller", positions);
-        }
+        NbtUtils.saveCompactRelativeBlockPosList(
+                nbt,
+                "controller",
+                controller.getBlockPos(),
+                i -> blockEntities.get(i + 1).getBlockPos(),
+                blockEntities.size() - 1,
+                controller.getFamily().getPushLimit()
+        );
     }
 }

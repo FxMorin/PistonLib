@@ -1,12 +1,11 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.pistonlib.helpers.NbtUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -62,37 +61,7 @@ public class LoadingStructureGroup implements StructureGroup {
         if (!nbt.contains("controller")) {
             return;
         }
-        List<BlockPos> blockPosList = new ArrayList<>();
-        if (pushLimit <= 126) { // relative block positions fit within bytes
-            byte[] positions = nbt.getByteArray("controller");
-            int bytePos = 0;
-            for (int i = 0; i < positions.length / 3; i++) {
-                blockPosList.add(new BlockPos(
-                        basePos.getX() + positions[bytePos++],
-                        basePos.getY() + positions[bytePos++],
-                        basePos.getZ() + positions[bytePos++]
-                ));
-            }
-        } else if (pushLimit <= 32766) { // Fits into short
-            ListTag positions = nbt.getList("controller", Tag.TAG_SHORT);
-            int shortPos = 0;
-            for (int i = 0; i < positions.size(); i++) {
-                blockPosList.add(new BlockPos(
-                        basePos.getX() + positions.getShort(shortPos++),
-                        basePos.getY() + positions.getShort(shortPos++),
-                        basePos.getZ() + positions.getShort(shortPos++)
-                ));
-            }
-        } else { // just use ints
-            int[] positions = nbt.getIntArray("controller");
-            int bytePos = 0;
-            for (int i = 0; i < positions.length / 3; i++) {
-                blockPosList.add(new BlockPos(
-                        basePos.getX() + positions[bytePos++],
-                        basePos.getY() + positions[bytePos++],
-                        basePos.getZ() + positions[bytePos++]
-                ));
-            }
-        }
+
+        blockPosList.addAll(NbtUtils.loadCompactRelativeBlockPosList(nbt, "controller", basePos, pushLimit));
     }
 }
