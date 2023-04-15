@@ -91,13 +91,12 @@ public class ServerStructureGroup implements StructureGroup {
             if (be instanceof BasicMovingBlockEntity bmbe) {
                 this.blockEntities.add(bmbe);
                 bmbe.setStructureGroup(this);
-            } /*else {
-                System.out.println("Failed to find structure block at: " + blockPos + " - " + be + " - " + (level.isClientSide ? "CLIENT" : "SERVER"));
-            }*/
+            }
         }
     }
 
     public void saveAdditional(CompoundTag nbt) {
+        blockEntities.removeIf(be -> be.isRemoved() || !be.hasLevel());
         if (blockEntities.size() == 0) {
             return;
         }

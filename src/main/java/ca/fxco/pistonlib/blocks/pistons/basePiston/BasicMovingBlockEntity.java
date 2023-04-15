@@ -6,6 +6,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.helpers.IonicReference;
+import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
@@ -27,7 +28,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -43,7 +43,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
+public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements BlockEntityPostLoad {
 
     protected final PistonType type;
 
@@ -383,11 +383,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     public void tick() {
-        if (this.structureGroup != null && !this.structureGroup.hasInitialized() && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
-            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
-            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
-            this.structureGroup = controllerStructure;
-        }
         tickStart();
         tickMovement();
     }
@@ -462,6 +457,20 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     protected boolean placeMovedBlock() {
         return this.level.setBlock(this.worldPosition, this.movedState,
             Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+    }
+
+    @Override
+    public boolean shouldPostLoad() {
+        return this.isGroupController && this.structureGroup != null && !this.structureGroup.hasInitialized();
+    }
+
+    @Override
+    public void onPostLoad() {
+        if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
+            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
+            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
+            this.structureGroup = controllerStructure;
+        }
     }
 
     @Override
