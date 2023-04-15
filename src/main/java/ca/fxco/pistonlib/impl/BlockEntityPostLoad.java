@@ -8,7 +8,7 @@ public interface BlockEntityPostLoad {
     boolean shouldPostLoad();
 
     /**
-     * This only gets first once, before your first tick!
+     * This only gets fired once, before your first tick!
      * Be very very careful with what you do in here!
      */
     void onPostLoad();
