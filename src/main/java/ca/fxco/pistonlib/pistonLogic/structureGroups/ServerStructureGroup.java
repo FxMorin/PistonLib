@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.pistonLogic.structureGroups;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
 import lombok.NoArgsConstructor;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -92,19 +91,14 @@ public class ServerStructureGroup implements StructureGroup {
             if (be instanceof BasicMovingBlockEntity bmbe) {
                 this.blockEntities.add(bmbe);
                 bmbe.setStructureGroup(this);
-            } else {
+            } /*else {
                 System.out.println("Failed to find structure block at: " + blockPos + " - " + be + " - " + (level.isClientSide ? "CLIENT" : "SERVER"));
-            }
+            }*/
         }
     }
 
     public void saveAdditional(CompoundTag nbt) {
         if (blockEntities.size() == 0) {
-            System.out.println(FabricLoader.getInstance().getEnvironmentType().toString());
-            // This happens when a player joins the server and loads the chunks.
-            // Resulting in the player not seeing the block entities. Not sure why
-            //System.out.println("ServerStructureGroup.saveAdditional) This shouldn't be possible");
-            //Arrays.asList(Thread.currentThread().getStackTrace()).forEach(System.out::println);
             return;
         }
         BasicMovingBlockEntity controller = blockEntities.get(0);

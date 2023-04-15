@@ -66,6 +66,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "All blocks now block drop together, `strongBlockDropping` does nothing if this is true",
+            more = "Requires `pistonStructureGrouping`",
             keyword = {"block", "dropping"},
             category = Category.MECHANIC
     )
@@ -80,12 +81,12 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Group the piston structure into a single ticking block entity, allowing tons of optimizations",
-            more = {"Disabling this feature also prevents multiple mechanics from working. Such as being able to change the direction mid-way through pushing without block dropping", // I know, game changer xD
+            more = {"Disabling this mechanic also prevents multiple features from working. Such as being able to change the direction mid-way through pushing without block dropping", // I know, game changer xD
                     "This also allows blocks to cull against other blocks in piston structures!"},
             keyword = {"group", "structure"},
             category = {Category.MECHANIC, Category.OPTIMIZATION}
     )
-    public static boolean pistonStructureGrouping = false;
+    public static boolean pistonStructureGrouping = true;
 
 
     // ===========
