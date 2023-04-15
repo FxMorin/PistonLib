@@ -6,7 +6,6 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.helpers.IonicReference;
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
@@ -44,7 +43,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements BlockEntityPostLoad {
+public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected final PistonType type;
 
@@ -379,6 +378,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     }
 
     public void tick() {
+        if (this.structureGroup != null && !this.structureGroup.hasInitialized() && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
+            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
+            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
+            this.structureGroup = controllerStructure;
+        }
         tickStart();
         tickMovement();
     }
@@ -542,15 +546,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     @Override
     public long getLastTicked() {
         return this.lastTicked;
-    }
-
-    @Override
-    public void onPostChunkLoad() {
-        if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
-            ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
-            controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
-            this.structureGroup = controllerStructure;
-        }
     }
 
     @FunctionalInterface

@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.mixin;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -28,7 +27,8 @@ public class LevelChunk_blockEntityMixin {
         return true;
     }
 
-    @Inject(
+    // Calling getBlockEntity() during this phase will hault the server forever
+    /*@Inject(
             method = "method_32920(Lnet/minecraft/world/level/block/entity/BlockEntity;)V",
             at = @At("RETURN")
     )
@@ -36,5 +36,5 @@ public class LevelChunk_blockEntityMixin {
         if (blockEntity instanceof BlockEntityPostLoad bepl) {
             bepl.onPostChunkLoad();
         }
-    }
+    }*/
 }

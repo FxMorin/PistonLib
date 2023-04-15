@@ -1,11 +1,11 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.pistonlib.helpers.NbtUtils;
 import lombok.NoArgsConstructor;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.ShortTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -93,14 +93,14 @@ public class ServerStructureGroup implements StructureGroup {
                 this.blockEntities.add(bmbe);
                 bmbe.setStructureGroup(this);
             } else {
-                System.out.println("Failed to find structure block at: " + blockPos + " - " + be);
+                System.out.println("Failed to find structure block at: " + blockPos + " - " + be + " - " + (level.isClientSide ? "CLIENT" : "SERVER"));
             }
         }
     }
 
-    // This is what data compression looks like xD
     public void saveAdditional(CompoundTag nbt) {
         if (blockEntities.size() == 0) {
+            System.out.println(FabricLoader.getInstance().getEnvironmentType().toString());
             // This happens when a player joins the server and loads the chunks.
             // Resulting in the player not seeing the block entities. Not sure why
             //System.out.println("ServerStructureGroup.saveAdditional) This shouldn't be possible");

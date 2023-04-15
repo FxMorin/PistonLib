@@ -169,11 +169,8 @@ public class NbtUtils {
 
     /**
      * Saves a compact representation of a {@link BlockPos} to a {@link CompoundTag}, using the specified max value to determine
-     * the most space-efficient format. If the max value is 14 or lower, the position is stored using only two bytes,
-     * combining the x and y coordinates into the first byte and storing the z coordinate in the second byte. If the max
-     * value is 126 or lower, the position is stored using three bytes, one for each coordinate. If the max value is 32766
-     * or lower, the position is stored as a List of three ShortTags. Otherwise, the position is stored as an array of
-     * three integers.
+     * the most space-efficient format. If the max value is 126 or lower, the position is stored using three bytes,
+     * one for each coordinate. Otherwise, the position is stored as an array of three integers.
      *
      * @param nbt The {@link CompoundTag} to save the compact {@link BlockPos} to
      * @param id The identifier to use when saving the compact {@link BlockPos} to the {@link CompoundTag}
@@ -181,23 +178,12 @@ public class NbtUtils {
      * @param max The maximum value that any {@link BlockPos} can have
      */
     public static void saveCompactBlockPos(CompoundTag nbt, String id, BlockPos blockPos, int max) {
-        if (max <= 14) { // block positions fit within 2 bytes
-            nbt.putByteArray(id, new byte[] {
-                    BitUtils.combine4BitNumbers(blockPos.getX(), blockPos.getY()),
-                    (byte)blockPos.getZ()
-            });
-        } else if (max <= 126) { // block positions fit within 3 bytes
+        if (max <= 126) { // block positions fit within 3 bytes
             nbt.putByteArray(id, new byte[] {
                     (byte) blockPos.getX(),
                     (byte) blockPos.getY(),
                     (byte)blockPos.getZ()
             });
-        } else if (max <= 32766) { // Fits into short (no short array)
-            ListTag tag = new ListTag();
-            tag.addTag(0, ShortTag.valueOf((short) blockPos.getX()));
-            tag.addTag(1, ShortTag.valueOf((short) blockPos.getY()));
-            tag.addTag(2, ShortTag.valueOf((short) blockPos.getZ()));
-            nbt.put(id, tag);
         } else { // just use ints
             nbt.putIntArray(id, new int[] {
                     blockPos.getX(),
@@ -216,16 +202,9 @@ public class NbtUtils {
      * @return A {@link BlockPos}
      */
     public static BlockPos loadCompactBlockPos(CompoundTag nbt, String id, int max) {
-        if (max <= 14) { // block positions fit within 2 bytes
-            byte[] pos = nbt.getByteArray(id);
-            int[] combined = BitUtils.extract4BitNumbers(pos[0]);
-            return new BlockPos(combined[0], combined[1], pos[1]);
-        } else if (max <= 126) { // block positions fit within 3 bytes
+        if (max <= 126) { // block positions fit within 3 bytes
             byte[] pos = nbt.getByteArray(id);
             return new BlockPos(pos[0], pos[1], pos[2]);
-        } else if (max <= 32766) { // Fits into short
-            ListTag pos = nbt.getList(id, Tag.TAG_SHORT);
-            return new BlockPos(pos.getShort(0), pos.getShort(1), pos.getShort(2));
         } // just use ints
         int[] pos = nbt.getIntArray(id);
         return new BlockPos(pos[0], pos[1], pos[2]);
@@ -244,16 +223,7 @@ public class NbtUtils {
      */
     public static void saveCompactBlockPosList(CompoundTag nbt, String id, IntFunction<BlockPos> blockPosFunction,
                                                int amt, int max) {
-        if (max <= 14) { // block positions fit within 2 bytes
-            byte[] positions = new byte[amt * 2];
-            int bytePos = 0;
-            for (int i = 0; i < amt; i++) {
-                BlockPos pos = blockPosFunction.apply(i);
-                positions[bytePos++] = BitUtils.combine4BitNumbers(pos.getX(), pos.getY());
-                positions[bytePos++] = (byte)pos.getZ();
-            }
-            nbt.putByteArray(id, positions);
-        } else if (max <= 126) { // block positions fit within 3 bytes
+        if (max <= 126) { // block positions fit within 3 bytes
             byte[] positions = new byte[amt * 3];
             int bytePos = 0;
             for (int i = 0; i < amt; i++) {
@@ -263,16 +233,6 @@ public class NbtUtils {
                 positions[bytePos++] = (byte)pos.getZ();
             }
             nbt.putByteArray(id, positions);
-        } else if (max <= 32766) { // Fits into short
-            ListTag positions = new ListTag();
-            int shortPos = 0;
-            for (int i = 0; i < amt; i++) {
-                BlockPos pos = blockPosFunction.apply(i);
-                positions.addTag(shortPos++, ShortTag.valueOf((short)pos.getX()));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)pos.getY()));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)pos.getZ()));
-            }
-            nbt.put(id, positions);
         } else { // just use ints
             int[] positions = new int[amt * 3];
             int intPos = 0;
@@ -296,18 +256,7 @@ public class NbtUtils {
      */
     public static List<BlockPos> loadCompactBlockPosList(CompoundTag nbt, String id, int max) {
         List<BlockPos> blockPosList = new ArrayList<>();
-        if (max <= 14) { // block positions fit within 2 bytes
-            byte[] positions = nbt.getByteArray(id);
-            int bytePos = 0;
-            for (int i = 0; i < positions.length / 2; i++) {
-                int[] combined = BitUtils.extract4BitNumbers(positions[bytePos++]);
-                blockPosList.add(new BlockPos(
-                        combined[0],
-                        combined[1],
-                        positions[bytePos++]
-                ));
-            }
-        } else if (max <= 126) { // relative block positions fit within bytes
+        if (max <= 126) { // relative block positions fit within bytes
             byte[] positions = nbt.getByteArray(id);
             int bytePos = 0;
             for (int i = 0; i < positions.length / 3; i++) {
@@ -315,16 +264,6 @@ public class NbtUtils {
                         positions[bytePos++],
                         positions[bytePos++],
                         positions[bytePos++]
-                ));
-            }
-        } else if (max <= 32766) { // Fits into short
-            ListTag positions = nbt.getList(id, Tag.TAG_SHORT);
-            int shortPos = 0;
-            for (int i = 0; i < positions.size(); i++) {
-                blockPosList.add(new BlockPos(
-                        positions.getShort(shortPos++),
-                        positions.getShort(shortPos++),
-                        positions.getShort(shortPos++)
                 ));
             }
         } else { // just use ints
@@ -355,19 +294,7 @@ public class NbtUtils {
      */
     public static void saveCompactRelativeBlockPosList(CompoundTag nbt, String id, BlockPos basePos,
                                                        IntFunction<BlockPos> blockPosFunction, int amt, int max) {
-        if (max <= 14) { // block positions fit within 2 bytes
-            byte[] positions = new byte[amt * 2];
-            int bytePos = 0;
-            for (int i = 0; i < amt; i++) {
-                BlockPos pos = blockPosFunction.apply(i);
-                positions[bytePos++] = BitUtils.combine4BitNumbers(
-                        pos.getX() - basePos.getX(),
-                        pos.getY() - basePos.getY()
-                );
-                positions[bytePos++] = (byte)(pos.getZ() - basePos.getZ());
-            }
-            nbt.putByteArray(id, positions);
-        } else if (max <= 126) { // block positions fit within 3 bytes
+        if (max <= 126) { // block positions fit within 3 bytes
             byte[] positions = new byte[amt * 3];
             int bytePos = 0;
             for (int i = 0; i < amt; i++) {
@@ -377,16 +304,6 @@ public class NbtUtils {
                 positions[bytePos++] = (byte)(pos.getZ() - basePos.getZ());
             }
             nbt.putByteArray(id, positions);
-        } else if (max <= 32766) { // Fits into short
-            ListTag positions = new ListTag();
-            int shortPos = 0;
-            for (int i = 0; i < amt; i++) {
-                BlockPos pos = blockPosFunction.apply(i);
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getX() - basePos.getX())));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getY() - basePos.getY())));
-                positions.addTag(shortPos++, ShortTag.valueOf((short)(pos.getZ() - basePos.getZ())));
-            }
-            nbt.put(id, positions);
         } else { // just use ints
             int[] positions = new int[amt * 3];
             int intPos = 0;
@@ -412,18 +329,7 @@ public class NbtUtils {
     public static List<BlockPos> loadCompactRelativeBlockPosList(CompoundTag nbt, String id,
                                                                  BlockPos basePos, int max) {
         List<BlockPos> blockPosList = new ArrayList<>();
-        if (max <= 14) { // block positions fit within 2 bytes
-            byte[] positions = nbt.getByteArray(id);
-            int bytePos = 0;
-            for (int i = 0; i < positions.length / 2; i++) {
-                int[] combined = BitUtils.extract4BitNumbers(positions[bytePos++]);
-                blockPosList.add(new BlockPos(
-                        basePos.getX() + combined[0],
-                        basePos.getY() + combined[1],
-                        basePos.getZ() + positions[bytePos++]
-                ));
-            }
-        } else if (max <= 126) { // relative block positions fit within bytes
+        if (max <= 126) { // relative block positions fit within bytes
             byte[] positions = nbt.getByteArray(id);
             int bytePos = 0;
             for (int i = 0; i < positions.length / 3; i++) {
@@ -431,16 +337,6 @@ public class NbtUtils {
                         basePos.getX() + positions[bytePos++],
                         basePos.getY() + positions[bytePos++],
                         basePos.getZ() + positions[bytePos++]
-                ));
-            }
-        } else if (max <= 32766) { // Fits into short
-            ListTag positions = nbt.getList(id, Tag.TAG_SHORT);
-            int shortPos = 0;
-            for (int i = 0; i < positions.size(); i++) {
-                blockPosList.add(new BlockPos(
-                        basePos.getX() + positions.getShort(shortPos++),
-                        basePos.getY() + positions.getShort(shortPos++),
-                        basePos.getZ() + positions.getShort(shortPos++)
                 ));
             }
         } else { // just use ints
