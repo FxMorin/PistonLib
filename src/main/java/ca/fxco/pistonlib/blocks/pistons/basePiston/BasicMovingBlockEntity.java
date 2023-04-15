@@ -73,12 +73,17 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
         this.setFamily(family);
 
-        this.structureGroup = structureGroup;
-        if (this.structureGroup != null) {
-            this.isGroupController = this.structureGroup.size() == 0;
-            this.structureGroup.add(this); // Add self to the structure group
+        if (PistonLibConfig.pistonStructureGrouping) {
+            this.structureGroup = structureGroup;
+            if (this.structureGroup != null) {
+                this.isGroupController = this.structureGroup.size() == 0;
+                this.structureGroup.add(this); // Add self to the structure group
+            } else {
+                isGroupController = false;
+            }
         } else {
-            isGroupController = false;
+            this.structureGroup = null;
+            this.isGroupController = false;
         }
     }
 
@@ -477,7 +482,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
         this.extending = nbt.getBoolean("extending");
         this.isSourcePiston = nbt.getBoolean("source");
-        if (nbt.contains("controller")) {
+        if (PistonLibConfig.pistonStructureGrouping && nbt.contains("controller")) {
             LoadingStructureGroup loadingStructureGroup = new LoadingStructureGroup();
             this.structureGroup = loadingStructureGroup;
             loadingStructureGroup.onLoad(nbt, this.worldPosition, this.family.getPushLimit());
