@@ -26,3 +26,6 @@ extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity
 
 # Set FeatureFlag constructor to public
 accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/world/flag/FeatureFlagUniverse;I)V
+
+# Recipes
+accessible field net/minecraft/world/item/crafting/SingleItemRecipe serializer Lnet/minecraft/world/item/crafting/RecipeSerializer;

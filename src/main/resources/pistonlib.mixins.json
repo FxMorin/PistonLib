@@ -10,6 +10,7 @@
     "PistonBaseBlock_tagsMixin",
     "accessors.BlockEntityAccessor",
     "entity.Entity_pushIntoMixin",
+    "entity.ItemEntity_crushingMixin",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",
     "merging.SignBlockEntity_mergeMixin",
