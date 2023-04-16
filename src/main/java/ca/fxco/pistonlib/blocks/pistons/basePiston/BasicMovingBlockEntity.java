@@ -138,11 +138,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
             Direction moveDir = this.getMovementDirection();
             double deltaProgress = nextProgress - this.progress;
             Map<BlockEntity, Pair<List<AABB>, AABB>> blockShapes = new HashMap<>();
-            AABB initialBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
-            initialBounds = PistonMath.getMovementArea(initialBounds, moveDir, deltaProgress).minmax(initialBounds);
-            IonicReference<AABB> combinedBounds = new IonicReference<>(initialBounds);
+            IonicReference<AABB> combinedBounds;
             if (!blockShape.isEmpty()) {
+                AABB initialBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
+                initialBounds = PistonMath.getMovementArea(initialBounds, moveDir, deltaProgress).minmax(initialBounds);
+                combinedBounds = new IonicReference<>(initialBounds);
                 blockShapes.put(this, Pair.of(blockShape.toAabbs(), initialBounds));
+            } else {
+                combinedBounds = new IonicReference<>(new AABB(0,0,0,0,0,0));
             }
 
             this.structureGroup.forNonControllers(be -> {
@@ -162,7 +165,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
             }
             this.structureGroup.forEach(be -> {
                 List<Entity> affectedEntities = new ArrayList<>();
-                AABB blockBounds = blockShapes.get(be).second();
+                Pair<List<AABB>, AABB> pair = blockShapes.get(be);
+                if (pair == null) {
+                    return;
+                }
+                AABB blockBounds = pair.second();
                 for (Entity entity : entities) {
                     if (entity.getBoundingBox().intersects(blockBounds)) {
                         affectedEntities.add(entity);
