@@ -61,8 +61,6 @@ public class PistonWandItem extends Item {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    // TODO: Fix the wand deleting items when those items can't be inserted
-
     @Override
     public boolean overrideStackedOnOther(ItemStack itemStack, Slot slot, ClickAction clickAction, Player player) {
         if (clickAction != ClickAction.SECONDARY) {
@@ -74,11 +72,9 @@ public class PistonWandItem extends Item {
                     this.playRemoveItemSound(player);
                     add(itemStack, slot.safeInsert(itemStack2x));
                 });
-            } else if (itemStack2.getItem().canFitInsideContainerItems()) {
-                int j = add(itemStack, slot.safeTake(itemStack2.getCount(), 1, player));
-                if (j > 0) {
-                    this.playInsertSound(player);
-                }
+            } else if (canAcceptItem(itemStack2) && getWandItem(itemStack).isEmpty()) {
+                add(itemStack, slot.safeTake(itemStack2.getCount(), 1, player));
+                this.playInsertSound(player);
             }
             return true;
         }
@@ -89,47 +85,36 @@ public class PistonWandItem extends Item {
         if (clickAction == ClickAction.SECONDARY && slot.allowModification(player)) {
             if (itemStack2.isEmpty()) {
                 removeItem(itemStack).ifPresent((itemStackx) -> {
-                    this.playRemoveItemSound(player);
                     slotAccess.set(itemStackx);
+                    this.playRemoveItemSound(player);
                 });
-            } else {
-                int i = add(itemStack, itemStack2);
-                if (i > 0) {
-                    this.playInsertSound(player);
-                    itemStack2.shrink(i);
-                }
+            } else if (canAcceptItem(itemStack2)) {
+                add(itemStack, itemStack2);
+                itemStack2.shrink(1);
+                this.playInsertSound(player);
             }
-
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    private static int add(ItemStack itemStack, ItemStack addingItem) {
-        if (!addingItem.isEmpty() && addingItem.getItem().canFitInsideContainerItems()) {
-            if (!(addingItem.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BasicPistonBaseBlock basicPistonBaseBlock)) {
-                return 0;
-            }
-            CompoundTag compoundTag = itemStack.getOrCreateTag();
-            if (!compoundTag.contains("Item")) { // its empty!
-                ItemStack itemStack4 = addingItem.copy();
-                itemStack4.setCount(1);
-                CompoundTag compoundTag3 = new CompoundTag();
-                itemStack4.save(compoundTag3);
-                compoundTag.put("Item", compoundTag3);
-                return 1;
-            } else {
-                //CompoundTag compoundTag2 = compoundTag.getCompound("Item");
-                //ItemStack stack = ItemStack.of(compoundTag2);
-                // Allow customization of the length based on pistons in wand
-                /*if (addingItem.is(stack.getItem()) && basicPistonBaseBlock.getFamily().getMaxLength() > stack.getCount()) {
-                    // add items to internal item
-                }*/
-                return 0;
-            }
+    private static boolean canAcceptItem(ItemStack addingItem) {
+        return !addingItem.isEmpty() &&
+                addingItem.getItem().canFitInsideContainerItems() &&
+                addingItem.getItem() instanceof BlockItem blockItem &&
+                blockItem.getBlock() instanceof BasicPistonBaseBlock;
+    }
+
+    private static void add(ItemStack itemStack, ItemStack addingItem) {
+        CompoundTag compoundTag = itemStack.getOrCreateTag();
+        if (compoundTag.contains("Item")) {
+            compoundTag.remove("Item");
         }
-        return 0;
+        ItemStack itemStack4 = addingItem.copy();
+        itemStack4.setCount(1);
+        CompoundTag compoundTag3 = new CompoundTag();
+        itemStack4.save(compoundTag3);
+        compoundTag.put("Item", compoundTag3);
     }
 
     private static Optional<ItemStack> removeItem(ItemStack itemStack) {
