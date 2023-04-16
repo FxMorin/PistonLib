@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.items;
 
 import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.pistonlib.helpers.SingleItemTooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -16,7 +17,6 @@ import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -172,7 +172,7 @@ public class PistonWandItem extends Item {
     public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
         NonNullList<ItemStack> nonNullList = NonNullList.create();
         nonNullList.add(getWandItem(itemStack));
-        return Optional.of(new BundleTooltip(nonNullList, 64));
+        return Optional.of(new SingleItemTooltip(nonNullList, 64));
     }
 
     private void playRemoveItemSound(Entity entity) {
