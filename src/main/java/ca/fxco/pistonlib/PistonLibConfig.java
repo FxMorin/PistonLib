@@ -99,4 +99,12 @@ public class PistonLibConfig {
             category = Category.FIX
     )
     public static boolean pistonProgressFix = true;
+
+    @ConfigValue(
+            desc = "Fixes tnt duping using pistons",
+            more = "This does also fix some other edge cases with modded blocks that behave the same when powered",
+            keyword = {"tnt", "duping"},
+            category = Category.FIX
+    )
+    public static boolean tntDupingFix = false;
 }

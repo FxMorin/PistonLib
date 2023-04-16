@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -79,6 +80,29 @@ public class BasicStructureRunner {
         }
     }
 
+    protected void taskPreventTntDuping(Level level, BlockPos pos, List<BlockPos> toMove) {
+        int moveSize = toMove.size();
+        if (moveSize > 0) {
+            for (int i = moveSize - 1; i >= 0; i--) {
+                BlockPos posToMove = toMove.get(i);
+
+                // Get the current state from the Level
+                BlockState stateToMove = level.getBlockState(posToMove);
+
+                // Vanilla usually uses the update flags UPDATE_INVISIBLE & UPDATE_MOVE_BY_PISTON
+                // Here we also add UPDATE_KNOWN_SHAPE, this removes block updates and state updates,
+                // we than also add UPDATE_CLIENTS in order for shapes can be updated correctly about the block being AIR now.
+                level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_KNOWN_SHAPE | UPDATE_MOVE_BY_PISTON);
+
+                // We replace the current state in the cached states with the latest version from the world
+                this.statesToMove.set(i, stateToMove);
+
+                // Make sure that the toRemove has the newest state also
+                toRemove.put(posToMove, stateToMove);
+            }
+        }
+    }
+
     protected void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
                                   boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
                                   AtomicInteger affectedIndex, Direction moveDir) {
@@ -144,8 +168,15 @@ public class BasicStructureRunner {
         }
     }
 
-    protected void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toDestroy, BlockState[] affectedStates,
-                                                AtomicInteger affectedIndex) {
+    protected void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos> toDestroy,
+                                                BlockState[] affectedStates, AtomicInteger affectedIndex) {
+        // Rearrange block states so that they are in the correct order :smartjang: & use latest state
+        if (PistonLibConfig.tntDupingFix) {
+            int size = toDestroy.size();
+            for (int i = toMove.size() - 1; i >= 0; i--) {
+                affectedStates[size++] = statesToMove.get(i);
+            }
+        }
         for (int i = toDestroy.size() - 1; i >= 0; i--) {
             BlockPos destroyedPos = toDestroy.get(i);
             BlockState destroyedState = affectedStates[affectedIndex.getAndIncrement()];
@@ -203,6 +234,10 @@ public class BasicStructureRunner {
         // destroy blocks
         taskDestroyBlocks(level, pos, toDestroy, affectedStates, affectedIndex);
 
+        if (PistonLibConfig.tntDupingFix) {
+            taskPreventTntDuping(level, pos, toMove);
+        }
+
         // move blocks
         taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
 
@@ -218,7 +253,7 @@ public class BasicStructureRunner {
         affectedIndex = new AtomicInteger();
 
         // do destroy neighbor updates
-        taskDoDestroyNeighborUpdates(level, toDestroy, affectedStates, affectedIndex);
+        taskDoDestroyNeighborUpdates(level, toMove, toDestroy, affectedStates, affectedIndex);
 
         // do move neighbor updates
         taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);
