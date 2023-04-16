@@ -2,16 +2,20 @@ package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import ca.fxco.pistonlib.items.PistonWandItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModItems {
+
+    public static final PistonWandItem PISTON_WAND = register("piston_wand", new PistonWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final BlockItem HALF_SLIME_BLOCK = registerBlock(ModBlocks.HALF_SLIME_BLOCK);
     public static final BlockItem HALF_HONEY_BLOCK = registerBlock(ModBlocks.HALF_HONEY_BLOCK);

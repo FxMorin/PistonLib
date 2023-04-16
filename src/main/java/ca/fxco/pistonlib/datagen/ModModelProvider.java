@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.datagen;
 import java.util.Map;
 import java.util.Optional;
 
+import ca.fxco.pistonlib.base.ModItems;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -71,9 +72,9 @@ public class ModModelProvider extends FabricModelProvider {
 		registerBlockWithCustomModel(generator, ModBlocks.HALF_SLIME_BLOCK);
 
 		registerBlockWithCustomStates(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK,
-			createLitFacingBlockState(
-				ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK),
-				ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK, "_on")));
+				createLitFacingBlockState(
+						ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK),
+						ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK, "_on")));
 		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelLocationUtils.getModelLocation(Blocks.REDSTONE_LAMP));
 		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelLocationUtils.getModelLocation(Blocks.REDSTONE_LAMP, "_on"), "_on");
 
@@ -101,11 +102,11 @@ public class ModModelProvider extends FabricModelProvider {
 		registerPoweredBlock(generator, ModBlocks.ALL_SIDED_OBSERVER);
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.POWERED_STICKY_BLOCK).with(
-			PropertyDispatch.property(BlockStateProperties.POWERED)
-				.select(false, Variant.variant().with(
-					VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK)))
-				.select(true, Variant.variant().with(
-					VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK, "_on")))
+				PropertyDispatch.property(BlockStateProperties.POWERED)
+						.select(false, Variant.variant().with(
+								VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK)))
+						.select(true, Variant.variant().with(
+								VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK, "_on")))
 		).with(BlockModelGenerators.createFacingDispatch()));
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.STICKY_CHAIN_BLOCK, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.STICKY_CHAIN_BLOCK))).with(BlockModelGenerators.createRotatedPillar()));
@@ -119,6 +120,7 @@ public class ModModelProvider extends FabricModelProvider {
 
 	@Override
 	public void generateItemModels(ItemModelGenerators generator) {
+		generator.generateFlatItem(ModItems.PISTON_WAND, ModelTemplates.FLAT_ITEM);
 	}
 
 	public static void registerCubeTextureMap(BlockModelGenerators generator, Block block,
@@ -226,15 +228,15 @@ public class ModModelProvider extends FabricModelProvider {
 			TextureMapping stickyHeadTextureMap = baseHeadTextureMap.copyAndUpdate(TextureSlot.PLATFORM, topStickyTextureId);
 
 			generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(head).with(
-				PropertyDispatch.properties(BlockStateProperties.SHORT, BlockStateProperties.PISTON_TYPE)
-					.select(false, PistonType.DEFAULT, Variant.variant().with(
-						VariantProperties.MODEL, ModelTemplates.PISTON_HEAD.createWithSuffix(base, "_head", regularHeadTextureMap, generator.modelOutput)))
-					.select(false, PistonType.STICKY, Variant.variant().with(
-						VariantProperties.MODEL, ModelTemplates.PISTON_HEAD.createWithSuffix(base, "_head_sticky", stickyHeadTextureMap, generator.modelOutput)))
-					.select(true, PistonType.DEFAULT, Variant.variant().with(
-						VariantProperties.MODEL, ModelTemplates.PISTON_HEAD_SHORT.createWithSuffix(base, "_head_short", regularHeadTextureMap, generator.modelOutput)))
-					.select(true, PistonType.STICKY, Variant.variant().with(
-						VariantProperties.MODEL, ModelTemplates.PISTON_HEAD_SHORT.createWithSuffix(base, "_head_short_sticky", stickyHeadTextureMap, generator.modelOutput)))
+					PropertyDispatch.properties(BlockStateProperties.SHORT, BlockStateProperties.PISTON_TYPE)
+							.select(false, PistonType.DEFAULT, Variant.variant().with(
+									VariantProperties.MODEL, ModelTemplates.PISTON_HEAD.createWithSuffix(base, "_head", regularHeadTextureMap, generator.modelOutput)))
+							.select(false, PistonType.STICKY, Variant.variant().with(
+									VariantProperties.MODEL, ModelTemplates.PISTON_HEAD.createWithSuffix(base, "_head_sticky", stickyHeadTextureMap, generator.modelOutput)))
+							.select(true, PistonType.DEFAULT, Variant.variant().with(
+									VariantProperties.MODEL, ModelTemplates.PISTON_HEAD_SHORT.createWithSuffix(base, "_head_short", regularHeadTextureMap, generator.modelOutput)))
+							.select(true, PistonType.STICKY, Variant.variant().with(
+									VariantProperties.MODEL, ModelTemplates.PISTON_HEAD_SHORT.createWithSuffix(base, "_head_short_sticky", stickyHeadTextureMap, generator.modelOutput)))
 			).with(BlockModelGenerators.createFacingDispatch()));
 		}
 
@@ -242,11 +244,11 @@ public class ModModelProvider extends FabricModelProvider {
 			TextureMapping armTextureMap = new TextureMapping().put(TextureSlot.TEXTURE, sideTextureId);
 
 			generator.blockStateOutput.accept((MultiVariantGenerator.multiVariant(arm).with(
-				PropertyDispatch.property(BlockStateProperties.SHORT)
-					.select(false, Variant.variant().with(
-						VariantProperties.MODEL, TEMPLATE_PISTON_ARM.createWithSuffix(base, "_arm", armTextureMap, generator.modelOutput)))
-					.select(true, Variant.variant().with(
-						VariantProperties.MODEL, TEMPLATE_PISTON_ARM_SHORT.createWithSuffix(base, "_arm_short", armTextureMap, generator.modelOutput)))
+					PropertyDispatch.property(BlockStateProperties.SHORT)
+							.select(false, Variant.variant().with(
+									VariantProperties.MODEL, TEMPLATE_PISTON_ARM.createWithSuffix(base, "_arm", armTextureMap, generator.modelOutput)))
+							.select(true, Variant.variant().with(
+									VariantProperties.MODEL, TEMPLATE_PISTON_ARM_SHORT.createWithSuffix(base, "_arm_short", armTextureMap, generator.modelOutput)))
 			).with(BlockModelGenerators.createFacingDispatch())));
 		}
 
