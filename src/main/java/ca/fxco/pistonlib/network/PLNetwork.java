@@ -40,27 +40,28 @@ public class PLNetwork {
     // Registering Packets
     //
 
-    @Environment(EnvType.CLIENT)
-    private static <T extends PLPacket> void registerClientReceiver(EnvType envType, String id, Class<T> type, Supplier<T> packetGen) {
+    private static <T extends PLPacket> void registerClientReceiver(EnvType envType, String id, Class<T> type,
+                                                                    Supplier<T> packetGen) {
         ResourceLocation resourceId = PistonLib.id(id);
         CLIENTBOUND_PACKET_TYPES.put(type, resourceId);
         if (envType == EnvType.CLIENT) {
-            ClientPlayNetworking.registerGlobalReceiver(resourceId, (client, handler, buf, responseSender) -> {
+            ClientPlayNetworking.registerGlobalReceiver(resourceId, (client, handler, buf, packetSender) -> {
                 T packet = packetGen.get();
                 packet.read(buf);
-                client.execute(() -> packet.handleClient(client, responseSender));
+                client.execute(() -> packet.handleClient(client, packetSender));
             });
         }
     }
 
-    private static <T extends PLPacket> void registerServerReceiver(EnvType envType, String id, Class<T> type, Supplier<T> packetGen) {
+    private static <T extends PLPacket> void registerServerReceiver(EnvType envType, String id, Class<T> type,
+                                                                    Supplier<T> packetGen) {
         ResourceLocation resourceId = PistonLib.id(id);
         SERVERBOUND_PACKET_TYPES.put(type, resourceId);
         if (envType == EnvType.SERVER) {
-            ServerPlayNetworking.registerGlobalReceiver(resourceId, (server, player, listener, buf, responseSender) -> {
+            ServerPlayNetworking.registerGlobalReceiver(resourceId, (server, player, listener, buf, packetSender) -> {
                 T packet = packetGen.get();
                 packet.read(buf);
-                server.execute(() -> packet.handleServer(server, player, responseSender));
+                server.execute(() -> packet.handleServer(server, player, packetSender));
             });
         }
     }
@@ -91,7 +92,8 @@ public class PLNetwork {
         }
     }
 
-    public void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet, double distance) {
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos,
+                                            PLPacket packet, double distance) {
         ResourceLocation id = getPacketId(packet, EnvType.SERVER);
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
@@ -107,8 +109,8 @@ public class PLNetwork {
         }
     }
 
-    public void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
-                                     double distance, @Nullable ServerPlayer exclude) {
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
+                                            double distance, @Nullable ServerPlayer exclude) {
         ResourceLocation id = getPacketId(packet, EnvType.SERVER);
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
@@ -124,8 +126,8 @@ public class PLNetwork {
         }
     }
 
-    public void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
-                                     double distance, Predicate<ServerPlayer> predicate) {
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
+                                            double distance, Predicate<ServerPlayer> predicate) {
         ResourceLocation id = getPacketId(packet, EnvType.SERVER);
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();

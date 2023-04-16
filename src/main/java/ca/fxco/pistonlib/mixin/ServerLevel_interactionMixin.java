@@ -9,6 +9,7 @@ import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -66,10 +67,18 @@ public abstract class ServerLevel_interactionMixin extends Level implements Serv
         for (PistonEventData pistonEventData : runningPistonEvents) {
             BasicPistonBaseBlock pistonBlock = pistonEventData.pistonBlock();
             StructureRunner structureRunner = new DecoupledStructureRunner(pistonBlock.newStructureRunner());
-            if (structureRunner.run(this, pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend(), pistonBlock::newStructureResolver)) {
-                PLNetwork.sendToClients(
-                        this.getServer().getPlayerList().getPlayers(),
-                        new ClientboundPistonEventPacket(pistonEventData)
+            if (structureRunner.run(
+                    this,
+                    pistonEventData.pos(),
+                    pistonEventData.dir(),
+                    pistonEventData.extend(),
+                    pistonBlock::newStructureResolver)
+            ) {
+                PLNetwork.sendToClientsInRange(
+                        this.getServer(),
+                        GlobalPos.of(this.dimension(), pistonEventData.pos()),
+                        new ClientboundPistonEventPacket(pistonEventData),
+                        64
                 );
             }
         }
