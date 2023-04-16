@@ -2,6 +2,7 @@
 !.idea/
 .idea/*
 !.idea/codeStyles/
+logs/
 
 *.iml
 *.ipr
