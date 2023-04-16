@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import ca.fxco.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
+import ca.fxco.pistonlib.network.PLNetwork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
+
+        PLNetwork.initialize();
 
         configManager.loadConfigClass(PistonLibConfig.class);
     }

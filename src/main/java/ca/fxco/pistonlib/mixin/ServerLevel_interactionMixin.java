@@ -3,16 +3,13 @@ package ca.fxco.pistonlib.mixin;
 import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
-import ca.fxco.pistonlib.network.NetworkUtils;
-import ca.fxco.pistonlib.network.PistonLibNetworkConstants;
+import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -70,21 +67,9 @@ public abstract class ServerLevel_interactionMixin extends Level implements Serv
             BasicPistonBaseBlock pistonBlock = pistonEventData.pistonBlock();
             StructureRunner structureRunner = new DecoupledStructureRunner(pistonBlock.newStructureRunner());
             if (structureRunner.run(this, pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend(), pistonBlock::newStructureResolver)) {
-                FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
-                friendlyByteBuf.writeId(BuiltInRegistries.BLOCK, pistonBlock);
-                friendlyByteBuf.writeBlockPos(pistonEventData.pos());
-                friendlyByteBuf.writeByte(pistonEventData.dir().ordinal());
-                friendlyByteBuf.writeBoolean(pistonEventData.extend());
-                NetworkUtils.broadcast(
+                PLNetwork.sendToClients(
                         this.getServer().getPlayerList().getPlayers(),
-                        null,
-                        pistonEventData.pos().getX(),
-                        pistonEventData.pos().getY(),
-                        pistonEventData.pos().getZ(),
-                        64.0,
-                        this.dimension(),
-                        PistonLibNetworkConstants.PISTON_EVENT_PACKET_ID,
-                        friendlyByteBuf
+                        new ClientboundPistonEventPacket(pistonEventData)
                 );
             }
         }
