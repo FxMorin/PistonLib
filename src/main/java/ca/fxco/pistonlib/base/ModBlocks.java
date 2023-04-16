@@ -156,13 +156,6 @@ public class ModBlocks {
     public static final BasicMovingBlock FRONT_POWERED_MOVING_BLOCK = register("front_powered_moving_block", new BasicMovingBlock(FRONT_POWERED));
 
 
-    // Translocation Piston
-    // Normal piston but has 1.10 translocation
-    public static final BasicPistonBaseBlock TRANSLOCATION_PISTON = register("translocation_piston", new BasicPistonBaseBlock(TRANSLOCATION, PistonType.DEFAULT));
-    public static final BasicPistonBaseBlock TRANSLOCATION_STICKY_PISTON = register("translocation_sticky_piston", new BasicPistonBaseBlock(TRANSLOCATION, PistonType.STICKY));
-    public static final BasicPistonHeadBlock TRANSLOCATION_PISTON_HEAD = register("translocation_piston_head", new BasicPistonHeadBlock(TRANSLOCATION));
-    public static final BasicMovingBlock TRANSLOCATION_MOVING_BLOCK = register("translocation_moving_block", new BasicMovingBlock(TRANSLOCATION));
-
     // Slippery Piston
     // It's just a normal piston except its slippery
     public static final BasicPistonBaseBlock SLIPPERY_PISTON = register("slippery_piston", new SlipperyPistonBaseBlock(SLIPPERY, PistonType.DEFAULT));
