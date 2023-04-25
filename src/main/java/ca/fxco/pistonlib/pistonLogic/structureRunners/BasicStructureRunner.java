@@ -101,6 +101,30 @@ public class BasicStructureRunner implements StructureRunner {
     }
 
     @Override
+    public void taskPreventTntDuping(Level level, BlockPos pos, List<BlockPos> toMove) {
+        int moveSize = toMove.size();
+        if (moveSize > 0) {
+            for (int i = moveSize - 1; i >= 0; i--) {
+                BlockPos posToMove = toMove.get(i);
+
+                // Get the current state from the Level
+                BlockState stateToMove = level.getBlockState(posToMove);
+
+                // Vanilla usually uses the update flags UPDATE_INVISIBLE & UPDATE_MOVE_BY_PISTON
+                // Here we also add UPDATE_KNOWN_SHAPE, this removes block updates and state updates,
+                // we than also add UPDATE_CLIENTS in order for shapes can be updated correctly about the block being AIR now.
+                level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_KNOWN_SHAPE | UPDATE_MOVE_BY_PISTON);
+
+                // We replace the current state in the cached states with the latest version from the world
+                this.statesToMove.set(i, stateToMove);
+
+                // Make sure that the toRemove has the newest state also
+                toRemove.put(posToMove, stateToMove);
+            }
+        }
+    }
+
+    @Override
     public void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
                                boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
                                AtomicInteger affectedIndex, Direction moveDir) {
@@ -170,8 +194,14 @@ public class BasicStructureRunner implements StructureRunner {
     }
 
     @Override
-    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toDestroy, BlockState[] affectedStates,
-                                             AtomicInteger affectedIndex) {
+    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos>toDestroy, BlockState[] affectedStates,
+                                             AtomicInteger affectedIndex) {// Rearrange block states so that they are in the correct order :smartjang: & use latest state
+        if (PistonLibConfig.tntDupingFix) {
+            int size = toDestroy.size();
+            for (int i = toMove.size() - 1; i >= 0; i--) {
+                affectedStates[size++] = statesToMove.get(i);
+            }
+        }
         for (int i = toDestroy.size() - 1; i >= 0; i--) {
             BlockPos destroyedPos = toDestroy.get(i);
             BlockState destroyedState = affectedStates[affectedIndex.getAndIncrement()];
@@ -194,4 +224,75 @@ public class BasicStructureRunner implements StructureRunner {
 
     @Override
     public void taskDoUnMergeUpdates(Level level) {}
+
+    @Override
+    public boolean run(Level level, BlockPos pos, Direction facing, boolean extend,
+                       BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider
+    ) {
+        if (!extend) {
+            BlockPos headPos = pos.relative(facing);
+            BlockState headState = level.getBlockState(headPos);
+
+            if (headState.is(this.family.getHead())) {
+                level.setBlock(headPos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
+            }
+        }
+
+        PistonStructureResolver structure = structureProvider.create(level, pos, facing, extend);
+
+        if (!structure.resolve()) {
+            return false;
+        }
+
+        List<BlockPos> toMove = structure.getToPush();
+        List<BlockPos> toDestroy = structure.getToDestroy();
+
+        Direction moveDir = extend ? facing : facing.getOpposite();
+
+        // collect blocks to move
+        taskSetPositionsToMove(level, toMove, moveDir);
+
+        if (structure instanceof MergingPistonStructureResolver mergingStructure) {
+            taskMergeBlocks(level, pos, facing, extend, mergingStructure, moveDir);
+        }
+
+        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
+        AtomicInteger affectedIndex = new AtomicInteger();
+
+        // destroy blocks
+        taskDestroyBlocks(level, pos, toDestroy, affectedStates, affectedIndex);
+
+        if (PistonLibConfig.tntDupingFix) {
+            taskPreventTntDuping(level, pos, toMove);
+        }
+
+        // move blocks
+        taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
+
+        // place extending head
+        taskPlaceExtendingHead(level, pos, facing, extend);
+
+        // remove left over blocks
+        taskRemoveLeftOverBlocks(level);
+
+        // do remove neighbor updates
+        taskDoRemoveNeighborUpdates(level);
+
+        affectedIndex = new AtomicInteger();
+
+        // do destroy neighbor updates
+        taskDoDestroyNeighborUpdates(level, toMove, toDestroy, affectedStates, affectedIndex);
+
+        // do move neighbor updates
+        taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);
+
+        // do unmerge neighbor updates
+        taskDoUnMergeUpdates(level);
+
+        if (extend) {
+            level.updateNeighborsAt(pos.relative(facing), this.family.getHead());
+        }
+
+        return true;
+    }
 }
