@@ -24,27 +24,4 @@ public class ConfigurableMovingBlockEntity extends SpeedMovingBlockEntity {
                                          boolean extending, boolean isSourcePiston) {
         super(family, group, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
     }
-
-    @Override
-    protected AABB moveByPositionAndProgress(BlockPos pos, AABB aabb) {
-        AABB newAabb = super.moveByPositionAndProgress(pos, aabb);
-        if (this.getFamily().isTranslocation()) {
-            return newAabb.inflate(0.01D); // Cheating ;)
-        }
-        return newAabb;
-    }
-
-    @Override
-    protected void moveEntity(Direction noclipDir, Entity entity, double amount, Direction moveDir) {
-        if (this.getFamily().isTranslocation()) {
-            amount += 0.1D;
-            entity.move(MoverType.SELF, new Vec3(
-                    amount * moveDir.getStepX(),
-                    amount * moveDir.getStepY(),
-                    amount * moveDir.getStepZ()
-            ));
-        } else {
-            super.moveEntity(noclipDir, entity, amount, moveDir);
-        }
-    }
 }

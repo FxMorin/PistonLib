@@ -60,8 +60,6 @@ public class ModItems {
     public static final BlockItem VERY_STICKY_PISTON = registerBlock(ModBlocks.VERY_STICKY_PISTON);
     public static final BlockItem FRONT_POWERED_PISTON = registerBlock(ModBlocks.FRONT_POWERED_PISTON);
     public static final BlockItem FRONT_POWERED_STICKY_PISTON = registerBlock(ModBlocks.FRONT_POWERED_STICKY_PISTON);
-    public static final BlockItem TRANSLOCATION_PISTON = registerBlock(ModBlocks.TRANSLOCATION_PISTON);
-    public static final BlockItem TRANSLOCATION_STICKY_PISTON = registerBlock(ModBlocks.TRANSLOCATION_STICKY_PISTON);
     public static final BlockItem SLIPPERY_PISTON = registerBlock(ModBlocks.SLIPPERY_PISTON);
     public static final BlockItem SLIPPERY_STICKY_PISTON = registerBlock(ModBlocks.SLIPPERY_STICKY_PISTON);
     public static final BlockItem SUPER_PISTON = registerBlock(ModBlocks.SUPER_PISTON);
