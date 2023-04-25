@@ -13,7 +13,6 @@ public class PistonBehavior {
 
     private final boolean verySticky;
     private final boolean frontPowered;
-    private final boolean translocation;
     private final boolean slippery;
     private final boolean quasi;
     @Builder.Default private final int pushLimit = 12;
@@ -26,7 +25,6 @@ public class PistonBehavior {
 
         boolean verySticky = false;
         boolean frontPowered = false;
-        boolean translocation = false;
         boolean slippery = false;
         boolean quasi = true;
         float extendingSpeed = 1;
@@ -39,11 +37,6 @@ public class PistonBehavior {
 
         public PistonBehaviorBuilder frontPowered() {
             this.frontPowered = true;
-            return this;
-        }
-
-        public PistonBehaviorBuilder translocation() {
-            this.translocation = true;
             return this;
         }
 

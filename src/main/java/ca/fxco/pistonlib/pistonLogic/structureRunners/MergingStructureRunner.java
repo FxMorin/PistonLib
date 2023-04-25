@@ -38,7 +38,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskSetPositionsToMove(Level level, List<BlockPos> toMove, Direction moveDir) {
+    public void taskSetPositionsToMove(Level level, List<BlockPos> toMove, Direction moveDir) {
         for (BlockPos posToMove : toMove) {
             BlockState stateToMove = level.getBlockState(posToMove);
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
@@ -57,9 +57,9 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
-                                  boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
-                                  AtomicInteger affectedIndex, Direction moveDir) {
+    public void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
+                               boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
+                               AtomicInteger affectedIndex, Direction moveDir) {
         int moveSize = toMove.size();
         if (moveSize > 0) {
             StructureGroup structureGroup = null;
@@ -121,8 +121,8 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskMergeBlocks(Level level, BlockPos pos, Direction facing, boolean extend,
-                                   MergingPistonStructureResolver structure, Direction moveDir) {
+    public void taskMergeBlocks(Level level, BlockPos pos, Direction facing, boolean extend,
+                                MergingPistonStructureResolver structure, Direction moveDir) {
         List<BlockPos> toMerge = structure.getToMerge();
         float speed = extend ? family.getExtendingSpeed() : family.getRetractingSpeed();
 
@@ -184,7 +184,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskDoUnMergeUpdates(Level level) {
+    public void taskDoUnMergeUpdates(Level level) {
         int unMergingIndex = 0;
 
         // Keep these blocks as they unmerged, just change there state to the new one

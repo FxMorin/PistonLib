@@ -20,7 +20,6 @@ public class ModPistonFamilies {
     public static final PistonFamily STRONG = register("strong", PistonFamily.of(PistonBehavior.builder().speed(0.05F).pushLimit(24).build()));
     public static final PistonFamily FAST = register("fast", PistonFamily.of(PistonBehavior.builder().pushLimit(2).build(), false));
     public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamily.of(PistonBehavior.builder().frontPowered().build(), false));
-    public static final PistonFamily TRANSLOCATION = register("translocation", PistonFamily.of(PistonBehavior.builder().translocation().build(), false));
     public static final PistonFamily SLIPPERY = register("slippery", PistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily SUPER = register("super", PistonFamily.of(PistonBehavior.builder().pushLimit(Integer.MAX_VALUE).verySticky().build(), false));
     public static final PistonFamily MBE = register("mbe", PistonFamily.of(PistonBehavior.DEFAULT, false));
