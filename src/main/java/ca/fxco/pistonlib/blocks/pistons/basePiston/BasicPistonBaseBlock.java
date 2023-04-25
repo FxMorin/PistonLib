@@ -11,6 +11,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -122,7 +123,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 new BasicStructureResolver(this, level, pos, facing, extend);
     }
 
-    public BasicStructureRunner newStructureRunner() {
+    public StructureRunner newStructureRunner() {
         return PistonLibConfig.mergingApi ?
                 new MergingStructureRunner(this.family, this.type) :
                 new BasicStructureRunner(this.family, this.type);
@@ -364,7 +365,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend) {
-        BasicStructureRunner structureRunner = newStructureRunner();
+        StructureRunner structureRunner = newStructureRunner();
         return structureRunner.run(level, pos, facing, extend, this::newStructureResolver);
     }
 }

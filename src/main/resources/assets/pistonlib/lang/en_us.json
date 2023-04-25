@@ -1,6 +1,7 @@
 {
   "itemGroup.pistonlib.general": "PistonLib: General",
   "itemGroup.pistonlib.pistons": "PistonLib: Pistons",
+  "item.pistonlib.piston_wand": "Piston Wand",
   "block.pistonlib.move_counting_block": "Move Counting Block",
   "block.pistonlib.sticky_chain": "Sticky Chain",
   "block.pistonlib.powered_sticky_block": "Powered Sticky Block",

@@ -7,6 +7,7 @@
     "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
     "PistonBaseBlock_tagsMixin",
+    "ServerLevel_interactionMixin",
     "accessors.BlockEntityAccessor",
     "blockEntity.Level_blockEntityMixin",
     "blockEntity.LevelChunk_blockEntityMixin",
@@ -34,5 +35,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "ClientTooltipComponent_singleMixin"
+  ]
 }
