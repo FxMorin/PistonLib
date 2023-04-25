@@ -67,7 +67,7 @@ dependencies {
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
     // MixinExtras
-    include(implementation(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixinextras_version}")))
+    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
 }
 
 processResources {
