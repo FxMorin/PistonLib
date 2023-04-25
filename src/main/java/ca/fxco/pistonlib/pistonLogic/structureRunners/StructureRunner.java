@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
@@ -26,6 +27,8 @@ public interface StructureRunner {
     void taskDestroyBlocks(Level level, BlockPos pos, List<BlockPos> toDestroy,
                            BlockState[] affectedStates, AtomicInteger affectedIndex);
 
+    void taskPreventTntDuping(Level level, BlockPos pos, List<BlockPos> toMove);
+
     void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
                         boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
                         AtomicInteger affectedIndex, Direction moveDir);
@@ -36,8 +39,8 @@ public interface StructureRunner {
 
     void taskDoRemoveNeighborUpdates(Level level);
 
-    void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toDestroy, BlockState[] affectedStates,
-                                      AtomicInteger affectedIndex);
+    void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos> toDestroy,
+                                      BlockState[] affectedStates, AtomicInteger affectedIndex);
 
     void taskDoMoveNeighborUpdates(Level level, List<BlockPos> toMove, BlockState[] affectedStates,
                                    AtomicInteger affectedIndex);
@@ -72,6 +75,10 @@ public interface StructureRunner {
         // destroy blocks
         taskDestroyBlocks(level, pos, toDestroy, affectedStates, affectedIndex);
 
+        if (PistonLibConfig.tntDupingFix) {
+            taskPreventTntDuping(level, pos, toMove);
+        }
+
         // move blocks
         taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
 
@@ -87,7 +94,7 @@ public interface StructureRunner {
         affectedIndex = new AtomicInteger();
 
         // do destroy neighbor updates
-        taskDoDestroyNeighborUpdates(level, toDestroy, affectedStates, affectedIndex);
+        taskDoDestroyNeighborUpdates(level, toMove, toDestroy, affectedStates, affectedIndex);
 
         // do move neighbor updates
         taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);

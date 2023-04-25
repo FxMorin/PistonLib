@@ -194,8 +194,9 @@ public class BasicStructureRunner implements StructureRunner {
     }
 
     @Override
-    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos>toDestroy, BlockState[] affectedStates,
-                                             AtomicInteger affectedIndex) {// Rearrange block states so that they are in the correct order :smartjang: & use latest state
+    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos>toDestroy,
+                                             BlockState[] affectedStates, AtomicInteger affectedIndex) {
+        // Rearrange block states so that they are in the correct order & use latest state :smartjang:
         if (PistonLibConfig.tntDupingFix) {
             int size = toDestroy.size();
             for (int i = toMove.size() - 1; i >= 0; i--) {
@@ -224,75 +225,4 @@ public class BasicStructureRunner implements StructureRunner {
 
     @Override
     public void taskDoUnMergeUpdates(Level level) {}
-
-    @Override
-    public boolean run(Level level, BlockPos pos, Direction facing, boolean extend,
-                       BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider
-    ) {
-        if (!extend) {
-            BlockPos headPos = pos.relative(facing);
-            BlockState headState = level.getBlockState(headPos);
-
-            if (headState.is(this.family.getHead())) {
-                level.setBlock(headPos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
-            }
-        }
-
-        PistonStructureResolver structure = structureProvider.create(level, pos, facing, extend);
-
-        if (!structure.resolve()) {
-            return false;
-        }
-
-        List<BlockPos> toMove = structure.getToPush();
-        List<BlockPos> toDestroy = structure.getToDestroy();
-
-        Direction moveDir = extend ? facing : facing.getOpposite();
-
-        // collect blocks to move
-        taskSetPositionsToMove(level, toMove, moveDir);
-
-        if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-            taskMergeBlocks(level, pos, facing, extend, mergingStructure, moveDir);
-        }
-
-        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
-        AtomicInteger affectedIndex = new AtomicInteger();
-
-        // destroy blocks
-        taskDestroyBlocks(level, pos, toDestroy, affectedStates, affectedIndex);
-
-        if (PistonLibConfig.tntDupingFix) {
-            taskPreventTntDuping(level, pos, toMove);
-        }
-
-        // move blocks
-        taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
-
-        // place extending head
-        taskPlaceExtendingHead(level, pos, facing, extend);
-
-        // remove left over blocks
-        taskRemoveLeftOverBlocks(level);
-
-        // do remove neighbor updates
-        taskDoRemoveNeighborUpdates(level);
-
-        affectedIndex = new AtomicInteger();
-
-        // do destroy neighbor updates
-        taskDoDestroyNeighborUpdates(level, toMove, toDestroy, affectedStates, affectedIndex);
-
-        // do move neighbor updates
-        taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);
-
-        // do unmerge neighbor updates
-        taskDoUnMergeUpdates(level);
-
-        if (extend) {
-            level.updateNeighborsAt(pos.relative(facing), this.family.getHead());
-        }
-
-        return true;
-    }
 }

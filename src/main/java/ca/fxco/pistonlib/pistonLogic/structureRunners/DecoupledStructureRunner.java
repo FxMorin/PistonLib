@@ -47,6 +47,11 @@ public class DecoupledStructureRunner implements StructureRunner {
     }
 
     @Override
+    public void taskPreventTntDuping(Level level, BlockPos pos, List<BlockPos> toMove) {
+        structureRunner.taskPreventTntDuping(level, pos, toMove);
+    }
+
+    @Override
     public void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing, boolean extend, List<BlockPos> toMove, BlockState[] affectedStates, AtomicInteger affectedIndex, Direction moveDir) {
         structureRunner.taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
     }
@@ -67,12 +72,14 @@ public class DecoupledStructureRunner implements StructureRunner {
     }
 
     @Override
-    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toDestroy, BlockState[] affectedStates, AtomicInteger affectedIndex) {
-        structureRunner.taskDoDestroyNeighborUpdates(level, toDestroy, affectedStates, affectedIndex);
+    public void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos> toDestroy,
+                                             BlockState[] affectedStates, AtomicInteger affectedIndex) {
+        structureRunner.taskDoDestroyNeighborUpdates(level, toDestroy, toMove, affectedStates, affectedIndex);
     }
 
     @Override
-    public void taskDoMoveNeighborUpdates(Level level, List<BlockPos> toMove, BlockState[] affectedStates, AtomicInteger affectedIndex) {
+    public void taskDoMoveNeighborUpdates(Level level, List<BlockPos> toMove, BlockState[] affectedStates,
+                                          AtomicInteger affectedIndex) {
         structureRunner.taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);
     }
 
