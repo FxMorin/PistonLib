@@ -59,6 +59,13 @@ public class PistonLibConfig {
     )
     public static boolean cookWhileMoving = true;
 
+    @ConfigValue(
+            desc = "Make the sticky chains strongly sticky, allows them to be pulled along by non-sticky blocks",
+            keyword = {"chain", "strong", "sticky"},
+            category = Category.FEATURE
+    )
+    public static boolean strongStickyChains = true;
+
 
     // ===============
     //    Mechanics
