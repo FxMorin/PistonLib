@@ -123,10 +123,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 new BasicStructureResolver(this, level, pos, facing, extend);
     }
 
-    public StructureRunner newStructureRunner() {
+    public StructureRunner newStructureRunner(Level level, BlockPos pos, Direction facing, boolean extend,
+                                              BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
         return PistonLibConfig.mergingApi ?
-                new MergingStructureRunner(this.family, this.type) :
-                new BasicStructureRunner(this.family, this.type);
+                new MergingStructureRunner(level, pos, facing, this.family, this.type, extend , structureProvider) :
+                new BasicStructureRunner(level, pos, facing, this.family, this.type, extend , structureProvider);
     }
 
     public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
@@ -365,7 +366,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, boolean extend) {
-        StructureRunner structureRunner = newStructureRunner();
-        return structureRunner.run(level, pos, facing, extend, this::newStructureResolver);
+        StructureRunner structureRunner = newStructureRunner(level, pos, facing, extend, this::newStructureResolver);
+        return structureRunner.run();
     }
 }

@@ -1,110 +1,81 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
-import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
-import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public interface StructureRunner {
 
-    PistonFamily getFamily();
+    void taskRemovePistonHeadOnRetract();
 
-    void taskRemovePistonHeadOnRetract(Level level, BlockPos pos, Direction facing, boolean extend);
+    // Sets the lists, when returning false it means it failed to resolve
+    boolean taskRunStructureResolver();
 
-    void taskSetPositionsToMove(Level level, List<BlockPos> toMove, Direction moveDir);
+    void taskSetPositionsToMove();
 
-    void taskMergeBlocks(Level level, BlockPos pos, Direction facing, boolean extend,
-                         MergingPistonStructureResolver structure, Direction moveDir);
+    void taskMergeBlocks();
 
-    void taskDestroyBlocks(Level level, BlockPos pos, List<BlockPos> toDestroy,
-                           BlockState[] affectedStates, AtomicInteger affectedIndex);
+    void taskDestroyBlocks();
 
-    void taskPreventTntDuping(Level level, BlockPos pos, List<BlockPos> toMove);
+    void taskPreventTntDuping();
 
-    void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
-                        boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
-                        AtomicInteger affectedIndex, Direction moveDir);
+    void taskMoveBlocks();
 
-    void taskPlaceExtendingHead(Level level, BlockPos pos, Direction facing, boolean extend);
+    void taskPlaceExtendingHead();
 
-    void taskRemoveLeftOverBlocks(Level level);
+    void taskRemoveLeftOverBlocks();
 
-    void taskDoRemoveNeighborUpdates(Level level);
+    void taskDoRemoveNeighborUpdates();
 
-    void taskDoDestroyNeighborUpdates(Level level, List<BlockPos> toMove, List<BlockPos> toDestroy,
-                                      BlockState[] affectedStates, AtomicInteger affectedIndex);
+    void taskDoDestroyNeighborUpdates();
 
-    void taskDoMoveNeighborUpdates(Level level, List<BlockPos> toMove, BlockState[] affectedStates,
-                                   AtomicInteger affectedIndex);
+    void taskDoMoveNeighborUpdates();
 
-    void taskDoUnMergeUpdates(Level level);
+    void taskDoUnMergeUpdates();
 
-    default boolean run(Level level, BlockPos pos, Direction facing, boolean extend,
-                        BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
-        taskRemovePistonHeadOnRetract(level, pos, facing, extend);
+    void taskDoPistonHeadExtendingUpdate();
 
-        PistonStructureResolver structure = structureProvider.create(level, pos, facing, extend);
+    default boolean run() {
+        taskRemovePistonHeadOnRetract();
 
-        if (!structure.resolve()) {
+        // Create the structure resolver lists
+        if (!taskRunStructureResolver()) {
             return false;
         }
 
-        List<BlockPos> toMove = structure.getToPush();
-        List<BlockPos> toDestroy = structure.getToDestroy();
-
-        Direction moveDir = extend ? facing : facing.getOpposite();
-
         // collect blocks to move
-        taskSetPositionsToMove(level, toMove, moveDir);
+        taskSetPositionsToMove();
 
-        if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-            taskMergeBlocks(level, pos, facing, extend, mergingStructure, moveDir);
-        }
-
-        BlockState[] affectedStates = new BlockState[toMove.size() + toDestroy.size()];
-        AtomicInteger affectedIndex = new AtomicInteger();
+        taskMergeBlocks();
 
         // destroy blocks
-        taskDestroyBlocks(level, pos, toDestroy, affectedStates, affectedIndex);
+        taskDestroyBlocks();
 
         if (PistonLibConfig.tntDupingFix) {
-            taskPreventTntDuping(level, pos, toMove);
+            taskPreventTntDuping();
         }
 
         // move blocks
-        taskMoveBlocks(level, pos, structure, facing, extend, toMove, affectedStates, affectedIndex, moveDir);
+        taskMoveBlocks();
 
         // place extending head
-        taskPlaceExtendingHead(level, pos, facing, extend);
+        taskPlaceExtendingHead();
 
         // remove left over blocks
-        taskRemoveLeftOverBlocks(level);
+        taskRemoveLeftOverBlocks();
 
         // do remove neighbor updates
-        taskDoRemoveNeighborUpdates(level);
-
-        affectedIndex = new AtomicInteger();
+        taskDoRemoveNeighborUpdates();
 
         // do destroy neighbor updates
-        taskDoDestroyNeighborUpdates(level, toMove, toDestroy, affectedStates, affectedIndex);
+        taskDoDestroyNeighborUpdates();
 
         // do move neighbor updates
-        taskDoMoveNeighborUpdates(level, toMove, affectedStates, affectedIndex);
+        taskDoMoveNeighborUpdates();
 
         // do unmerge neighbor updates
-        taskDoUnMergeUpdates(level);
+        taskDoUnMergeUpdates();
 
-        if (extend) {
-            level.updateNeighborsAt(pos.relative(facing), getFamily().getHead());
-        }
+        // update neighbors at piston head on extending
+        taskDoPistonHeadExtendingUpdate();
 
         return true;
     }

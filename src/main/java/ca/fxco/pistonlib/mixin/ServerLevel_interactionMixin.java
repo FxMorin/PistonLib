@@ -66,14 +66,14 @@ public abstract class ServerLevel_interactionMixin extends Level implements Serv
         pistonEvents.clear();
         for (PistonEventData pistonEventData : runningPistonEvents) {
             BasicPistonBaseBlock pistonBlock = pistonEventData.pistonBlock();
-            StructureRunner structureRunner = new DecoupledStructureRunner(pistonBlock.newStructureRunner());
-            if (structureRunner.run(
+            StructureRunner structureRunner = new DecoupledStructureRunner(pistonBlock.newStructureRunner(
                     this,
                     pistonEventData.pos(),
                     pistonEventData.dir(),
                     pistonEventData.extend(),
-                    pistonBlock::newStructureResolver)
-            ) {
+                    pistonBlock::newStructureResolver
+            ));
+            if (structureRunner.run()) {
                 PLNetwork.sendToClientsInRange(
                         this.getServer(),
                         GlobalPos.of(this.dimension(), pistonEventData.pos()),
