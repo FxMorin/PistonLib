@@ -14,6 +14,7 @@ public class ModCreativeModeTabs {
     public static final CreativeModeTab GENERAL = FabricItemGroup.builder(id("general"))
         .icon(() -> new ItemStack(ModItems.BASIC_STICKY_PISTON))
         .displayItems((featureFlags, output, hasPermissions) -> {
+            output.accept(ModItems.PISTON_WAND);
             output.accept(ModItems.HALF_SLIME_BLOCK);
             output.accept(ModItems.HALF_HONEY_BLOCK);
             output.accept(ModItems.HALF_REDSTONE_BLOCK);

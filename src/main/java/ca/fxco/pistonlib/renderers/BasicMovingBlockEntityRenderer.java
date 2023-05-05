@@ -170,6 +170,15 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
 
     }
 
+    protected void renderDebugBlock(Level level, Block block, BlockPos pos, PoseStack stack,
+                                    MultiBufferSource bufferSource, int overlay) {
+        BlockState state = block.defaultBlockState();
+        RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        VertexConsumer consumer = bufferSource.getBuffer(type);
+        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state,
+                pos, stack, consumer, false, RandomSource.create(), state.getSeed(pos), overlay);
+    }
+
     protected void renderBlock(T mbe, BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource,
                                Level level, boolean cull, int overlay) {
         RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
@@ -192,17 +201,6 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         this.blockRenderer.getModelRenderer().tesselateBlock(getter, this.blockRenderer.getBlockModel(state), state,
                 pos, stack, consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
-
-    protected void renderDebugBlock(Level level, Block block, BlockPos pos, PoseStack stack,
-                                    MultiBufferSource bufferSource, int overlay) {
-        BlockState state = block.defaultBlockState();
-        RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
-        VertexConsumer consumer = bufferSource.getBuffer(type);
-        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state,
-                pos, stack, consumer, false, RandomSource.create(), state.getSeed(pos), overlay);
-    }
-
-
 
     @Override
     public int getViewDistance() {

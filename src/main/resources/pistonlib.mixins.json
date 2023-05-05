@@ -6,9 +6,12 @@
   "mixins": [
     "Block_customBehaviorMixin",
     "BlockStateBase_pistonBehaviorMixin",
-    "LevelChunk_blockEntityMixin",
     "PistonBaseBlock_tagsMixin",
+    "ServerLevel_interactionMixin",
     "accessors.BlockEntityAccessor",
+    "blockEntity.Level_blockEntityMixin",
+    "blockEntity.LevelChunk_blockEntityMixin",
+    "blockEntity.ServerLevel_blockEntityMixin",
     "entity.Entity_pushIntoMixin",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",
@@ -25,6 +28,7 @@
     "quasi.PistonBaseBlock_quasiMixin",
     "stickyGroup.HoneyBlock_slimeMixin",
     "stickyGroup.SlimeBlock_honeyMixin",
+    "ticking.AbstractFurnaceBlockEntity_tickingMixin",
     "toggle.BlockBehaviour_toggleMixin",
     "toggle.Item_toggleMixin",
     "toggle.Properties_blockMixin",
@@ -32,5 +36,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "ClientTooltipComponent_singleMixin"
+  ]
 }

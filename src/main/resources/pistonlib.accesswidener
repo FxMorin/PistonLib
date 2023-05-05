@@ -27,3 +27,6 @@ extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity
 
 # Set FeatureFlag constructor to public
 accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/world/flag/FeatureFlagUniverse;I)V
+
+extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeX ()I
+extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeY ()I

@@ -7,7 +7,6 @@ import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.translocationPiston.TranslocationMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -28,7 +27,6 @@ public class ModBlockEntities {
     public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SpeedMovingBlockEntity> SPEED_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<FastMovingBlockEntity> FAST_MOVING_BLOCK_ENTITY;
-    public static final BlockEntityType<TranslocationMovingBlockEntity> TRANSLOCATION_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<MBEMovingBlockEntity> MBE_MOVING_BLOCK_ENTITY;
 
     // Other
@@ -67,12 +65,6 @@ public class ModBlockEntities {
                 FastMovingBlockEntity::new,
                 FastMovingBlockEntity::new,
                 ModPistonFamilies.FAST
-        );
-        TRANSLOCATION_MOVING_BLOCK_ENTITY = register(
-                "translocation",
-                TranslocationMovingBlockEntity::new,
-                TranslocationMovingBlockEntity::new,
-                ModPistonFamilies.TRANSLOCATION
         );
         MBE_MOVING_BLOCK_ENTITY = register(
                 "mbe",

@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.blocks.pistons.movableBlockEntities;
 
+import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.impl.ILevel;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
@@ -36,6 +37,14 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
     protected boolean placeMovedBlock() {
         ((ILevel)this.level).prepareBlockEntityPlacement(this.worldPosition, this.movedState, this.movedBlockEntity);
         return super.placeMovedBlock();
+    }
+
+    @Override
+    protected void onMovingTick(Direction movingDirection, float speed) {
+        super.onMovingTick(movingDirection, speed);
+        if (this.movedBlockEntity instanceof PistonTicking pistonTicking) {
+            pistonTicking.onMovingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
+        }
     }
 
     @Override

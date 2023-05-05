@@ -11,6 +11,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -122,10 +123,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                 new BasicStructureResolver(this, level, pos, facing, length, extend);
     }
 
-    public BasicStructureRunner newStructureRunner() {
+    public StructureRunner newStructureRunner(Level level, BlockPos pos, Direction facing, int length, boolean extend,
+                                              BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
         return PistonLibConfig.mergingApi ?
-                new MergingStructureRunner(this.family, this.type) :
-                new BasicStructureRunner(this.family, this.type);
+                new MergingStructureRunner(level, pos, facing, length, this.family, this.type, extend , structureProvider) :
+                new BasicStructureRunner(level, pos, facing, length, this.family, this.type, extend , structureProvider);
     }
 
     public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
@@ -399,7 +401,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     }
 
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, int length, boolean extend) {
-        BasicStructureRunner structureRunner = newStructureRunner();
-        return structureRunner.run(level, pos, facing, length, extend, this::newStructureResolver);
+        StructureRunner structureRunner = newStructureRunner(level, pos, facing, length, extend, this::newStructureResolver);
+        return structureRunner.run();
     }
 }

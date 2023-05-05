@@ -1,5 +1,7 @@
 package ca.fxco.pistonlib.blocks.mergeBlock;
 
+import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
@@ -91,16 +93,21 @@ public class MergeBlockEntity extends BlockEntity {
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, MergeBlockEntity mergeBlockEntity) {
         byte count = 0;
-        for (MergeData data : mergeBlockEntity.mergingBlocks.values()) {
+        for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
+            MergeData data = entry.getValue();
             data.setLastProgress(data.getProgress());
             float lastProgress = data.getLastProgress();
             if (lastProgress >= 1.0F) {
                 count++;
             }
-            float f = lastProgress + 0.5F * data.getSpeed();
+            float speed = data.getSpeed();
+            float f = lastProgress + 0.5F * speed;
             mergeBlockEntity.moveCollidedEntities(f);
             //moveStuckEntities(level, blockPos, f, mergeBlockEntity);
             data.setProgress(Math.min(f, 1.0F));
+            if (PistonLibConfig.tickingApi && lastProgress < 1.0F) {
+                data.onMovingTick(level, blockPos, entry.getKey());
+            }
         }
         if (count == mergeBlockEntity.mergingBlocks.size()) { // All ready
             level.removeBlockEntity(blockPos);
@@ -308,7 +315,7 @@ public class MergeBlockEntity extends BlockEntity {
     public static class MergeData {
 
         private final BlockState state;
-        private final BlockEntity be;
+        private final @Nullable BlockEntity be;
         private float progress;
         private float lastProgress;
         private float speed = 1F;
@@ -360,6 +367,15 @@ public class MergeBlockEntity extends BlockEntity {
 
         public void setSpeed(float speed) {
             this.speed = speed;
+        }
+
+        public void onMovingTick(Level level, BlockPos toPos, Direction direction) {
+            if (this.state.getBlock() instanceof PistonTicking pistonTicking) {
+                pistonTicking.onMovingTick(level, this.state, toPos, direction, this.lastProgress, this.speed, true);
+            }
+            if (this.be instanceof PistonTicking pistonTicking) {
+                pistonTicking.onMovingTick(level, this.state, toPos, direction, this.lastProgress, this.speed, true);
+            }
         }
 
         public static CompoundTag writeNbt(MergeData data) {

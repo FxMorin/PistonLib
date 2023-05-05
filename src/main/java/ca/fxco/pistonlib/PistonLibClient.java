@@ -21,7 +21,6 @@ public class PistonLibClient implements ClientModInitializer {
         BlockEntityRenderers.register(ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.TRANSLOCATION_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, MBEMovingBlockEntityRenderer::new);
 
         // Registering Other Block Entities

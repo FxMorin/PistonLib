@@ -17,6 +17,9 @@ public enum Category {
     /** An experimental config value, use with caution */
     EXPERIMENTAL,
 
+    /** An optimization config value, performance go brrrr */
+    OPTIMIZATION,
+
     /** Work In Progress, this is still missing some features */
     WIP
 

@@ -124,10 +124,10 @@ public class PistonFamily {
     }
 
     public static PistonFamily of(PistonBehavior behavior) {
-        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior) : new PistonFamily(behavior);
+        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior, true) : new PistonFamily(behavior);
     }
 
     public static PistonFamily of(PistonBehavior behavior, boolean hasCustomTextures) {
-        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior) : new PistonFamily(behavior);
+        return PistonLib.DATAGEN_ACTIVE ? new DataGenPistonFamily(behavior, hasCustomTextures) : new PistonFamily(behavior);
     }
 }
