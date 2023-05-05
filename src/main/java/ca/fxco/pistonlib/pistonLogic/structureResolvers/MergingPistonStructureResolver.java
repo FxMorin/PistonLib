@@ -11,7 +11,6 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,9 +52,12 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             }
             return false;
         } else {
-            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection))
+            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
                 return false;
+            }
         }
+
+        // This loops through the blocks to push and creates the branches
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos blockPos = this.toPush.get(i);
             state = this.level.getBlockState(blockPos);
@@ -64,7 +66,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 return false;
             }
         }
-        this.toUnMerge.removeAll(this.ignore); // Remove ignored blocks from toUnMerge list
+
+        // Remove ignored blocks from toUnMerge list
+        this.toUnMerge.removeAll(this.ignore);
         return true;
     }
 
@@ -77,8 +81,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 this.ignore.contains(pos)) {
             return false;
         }
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
+        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
             return false;
+        }
         int weight = ((BlockStateBasePushReaction)state).getWeight();
         if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;
@@ -120,10 +125,13 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     blockPos.equals(this.pistonPos) ||
                     this.toMerge.contains(blockPos) ||
                     this.ignore.contains(blockPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite))
+                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite)) {
                 break;
+            }
             weight += ((BlockStateBasePushReaction)state).getWeight();
-            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            if (weight + this.movingWeight > this.maxMovableWeight) {
+                return true;
+            }
             ++distance;
 
             // UnMerge checks
@@ -218,11 +226,11 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             }
 
             // Movement Checks
-            if (state.isAir())
+            if (state.isAir()) {
                 return false;
-            if (currentPos.equals(this.pistonPos))
+            } else if (currentPos.equals(this.pistonPos)) {
                 return true;
-            if (!piston.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
+            } else if (!piston.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
                 return true;
             }
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();

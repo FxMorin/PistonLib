@@ -301,14 +301,15 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     public boolean canMoveBlock(BlockState state, Level level, BlockPos pos, Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
         // coordinate related checks (world height/world border)
 
-        if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos))
+        if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos)) {
             return false;
-        if (state.isAir())
+        } else if (state.isAir()) {
             return true; // air is never in the way
-        if (moveDir == Direction.DOWN && pos.getY() == level.getMinBuildHeight())
+        } else if (moveDir == Direction.DOWN && pos.getY() == level.getMinBuildHeight()) {
             return false;
-        if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1)
+        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1) {
             return false;
+        }
 
 
         // piston push reaction/ custom piston behavior
@@ -316,36 +317,42 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
 
         if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
-            if (!customBehavior.isMovable(level, pos, state))
+            if (!customBehavior.isMovable(level, pos, state)) {
                 return false;
-            if (moveDir == pistonFacing) {
-                if (!customBehavior.canPistonPush(level, pos, state, moveDir))
+            } else if (moveDir == pistonFacing) {
+                if (!customBehavior.canPistonPush(level, pos, state, moveDir)) {
                     return false;
+                }
             } else {
-                if (!customBehavior.canPistonPull(level, pos, state, moveDir))
+                if (!customBehavior.canPistonPull(level, pos, state, moveDir)) {
                     return false;
+                }
             }
-            if (customBehavior.canDestroy(level, pos, state) && !allowDestroy)
+            if (customBehavior.canDestroy(level, pos, state) && !allowDestroy) {
                 return false;
+            }
         } else {
-            if (state.is(ModTags.UNPUSHABLE))
+            if (state.is(ModTags.UNPUSHABLE)) {
                 return false;
-            if (state.is(ModTags.PISTONS)) {
+            } else if (state.is(ModTags.PISTONS)) {
                 if (state.getValue(EXTENDED)) {
                     return false;
                 }
             } else { // Pistons shouldn't be checked against destroy speed or PistonPushReaction
-                if (state.getDestroySpeed(level, pos) == -1.0F)
+                if (state.getDestroySpeed(level, pos) == -1.0F) {
                     return false;
+                }
                 switch (state.getPistonPushReaction()) {
                     case BLOCK -> { return false; }
                     case DESTROY -> {
-                        if (!allowDestroy)
+                        if (!allowDestroy) {
                             return false;
+                        }
                     }
                     case PUSH_ONLY -> {
-                        if (moveDir != pistonFacing)
+                        if (moveDir != pistonFacing) {
                             return false;
+                        }
                     }
                     default -> { }
                 }

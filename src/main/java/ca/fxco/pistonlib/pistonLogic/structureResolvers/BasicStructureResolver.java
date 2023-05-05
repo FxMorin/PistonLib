@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
@@ -59,8 +61,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
             return false;
         } else { // Start block is not immovable, we can check if its possible to move. Also generates structure
-            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection))
+            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
                 return false;
+            }
         }
 
         // This loops through the blocks to push and creates the branches
@@ -81,8 +84,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (direction.getAxis() != this.pushDirection.getAxis()) {
                 BlockPos blockPos = pos.relative(direction);
                 BlockState blockState2 = this.level.getBlockState(blockPos);
-                if (canAdjacentBlockStick(direction, blockState, blockState2) && this.cantMove(blockPos, direction))
+                if (canAdjacentBlockStick(direction, blockState, blockState2) && this.cantMove(blockPos, direction)) {
                     return true;
+                }
             }
         }
         return false;
@@ -92,7 +96,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
         BlockState blockState = this.level.getBlockState(pos);
         for (Map.Entry<Direction, StickyType> sideData : sides.entrySet()) {
             StickyType stickyType = sideData.getValue();
-            if (stickyType == StickyType.NO_STICK) continue;
+            if (stickyType == StickyType.NO_STICK) {
+                continue;
+            }
             Direction dir = sideData.getKey();
             if (dir.getAxis() != this.pushDirection.getAxis()) {
                 BlockPos blockPos = pos.relative(dir);
@@ -100,13 +106,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(blockState, adjState, dir)) {
                     continue;
                 }
-                if (canAdjacentBlockStick(dir, blockState, adjState) && this.cantMove(blockPos, dir))
+                if (canAdjacentBlockStick(dir, blockState, adjState) && this.cantMove(blockPos, dir)) {
                     return true;
+                }
             }
         }
         return false;
     }
-
 
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
@@ -176,10 +182,16 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
+        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) {
+            return false;
+        }
+        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
+            return false;
+        }
         int weight = ((BlockStateBasePushReaction)state).getWeight();
-        if (weight + this.movingWeight > this.maxMovableWeight) return true;
+        if (weight + this.movingWeight > this.maxMovableWeight) {
+            return true;
+        }
         int i = 1;
         Direction dir2 = this.pushDirection.getOpposite();
         ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)state.getBlock();
@@ -191,10 +203,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
                     blockPos.equals(this.pistonPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
+                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2)) {
                 break;
+            }
             weight += ((BlockStateBasePushReaction)state).getWeight();
-            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            if (weight + this.movingWeight > this.maxMovableWeight) {
+                return true;
+            }
             ++i;
         }
         this.movingWeight += weight;
@@ -209,7 +224,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             int l = this.toPush.indexOf(pos2);
             if (l > -1) {
                 this.setMovedBlocks(j, l);
-                for(int m = 0; m <= l + j; ++m) {
+                for (int m = 0; m <= l + j; ++m) {
                     BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
                     stick = (ConfigurablePistonStickiness)state.getBlock();
@@ -220,12 +235,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return false;
             }
             state = this.level.getBlockState(pos2);
-            if (state.isAir())
+            if (state.isAir()) {
                 return false;
-            if (pos2.equals(this.pistonPos))
+            } else if (pos2.equals(this.pistonPos)) {
                 return true;
-            if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
+            } else if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection)) {
                 return true;
+            }
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
             if (pistonBehavior.usesConfigurablePistonBehavior()) {
                 if (pistonBehavior.canDestroy(this.level, pos2, state)) {
@@ -237,7 +253,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return false;
             }
             weight = pistonBehavior.getWeight(state);
-            if (weight + this.movingWeight > this.maxMovableWeight) return true;
+            if (weight + this.movingWeight > this.maxMovableWeight) {
+                return true;
+            }
             this.movingWeight += weight;
             this.toPush.add(pos2);
             ++j;

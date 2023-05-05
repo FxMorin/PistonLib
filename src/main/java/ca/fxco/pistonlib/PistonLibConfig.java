@@ -73,6 +73,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Toggle the strong sticky type block dropping mechanic where all strong sticky types block drop together",
+            more = "Doesn't work with  `combinedBlockDropping`",
             keyword = {"block", "dropping"},
             category = Category.MECHANIC
     )
