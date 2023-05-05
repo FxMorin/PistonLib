@@ -101,6 +101,7 @@ public class ModBlocks {
     // to very easily enable and disable features in your pistons
     public static final BasicPistonBaseBlock CONFIGURABLE_PISTON = register("configurable_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.DEFAULT));
     public static final BasicPistonBaseBlock CONFIGURABLE_STICKY_PISTON = register("configurable_sticky_piston", new ConfigurablePistonBaseBlock(CONFIGURABLE, PistonType.STICKY));
+    public static final BasicPistonArmBlock CONFIGURABLE_PISTON_ARM = register("configurable_piston_arm", new BasicPistonArmBlock(CONFIGURABLE));
     public static final BasicPistonHeadBlock CONFIGURABLE_PISTON_HEAD = register("configurable_piston_head", new ConfigurablePistonHeadBlock(CONFIGURABLE));
     public static final ConfigurableMovingBlock CONFIGURABLE_MOVING_BLOCK = register("configurable_moving_block", new ConfigurableMovingBlock(CONFIGURABLE));
 

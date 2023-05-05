@@ -140,11 +140,9 @@ public class BasicPistonArmBlock extends DirectionalBlock {
                     backState.getValue(FACING) == backState.getValue(FACING);
         }
         if (validBack) {
-            //System.out.println("Break Behind");
             level.destroyBlock(behindPos, false);
         }
         if (validFront) {
-            //System.out.println("Break In-front");
             level.destroyBlock(frontPos, false);
         }
     }

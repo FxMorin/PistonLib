@@ -73,4 +73,24 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return !this.getFamily().isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
     }
+
+    @Override
+    protected int getLength(Level level, BlockPos pos, BlockState state) {
+        if (state.getValue(EXTENDED)) {
+            Direction facing = state.getValue(FACING);
+            int length = this.getFamily().getMinLength();
+
+            while (length++ < this.getFamily().getMaxLength()) {
+                BlockPos frontPos = pos.relative(facing, length);
+                BlockState frontState = level.getBlockState(frontPos);
+
+                if (!frontState.is(this.getFamily().getArm())) {
+                    break;
+                }
+            }
+
+            return length;
+        }
+        return this.getFamily().getMinLength();
+    }
 }
