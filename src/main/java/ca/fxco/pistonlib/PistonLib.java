@@ -59,6 +59,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModCreativeModeTabs.bootstrap();
         ModMenus.boostrap();
         ModScreens.boostrap();
+        ModArgumentTypes.bootstrap();
+        ModCommands.bootstrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
