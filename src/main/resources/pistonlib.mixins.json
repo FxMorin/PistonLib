@@ -12,6 +12,7 @@
     "blockEntity.Level_blockEntityMixin",
     "blockEntity.LevelChunk_blockEntityMixin",
     "blockEntity.PistonMovingBlockEntity_pushTooFarMixin",
+    "blockEntity.PistonMovingBlockEntity_waterloggedMixin",
     "blockEntity.ServerLevel_blockEntityMixin",
     "entity.Entity_pushIntoMixin",
     "merging.IceBlock_compressMixin",
