@@ -163,6 +163,14 @@ public class PistonLibConfig {
     )
     public static boolean locationalUpdateOrderFix = true;
 
+    @ConfigValue(
+            desc = "Fixes pistons being able to push blocks outside of the world border",
+            keyword = {"world border"},
+            fixes = 82010,
+            category = Category.FIX
+    )
+    public static boolean pushThroughWorldBorderFix = true;
+
 
     public enum WaterloggedState {
         NONE,

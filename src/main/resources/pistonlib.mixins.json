@@ -17,6 +17,7 @@
     "fixes.PistonBaseBlock_headlessMixin",
     "fixes.PistonBaseBlock_illegalMixin",
     "fixes.PistonBaseBlock_pushOrderMixin",
+    "fixes.PistonBlock_worldBorderMixin",
     "fixes.PistonMovingBlockEntity_pushTooFarMixin",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",

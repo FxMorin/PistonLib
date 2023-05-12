@@ -323,14 +323,17 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     public boolean canMoveBlock(BlockState state, Level level, BlockPos pos, Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
         // coordinate related checks (world height/world border)
 
-        if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos))
+        if (level.isOutsideBuildHeight(pos) || !(PistonLibConfig.pushThroughWorldBorderFix ? level.getWorldBorder().isWithinBounds(pos.relative(moveDir)) : level.getWorldBorder().isWithinBounds(pos))) {
             return false;
-        if (state.isAir())
+        } else if (state.isAir()) {
             return true; // air is never in the way
-        if (moveDir == Direction.DOWN && pos.getY() == level.getMinBuildHeight())
+        } else if (moveDir == Direction.DOWN) {
+            if (pos.getY() == level.getMinBuildHeight()) {
+                return false;
+            }
+        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1) {
             return false;
-        if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1)
-            return false;
+        }
 
 
         // piston push reaction/ custom piston behavior
