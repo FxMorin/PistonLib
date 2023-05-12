@@ -1,9 +1,12 @@
-package ca.fxco.pistonlib.mixin;
+package ca.fxco.pistonlib.mixin.behavior;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,15 +30,15 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockStateBase.class)
 public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
 
-    @Shadow
-    public Block getBlock() { return null; }
-
-    @Shadow
-    protected BlockState asState() { return null; }
+    @Shadow public Block getBlock() { return null; }
+    @Shadow protected BlockState asState() { return null; }
 
     @Override
     public int getWeight() {
@@ -170,5 +173,23 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     @Override
     public ConfigurablePistonMerging.MergeRule getBlockEntityMergeRules() {
         return ((ConfigurablePistonMerging)this.getBlock()).getBlockEntityMergeRules();
+    }
+
+    //
+    // Override Behavior
+    //
+
+    @Inject(
+            method = "getPistonPushReaction",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void overridePushReaction(CallbackInfoReturnable<PushReaction> cir) {
+        if (PistonLibConfig.behaviorOverrideApi) {
+            PistonLibBehaviorManager.PistonMoveBehavior behavior = PistonLibBehaviorManager.getOverride(this.asState());
+            if (behavior.isPresent()) {
+                cir.setReturnValue(behavior.getPushReaction());
+            }
+        }
     }
 }
