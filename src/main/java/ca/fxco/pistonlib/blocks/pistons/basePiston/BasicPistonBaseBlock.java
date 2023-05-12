@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -138,6 +139,21 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         Direction facing = state.getValue(FACING);
         boolean isExtended = state.getValue(EXTENDED);
         boolean shouldBeExtended = this.hasNeighborSignal(level, pos, facing);
+
+        if (PistonLibConfig.headlessPistonFix && isExtended) {
+            BlockState blockState = level.getBlockState(pos.relative(facing));
+            if (shouldBeExtended && !blockState.is(this.family.getMoving()) && !blockState.is(this.family.getHead())) {
+                level.removeBlock(pos, false);
+                ItemEntity itemEntity = new ItemEntity(
+                        level,
+                        pos.getX(), pos.getY(), pos.getZ(),
+                        new ItemStack(this.family.getBase(this.type).asItem())
+                );
+                itemEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(itemEntity);
+                return;
+            }
+        }
 
         if (shouldBeExtended && !isExtended) {
             if (this.newStructureResolver(level, pos, facing, true).resolve()) {

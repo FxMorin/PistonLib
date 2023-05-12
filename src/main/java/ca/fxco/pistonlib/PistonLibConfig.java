@@ -138,6 +138,14 @@ public class PistonLibConfig {
     )
     public static WaterloggedState pistonsPushWaterloggedBlocks = WaterloggedState.VANILLA;
 
+    @ConfigValue(
+            desc = "Fixes being able to make and use Headless Pistons",
+            keyword = {"headless"},
+            fixes = 27056,
+            category = Category.FIX
+    )
+    public static boolean headlessPistonFix = true;
+
 
     public enum WaterloggedState {
         NONE,

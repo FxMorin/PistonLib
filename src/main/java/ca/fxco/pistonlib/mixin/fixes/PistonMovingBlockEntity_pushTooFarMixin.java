@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.mixin.blockEntity;
+package ca.fxco.pistonlib.mixin.fixes;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import com.llamalad7.mixinextras.sugar.Share;
