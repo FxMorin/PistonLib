@@ -108,6 +108,14 @@ public class PistonLibConfig {
     // ===========
 
     @ConfigValue(
+            desc = "Fixes pistons pushing entities 0.01 too far",
+            more = "The value may not be 0.01 for pistons with different speeds",
+            keyword = {"entity", "collision"},
+            category = Category.FIX
+    )
+    public static boolean pistonsPushTooFarFix = true;
+
+    @ConfigValue(
             desc = "Fixes piston progress not being saved correctly, cause some pistons to get out of sync",
             keyword = {"progress", "sync"},
             category = Category.FIX

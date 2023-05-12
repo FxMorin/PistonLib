@@ -241,7 +241,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
                 continue;
             }
 
-            moveEntity(moveDir, entity, Math.min(movement, deltaProgress) + this.movementMargin(), moveDir);
+            double movementAmount = Math.min(movement, deltaProgress);
+            if (!PistonLibConfig.pistonsPushTooFarFix || deltaProgress < 1.0) {
+                movementAmount += this.movementMargin();
+            }
+            moveEntity(moveDir, entity, movementAmount, moveDir);
 
             if (!this.extending && this.isSourcePiston) {
                 fixEntityWithinPistonBase(entity, moveDir, deltaProgress);

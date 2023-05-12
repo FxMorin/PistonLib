@@ -11,6 +11,7 @@
     "accessors.BlockEntityAccessor",
     "blockEntity.Level_blockEntityMixin",
     "blockEntity.LevelChunk_blockEntityMixin",
+    "blockEntity.PistonMovingBlockEntity_pushTooFarMixin",
     "blockEntity.ServerLevel_blockEntityMixin",
     "entity.Entity_pushIntoMixin",
     "merging.IceBlock_compressMixin",
