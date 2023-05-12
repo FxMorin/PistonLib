@@ -87,7 +87,7 @@ public class BasicStructureRunner implements StructureRunner {
         // Set lists
         this.toMove = structure.getToPush();
         this.toDestroy = structure.getToDestroy();
-        this.toRemove = new LinkedHashMap<>();
+        this.toRemove = PistonLibConfig.locationalUpdateOrderFix ? new LinkedHashMap<>() : new HashMap<>();
         this.statesToMove = new ArrayList<>();
         this.blockEntitiesToMove = new ArrayList<>();
         return true;

@@ -16,6 +16,7 @@
     "entity.Entity_pushIntoMixin",
     "fixes.PistonBaseBlock_headlessMixin",
     "fixes.PistonBaseBlock_illegalMixin",
+    "fixes.PistonBaseBlock_pushOrderMixin",
     "fixes.PistonMovingBlockEntity_pushTooFarMixin",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",

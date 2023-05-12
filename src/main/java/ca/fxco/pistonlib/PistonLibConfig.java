@@ -155,6 +155,14 @@ public class PistonLibConfig {
     )
     public static boolean illegalBreakingFix = true;
 
+    @ConfigValue(
+            desc = "Fixes pistons pulling/pushing blocks using a hashmap causing order to be locational",
+            keyword = {"locational", "update", "order"},
+            fixes = 233420,
+            category = Category.FIX
+    )
+    public static boolean locationalUpdateOrderFix = true;
+
 
     public enum WaterloggedState {
         NONE,
