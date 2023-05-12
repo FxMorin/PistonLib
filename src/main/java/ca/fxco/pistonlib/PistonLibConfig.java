@@ -171,6 +171,15 @@ public class PistonLibConfig {
     )
     public static boolean pushThroughWorldBorderFix = true;
 
+    @ConfigValue(
+            desc = "Fixes mobs being able to spawn on moving pistons",
+            more = "Only works on PistonLib pistons, not vanilla pistons",
+            keyword = {"mob","spawning"},
+            fixes = 163978,
+            category = Category.FIX
+    )
+    public static boolean mobsSpawnOnMovingPistonsFix = true;
+
 
     public enum WaterloggedState {
         NONE,
