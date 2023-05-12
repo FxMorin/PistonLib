@@ -146,6 +146,15 @@ public class PistonLibConfig {
     )
     public static boolean headlessPistonFix = true;
 
+    @ConfigValue(
+            desc = "Fixes Breaking blocks that should not be able to be broken using headless pistons",
+            more = "Illegal blocks are any blocks that have a hardness value of -1.0F",
+            keyword = {"headless", "illegal"},
+            fixes = 188220,
+            category = Category.FIX
+    )
+    public static boolean illegalBreakingFix = true;
+
 
     public enum WaterloggedState {
         NONE,

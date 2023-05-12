@@ -256,13 +256,19 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     if (type != MotionType.PULL || frontState.isAir() ||
                             (frontState.getPistonPushReaction() != PushReaction.NORMAL && !frontState.is(ModTags.PISTONS)) ||
                             !canMoveBlock(frontState, level, frontPos, facing.getOpposite(), false, facing)) {
-                        level.removeBlock(headPos, false);
+                        if (!PistonLibConfig.illegalBreakingFix ||
+                                level.getBlockState(headPos).getDestroySpeed(level, headPos) != -1.0F) {
+                            level.removeBlock(headPos, false);
+                        }
                     } else {
                         this.moveBlocks(level, pos, facing, false);
                     }
                 }
             } else {
-                level.removeBlock(headPos, false);
+                if (!PistonLibConfig.illegalBreakingFix ||
+                        level.getBlockState(headPos).getDestroySpeed(level, headPos) != -1.0F) {
+                    level.removeBlock(headPos, false);
+                }
             }
 
             playEvents(level, GameEvent.PISTON_CONTRACT, pos);
