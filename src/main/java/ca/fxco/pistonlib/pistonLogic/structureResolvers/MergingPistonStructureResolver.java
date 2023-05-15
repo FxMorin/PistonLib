@@ -11,7 +11,6 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,6 +34,41 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         this.toMerge.clear();
         this.toUnMerge.clear();
         this.ignore.clear();
+        BlockState state = this.level.getBlockState(this.startPos);
+        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
+            if (this.extending) {
+                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
+                if (pistonBehavior.usesConfigurablePistonBehavior()) {
+                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
+                        this.toDestroy.add(this.startPos);
+                        return true;
+                    }
+                } else if (state.getPistonPushReaction() == PushReaction.DESTROY) {
+                    this.toDestroy.add(this.startPos);
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        } else {
+            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
+                return false;
+            }
+        }
+
+        // This loops through the blocks to push and creates the branches
+        for (int i = 0; i < this.toPush.size(); ++i) {
+            BlockPos blockPos = this.toPush.get(i);
+            state = this.level.getBlockState(blockPos);
+            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
+            if (!attemptMove(stick, state, blockPos)) {
+                return false;
+            }
+        }
+
+        // Remove ignored blocks from toUnMerge list
+        this.toUnMerge.removeAll(this.ignore);
+        return true;
     }
 
     @Override
@@ -55,8 +89,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 this.ignore.contains(pos)) {
             return false;
         }
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir))
+        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
             return false;
+        }
         int weight = ((BlockStateBasePushReaction)state).getWeight();
         if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;
@@ -84,13 +119,10 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         }
 
         // Do sticky checks on initial line blocks
-        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
-        boolean isSticky = stick.usesConfigurablePistonStickiness() ?
-                (stick.isSticky(state) && stick.sideStickiness(state, pushDirOpposite).ordinal() >= StickyType.STICKY.ordinal()) :
-                stick.hasStickyGroup();
         int distance = 1;
+        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
         BlockPos lastBlockPos = pos;
-        while (isSticky) {
+        while (isSticky(stick, state, pushDirOpposite)) {
             BlockPos blockPos = pos.relative(pushDirOpposite, distance);
             BlockState lastState = state;
             state = this.level.getBlockState(blockPos);
@@ -101,19 +133,14 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     blockPos.equals(this.pistonPos) ||
                     this.toMerge.contains(blockPos) ||
                     this.ignore.contains(blockPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite))
+                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite)) {
                 break;
-            weight += ((BlockStateBasePushReaction)state).getWeight();
-            if (weight + this.movingWeight > this.maxMovableWeight) return true;
-            ++distance;
-            if (stick.usesConfigurablePistonStickiness()) {
-                boolean StickyStick = stick.isSticky(state);
-                if (StickyStick && stick.sideStickiness(state, pushDirOpposite).ordinal() < StickyType.STICKY.ordinal())
-                    break;
-                isSticky = StickyStick;
-            } else {
-                isSticky = stick.hasStickyGroup();
             }
+            weight += ((BlockStateBasePushReaction)state).getWeight();
+            if (weight + this.movingWeight > this.maxMovableWeight) {
+                return true;
+            }
+            ++distance;
 
             // UnMerge checks
             ConfigurablePistonMerging merge = (ConfigurablePistonMerging) state.getBlock();
@@ -152,12 +179,8 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
                     stick = (ConfigurablePistonStickiness)state.getBlock();
-                    if (stick.usesConfigurablePistonStickiness()) {
-                        if (stick.isSticky(state) && this.cantMoveAdjacentStickyBlocks(stick.stickySides(state),pos3))
-                            return true;
-                    } else {
-                        if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocks(pos3))
-                            return true;
+                    if (!attemptMove(stick, state, pos3)) {
+                        return true;
                     }
                 }
                 return false;
@@ -211,11 +234,11 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             }
 
             // Movement Checks
-            if (state.isAir())
+            if (state.isAir()) {
                 return false;
-            if (currentPos.equals(this.pistonPos))
+            } else if (currentPos.equals(this.pistonPos)) {
                 return true;
-            if (!piston.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
+            } else if (!piston.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
                 return true;
             }
             ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();

@@ -59,6 +59,13 @@ public class PistonLibConfig {
     )
     public static boolean cookWhileMoving = true;
 
+    @ConfigValue(
+            desc = "Make the sticky chains strongly sticky, allows them to be pulled along by non-sticky blocks",
+            keyword = {"chain", "strong", "sticky"},
+            category = Category.FEATURE
+    )
+    public static boolean strongStickyChains = true;
+
 
     // ===============
     //    Mechanics
@@ -66,6 +73,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Toggle the strong sticky type block dropping mechanic where all strong sticky types block drop together",
+            more = "Doesn't work with  `combinedBlockDropping`",
             keyword = {"block", "dropping"},
             category = Category.MECHANIC
     )
@@ -94,6 +102,13 @@ public class PistonLibConfig {
     public static boolean tickingApi = true;
 
     @ConfigValue(
+            desc = "Toggle the indirect sticky API, this allows blocks to sticky to non-sticky blocks by being strongly sticky",
+            keyword = {"extended", "indirect", "sticky", "api"},
+            category = Category.MECHANIC
+    )
+    public static boolean indirectStickyApi = true;
+
+    @ConfigValue(
             desc = "Group the piston structure into a single ticking block entity, allowing tons of optimizations",
             more = {"Disabling this mechanic also prevents multiple features from working. Such as being able to change the direction mid-way through pushing without block dropping", // I know, game changer xD
                     "This also allows blocks to cull against other blocks in piston structures!"},
@@ -101,6 +116,19 @@ public class PistonLibConfig {
             category = {Category.MECHANIC, Category.OPTIMIZATION}
     )
     public static boolean pistonStructureGrouping = true;
+
+
+    // ===================
+    //    Major Changes
+    // ===================
+
+    @ConfigValue(
+            desc = "Causes all sticky types to act like indirect sticky blocks",
+            more = "Requires `indirectStickyApi`",
+            keyword = {"sticky", "indirect"},
+            category = {Category.EXTREME, Category.MECHANIC, Category.EXPERIMENTAL}
+    )
+    public static boolean allStickyTypesAreIndirect = false;
 
 
     // ===========
