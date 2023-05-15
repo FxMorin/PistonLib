@@ -14,6 +14,9 @@ public enum Category {
     /** A core mechanic, disabling this will cause many things to stop working */
     MECHANIC,
 
+    /** Extreme means this has a Major impact on how pistons work and will likely break any contraption made without it being on */
+    EXTREME,
+
     /** An experimental config value, use with caution */
     EXPERIMENTAL,
 

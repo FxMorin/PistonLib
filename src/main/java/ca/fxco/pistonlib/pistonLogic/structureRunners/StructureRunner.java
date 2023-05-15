@@ -1,7 +1,5 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
-import ca.fxco.pistonlib.PistonLibConfig;
-
 public interface StructureRunner {
 
     void taskRemovePistonHeadOnRetract();
@@ -15,7 +13,7 @@ public interface StructureRunner {
 
     void taskDestroyBlocks();
 
-    void taskPreventTntDuping();
+    void taskFixUpdatesAndStates();
 
     void taskMoveBlocks();
 
@@ -49,9 +47,8 @@ public interface StructureRunner {
         // destroy blocks
         taskDestroyBlocks();
 
-        if (PistonLibConfig.tntDupingFix) {
-            taskPreventTntDuping();
-        }
+        // Fix cached states being used and updates
+        taskFixUpdatesAndStates();
 
         // move blocks
         taskMoveBlocks();

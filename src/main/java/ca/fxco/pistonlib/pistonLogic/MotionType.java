@@ -26,4 +26,14 @@ public class MotionType {
     public static boolean isRetract(int type) {
         return type == PULL || type == RETRACT;
     }
+
+    public static String toString(int type) {
+        return switch (type) {
+            case -1 -> "NONE";
+            case 0 -> "PUSH";
+            case 1 -> "PULL";
+            case 2 -> "RETRACT";
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        };
+    }
 }

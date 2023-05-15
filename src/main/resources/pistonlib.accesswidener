@@ -5,6 +5,7 @@ accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver pistonPos Lnet/minecraft/core/BlockPos;
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver extending Z
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver startPos Lnet/minecraft/core/BlockPos;
+mutable field  net/minecraft/world/level/block/piston/PistonStructureResolver startPos Lnet/minecraft/core/BlockPos;
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver pushDirection Lnet/minecraft/core/Direction;
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver toPush Ljava/util/List;
 accessible field  net/minecraft/world/level/block/piston/PistonStructureResolver toDestroy Ljava/util/List;

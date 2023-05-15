@@ -32,9 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private BlockState[] unMergingStates;
     private int unMergingIndex = 0;
 
-    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, PistonFamily family, PistonType type,
-                                  boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
-        super(level, pos, facing, family, type, extend, structureProvider);
+    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, int length,
+                                  PistonFamily family, PistonType type, boolean extend,
+                                  BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+        super(level, pos, facing, length, family, type, extend, structureProvider);
     }
 
     @Override
@@ -69,23 +70,22 @@ public class MergingStructureRunner extends BasicStructureRunner {
     public void taskMoveBlocks() {
         int moveSize = toMove.size();
         if (moveSize > 0) {
-            StructureGroup structureGroup = null;
-            if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
-                structureGroup = StructureGroup.create(level);
-            }
-            for (int i = moveSize - 1; i >= 0; i--) {
-                BlockPos posToMove = toMove.get(i);
-                BlockPos dstPos = posToMove.relative(moveDir);
-                BlockState stateToMove = statesToMove.get(i);
-                BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
+            if (structure instanceof MergingPistonStructureResolver mergingStructure) {
+                List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
+                unMergingStates = new BlockState[toUnMerge.size()];
+                StructureGroup structureGroup = null;
+                if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
+                    structureGroup = StructureGroup.create(level);
+                }
+                for (int i = moveSize - 1; i >= 0; i--) {
+                    BlockPos posToMove = toMove.get(i);
+                    BlockPos dstPos = posToMove.relative(moveDir);
+                    BlockState stateToMove = statesToMove.get(i);
+                    BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
 
-                boolean move = true;
+                    boolean move = true;
 
-                // UnMerge blocks
-                if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-                    List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
-                    unMergingStates = new BlockState[toUnMerge.size()];
-
+                    // UnMerge blocks
                     if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
                         Pair<BlockState, BlockState> unmergedStates = null;
                         if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
@@ -108,20 +108,20 @@ public class MergingStructureRunner extends BasicStructureRunner {
                             move = false;
                         }
                     }
-                }
 
-                toRemove.remove(dstPos);
+                    toRemove.remove(dstPos);
 
-                BlockState movingBlock = this.family.getMoving().defaultBlockState()
-                        .setValue(BasicMovingBlock.FACING, facing);
-                BlockEntity movingBlockEntity = this.family
-                        .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                    BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                            .setValue(BasicMovingBlock.FACING, facing);
+                    BlockEntity movingBlockEntity = this.family
+                            .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
-                level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
-                level.setBlockEntity(movingBlockEntity);
+                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                    level.setBlockEntity(movingBlockEntity);
 
-                if (move) {
-                    affectedStates[affectedIndex++] = stateToMove;
+                    if (move) {
+                        affectedStates[affectedIndex++] = stateToMove;
+                    }
                 }
             }
         }

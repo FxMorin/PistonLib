@@ -117,4 +117,11 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     public StickyType sideStickiness(BlockState state, Direction direction) {
         return state.getValue(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
     }
+
+    @Override
+    public boolean isFittingBase(BlockState headState, BlockState behindState) {
+        return behindState.is(this.getFamily().getArm()) ?
+                behindState.getValue(FACING) == headState.getValue(FACING) :
+                super.isFittingBase(headState, behindState);
+    }
 }

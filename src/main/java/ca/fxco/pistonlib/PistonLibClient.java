@@ -3,7 +3,6 @@ package ca.fxco.pistonlib;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.renderers.BasicMovingBlockEntityRenderer;
-import ca.fxco.pistonlib.renderers.LongMovingBlockEntityRenderer;
 import ca.fxco.pistonlib.renderers.MBEMovingBlockEntityRenderer;
 import ca.fxco.pistonlib.renderers.MergeBlockEntityRenderer;
 
@@ -20,7 +19,6 @@ public class PistonLibClient implements ClientModInitializer {
         // Registering Piston Moving Block Entities
         BlockEntityRenderers.register(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntities.LONG_MOVING_BLOCK_ENTITY, LongMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, BasicMovingBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, MBEMovingBlockEntityRenderer::new);
