@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.HashMap;
 
 /**
- * Prevents pistons from being able to break blocks with a hardness value of -1.0F
- * You need headless pistons to be able to break these blocks using pistons.
+ * Fixes the piston update order being locational
  */
 
 @Mixin(PistonBaseBlock.class)
