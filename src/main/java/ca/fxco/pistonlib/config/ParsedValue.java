@@ -73,9 +73,13 @@ public class ParsedValue<T> {
     /**
      * Should not be used unless loading from the config
      */
+    @SuppressWarnings("unchecked")
     protected void setValueFromConfig(Object value) {
         if (this.defaultValue.getClass() == value.getClass()) {
             setValue((T) this.defaultValue.getClass().cast(value));
+        } else if (this.defaultValue.getClass().isEnum() && value instanceof String str) {
+            Object e = Enum.valueOf((Class<? extends Enum>)this.defaultValue.getClass(), str);
+            setValue((T) this.defaultValue.getClass().cast(e));
         }
     }
 

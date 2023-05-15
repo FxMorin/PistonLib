@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -138,6 +139,21 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         Direction facing = state.getValue(FACING);
         int length = this.getLength(level, pos, state);
         boolean shouldExtend = this.hasNeighborSignal(level, pos, facing);
+
+        if (PistonLibConfig.headlessPistonFix && length > this.family.getMinLength()) {
+            BlockState blockState = level.getBlockState(pos.relative(facing, length));
+            if (shouldExtend && !blockState.is(this.family.getMoving()) && !blockState.is(this.family.getHead())) {
+                level.removeBlock(pos, false);
+                ItemEntity itemEntity = new ItemEntity(
+                        level,
+                        pos.getX(), pos.getY(), pos.getZ(),
+                        new ItemStack(this.family.getBase(this.type).asItem())
+                );
+                itemEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(itemEntity);
+                return;
+            }
+        }
 
         if (shouldExtend && length < this.family.getMaxLength()) {
             if (this.newStructureResolver(level, pos, facing, length, true).resolve()) {
@@ -275,13 +291,19 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     if (type != MotionType.PULL || frontState.isAir() ||
                             (frontState.getPistonPushReaction() != PushReaction.NORMAL && !frontState.is(ModTags.PISTONS)) ||
                             !canMoveBlock(frontState, level, frontPos, facing.getOpposite(), false, facing)) {
-                        level.removeBlock(headPos, false);
+                        if (!PistonLibConfig.illegalBreakingFix ||
+                                level.getBlockState(headPos).getDestroySpeed(level, headPos) != -1.0F) {
+                            level.removeBlock(headPos, false);
+                        }
                     } else {
                         this.moveBlocks(level, pos, facing, length, false);
                     }
                 }
             } else {
-                level.removeBlock(headPos, false);
+                if (!PistonLibConfig.illegalBreakingFix ||
+                        level.getBlockState(headPos).getDestroySpeed(level, headPos) != -1.0F) {
+                    level.removeBlock(headPos, false);
+                }
             }
 
             playEvents(level, GameEvent.PISTON_CONTRACT, pos);
@@ -336,12 +358,14 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
     public boolean canMoveBlock(BlockState state, Level level, BlockPos pos, Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
         // coordinate related checks (world height/world border)
 
-        if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos)) {
+        if (level.isOutsideBuildHeight(pos) || !(PistonLibConfig.pushThroughWorldBorderFix ? level.getWorldBorder().isWithinBounds(pos.relative(moveDir)) : level.getWorldBorder().isWithinBounds(pos))) {
             return false;
         } else if (state.isAir()) {
             return true; // air is never in the way
-        } else if (moveDir == Direction.DOWN && pos.getY() == level.getMinBuildHeight()) {
-            return false;
+        } else if (moveDir == Direction.DOWN) {
+            if (pos.getY() == level.getMinBuildHeight()) {
+                return false;
+            }
         } else if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1) {
             return false;
         }

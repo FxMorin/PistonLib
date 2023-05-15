@@ -136,6 +136,14 @@ public class PistonLibConfig {
     // ===========
 
     @ConfigValue(
+            desc = "Fixes pistons pushing entities 0.01 too far",
+            more = "The value may not be 0.01 for pistons with different speeds",
+            keyword = {"entity", "collision"},
+            category = Category.FIX
+    )
+    public static boolean pistonsPushTooFarFix = true;
+
+    @ConfigValue(
             desc = "Fixes piston progress not being saved correctly, cause some pistons to get out of sync",
             keyword = {"progress", "sync"},
             category = Category.FIX
@@ -152,6 +160,56 @@ public class PistonLibConfig {
     public static boolean tntDupingFix = false;
 
     @ConfigValue(
+            desc = "Fixes tnt duping using pistons",
+            more = "This does also fix some other edge cases with modded blocks that behave the same when powered",
+            keyword = {"tnt", "duping"},
+            category = Category.FIX
+    )
+    public static WaterloggedState pistonsPushWaterloggedBlocks = WaterloggedState.VANILLA;
+
+    @ConfigValue(
+            desc = "Fixes being able to make and use Headless Pistons",
+            keyword = {"headless"},
+            fixes = 27056,
+            category = Category.FIX
+    )
+    public static boolean headlessPistonFix = true;
+
+    @ConfigValue(
+            desc = "Fixes Breaking blocks that should not be able to be broken using headless pistons",
+            more = "Illegal blocks are any blocks that have a hardness value of -1.0F",
+            keyword = {"headless", "illegal"},
+            fixes = 188220,
+            category = Category.FIX
+    )
+    public static boolean illegalBreakingFix = true;
+
+    @ConfigValue(
+            desc = "Fixes pistons pulling/pushing blocks using a hashmap causing order to be locational",
+            keyword = {"locational", "update", "order"},
+            fixes = 233420,
+            category = Category.FIX
+    )
+    public static boolean locationalUpdateOrderFix = true;
+
+    @ConfigValue(
+            desc = "Fixes pistons being able to push blocks outside of the world border",
+            keyword = {"world border"},
+            fixes = 82010,
+            category = Category.FIX
+    )
+    public static boolean pushThroughWorldBorderFix = true;
+
+    @ConfigValue(
+            desc = "Fixes mobs being able to spawn on moving pistons",
+            more = "Only works on PistonLib pistons, not vanilla pistons",
+            keyword = {"mob","spawning"},
+            fixes = 163978,
+            category = Category.FIX
+    )
+    public static boolean mobsSpawnOnMovingPistonsFix = true;
+
+    @ConfigValue(
             desc = "Fixes the way piston pushing cache works",
             more = {"Prevents multiple duping methods based on update order and internal cache",
                     "Disable this rule in order to have the exact same vanilla duping behaviour"},
@@ -159,4 +217,11 @@ public class PistonLibConfig {
             category = Category.FIX
     )
     public static boolean pistonPushingCacheFix = true;
+
+
+    public enum WaterloggedState {
+        NONE,
+        VANILLA,
+        ALL
+    }
 }

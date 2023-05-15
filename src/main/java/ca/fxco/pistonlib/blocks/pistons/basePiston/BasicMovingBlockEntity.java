@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
@@ -241,7 +242,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
                 continue;
             }
 
-            moveEntity(moveDir, entity, Math.min(movement, deltaProgress) + this.movementMargin(), moveDir);
+            double movementAmount = Math.min(movement, deltaProgress);
+            if (!PistonLibConfig.pistonsPushTooFarFix || deltaProgress < 1.0) {
+                movementAmount += this.movementMargin();
+            }
+            moveEntity(moveDir, entity, movementAmount, moveDir);
 
             if (!this.extending && this.isSourcePiston) {
                 fixEntityWithinPistonBase(entity, moveDir, deltaProgress);
@@ -462,6 +467,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
 
         BlockState updatedState = setAir ? Blocks.AIR.defaultBlockState() :
                 Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
+
+        if (PistonLibConfig.pistonsPushWaterloggedBlocks.ordinal() <= (removeSource ? PistonLibConfig.WaterloggedState.NONE.ordinal() : PistonLibConfig.WaterloggedState.VANILLA.ordinal()) &&
+                updatedState.hasProperty(BlockStateProperties.WATERLOGGED) &&
+                updatedState.getValue(BlockStateProperties.WATERLOGGED)) {
+            updatedState = updatedState.setValue(BlockStateProperties.WATERLOGGED, false);
+        }
 
         if (updatedState == this.movedState) { // If it doesn't change, add updates manually
             this.level.updateNeighborsAt(this.worldPosition, updatedState.getBlock());
