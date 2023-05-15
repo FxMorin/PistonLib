@@ -243,7 +243,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
                     isPiston(blockPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
+                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2)) {
                 break;
             }
             weight += ((BlockStateBasePushReaction)state).getWeight();

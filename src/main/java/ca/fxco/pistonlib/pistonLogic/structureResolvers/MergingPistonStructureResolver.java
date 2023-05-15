@@ -34,41 +34,6 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         this.toMerge.clear();
         this.toUnMerge.clear();
         this.ignore.clear();
-        BlockState state = this.level.getBlockState(this.startPos);
-        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
-            if (this.extending) {
-                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
-                if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
-                        this.toDestroy.add(this.startPos);
-                        return true;
-                    }
-                } else if (state.getPistonPushReaction() == PushReaction.DESTROY) {
-                    this.toDestroy.add(this.startPos);
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        } else {
-            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
-                return false;
-            }
-        }
-
-        // This loops through the blocks to push and creates the branches
-        for (int i = 0; i < this.toPush.size(); ++i) {
-            BlockPos blockPos = this.toPush.get(i);
-            state = this.level.getBlockState(blockPos);
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
-            if (!attemptMove(stick, state, blockPos)) {
-                return false;
-            }
-        }
-
-        // Remove ignored blocks from toUnMerge list
-        this.toUnMerge.removeAll(this.ignore);
-        return true;
     }
 
     @Override
