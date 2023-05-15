@@ -4,20 +4,20 @@ import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
+import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
 import ca.fxco.pistonlib.helpers.BlockUtils;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
@@ -41,16 +41,7 @@ import java.util.LinkedList;
 
 public class PistonLibCommand implements Command {
 
-    private static final String[] BEHAVIOR_NAMES;
-
-    static {
-        PistonMoveBehavior[] behaviors = PistonMoveBehavior.ALL;
-        BEHAVIOR_NAMES = new String[behaviors.length];
-
-        for (PistonMoveBehavior behavior : behaviors) {
-            BEHAVIOR_NAMES[behavior.getIndex()] = behavior.getName();
-        }
-    }
+    private static final DynamicCommandExceptionType ERROR_CANNOT_CHANGE_PISTON_MOVE_BEHAVIOR = new DynamicCommandExceptionType(o -> Component.translatable("commands.pistonlib.behavior.illegalChange", o));
 
     @Override
     public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
@@ -60,14 +51,13 @@ public class PistonLibCommand implements Command {
             .then(pistonEventSubCommand(registryAccess, PistonEventType.PULL)) // Pull Command
             .then(Commands.literal("behavior")
                 .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
-                    .executes(context -> query(context.getSource(), BlockStateArgument.getBlock(context, "block")))
+                    .executes(context -> queryBehavior(context.getSource(), BlockStateArgument.getBlock(context, "block")))
                     .then(Commands.literal("default")
-                        .executes(ctx -> setOverride(ctx.getSource(), BlockStateArgument.getBlock(ctx, "block"), PistonMoveBehavior.DEFAULT))
+                        .executes(ctx -> setBehaviorOverride(ctx.getSource(), BlockStateArgument.getBlock(ctx, "block"), PistonMoveBehavior.DEFAULT))
                     )
                     .then(Commands.
-                            argument("behavior", StringArgumentType.word()).
-                            suggests((context, suggestionsBuilder) -> SharedSuggestionProvider.suggest(BEHAVIOR_NAMES, suggestionsBuilder)).
-                            executes(context -> setOverride(context.getSource(), BlockStateArgument.getBlock(context, "block"), parsePistonMoveBehavior(StringArgumentType.getString(context, "behavior"))))
+                            argument("behavior", PistonMoveBehaviorArgument.pistonMoveBehavior()).
+                            executes(context -> setBehaviorOverride(context.getSource(), BlockStateArgument.getBlock(context, "block"), PistonMoveBehaviorArgument.getPistonMoveBehavior(context, "behavior")))
                     )
                 )
             )
@@ -149,16 +139,6 @@ public class PistonLibCommand implements Command {
             );
     }
 
-    private static PistonMoveBehavior parsePistonMoveBehavior(String name) throws CommandSyntaxException {
-        PistonMoveBehavior behavior = PistonMoveBehavior.fromName(name);
-
-        if (behavior == null) {
-            throw new SimpleCommandExceptionType(Component.literal("Unknown PistonLib behavior: " + name)).create();
-        }
-
-        return behavior;
-    }
-
     private static int runPistonEvent(CommandSourceStack commandSourceStack, GlobalPos globalPos, Direction facing, BlockInput blockInput, PistonEventType eventType) throws CommandSyntaxException {
         Block block = blockInput == null ? ModBlocks.BASIC_STICKY_PISTON : blockInput.getState().getBlock();
         if (!(block instanceof BasicPistonBaseBlock basicPistonBaseBlock)) {
@@ -197,7 +177,7 @@ public class PistonLibCommand implements Command {
         return 1;
     }
 
-    private static int query(CommandSourceStack source, BlockInput input) {
+    private static int queryBehavior(CommandSourceStack source, BlockInput input) {
         BlockState state = input.getState();
         PushReaction pushReaction = state.getPistonPushReaction();
         PistonMoveBehavior behavior = PistonMoveBehavior.fromPushReaction(pushReaction);
@@ -220,18 +200,8 @@ public class PistonLibCommand implements Command {
         return 1;
     }
 
-    private static int setOverride(CommandSourceStack source, BlockInput input, PistonMoveBehavior override) throws CommandSyntaxException {
+    private static int setBehaviorOverride(CommandSourceStack source, BlockInput input, PistonMoveBehavior override) throws CommandSyntaxException {
         BlockState state = input.getState();
-        PistonMoveBehavior currentOverride = PistonLibBehaviorManager.getOverride(state);
-        if (override == currentOverride) {
-            MutableComponent message = Component.
-                    literal("State is already set to override: ").
-                    append(Component.
-                            literal(override.getName()).
-                            withStyle(override == PistonMoveBehavior.DEFAULT ? ChatFormatting.GREEN : ChatFormatting.GOLD, ChatFormatting.BOLD));
-            source.sendSuccess(message, true);
-            return 0;
-        }
         Collection<Property<?>> properties = input.getDefinedProperties();
         Collection<BlockState> states = collectMatchingBlockStates(state, properties);
 
@@ -263,7 +233,7 @@ public class PistonLibCommand implements Command {
         for (BlockState blockState : state.getBlock().getStateDefinition().getPossibleStates()) {
             if (blockStatesMatchProperties(state, blockState, properties)) {
                 if (!PistonLibBehaviorManager.canChangeOverride(blockState)) {
-                    throw new SimpleCommandExceptionType(Component.literal("Cannot change the piston move behavior of " + BlockUtils.blockStateAsString(blockState))).create();
+                    throw ERROR_CANNOT_CHANGE_PISTON_MOVE_BEHAVIOR.create(BlockUtils.blockStateAsString(blockState));
                 }
 
                 states.add(blockState);

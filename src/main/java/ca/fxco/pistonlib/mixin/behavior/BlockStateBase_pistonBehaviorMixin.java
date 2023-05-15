@@ -4,6 +4,7 @@ import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
@@ -19,6 +20,7 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMoveBehavior;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
@@ -35,10 +37,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockStateBase.class)
-public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
+public class BlockStateBase_pistonBehaviorMixin implements BlockStateBaseMoveBehavior, BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
+
+    private PistonLibBehaviorManager.PistonMoveBehavior pistonMoveBehaviorOverride = PistonLibBehaviorManager.PistonMoveBehavior.DEFAULT;
 
     @Shadow public Block getBlock() { return null; }
     @Shadow protected BlockState asState() { return null; }
+
+    @Override
+    public PistonMoveBehavior getPistonMoveBehaviorOverride() {
+        return pistonMoveBehaviorOverride;
+    }
+
+    @Override
+    public void setPistonMoveBehaviorOverride(PistonMoveBehavior override) {
+        pistonMoveBehaviorOverride = override;
+    }
 
     @Override
     public int getWeight() {
@@ -186,9 +200,8 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     )
     private void overridePushReaction(CallbackInfoReturnable<PushReaction> cir) {
         if (PistonLibConfig.behaviorOverrideApi) {
-            PistonLibBehaviorManager.PistonMoveBehavior behavior = PistonLibBehaviorManager.getOverride(this.asState());
-            if (behavior.isPresent()) {
-                cir.setReturnValue(behavior.getPushReaction());
+            if (pistonMoveBehaviorOverride.isPresent()) {
+                cir.setReturnValue(pistonMoveBehaviorOverride.getPushReaction());
             }
         }
     }

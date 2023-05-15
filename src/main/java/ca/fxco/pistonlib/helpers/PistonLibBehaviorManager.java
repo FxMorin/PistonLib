@@ -1,12 +1,15 @@
 package ca.fxco.pistonlib.helpers;
 
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMoveBehavior;
+
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import lombok.AllArgsConstructor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import org.apache.commons.lang3.SerializationException;
@@ -20,66 +23,51 @@ import java.util.Map;
 
 public class PistonLibBehaviorManager {
 
-    private static final Map<BlockState, PistonMoveBehavior> blockStateBehavior = new HashMap<>();
-
     private static final Logger LOGGER = LogManager.getLogger("PistonLib Behavior Manager");
 
     private static boolean dirty;
 
     public static boolean canChangeOverride(BlockState state) {
-        return ((ConfigurablePistonBehavior)state).canChangePistonMoveBehaviorOverride();
+        return ((ConfigurablePistonBehavior)state.getBlock()).canChangePistonMoveBehaviorOverride();
     }
 
     public static PistonMoveBehavior getOverride(BlockState state) {
-        return blockStateBehavior.getOrDefault(state, PistonMoveBehavior.DEFAULT);
+        return ((BlockStateBaseMoveBehavior)state).getPistonMoveBehaviorOverride();
     }
 
     public static void setOverride(BlockState state, PistonMoveBehavior override) {
         if (canChangeOverride(state)) {
-            blockStateBehavior.put(state, override);
+            ((BlockStateBaseMoveBehavior)state).setPistonMoveBehaviorOverride(override);
+            dirty = true;
         }
     }
 
-    public static void resetOverride(BlockState state) {
-        setOverride(state, PistonMoveBehavior.DEFAULT);
-    }
-
-    public static void resetOverrides() {
+    private static void initOverrides() {
         for (Block block : BuiltInRegistries.BLOCK) {
-            for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-                resetOverride(state);
-            }
-        }
-    }
-
-    /*private static void initDefaultOverrides() {
-        for (Block block : BuiltInRegistries.BLOCK) {
-            for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-                setDefaultOverride(state, PistonMoveBehavior.NONE);
-            }
+            initOverrides(block, PistonMoveBehavior.DEFAULT);
         }
 
-        setDefaultOverrides(Blocks.MOVING_PISTON, PistonMoveBehavior.BLOCK);
+        initOverrides(Blocks.MOVING_PISTON, PistonMoveBehavior.BLOCK);
 
         // Blocks that are immovable due to having block entities, but should
         // also be immovable for other reasons (e.g. containing obsidian).
-        setDefaultOverrides(Blocks.ENCHANTING_TABLE, PistonMoveBehavior.BLOCK);
-        setDefaultOverrides(Blocks.BEACON, PistonMoveBehavior.BLOCK);
-        setDefaultOverrides(Blocks.ENDER_CHEST, PistonMoveBehavior.BLOCK);
-        setDefaultOverrides(Blocks.SPAWNER, PistonMoveBehavior.BLOCK);
-    }*/
+        initOverrides(Blocks.ENCHANTING_TABLE, PistonMoveBehavior.BLOCK);
+        initOverrides(Blocks.BEACON, PistonMoveBehavior.BLOCK);
+        initOverrides(Blocks.ENDER_CHEST, PistonMoveBehavior.BLOCK);
+        initOverrides(Blocks.SPAWNER, PistonMoveBehavior.BLOCK);
+    }
+
+    private static void initOverrides(Block block, PistonMoveBehavior override) {
+        for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+            setOverride(state, override);
+        }
+    }
 
     public static void load() {
         LOGGER.info("Loading PistonLib move behavior overrides...");
 
-        //initDefaultOverrides();
-        for (Block block : BuiltInRegistries.BLOCK) {
-            for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-                setOverride(state, PistonMoveBehavior.DEFAULT);
-            }
-        }
+        initOverrides();
         Config.load();
-        resetOverrides();
         dirty = false;
     }
 
@@ -96,7 +84,7 @@ public class PistonLibBehaviorManager {
 
     /**
      * A wrapper of {@link net.minecraft.world.level.material.PushReaction PushReaction}
-     * that includes {@code none}, to be used in the `/pistonmovebehavior` command.
+     * that includes {@code default}, to be used in the `/pistonlib behavior` command.
      */
     @AllArgsConstructor
     public enum PistonMoveBehavior {
@@ -171,7 +159,7 @@ public class PistonLibBehaviorManager {
     public static class Config {
 
         public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("pistonlib_behavior_overrides.toml");
-        private static final TomlWriter tomlWriter = new TomlWriter();
+        private static final TomlWriter WRITER = new TomlWriter();
 
         public static void load() {
             if (!Files.exists(CONFIG_PATH)) {
@@ -199,10 +187,6 @@ public class PistonLibBehaviorManager {
                 LOGGER.info("Ignoring PistonLib behavior overrides for unknown block: " + blockString);
                 return;
             }
-            /*if (!(rawOverrides instanceof String[] strList)) {
-                LOGGER.info("PistonLib behavior overrides for `" + blockString + "` provided in an invalid format");
-                return;
-            }*/
 
             for (Map.Entry<String, String> entry : stateOverrides.entrySet()) {
                 loadOverride(block, entry.getKey(), entry.getValue());
@@ -220,10 +204,6 @@ public class PistonLibBehaviorManager {
                 LOGGER.info("ignoring piston move behavior override for block state " + blockStateString + " of block " + block + ": not allowed to change overrides");
                 return;
             }
-            /*if (!rawJson.isJsonPrimitive()) {
-                LOGGER.info("piston move behavior overrides for block state " + blockStateString + " of block " + block + " provided in an invalid format");
-                return;
-            }*/
 
             PistonMoveBehavior override = PistonMoveBehavior.fromName(behaviorString);
 
@@ -257,8 +237,8 @@ public class PistonLibBehaviorManager {
                 //for (Map.Entry<String, Map<String, String>> entry : serializedValues.entrySet()) {
                 //    savedValues.put(entry.getKey(), entry.getValue().getValue());
                 //}
-                //tomlWriter.write(savedValues, configPath.toFile());
-                tomlWriter.write(serializedValues, CONFIG_PATH.toFile());
+                //WRITER.write(savedValues, configPath.toFile());
+                WRITER.write(serializedValues, CONFIG_PATH.toFile());
             } catch (IOException e) {
                 throw new SerializationException(e);
             }
@@ -283,7 +263,7 @@ public class PistonLibBehaviorManager {
 
             PistonMoveBehavior override = getOverride(state);
 
-            if (!override.isPresent() || override == PistonMoveBehavior.DEFAULT) {
+            if (!override.isPresent()) {
                 return;
             }
 
