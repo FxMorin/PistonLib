@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import ca.fxco.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         PLNetwork.initialize();
 
         configManager.loadConfigClass(PistonLibConfig.class);
+        PistonLibBehaviorManager.load();
+    }
+
+    public static void onStopServer() {
+        PistonLibBehaviorManager.save(false);
     }
 
     @Override
@@ -59,6 +65,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModCreativeModeTabs.bootstrap();
         ModMenus.boostrap();
         ModScreens.boostrap();
+        ModArgumentTypes.bootstrap();
+        ModCommands.bootstrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {

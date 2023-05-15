@@ -1,9 +1,13 @@
-package ca.fxco.pistonlib.mixin;
+package ca.fxco.pistonlib.mixin.behavior;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,6 +20,7 @@ import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
+import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMoveBehavior;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
@@ -27,15 +32,27 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockStateBase.class)
-public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
+public class BlockStateBase_pistonBehaviorMixin implements BlockStateBaseMoveBehavior, BlockStateBasePushReaction, BlockStateBaseExpandedSticky, BlockStateBaseMerging, BlockStateQuasiPower {
 
-    @Shadow
-    public Block getBlock() { return null; }
+    private PistonLibBehaviorManager.PistonMoveBehavior pistonMoveBehaviorOverride = PistonLibBehaviorManager.PistonMoveBehavior.DEFAULT;
 
-    @Shadow
-    protected BlockState asState() { return null; }
+    @Shadow public Block getBlock() { return null; }
+    @Shadow protected BlockState asState() { return null; }
+
+    @Override
+    public PistonMoveBehavior getPistonMoveBehaviorOverride() {
+        return pistonMoveBehaviorOverride;
+    }
+
+    @Override
+    public void setPistonMoveBehaviorOverride(PistonMoveBehavior override) {
+        pistonMoveBehaviorOverride = override;
+    }
 
     @Override
     public int getWeight() {
@@ -170,5 +187,22 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     @Override
     public ConfigurablePistonMerging.MergeRule getBlockEntityMergeRules() {
         return ((ConfigurablePistonMerging)this.getBlock()).getBlockEntityMergeRules();
+    }
+
+    //
+    // Override Behavior
+    //
+
+    @Inject(
+            method = "getPistonPushReaction",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void overridePushReaction(CallbackInfoReturnable<PushReaction> cir) {
+        if (PistonLibConfig.behaviorOverrideApi) {
+            if (pistonMoveBehaviorOverride.isPresent()) {
+                cir.setReturnValue(pistonMoveBehaviorOverride.getPushReaction());
+            }
+        }
     }
 }

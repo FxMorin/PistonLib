@@ -46,4 +46,8 @@ public interface ConfigurablePistonBehavior {
 
     // This is called whenever an entity is pushed into a block by a piston.
     default void onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {}
+
+    default boolean canChangePistonMoveBehaviorOverride() {
+        return true;
+    }
 }

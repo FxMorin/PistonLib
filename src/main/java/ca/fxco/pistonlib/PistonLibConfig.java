@@ -94,6 +94,13 @@ public class PistonLibConfig {
     public static boolean tickingApi = true;
 
     @ConfigValue(
+            desc = "Toggle the behavior override API, this API allows you to change the move-ability of any block",
+            keyword = {"behavior", "api"},
+            category = Category.MECHANIC
+    )
+    public static boolean behaviorOverrideApi = true;
+
+    @ConfigValue(
             desc = "Group the piston structure into a single ticking block entity, allowing tons of optimizations",
             more = {"Disabling this mechanic also prevents multiple features from working. Such as being able to change the direction mid-way through pushing without block dropping", // I know, game changer xD
                     "This also allows blocks to cull against other blocks in piston structures!"},
