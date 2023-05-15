@@ -24,14 +24,13 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
     public final List<BlockPos> toUnMerge = new ArrayList<>();
     public final List<BlockPos> ignore = new ArrayList<>();
 
-    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
-        super(piston, level, pos, facing, extend);
+    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, int length, boolean extend) {
+        super(piston, level, pos, facing, length, extend);
     }
 
     @Override
-    public boolean resolve() {
-        this.toPush.clear();
-        this.toDestroy.clear();
+    protected void resetResolver() {
+        super.resetResolver();
         this.toMerge.clear();
         this.toUnMerge.clear();
         this.ignore.clear();
@@ -70,6 +69,15 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         // Remove ignored blocks from toUnMerge list
         this.toUnMerge.removeAll(this.ignore);
         return true;
+    }
+
+    @Override
+    protected boolean runStructureGeneration() {
+        if (super.runStructureGeneration()) {
+            this.toUnMerge.removeAll(this.ignore); // Remove ignored blocks from toUnMerge list
+            return true;
+        }
+        return false;
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
