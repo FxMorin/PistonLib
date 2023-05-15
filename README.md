@@ -16,7 +16,7 @@ I don't have much time to work on this, so any time your willing to give to help
 
 ### In Progress
 - /pistonlib command to push/pull blocks with commands, override piston behavior for any block, and change config options in-game
-- Piston Crushing, json recipe system that allows blocks to be crushed by pistons to turn into other blocks. Also entity crushing API
+- Piston Crushing, json recipe system that allows item entities to be crushed by pistons to turn into other blocks. Also entity crushing API
 
 ### Current Piston Features
 - Configurable piston speed, per piston
