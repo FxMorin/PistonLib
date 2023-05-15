@@ -25,51 +25,25 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
     public final List<BlockPos> toUnMerge = new ArrayList<>();
     public final List<BlockPos> ignore = new ArrayList<>();
 
-    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, boolean extend) {
-        super(piston, level, pos, facing, extend);
+    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, int length, boolean extend) {
+        super(piston, level, pos, facing, length, extend);
     }
 
     @Override
-    public boolean resolve() {
-        this.toPush.clear();
-        this.toDestroy.clear();
+    protected void resetResolver() {
+        super.resetResolver();
         this.toMerge.clear();
         this.toUnMerge.clear();
         this.ignore.clear();
-        BlockState state = this.level.getBlockState(this.startPos);
-        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
-            if (this.extending) {
-                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
-                if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
-                        this.toDestroy.add(this.startPos);
-                        return true;
-                    }
-                } else if (state.getPistonPushReaction() == PushReaction.DESTROY) {
-                    this.toDestroy.add(this.startPos);
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        } else {
-            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection))
-                return false;
+    }
+
+    @Override
+    protected boolean runStructureGeneration() {
+        if (super.runStructureGeneration()) {
+            this.toUnMerge.removeAll(this.ignore); // Remove ignored blocks from toUnMerge list
+            return true;
         }
-        for (int i = 0; i < this.toPush.size(); ++i) {
-            BlockPos blockPos = this.toPush.get(i);
-            state = this.level.getBlockState(blockPos);
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
-            if (stick.usesConfigurablePistonStickiness()) {
-                if (stick.isSticky(state) && cantMoveAdjacentStickyBlocks(stick.stickySides(state), blockPos))
-                    return false;
-            } else {
-                if (stick.hasStickyGroup() && this.cantMoveAdjacentBlocks(blockPos))
-                    return false;
-            }
-        }
-        this.toUnMerge.removeAll(this.ignore); // Remove ignored blocks from toUnMerge list
-        return true;
+        return false;
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {

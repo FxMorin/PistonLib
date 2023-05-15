@@ -32,9 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private BlockState[] unMergingStates;
     private int unMergingIndex = 0;
 
-    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, PistonFamily family, PistonType type,
-                                  boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
-        super(level, pos, facing, family, type, extend, structureProvider);
+    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, int length,
+                                  PistonFamily family, PistonType type, boolean extend,
+                                  BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+        super(level, pos, facing, length, family, type, extend, structureProvider);
     }
 
     @Override

@@ -40,6 +40,8 @@ public class BasicStructureRunner implements StructureRunner {
     @Getter
     protected final Direction facing;
     @Getter
+    protected final int length;
+    @Getter
     protected final boolean extend;
 
     protected final Direction moveDir;
@@ -54,22 +56,24 @@ public class BasicStructureRunner implements StructureRunner {
     protected BlockState[] affectedStates;
     protected int affectedIndex = 0;
 
-    public BasicStructureRunner(Level level, BlockPos pos, Direction facing, PistonFamily family, PistonType type,
-                                boolean extend, BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+    public BasicStructureRunner(Level level, BlockPos pos, Direction facing, int length,
+                                PistonFamily family, PistonType type, boolean extend,
+                                BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
         this.level = level;
         this.family = family;
         this.type = type;
         this.blockPos = pos;
         this.facing = facing;
+        this.length = length;
         this.moveDir = extend ? facing : facing.getOpposite();
         this.extend = extend;
-        this.structure = structureProvider.create(level, pos, facing, extend);
+        this.structure = structureProvider.create(level, pos, facing, length, extend);
     }
 
     @Override
     public void taskRemovePistonHeadOnRetract() {
         if (!extend) {
-            BlockPos headPos = blockPos.relative(facing);
+            BlockPos headPos = blockPos.relative(facing, length);
             BlockState headState = level.getBlockState(headPos);
 
             if (headState.is(family.getHead())) {
@@ -123,7 +127,7 @@ public class BasicStructureRunner implements StructureRunner {
             BlockEntity blockEntityToDestroy = level.getBlockEntity(posToDestroy);
 
             dropResources(stateToDestroy, level, posToDestroy, blockEntityToDestroy);
-            level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
+            level.setBlock(posToDestroy, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
             if (!stateToDestroy.is(BlockTags.FIRE)) {
                 level.addDestroyBlockEffect(posToDestroy, stateToDestroy);
             }
@@ -188,7 +192,7 @@ public class BasicStructureRunner implements StructureRunner {
     @Override
     public void taskPlaceExtendingHead() {
         if (extend) {
-            BlockPos headPos = blockPos.relative(facing);
+            BlockPos headPos = blockPos.relative(facing, length + 1);
             BlockState headState = this.family.getHead().defaultBlockState()
                     .setValue(BasicPistonHeadBlock.TYPE, this.type)
                     .setValue(BasicPistonHeadBlock.FACING, facing);
@@ -258,7 +262,7 @@ public class BasicStructureRunner implements StructureRunner {
     @Override
     public void taskDoPistonHeadExtendingUpdate() {
         if (extend) {
-            level.updateNeighborsAt(blockPos.relative(facing), family.getHead());
+            level.updateNeighborsAt(blockPos.relative(facing, length + 1), family.getHead());
         }
     }
 }

@@ -29,8 +29,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
-        return new BasicStructureResolver(this, level, pos, facing, extend);
+    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, int length, boolean extend) {
+        return new BasicStructureResolver(this, level, pos, facing, length, extend);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing) {
-        return this.getFamily().isRetractOnExtending() ? super.getPullType(level, pos, facing) : MotionType.NONE;
+    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+        return this.getFamily().isRetractOnExtending() ? super.getPullType(level, pos, facing, length) : MotionType.NONE;
     }
 
     @Override
@@ -72,5 +72,25 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return !this.getFamily().isSlippery() || BaseSlipperyBlock.calculateDistance(level, pos) < MAX_DISTANCE;
+    }
+
+    @Override
+    protected int getLength(Level level, BlockPos pos, BlockState state) {
+        if (state.getValue(EXTENDED)) {
+            Direction facing = state.getValue(FACING);
+            int length = this.getFamily().getMinLength();
+
+            while (length++ < this.getFamily().getMaxLength()) {
+                BlockPos frontPos = pos.relative(facing, length);
+                BlockState frontState = level.getBlockState(frontPos);
+
+                if (!frontState.is(this.getFamily().getArm())) {
+                    break;
+                }
+            }
+
+            return length;
+        }
+        return this.getFamily().getMinLength();
     }
 }

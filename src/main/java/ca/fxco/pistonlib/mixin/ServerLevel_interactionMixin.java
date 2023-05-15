@@ -70,6 +70,7 @@ public abstract class ServerLevel_interactionMixin extends Level implements Serv
                     this,
                     pistonEventData.pos(),
                     pistonEventData.dir(),
+                    1, // Can't use length in decoupled piston logic
                     pistonEventData.extend(),
                     pistonBlock::newStructureResolver
             ));

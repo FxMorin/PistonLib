@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
@@ -15,6 +16,7 @@ import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -23,23 +25,58 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     protected final BasicPistonBaseBlock piston;
     protected final int maxMovableWeight;
+    protected final int length;
     protected int movingWeight = 0; // used instead of the toPush size so some blocks can be harder to push than others
 
     public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
-                                  Direction facing, boolean extend) {
+                                  Direction facing, int length, boolean extend) {
         super(level, pos, facing, extend);
 
         this.piston = piston;
+        this.length = length;
         this.maxMovableWeight = piston.getFamily().getPushLimit();
+
+        this.startPos = this.pistonPos.relative(this.pistonDirection, this.length + 1);
+    }
+
+    protected void resetResolver() {
+        this.toPush.clear();
+        this.toDestroy.clear();
+        this.movingWeight = 0;
     }
 
     @Override
     public boolean resolve() {
-        // Reset resolver
-        this.toPush.clear();
-        this.toDestroy.clear();
-        this.movingWeight = 0;
+        resetResolver();
 
+        if (this.piston.getFamily().hasCustomLength() && !resolveLongPiston()) {
+            return false;
+        }
+
+        return runStructureGeneration();
+    }
+
+    protected boolean resolveLongPiston() {
+        // make sure the piston doesn't try to extend while it's already extending
+        // or retract while it's already retracting
+        BlockPos headPos = this.pistonPos.relative(this.pistonDirection, this.length);
+        BlockState headState = this.level.getBlockState(headPos);
+        if (headState.is(this.piston.getFamily().getMoving())) {
+            BlockEntity blockEntity = this.level.getBlockEntity(headPos);
+            if (blockEntity == null) {
+                return false;
+            }
+            if (blockEntity.getType() == this.piston.getFamily().getMovingBlockEntityType()) {
+                BasicMovingBlockEntity mbe = (BasicMovingBlockEntity)blockEntity;
+                if (mbe.isSourcePiston && mbe.extending == this.extending && mbe.direction == this.pistonDirection) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    protected boolean runStructureGeneration() {
         // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
@@ -77,6 +114,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
         }
         return true;
+    }
+
+    protected boolean isPiston(BlockPos pos) {
+        for (int i = 0; i <= this.length; i++)
+            if (this.pistonPos.relative(this.pistonDirection, i).equals(pos))
+                return true;
+    	return false;
     }
 
     protected boolean cantMoveAdjacentBlocks(BlockPos pos) {
@@ -128,7 +172,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || pos.equals(this.pistonPos) || this.toPush.contains(pos)) return false;
+        if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) return false;
         if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
         int weight = ((BlockStateBasePushReaction)state).getWeight();
         if (weight + this.movingWeight > this.maxMovableWeight) return true;
@@ -145,7 +189,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             stick = (ConfigurablePistonStickiness)state.getBlock();
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
-                    blockPos.equals(this.pistonPos) ||
+                    isPiston(blockPos) ||
                     !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2))
                 break;
             weight += ((BlockStateBasePushReaction)state).getWeight();
@@ -189,7 +233,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             state = this.level.getBlockState(pos2);
             if (state.isAir())
                 return false;
-            if (pos2.equals(this.pistonPos))
+            if (isPiston(pos2))
                 return true;
             if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection))
                 return true;
@@ -232,7 +276,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     @FunctionalInterface
     public interface Factory<T extends BasicStructureResolver> {
 
-        T create(Level level, BlockPos pos, Direction facing, boolean extend);
+        T create(Level level, BlockPos pos, Direction facing, int length, boolean extend);
 
     }
 }

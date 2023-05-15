@@ -44,7 +44,7 @@ public class ClientboundPistonEventPacket extends PLPacket {
 
     @Override
     public void handleClient(Minecraft client, PacketSender packetSender) {
-        StructureRunner structureRunner = new DecoupledStructureRunner(this.pistonBlock.newStructureRunner(client.level, this.pos, this.dir, this.extend, this.pistonBlock::newStructureResolver));
+        StructureRunner structureRunner = new DecoupledStructureRunner(this.pistonBlock.newStructureRunner(client.level, this.pos, this.dir, 1, this.extend, this.pistonBlock::newStructureResolver));
         structureRunner.run();
     }
 }

@@ -104,6 +104,6 @@ public class PistonBaseBlock_tagsMixin {
     private PistonStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
         // the basic pistons should act exactly as vanilla pistons anyway
         return (this.isSticky ? ModBlocks.BASIC_STICKY_PISTON : ModBlocks.BASIC_PISTON)
-           .newStructureResolver(level, pos, facing, extend);
+           .newStructureResolver(level, pos, facing, extend ? 0 : 1, extend);
     }
 }

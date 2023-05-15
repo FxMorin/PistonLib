@@ -139,12 +139,12 @@ public class BasicPistonArmBlock extends DirectionalBlock {
                     backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
                     backState.getValue(FACING) == backState.getValue(FACING);
         }
-        if (!validBack || !validFront) {
-            if (validBack) level.destroyBlock(behindPos, false);
-            if (validFront) level.destroyBlock(frontPos, false);
+        if (validBack) {
+            level.destroyBlock(behindPos, false);
         }
-        //world.breakBlock(backPos, false);
-        //world.breakBlock(frontPos, false);
+        if (validFront) {
+            level.destroyBlock(frontPos, false);
+        }
     }
 
     public boolean isAttachedOrBreak(
@@ -187,8 +187,10 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!newState.is(this)) {
             super.onRemove(state, level, pos, newState, moved);
-            Direction facing = state.getValue(FACING);
-            this.isAttachedOrBreak(level, state, pos.relative(facing.getOpposite()), pos.relative(facing));
+            if (!moved) {
+                Direction facing = state.getValue(FACING);
+                this.isAttachedOrBreak(level, state, pos.relative(facing.getOpposite()), pos.relative(facing));
+            }
         }
     }
 
@@ -210,11 +212,8 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
         if (state.canSurvive(level, pos)) {
-            Direction dir = state.getValue(FACING);
-            BlockPos backPos = pos.relative(dir.getOpposite());
-            BlockPos frontPos = pos.relative(dir);
+            BlockPos backPos = pos.relative(state.getValue(FACING).getOpposite());
             level.neighborChanged(level.getBlockState(backPos), backPos, neighborBlock, neighborPos, false);
-            level.neighborChanged(level.getBlockState(frontPos), frontPos, neighborBlock, neighborPos, false);
         }
     }
 

@@ -115,18 +115,21 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
                 this.renderBlock(mbe, fromPos, state.setValue(BasicPistonHeadBlock.SHORT,
                                 mbe.getProgress(partialTick) <= 0.5F), stack, bufferSource, level, false, overlay);
             }
-        } else {
-            if (state.getBlock() instanceof BasicPistonBaseBlock base) {
-                PistonFamily family = mbe.getFamily();
-                Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
+        } else if (state.getBlock() instanceof BasicPistonBaseBlock base) {
+            PistonFamily family = mbe.getFamily();
+            Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
-                BlockState headState = family.getHead().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, base.getType())
-                    .setValue(BasicPistonHeadBlock.FACING, facing)
+            BlockState headState = family.getHead().defaultBlockState()
+                .setValue(BasicPistonHeadBlock.TYPE, base.getType())
+                .setValue(BasicPistonHeadBlock.FACING, facing)
+                .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
+
+            this.renderBlock(mbe, fromPos, headState, stack, bufferSource, level, false, overlay);
+        } else if (state.getBlock() instanceof BasicPistonHeadBlock) {
+            BlockState headState = state
                     .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 
-                this.renderBlock(mbe, fromPos, headState, stack, bufferSource, level, false, overlay);
-            }
+            this.renderBlock(mbe, fromPos, headState, stack, bufferSource, level, false, overlay);
         }
     }
 
@@ -134,10 +137,18 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
                                       PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         if (!mbe.isExtending()) {
             BlockState state = mbe.getMovedState();
-
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
                 this.renderBlock(mbe, fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true),
                         stack, bufferSource, level, false, overlay);
+            } else if (state.getBlock() instanceof BasicPistonHeadBlock) {
+                PistonFamily family = mbe.getFamily();
+                Direction facing = state.getValue(BasicPistonHeadBlock.FACING);
+
+                BlockState armState = family.getArm().defaultBlockState()
+                        .setValue(BasicPistonHeadBlock.FACING, facing)
+                        .setValue(BasicPistonHeadBlock.SHORT, false);
+
+                this.renderBlock(mbe, fromPos, armState, stack, bufferSource, level, false, overlay);
             }
         }
     }
@@ -190,8 +201,6 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         this.blockRenderer.getModelRenderer().tesselateBlock(getter, this.blockRenderer.getBlockModel(state), state,
                 pos, stack, consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
-
-    
 
     @Override
     public int getViewDistance() {

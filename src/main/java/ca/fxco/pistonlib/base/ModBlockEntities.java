@@ -4,7 +4,6 @@ import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.longPiston.LongMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
@@ -26,7 +25,6 @@ public class ModBlockEntities {
     // Pistons
     public static final BlockEntityType<BasicMovingBlockEntity> BASIC_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<ConfigurableMovingBlockEntity> CONFIGURABLE_MOVING_BLOCK_ENTITY;
-    public static final BlockEntityType<LongMovingBlockEntity> LONG_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<SpeedMovingBlockEntity> SPEED_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<FastMovingBlockEntity> FAST_MOVING_BLOCK_ENTITY;
     public static final BlockEntityType<MBEMovingBlockEntity> MBE_MOVING_BLOCK_ENTITY;
@@ -42,6 +40,7 @@ public class ModBlockEntities {
                 BasicMovingBlockEntity::new,
                 BasicMovingBlockEntity::new,
                 ModPistonFamilies.BASIC,
+                ModPistonFamilies.LONG,
                 ModPistonFamilies.VERY_STICKY,
                 ModPistonFamilies.SLIPPERY,
                 ModPistonFamilies.STALE,
@@ -54,12 +53,6 @@ public class ModBlockEntities {
                 ConfigurableMovingBlockEntity::new,
                 ConfigurableMovingBlockEntity::new,
                 ModPistonFamilies.CONFIGURABLE
-        );
-        LONG_MOVING_BLOCK_ENTITY = register(
-                "long",
-                LongMovingBlockEntity::new,
-                LongMovingBlockEntity::new,
-                ModPistonFamilies.LONG
         );
         SPEED_MOVING_BLOCK_ENTITY = register(
                 "speed",
