@@ -37,8 +37,8 @@ public class DecoupledStructureRunner implements StructureRunner {
     }
 
     @Override
-    public void taskPreventTntDuping() {
-        structureRunner.taskPreventTntDuping();
+    public void taskFixUpdatesAndStates() {
+        structureRunner.taskFixUpdatesAndStates();
     }
 
     @Override

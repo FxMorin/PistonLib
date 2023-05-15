@@ -119,7 +119,7 @@ public class BasicStructureRunner implements StructureRunner {
 
     @Override
     public void taskDestroyBlocks() {
-        this.affectedStates = new BlockState[this.toMove.size() + this.toDestroy.size()];
+        this.affectedStates = new BlockState[toDestroy.size() + toMove.size()];
 
         for (int i = toDestroy.size() - 1; i >= 0; i--) {
             BlockPos posToDestroy = toDestroy.get(i);
@@ -137,7 +137,10 @@ public class BasicStructureRunner implements StructureRunner {
     }
 
     @Override
-    public void taskPreventTntDuping() {
+    public void taskFixUpdatesAndStates() {
+        if (!PistonLibConfig.pistonPushingCacheFix) {
+            return;
+        }
         int moveSize = toMove.size();
         if (moveSize > 0) {
             for (int i = moveSize - 1; i >= 0; i--) {
@@ -146,13 +149,18 @@ public class BasicStructureRunner implements StructureRunner {
                 // Get the current state from the Level
                 BlockState stateToMove = level.getBlockState(posToMove);
 
+                if (!PistonLibConfig.tntDupingFix && (stateToMove.is(Blocks.TNT) || stateToMove.canBeReplaced())) {
+                    continue;
+                }
+
                 // Vanilla usually uses the update flags UPDATE_INVISIBLE & UPDATE_MOVE_BY_PISTON
                 // Here we also add UPDATE_KNOWN_SHAPE, this removes block updates and state updates,
                 // we than also add UPDATE_CLIENTS in order for shapes can be updated correctly about the block being AIR now.
-                level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_KNOWN_SHAPE | UPDATE_MOVE_BY_PISTON);
+                int updateFlags = UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_MOVE_BY_PISTON;
+                level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), PistonLibConfig.tntDupingFix ? updateFlags | UPDATE_KNOWN_SHAPE : updateFlags);
 
                 // We replace the current state in the cached states with the latest version from the world
-                this.statesToMove.set(i, stateToMove);
+                statesToMove.set(i, stateToMove);
 
                 // Make sure that the toRemove has the newest state also
                 toRemove.put(posToMove, stateToMove);
@@ -231,7 +239,7 @@ public class BasicStructureRunner implements StructureRunner {
     public void taskDoDestroyNeighborUpdates() {
         affectedIndex = 0;
         // Rearrange block states so that they are in the correct order & use latest state :smartjang:
-        if (PistonLibConfig.tntDupingFix) {
+        if (PistonLibConfig.pistonPushingCacheFix) {
             int size = toDestroy.size();
             for (int i = toMove.size() - 1; i >= 0; i--) {
                 affectedStates[size++] = statesToMove.get(i);
