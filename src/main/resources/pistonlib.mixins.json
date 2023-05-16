@@ -19,6 +19,7 @@
     "fixes.PistonBaseBlock_pushOrderMixin",
     "fixes.PistonBlock_worldBorderMixin",
     "fixes.PistonMovingBlockEntity_pushTooFarMixin",
+    "gametest.GameTestServerMixin",
     "merging.IceBlock_compressMixin",
     "merging.SignBlock_mergeMixin",
     "merging.SignBlockEntity_mergeMixin",
