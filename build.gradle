@@ -28,7 +28,7 @@ loom {
             vmArg "-Dfabric-api.gametest"
             vmArg "-Dfabric-api.gametest.server=true"
             vmArg "-Dfabric-api.gametest.command=true"
-            //vmArg "-Dfabric-api.gametest.keepAlive=true"
+            vmArg "-Dfabric-api.gametest.keepAlive=true"
             runDir "build/gametest"
         }
     }
