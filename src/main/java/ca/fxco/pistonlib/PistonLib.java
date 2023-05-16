@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import ca.fxco.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.pistonlib.network.PLNetwork;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModItems.boostrap();
         ModCreativeModeTabs.bootstrap();
         ModMenus.boostrap();
-        ModScreens.boostrap();
+        if (FabricLoaderImpl.INSTANCE.getEnvironmentType() == EnvType.CLIENT) {
+            ModScreens.boostrap();
+        }
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
