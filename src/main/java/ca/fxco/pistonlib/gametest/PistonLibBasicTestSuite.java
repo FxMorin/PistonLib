@@ -91,13 +91,13 @@ public class PistonLibBasicTestSuite {
     @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
     public void pushWaterDirectly(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        helper.setBlock(0, 2, 0, Blocks.CHAIN.defaultBlockState().setValue(WATERLOGGED, true));
+        helper.setBlock(0, 2, 0, Blocks.MANGROVE_ROOTS.defaultBlockState().setValue(WATERLOGGED, true));
         helper.pulseRedstone(new BlockPos(0, 1, 1), 2);
 
         GametestUtil.succeedAfterDelay(helper, 3, () -> {
             BlockState state = helper.getBlockState(new BlockPos(0, 3, 0));
             return state.hasProperty(WATERLOGGED) && state.getValue(WATERLOGGED);
-        }, "2 gametick pulse did not maintain the chains waterlogged state!");
+        }, "2 gametick pulse did not maintain the waterlogged state!");
     }
 
     // Make sure 2 gametick pulses only push water when directly in front of the piston
@@ -105,13 +105,13 @@ public class PistonLibBasicTestSuite {
     public void dontPushWaterOffset(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         helper.setBlock(0, 2, 0, Blocks.SLIME_BLOCK);
-        helper.setBlock(1, 2, 0, Blocks.CHAIN.defaultBlockState().setValue(WATERLOGGED, true));
+        helper.setBlock(1, 2, 0, Blocks.MANGROVE_ROOTS.defaultBlockState().setValue(WATERLOGGED, true));
         helper.pulseRedstone(new BlockPos(0, 1, 1), 2);
 
         GametestUtil.succeedAfterDelay(helper, 3, () -> {
             BlockState state = helper.getBlockState(new BlockPos(1, 3, 0));
             return state.hasProperty(WATERLOGGED) && !state.getValue(WATERLOGGED);
-        }, "2 gametick pulse maintained the chains waterlogged state when indirectly pushed!");
+        }, "2 gametick pulse maintained the waterlogged state when indirectly pushed!");
     }
 
     // Piston should break bedrock if headless
