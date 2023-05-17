@@ -124,4 +124,10 @@ public class PistonLibBasicTestSuite {
 
         helper.succeedWhenBlockPresent(Blocks.AIR, 0, 2, 0);
     }*/
+
+    //@GameTest
+    public void mergingslabs(GameTestHelper helper) {
+        GametestUtil.pistonLibGameTest(helper);
+        // Do stuff
+    }
 }

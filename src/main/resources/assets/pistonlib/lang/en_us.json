@@ -33,5 +33,12 @@
   "block.pistonlib.half_obsidian": "Half Obsidian",
   "block.pistonlib.half_redstone": "Half Redstone",
   "block.pistonlib.half_redstone_lamp": "Half Redstone Lamp",
-  "container.pistonlib.auto_crafting_block": "Auto Crafting Block"
+  "block.pistonlib.pulse_state_block": "Pulse State Block",
+  "container.pistonlib.auto_crafting_block": "Auto Crafting Block",
+  "screen.pistonlib.pulse_state_block.title": "Pulse State Block",
+  "screen.pistonlib.pulse_state_block.delay": "Pulse Delay",
+  "screen.pistonlib.pulse_state_block.duration": "Pulse Duration",
+  "screen.pistonlib.pulse_state_block.firstState": "Initial State",
+  "screen.pistonlib.pulse_state_block.pulseState": "Pulse State",
+  "screen.pistonlib.pulse_state_block.lastState": "Final State"
 }

@@ -56,6 +56,13 @@ public class ModCreativeModeTabs {
         })
         .build();
 
+    public static final CreativeModeTab GAMETEST = FabricItemGroup.builder(id("gametest"))
+            .icon(() -> new ItemStack(ModItems.PULSE_STATE_BLOCK))
+            .displayItems((featureFlags, output, hasPermissions) -> {
+                output.accept(ModItems.PULSE_STATE_BLOCK);
+            })
+            .build();
+
     public static void bootstrap() { }
 
 }
