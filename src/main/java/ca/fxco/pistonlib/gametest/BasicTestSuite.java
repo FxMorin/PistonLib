@@ -125,7 +125,13 @@ public class BasicTestSuite {
         helper.succeedWhenBlockPresent(Blocks.AIR, 0, 2, 0);
     }
 
-    //@GameTest
+    @GameTest
+    public void zerotick(GameTestHelper helper) {
+        GametestUtil.pistonLibGameTest(helper);
+        // Do stuff
+    }
+
+    @GameTest
     public void mergingslabs(GameTestHelper helper) {
         GametestUtil.pistonLibGameTest(helper);
         // Do stuff
