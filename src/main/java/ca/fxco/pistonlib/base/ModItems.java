@@ -72,6 +72,7 @@ public class ModItems {
     // GameTest
 
     public static final BlockItem PULSE_STATE_BLOCK = registerBlock(ModBlocks.PULSE_STATE_BLOCK);
+    public static final BlockItem CHECK_STATE_BLOCK = registerBlock(ModBlocks.CHECK_STATE_BLOCK);
 
     private static BlockItem registerBlock(Block block) {
         return registerBlock(block, new Item.Properties());

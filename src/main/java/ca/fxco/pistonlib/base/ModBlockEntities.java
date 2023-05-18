@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
+import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;
 import ca.fxco.pistonlib.blocks.gametest.PulseStateBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
@@ -37,6 +38,7 @@ public class ModBlockEntities {
     // GameTest
 
     public static final BlockEntityType<PulseStateBlockEntity> PULSE_STATE_BLOCK_ENTITY;
+    public static final BlockEntityType<CheckStateBlockEntity> CHECK_STATE_BLOCK_ENTITY;
 
     static {
         // Pistons
@@ -95,6 +97,11 @@ public class ModBlockEntities {
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id("pulse_state_block"),
                 FabricBlockEntityTypeBuilder.create(PulseStateBlockEntity::new, ModBlocks.PULSE_STATE_BLOCK).build(null)
+        );
+        CHECK_STATE_BLOCK_ENTITY = Registry.register(
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                id("check_state_block"),
+                FabricBlockEntityTypeBuilder.create(CheckStateBlockEntity::new, ModBlocks.CHECK_STATE_BLOCK).build(null)
         );
     }
 

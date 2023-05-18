@@ -1,7 +1,9 @@
 package ca.fxco.pistonlib.gametest;
 
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;
 import ca.fxco.pistonlib.blocks.gametest.PulseStateBlockEntity;
+import ca.fxco.pistonlib.gametest.extension.GameTestGroupConditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Block;
@@ -17,9 +19,14 @@ public class GametestUtil {
      * TODO: Add success & fail conditions
      */
     public static void pistonLibGameTest(GameTestHelper helper) {
+        if (helper.getTick() != 0) { // Only run searching logic on the first tick
+            return;
+        }
+        GameTestGroupConditions groupConditions = new GameTestGroupConditions();
         helper.forEveryBlockInStructure(blockPos -> {
             BlockState state = helper.getBlockState(blockPos);
-            if (state.getBlock() == ModBlocks.PULSE_STATE_BLOCK) {
+            Block block = state.getBlock();
+            if (block == ModBlocks.PULSE_STATE_BLOCK) {
                 BlockEntity blockEntity = helper.getBlockEntity(blockPos);
                 if (blockEntity instanceof PulseStateBlockEntity pulseStateBe) {
                     helper.setBlock(blockPos, pulseStateBe.getFirstBlockState());
@@ -32,8 +39,22 @@ public class GametestUtil {
                         helper.runAfterDelay(delay + duration, () -> helper.setBlock(blockPos, pulseStateBe.getLastBlockState()));
                     }
                 }
+            } else if (block == ModBlocks.CHECK_STATE_BLOCK) {
+                BlockEntity blockEntity = helper.getBlockEntity(blockPos);
+                if (blockEntity instanceof CheckStateBlockEntity checkStateBe) {
+                    BlockPos checkPos = blockPos.relative(checkStateBe.getDirection());
+                    groupConditions.addCondition(checkStateBe, checkPos);
+                }
             }
         });
+        if (!groupConditions.getTestConditions().isEmpty()) {
+            helper.onEachTick(() -> {
+                groupConditions.runTick(helper);
+                if (groupConditions.isSuccess()) {
+                    helper.succeed();
+                }
+            });
+        }
     }
 
     public static void succeedAfterDelay(GameTestHelper helper, long tick, BooleanSupplier supplier, String failReason) {

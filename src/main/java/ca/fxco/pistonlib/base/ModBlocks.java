@@ -6,6 +6,7 @@ import java.util.function.Function;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
+import ca.fxco.pistonlib.blocks.gametest.CheckStateBlock;
 import ca.fxco.pistonlib.blocks.gametest.PulseStateBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfObsidianBlock;
@@ -185,6 +186,7 @@ public class ModBlocks {
 
     // GameTest Blocks
     public static final PulseStateBlock PULSE_STATE_BLOCK = register("pulse_state_block", new PulseStateBlock(FabricBlockSettings.copyOf(Blocks.STONE)));
+    public static final CheckStateBlock CHECK_STATE_BLOCK = register("check_state_block", new CheckStateBlock(FabricBlockSettings.copyOf(Blocks.STONE)));
 
     private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
         return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)));
