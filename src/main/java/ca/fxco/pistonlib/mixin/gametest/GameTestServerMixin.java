@@ -39,7 +39,7 @@ public abstract class GameTestServerMixin extends MinecraftServer {
     @Unique
     private boolean keepAlive = false;
     @Unique
-    private boolean tickWarp = true; // TODO: Add command to change gametest config options
+    private boolean tickWarp = false; // TODO: Add command to change gametest config options, true by default
 
     public GameTestServerMixin(Thread thread, LevelStorageSource.LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, Services services, ChunkProgressListenerFactory chunkProgressListenerFactory) {
         super(thread, levelStorageAccess, packRepository, worldStem, proxy, dataFixer, services, chunkProgressListenerFactory);

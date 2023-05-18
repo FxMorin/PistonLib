@@ -21,6 +21,7 @@ public class TestTriggerBlock extends Block implements GameMasterBlock {
 
     public TestTriggerBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false).setValue(INVERTED, false));
     }
 
     @Override
