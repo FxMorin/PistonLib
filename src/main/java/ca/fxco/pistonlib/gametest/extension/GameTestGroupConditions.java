@@ -23,18 +23,16 @@ public class GameTestGroupConditions {
                 if (testCondition.canRunThisTick(helper.getTick())) {
                     if (!testCondition.runCheck(helper)) {
                         break;
-                    } else {
-                        testCondition.setSuccess(true);
                     }
+                    testCondition.setSuccess(true);
                 }
             } else {
                 Boolean result = testCondition.runCheck(helper);
                 if (result != null) {
                     if (!result) {
                         break;
-                    } else {
-                        testCondition.setSuccess(true);
                     }
+                    testCondition.setSuccess(true);
                 }
             }
         }
@@ -73,7 +71,7 @@ public class GameTestGroupConditions {
         private final BlockPos blockPos;
 
         public TriggerTestCondition(BlockPos blockPos) {
-            this.blockPos = blockPos;
+            this.blockPos = blockPos.immutable();
         }
 
         @Override
@@ -86,7 +84,11 @@ public class GameTestGroupConditions {
             BlockState state = helper.getBlockState(blockPos);
             if (state.getBlock() == ModBlocks.TEST_TRIGGER_BLOCK) {
                 if (state.getValue(BlockStateProperties.POWERED)) {
-                    return !state.getValue(BlockStateProperties.INVERTED);
+                    if (state.getValue(BlockStateProperties.INVERTED)) {
+                        helper.fail("Test Trigger at " + blockPos.toShortString() + " was triggered");
+                        return false;
+                    }
+                    return true;
                 }
                 return null;
             }
@@ -105,7 +107,7 @@ public class GameTestGroupConditions {
 
         public CheckStateTestCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
             this.checkStateBe = checkStateBe;
-            this.checkPos = checkPos;
+            this.checkPos = checkPos.immutable();
         }
 
         @Override

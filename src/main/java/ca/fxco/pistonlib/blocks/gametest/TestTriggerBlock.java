@@ -27,9 +27,8 @@ public class TestTriggerBlock extends Block implements GameMasterBlock {
     @Override
     public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos,
                                 Block block, BlockPos blockPos2, boolean bl) {
-        boolean hasSignal = level.hasNeighborSignal(blockPos);
-        if (hasSignal != blockState.getValue(POWERED)) {
-            level.setBlock(blockPos, blockState.setValue(POWERED, hasSignal), 4);
+        if (!blockState.getValue(POWERED) && level.hasNeighborSignal(blockPos)) {
+            level.setBlock(blockPos, blockState.setValue(POWERED, true), 4);
         }
     }
 
@@ -39,7 +38,7 @@ public class TestTriggerBlock extends Block implements GameMasterBlock {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        blockState = blockState.cycle(INVERTED);
+        blockState = blockState.cycle(INVERTED).setValue(POWERED, false);
         level.setBlock(blockPos, blockState, 4);
         return InteractionResult.CONSUME;
     }
