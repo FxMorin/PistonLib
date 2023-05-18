@@ -90,6 +90,9 @@ public class ModModelProvider extends FabricModelProvider {
 		generator.createTrivialCube(ModBlocks.QUASI_BLOCK);
 		generator.createTrivialCube(ModBlocks.ERASE_BLOCK);
 		generator.createTrivialCube(ModBlocks.HEAVY_BLOCK);
+		generator.createTrivialCube(ModBlocks.PULSE_STATE_BLOCK);
+		generator.createTrivialCube(ModBlocks.CHECK_STATE_BLOCK);
+		generator.createTrivialCube(ModBlocks.TEST_TRIGGER_BLOCK);
 
 		registerSlab(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_SLAB_BLOCK);
 		registerStair(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_STAIR_BLOCK);

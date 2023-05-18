@@ -1,10 +1,13 @@
 package ca.fxco.pistonlib.gametest.extension;
 
+import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,8 @@ public class GameTestGroupConditions {
 
     public void runTick(GameTestHelper helper) {
         for (TestCondition testCondition : testConditions) {
-            if (testCondition.getCheckStateBe().getTick() > -1) {
-                if (testCondition.getCheckStateBe().getTick() == helper.getTick()) {
+            if (testCondition.isSingleTick()) {
+                if (testCondition.canRunThisTick(helper.getTick())) {
                     if (!testCondition.runCheck(helper)) {
                         break;
                     } else {
@@ -47,10 +50,51 @@ public class GameTestGroupConditions {
     }
 
     public void addCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
-        testConditions.add(new TestCondition(checkStateBe, checkPos));
+        testConditions.add(new CheckStateTestCondition(checkStateBe, checkPos));
     }
 
-    public static class TestCondition {
+    public void addTestTrigger(BlockPos blockPos) {
+        testConditions.add(new TriggerTestCondition(blockPos));
+    }
+
+    public static abstract class TestCondition {
+        public abstract boolean isSuccess();
+        public abstract void setSuccess(boolean state);
+        public abstract boolean isSingleTick();
+        public boolean canRunThisTick(long tick) {return false;}
+        public abstract Boolean runCheck(GameTestHelper helper);
+    }
+
+    public static class TriggerTestCondition extends TestCondition {
+
+        @Getter
+        @Setter
+        private boolean success = false;
+        private final BlockPos blockPos;
+
+        public TriggerTestCondition(BlockPos blockPos) {
+            this.blockPos = blockPos;
+        }
+
+        @Override
+        public boolean isSingleTick() {
+            return false;
+        }
+
+        @Override
+        public Boolean runCheck(GameTestHelper helper) {
+            BlockState state = helper.getBlockState(blockPos);
+            if (state.getBlock() == ModBlocks.TEST_TRIGGER_BLOCK) {
+                if (state.getValue(BlockStateProperties.POWERED)) {
+                    return !state.getValue(BlockStateProperties.INVERTED);
+                }
+                return null;
+            }
+            return false;
+        }
+    }
+
+    public static class CheckStateTestCondition extends TestCondition {
 
         @Getter
         @Setter
@@ -59,11 +103,22 @@ public class GameTestGroupConditions {
         @Getter
         private final CheckStateBlockEntity checkStateBe;
 
-        public TestCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
+        public CheckStateTestCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
             this.checkStateBe = checkStateBe;
             this.checkPos = checkPos;
         }
 
+        @Override
+        public boolean isSingleTick() {
+            return this.checkStateBe.getTick() > -1;
+        }
+
+        @Override
+        public boolean canRunThisTick(long tick) {
+            return this.checkStateBe.getTick() == tick;
+        }
+
+        @Override
         public Boolean runCheck(GameTestHelper helper) {
             return checkStateBe.runGameTestChecks(helper, checkPos);
         }

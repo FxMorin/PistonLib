@@ -61,6 +61,7 @@ public class ModCreativeModeTabs {
             .displayItems((featureFlags, output, hasPermissions) -> {
                 output.accept(ModItems.PULSE_STATE_BLOCK);
                 output.accept(ModItems.CHECK_STATE_BLOCK);
+                output.accept(ModItems.TEST_TRIGGER_BLOCK);
             })
             .build();
 

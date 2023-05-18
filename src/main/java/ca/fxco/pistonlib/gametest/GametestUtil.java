@@ -45,6 +45,8 @@ public class GametestUtil {
                     BlockPos checkPos = blockPos.relative(checkStateBe.getDirection());
                     groupConditions.addCondition(checkStateBe, checkPos);
                 }
+            } else if (block == ModBlocks.TEST_TRIGGER_BLOCK) {
+                groupConditions.addTestTrigger(blockPos);
             }
         });
         if (!groupConditions.getTestConditions().isEmpty()) {
