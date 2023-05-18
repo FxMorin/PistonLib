@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -14,7 +15,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 public class PistonLibBasicTestSuite {
 
     // Make sure pistons can push 12 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
     public void pushUp12(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         for (int i = 0; i < 11; i++) {
@@ -27,7 +28,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Make sure pistons cant push 13 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
     public void dontPushUp13(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         for (int i = 0; i < 12; i++) {
@@ -43,7 +44,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Make sure sticky pistons can push and pull 12 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 7)
     public void pushAndPull12(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         for (int i = 0; i < 11; i++) {
@@ -59,7 +60,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Make sure Honey does not stick to Slime
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
     public void slimeAndHoney(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         for (int i = 0; i < 12; i++) {
@@ -75,7 +76,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Make sure obsidian is still immovable
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
     public void immovableObsidian(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         helper.setBlock(0, 2, 0, Blocks.OBSIDIAN);
@@ -88,7 +89,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Check if 2 game tick pulses still keep waterlogged state
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
     public void pushWaterDirectly(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         helper.setBlock(0, 2, 0, Blocks.MANGROVE_ROOTS.defaultBlockState().setValue(WATERLOGGED, true));
@@ -101,7 +102,7 @@ public class PistonLibBasicTestSuite {
     }
 
     // Make sure 2 gametick pulses only push water when directly in front of the piston
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
     public void dontPushWaterOffset(GameTestHelper helper) {
         helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
         helper.setBlock(0, 2, 0, Blocks.SLIME_BLOCK);
@@ -115,15 +116,14 @@ public class PistonLibBasicTestSuite {
     }
 
     // Piston should break bedrock if headless
-   /* @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
+   @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {
         helper.setBlock(0, 2, 0, Blocks.BEDROCK);
-        // TODO: Set extended piston body without updates
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP).setValue(EXTENDED, true));
+        GametestUtil.setBlock(helper, 0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP).setValue(EXTENDED, true), Block.UPDATE_NONE);
         helper.setBlock(0, 1, 1, Blocks.STONE);
 
         helper.succeedWhenBlockPresent(Blocks.AIR, 0, 2, 0);
-    }*/
+    }
 
     //@GameTest
     public void mergingslabs(GameTestHelper helper) {

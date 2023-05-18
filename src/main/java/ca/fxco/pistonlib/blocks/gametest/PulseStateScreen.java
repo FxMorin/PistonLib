@@ -119,10 +119,9 @@ public class PulseStateScreen extends Screen {
             return true;
         } else if (i != 257 && i != 335) {
             return false;
-        } else {
-            this.onDone();
-            return true;
         }
+        this.onDone();
+        return true;
     }
 
     public boolean mouseScrolled(double d, double e, double f) {
