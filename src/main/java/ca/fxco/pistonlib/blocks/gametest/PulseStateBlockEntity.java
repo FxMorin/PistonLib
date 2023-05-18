@@ -11,6 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -78,5 +79,15 @@ public class PulseStateBlockEntity extends BlockEntity {
         if (compoundTag.contains("lastBS")) {
             this.lastBlockState = NbtUtils.readBlockState(holderLookup, compoundTag.getCompound("lastBS"));
         }
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
     }
 }

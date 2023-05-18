@@ -31,6 +31,7 @@ public class PulseStateScreen extends Screen {
         this.blockEntity = blockEntity;
     }
 
+    @Override
     public void tick() {
         this.pulseDelayEdit.tick();
         this.pulseDurationEdit.tick();
@@ -57,6 +58,7 @@ public class PulseStateScreen extends Screen {
         this.minecraft.setScreen(null);
     }
 
+    @Override
     protected void init() {
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (button) -> {
             this.onDone();
@@ -103,11 +105,6 @@ public class PulseStateScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
-        this.minecraft.setScreen(null);
-    }
-
-    @Override
     public boolean keyPressed(int i, int j, int k) {
         if (this.blockStateSuggestionsFirst.keyPressed(i, j, k)) {
             return true;
@@ -124,11 +121,13 @@ public class PulseStateScreen extends Screen {
         return true;
     }
 
+    @Override
     public boolean mouseScrolled(double d, double e, double f) {
         return this.blockStateSuggestionsFirst.mouseScrolled(f) || this.blockStateSuggestionsPulse.mouseScrolled(f) ||
                 this.blockStateSuggestionsLast.mouseScrolled(f) || super.mouseScrolled(d, e, f);
     }
 
+    @Override
     public boolean mouseClicked(double d, double e, int i) {
         return this.blockStateSuggestionsFirst.mouseClicked(d, e, i) ||
                 this.blockStateSuggestionsPulse.mouseClicked(d, e, i) ||
@@ -136,6 +135,7 @@ public class PulseStateScreen extends Screen {
                 super.mouseClicked(d, e, i);
     }
 
+    @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 10, 16777215);

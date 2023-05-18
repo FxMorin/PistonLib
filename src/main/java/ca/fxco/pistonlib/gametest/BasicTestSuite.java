@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
-public class PistonLibBasicTestSuite {
+public class BasicTestSuite {
 
     // Make sure pistons can push 12 blocks
     @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
