@@ -28,19 +28,9 @@ public class BasicTestSuite {
     }
 
     // Make sure pistons cant push 13 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
-    public void dontPushUp13(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        for (int i = 0; i < 12; i++) {
-            helper.setBlock(0, 2 + i, 0, Blocks.DIRT);
-        }
-        helper.setBlock(0, 14, 0, Blocks.DIAMOND_BLOCK);
-        helper.setBlock(0, 1, 1, Blocks.REDSTONE_BLOCK);
-
-        GametestUtil.succeedAfterDelay(helper, 3, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(0, 15, 0));
-            return state.getBlock() == Blocks.AIR;
-        }, "Piston is able to push 13 blocks");
+    @GameTest(timeoutTicks = 4)
+    public void pushlimit(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure sticky pistons can push and pull 12 blocks
@@ -53,7 +43,7 @@ public class BasicTestSuite {
         helper.setBlock(0, 13, 0, Blocks.DIAMOND_BLOCK);
         helper.pulseRedstone(new BlockPos(0, 1, 1), 3);
 
-        GametestUtil.succeedAfterDelay(helper, 6, () -> {
+        GameTestUtil.succeedAfterDelay(helper, 6, () -> {
             BlockState state = helper.getBlockState(new BlockPos(0, 13, 0));
             return state.getBlock() == Blocks.DIAMOND_BLOCK;
         }, "Piston is unable to push 12 blocks");
@@ -69,71 +59,59 @@ public class BasicTestSuite {
         }
         helper.setBlock(0, 1, 1, Blocks.REDSTONE_BLOCK);
 
-        GametestUtil.succeedAfterDelay(helper, 3, () -> {
+        GameTestUtil.succeedAfterDelay(helper, 3, () -> {
             BlockState state = helper.getBlockState(new BlockPos(0, 14, -1));
             return state.getBlock() == Blocks.AIR;
         }, "Honey is sticking to Slime!");
     }
 
     // Make sure obsidian is still immovable
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
-    public void immovableObsidian(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        helper.setBlock(0, 2, 0, Blocks.OBSIDIAN);
-        helper.setBlock(0, 1, 1, Blocks.REDSTONE_BLOCK);
-
-        GametestUtil.succeedAfterDelay(helper, 3, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(0, 3, 0));
-            return state.getBlock() != Blocks.OBSIDIAN;
-        }, "Obsidian was moved!");
+    @GameTest(timeoutTicks = 4)
+    public void immovable(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Check if 2 game tick pulses still keep waterlogged state
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
-    public void pushWaterDirectly(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        helper.setBlock(0, 2, 0, Blocks.MANGROVE_ROOTS.defaultBlockState().setValue(WATERLOGGED, true));
-        helper.pulseRedstone(new BlockPos(0, 1, 1), 2);
-
-        GametestUtil.succeedAfterDelay(helper, 3, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(0, 3, 0));
-            return state.hasProperty(WATERLOGGED) && state.getValue(WATERLOGGED);
-        }, "2 gametick pulse did not maintain the waterlogged state!");
+    @GameTest(timeoutTicks = 5)
+    public void waterPushDirectly(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure 2 gametick pulses only push water when directly in front of the piston
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
-    public void dontPushWaterOffset(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        helper.setBlock(0, 2, 0, Blocks.SLIME_BLOCK);
-        helper.setBlock(1, 2, 0, Blocks.MANGROVE_ROOTS.defaultBlockState().setValue(WATERLOGGED, true));
-        helper.pulseRedstone(new BlockPos(0, 1, 1), 2);
-
-        GametestUtil.succeedAfterDelay(helper, 3, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(1, 3, 0));
-            return state.hasProperty(WATERLOGGED) && !state.getValue(WATERLOGGED);
-        }, "2 gametick pulse maintained the waterlogged state when indirectly pushed!");
+    @GameTest(timeoutTicks = 5)
+    public void waterPushInDirectly(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Piston should break bedrock if headless
-   @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {
         helper.setBlock(0, 2, 0, Blocks.BEDROCK);
-        GametestUtil.setBlock(helper, 0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP).setValue(EXTENDED, true), Block.UPDATE_NONE);
+        GameTestUtil.setBlock(helper, 0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP).setValue(EXTENDED, true), Block.UPDATE_NONE);
         helper.setBlock(0, 1, 1, Blocks.STONE);
 
         helper.succeedWhenBlockPresent(Blocks.AIR, 0, 2, 0);
     }
 
     @GameTest
+    public void strongPull(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
+    }
+
+    @GameTest
+    public void strongPush(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
+    }
+
+    @GameTest
     public void zerotick(GameTestHelper helper) {
-        GametestUtil.pistonLibGameTest(helper);
+        GameTestUtil.pistonLibGameTest(helper);
         // Do stuff
     }
 
     @GameTest
     public void mergingslabs(GameTestHelper helper) {
-        GametestUtil.pistonLibGameTest(helper);
+        GameTestUtil.pistonLibGameTest(helper);
         // Do stuff
     }
 }
