@@ -12,9 +12,9 @@ I don't have much time to work on this, so any time your willing to give to help
 - Blocks that can be placed on slime but break when the slime moves should not break if the block below has the `fused` sticky property
 - Dual-sided piston
 - Quarter Slime blocks
-- Integrate GameTest **MAJOR**
 
 ### In Progress
+- Integrate GameTest **MAJOR**
 - /pistonlib command to push/pull blocks with commands, override piston behavior for any block, and change config options in-game
 - Piston Crushing, json recipe system that allows item entities to be crushed by pistons to turn into other blocks. Also entity crushing API
 
