@@ -22,7 +22,7 @@ public class BasicTestSuite {
 
     // Make sure pistons cant push 13 blocks
     @GameTest(timeoutTicks = 4)
-    public void pushlimit(GameTestHelper helper) {
+    public void pushLimit(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
@@ -50,7 +50,7 @@ public class BasicTestSuite {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    // Make sure 2 gametick pulses only push water when directly in front of the piston
+    // Make sure 2 game tick pulses only push water when directly in front of the piston
     @GameTest(timeoutTicks = 5)
     public void waterPushInDirectly(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
@@ -62,26 +62,31 @@ public class BasicTestSuite {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
+    // Check if the strong piston can still pull 24 blocks
     @GameTest(timeoutTicks = 90)
     public void strongPull(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
+    // Check if the strong piston can still push 24 blocks
     @GameTest(timeoutTicks = 90)
     public void strongPush(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
+    // Make sure 0-ticks still work with!
     @GameTest(timeoutTicks = 6)
     public void zerotick(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
+    // Make sure the Merging API still works
     @GameTest(timeoutTicks = 6) // Change timeout to: 3
     public void mergingslabs(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
+    // Check if a retracting sticky piston head is still missing an update if it fails to pull a structure
     @GameTest(timeoutTicks = 7)
     public void headRetractionUpdate(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
