@@ -106,12 +106,15 @@ public class BasicTestSuite {
     @GameTest
     public void zerotick(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
-        // Do stuff
     }
 
     @GameTest
     public void mergingslabs(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
-        // Do stuff
+    }
+
+    @GameTest
+    public void headRetractionUpdate(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 }
