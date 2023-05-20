@@ -33,20 +33,10 @@ public class BasicTestSuite {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    // Make sure sticky pistons can push and pull 12 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 7)
-    public void pushAndPull12(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_STICKY_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        for (int i = 0; i < 11; i++) {
-            helper.setBlock(0, 2 + i, 0, Blocks.SLIME_BLOCK);
-        }
-        helper.setBlock(0, 13, 0, Blocks.DIAMOND_BLOCK);
-        helper.pulseRedstone(new BlockPos(0, 1, 1), 3);
-
-        GameTestUtil.succeedAfterDelay(helper, 6, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(0, 13, 0));
-            return state.getBlock() == Blocks.DIAMOND_BLOCK;
-        }, "Piston is unable to push 12 blocks");
+    // Tests the piston pushing 12 blocks than only pulling 11 back
+    @GameTest(timeoutTicks = 7)
+    public void pushAndDrop(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure Honey does not stick to Slime
