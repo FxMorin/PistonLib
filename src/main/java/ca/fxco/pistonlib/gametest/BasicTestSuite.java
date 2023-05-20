@@ -50,19 +50,9 @@ public class BasicTestSuite {
     }
 
     // Make sure Honey does not stick to Slime
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 4)
+    @GameTest(timeoutTicks = 5)
     public void slimeAndHoney(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        for (int i = 0; i < 12; i++) {
-            helper.setBlock(0, 2 + i, 0, Blocks.SLIME_BLOCK);
-            helper.setBlock(0, 2 + i, -1, Blocks.HONEY_BLOCK);
-        }
-        helper.setBlock(0, 1, 1, Blocks.REDSTONE_BLOCK);
-
-        GameTestUtil.succeedAfterDelay(helper, 3, () -> {
-            BlockState state = helper.getBlockState(new BlockPos(0, 14, -1));
-            return state.getBlock() == Blocks.AIR;
-        }, "Honey is sticking to Slime!");
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure obsidian is still immovable
