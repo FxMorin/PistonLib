@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.helpers;
 
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,6 +22,8 @@ public abstract class BlockStateExp {
     public static final BlockStateExp EMPTY = BlockStateExp.of(Blocks.AIR);
 
     public abstract boolean matches(BlockState state);
+
+    public abstract String asString();
 
     public abstract CompoundTag write();
 
@@ -68,6 +71,11 @@ public abstract class BlockStateExp {
         }
 
         @Override
+        public String asString() {
+            return BlockStateParser.serialize(this.blockState);
+        }
+
+        @Override
         public CompoundTag write() {
             CompoundTag compoundTag = NbtUtils.writeBlockState(this.blockState);
             compoundTag.putBoolean("state", true);
@@ -94,6 +102,12 @@ public abstract class BlockStateExp {
             compoundTag.putString("Name", BuiltInRegistries.BLOCK.getKey(this.block).toString());
             compoundTag.putBoolean("state", false);
             return compoundTag;
+        }
+
+        @Override
+        public String asString() {
+            return this.block.builtInRegistryHolder().unwrapKey().map(key -> key.location().toString())
+                    .orElse("minecraft:air");
         }
     }
 

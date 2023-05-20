@@ -82,7 +82,7 @@ public class CheckStateScreen extends Screen {
         this.addWidget(this.directionCycleButton);
         this.stateEdit = new EditBox(this.font, this.width / 2 - 154, 90, 308, 20, Component.translatable("screen.pistonlib.check_state_block.state"));
         this.stateEdit.setMaxLength(255);
-        this.stateEdit.setValue(BlockStateParser.serialize(this.blockEntity.getBlockState()));
+        this.stateEdit.setValue(this.blockEntity.getBlockStateExp().asString());
         this.addWidget(this.stateEdit);
         this.failOnFoundCheckbox = new Checkbox(this.width / 2 - 154, 130, 100, 20, Component.translatable("screen.pistonlib.check_state_block.failOnFind"), this.blockEntity.isFailOnFound());
         this.addWidget(this.failOnFoundCheckbox);
