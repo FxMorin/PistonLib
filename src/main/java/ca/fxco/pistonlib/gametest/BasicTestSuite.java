@@ -84,13 +84,9 @@ public class BasicTestSuite {
     }
 
     // Piston should break bedrock if headless
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
+    @GameTest(timeoutTicks = 5)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {
-        helper.setBlock(0, 2, 0, Blocks.BEDROCK);
-        GameTestUtil.setBlock(helper, 0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP).setValue(EXTENDED, true), Block.UPDATE_NONE);
-        helper.setBlock(0, 1, 1, Blocks.STONE);
-
-        helper.succeedWhenBlockPresent(Blocks.AIR, 0, 2, 0);
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     @GameTest
