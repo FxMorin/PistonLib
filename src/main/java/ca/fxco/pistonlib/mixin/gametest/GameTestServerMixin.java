@@ -9,6 +9,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestServer;
+import net.minecraft.gametest.framework.StructureUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
@@ -28,13 +29,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.io.File;
 import java.io.IOException;
 import java.net.Proxy;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.function.BooleanSupplier;
 
 @Mixin(GameTestServer.class)
 public abstract class GameTestServerMixin extends MinecraftServer {
 
-    // TODO: Keep the server alive, so you can join it. Not sure how to do the joining part
+    private static final Path DEV_RESOURCES = Path.of("..","..", "src", "main", "resources", "data", "pistonlib", "gametest", "structures");
 
     @Unique
     private boolean keepAlive = false;
@@ -43,6 +45,18 @@ public abstract class GameTestServerMixin extends MinecraftServer {
 
     public GameTestServerMixin(Thread thread, LevelStorageSource.LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, Services services, ChunkProgressListenerFactory chunkProgressListenerFactory) {
         super(thread, levelStorageAccess, packRepository, worldStem, proxy, dataFixer, services, chunkProgressListenerFactory);
+    }
+
+    @Inject(
+            method = "<init>",
+            at = @At("RETURN")
+    )
+    private void useDevResourcesAsTestStructureDir(Thread thread,
+                                                   LevelStorageSource.LevelStorageAccess levelStorageAccess,
+                                                   PackRepository packRepository, WorldStem worldStem,
+                                                   Collection collection, BlockPos blockPos, CallbackInfo ci) {
+        StructureUtils.testStructuresDir = DEV_RESOURCES.toString();
+        System.out.println("New test structures dir: " + StructureUtils.testStructuresDir);
     }
 
     @Inject(
