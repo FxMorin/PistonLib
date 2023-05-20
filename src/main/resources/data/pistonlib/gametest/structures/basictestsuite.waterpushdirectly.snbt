@@ -51,7 +51,7 @@
         {pos: [0, 5, 1], state: "minecraft:air"},
         {pos: [0, 5, 2], state: "minecraft:air"},
         {pos: [1, 5, 0], state: "minecraft:air"},
-        {pos: [1, 5, 1], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:mangrove_roots", Properties: {waterlogged: "true"}, state: 1b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", ignorePistons: 0b, invertState: 0b, tick: 4}},
+        {pos: [1, 5, 1], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:mangrove_roots", Properties: {waterlogged: "true"}, state: 1b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 4}},
         {pos: [1, 5, 2], state: "minecraft:air"},
         {pos: [2, 5, 0], state: "minecraft:air"},
         {pos: [2, 5, 1], state: "minecraft:air"},

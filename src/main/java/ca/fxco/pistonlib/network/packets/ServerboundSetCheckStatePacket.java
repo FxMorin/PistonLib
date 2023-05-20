@@ -21,8 +21,6 @@ public class ServerboundSetCheckStatePacket extends PLPacket {
     private BlockPos blockPos;
     private int tick;
     private boolean failOnFound;
-    private boolean invertState;
-    private boolean ignorePistons;
     private Direction direction;
     private BlockStateExp blockStateExp;
 
@@ -31,8 +29,6 @@ public class ServerboundSetCheckStatePacket extends PLPacket {
         buf.writeBlockPos(blockPos);
         buf.writeVarInt(tick);
         buf.writeBoolean(failOnFound);
-        buf.writeBoolean(invertState);
-        buf.writeBoolean(ignorePistons);
         buf.writeByte(direction.ordinal());
         buf.writeBoolean(blockStateExp != null);
         if (blockStateExp != null) {
@@ -45,8 +41,6 @@ public class ServerboundSetCheckStatePacket extends PLPacket {
         this.blockPos = buf.readBlockPos();
         this.tick = buf.readVarInt();
         this.failOnFound = buf.readBoolean();
-        this.invertState = buf.readBoolean();
-        this.ignorePistons = buf.readBoolean();
         this.direction = Direction.values()[buf.readByte()];
         if (buf.readBoolean()) {
             this.blockStateExp = BlockStateExp.read(buf.readNbt());

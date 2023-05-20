@@ -28,8 +28,6 @@ public class CheckStateScreen extends Screen {
     private EditBox stateEdit;
     private BlockStateSuggestions blockStateSuggestions;
     private Checkbox failOnFoundCheckbox;
-    private Checkbox invertStateCheckbox; // All states but...
-    private Checkbox ignoreMovingPistonsCheckbox;
 
     protected CheckStateScreen(CheckStateBlockEntity blockEntity) {
         super(Component.translatable("screen.pistonlib.check_state_block.title"));
@@ -53,8 +51,6 @@ public class CheckStateScreen extends Screen {
                     this.blockEntity.getBlockPos(),
                     Integer.parseInt(this.tickEdit.getValue()),
                     this.failOnFoundCheckbox.selected(),
-                    this.invertStateCheckbox.selected(),
-                    this.ignoreMovingPistonsCheckbox.selected(),
                     this.directionCycleButton.getValue(),
                     blockStateExp
             );
@@ -90,10 +86,6 @@ public class CheckStateScreen extends Screen {
         this.addWidget(this.stateEdit);
         this.failOnFoundCheckbox = new Checkbox(this.width / 2 - 154, 130, 100, 20, Component.translatable("screen.pistonlib.check_state_block.failOnFind"), this.blockEntity.isFailOnFound());
         this.addWidget(this.failOnFoundCheckbox);
-        this.invertStateCheckbox = new Checkbox(this.width / 2 - 50, 130, 100, 20, Component.translatable("screen.pistonlib.check_state_block.invertState"), this.blockEntity.isInvertState());
-        this.addWidget(this.invertStateCheckbox);
-        this.ignoreMovingPistonsCheckbox = new Checkbox(this.width / 2 + 54, 130, 100, 20, Component.translatable("screen.pistonlib.check_state_block.ignorePistons"), this.blockEntity.isIgnorePistons());
-        this.addWidget(this.ignoreMovingPistonsCheckbox);
 
         this.setInitialFocus(this.stateEdit);
 
@@ -139,8 +131,6 @@ public class CheckStateScreen extends Screen {
         drawString(poseStack, this.font, Component.translatable("screen.pistonlib.check_state_block.state"), this.width / 2 - 153, 80, 10526880);
         this.stateEdit.render(poseStack, i, j, f);
         this.failOnFoundCheckbox.render(poseStack, i, j, f);
-        this.invertStateCheckbox.render(poseStack, i, j, f);
-        this.ignoreMovingPistonsCheckbox.render(poseStack, i, j, f);
 
         super.render(poseStack, i, j, f);
         this.blockStateSuggestions.render(poseStack, i, j);

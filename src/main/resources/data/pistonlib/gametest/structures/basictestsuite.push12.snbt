@@ -150,7 +150,7 @@
         {pos: [0, 16, 1], state: "minecraft:air"},
         {pos: [0, 16, 2], state: "minecraft:air"},
         {pos: [1, 16, 0], state: "minecraft:air"},
-        {pos: [1, 16, 1], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:dirt", state: 0b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", ignorePistons: 0b, invertState: 0b, tick: 3}},
+        {pos: [1, 16, 1], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:dirt", state: 0b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 3}},
         {pos: [1, 16, 2], state: "minecraft:air"},
         {pos: [2, 16, 0], state: "minecraft:air"},
         {pos: [2, 16, 1], state: "minecraft:air"},
