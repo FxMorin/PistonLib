@@ -15,16 +15,9 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 public class BasicTestSuite {
 
     // Make sure pistons can push 12 blocks
-    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 3)
-    public void pushUp12(GameTestHelper helper) {
-        helper.setBlock(0, 1, 0, ModBlocks.BASIC_PISTON.defaultBlockState().setValue(FACING, Direction.UP));
-        for (int i = 0; i < 11; i++) {
-            helper.setBlock(0, 2 + i, 0, Blocks.DIRT);
-        }
-        helper.setBlock(0, 13, 0, Blocks.DIAMOND_BLOCK);
-        helper.setBlock(0, 1, 1, Blocks.REDSTONE_BLOCK);
-
-        helper.succeedWhenBlockPresent(Blocks.DIAMOND_BLOCK, 0, 14, 0);
+    @GameTest(timeoutTicks = 4)
+    public void push12(GameTestHelper helper) {
+        GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure pistons cant push 13 blocks
