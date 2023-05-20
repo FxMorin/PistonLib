@@ -32,6 +32,7 @@ extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundl
 extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeY ()I
 
 # GameTest
+accessible method net/minecraft/gametest/framework/StructureUtils tryLoadStructure (Ljava/nio/file/Path;)Lnet/minecraft/nbt/CompoundTag;
 accessible method net/minecraft/client/gui/components/CommandSuggestions getLastWordIndex (Ljava/lang/String;)I
 extendable method net/minecraft/client/gui/components/CommandSuggestions updateUsageInfo ()V
 extendable method net/minecraft/client/gui/components/CommandSuggestions fillNodeUsage (Lnet/minecraft/ChatFormatting;)V
