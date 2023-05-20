@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,6 +61,8 @@ public class GameTestUtil {
                 }
             } else if (block == ModBlocks.TEST_TRIGGER_BLOCK) {
                 groupConditions.addTestTrigger(blockPos);
+            } else if (block == ModBlocks.GAMETEST_REDSTONE_BLOCK) {
+                helper.setBlock(blockPos, state.cycle(BlockStateProperties.POWERED));
             }
         });
         if (!groupConditions.getTestConditions().isEmpty()) {

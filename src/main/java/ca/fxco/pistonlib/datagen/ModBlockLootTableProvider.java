@@ -69,6 +69,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         dropSelf(ModBlocks.PULSE_STATE_BLOCK);
         dropSelf(ModBlocks.CHECK_STATE_BLOCK);
         dropSelf(ModBlocks.TEST_TRIGGER_BLOCK);
+        dropSelf(ModBlocks.GAMETEST_REDSTONE_BLOCK);
 
         dropSelf(ModBlocks.SLIPPERY_SLIME_BLOCK);
         dropSelf(ModBlocks.SLIPPERY_REDSTONE_BLOCK);

@@ -104,6 +104,7 @@ public class ModModelProvider extends FabricModelProvider {
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
 
 		registerPoweredBlock(generator, ModBlocks.ALL_SIDED_OBSERVER);
+		registerPoweredBlock(generator, ModBlocks.GAMETEST_REDSTONE_BLOCK);
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.POWERED_STICKY_BLOCK).with(
 				PropertyDispatch.property(BlockStateProperties.POWERED)
