@@ -25,7 +25,6 @@ public class GameTestUtil {
 
     /**
      * By using this method as the first line in a gametest, you will be able to use gametest blocks within those tests
-     * TODO: Add success & fail conditions
      */
     public static void pistonLibGameTest(GameTestHelper helper) {
         if (helper.getTick() != 0) { // Only run searching logic on the first tick
@@ -41,11 +40,16 @@ public class GameTestUtil {
                     helper.setBlock(blockPos, pulseStateBe.getFirstBlockState());
                     int delay = pulseStateBe.getDelay();
                     int duration = pulseStateBe.getDuration();
+                    BlockPos blockPos2 = blockPos.immutable();
                     if (delay > 0) {
-                        helper.runAfterDelay(delay, () -> helper.setBlock(blockPos, pulseStateBe.getPulseBlockState()));
+                        helper.runAfterDelay(delay, () ->
+                                helper.setBlock(blockPos2, pulseStateBe.getPulseBlockState())
+                        );
                     }
                     if (duration > 0) {
-                        helper.runAfterDelay(delay + duration, () -> helper.setBlock(blockPos, pulseStateBe.getLastBlockState()));
+                        helper.runAfterDelay(delay + duration, () ->
+                                helper.setBlock(blockPos2, pulseStateBe.getLastBlockState())
+                        );
                     }
                 }
             } else if (block == ModBlocks.CHECK_STATE_BLOCK) {

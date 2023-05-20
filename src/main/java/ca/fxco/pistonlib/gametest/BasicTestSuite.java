@@ -84,32 +84,32 @@ public class BasicTestSuite {
     }
 
     // Piston should break bedrock if headless
-    @GameTest(timeoutTicks = 5)
+    @GameTest(timeoutTicks = 4)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 90)
     public void strongPull(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 90)
     public void strongPush(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 6)
     public void zerotick(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 6) // Change timeout to: 3
     public void mergingslabs(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 7)
     public void headRetractionUpdate(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
