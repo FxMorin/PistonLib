@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks.gametest;
 
-import ca.fxco.pistonlib.gametest.extension.BlockStateSuggestions;
+import ca.fxco.pistonlib.gametest.expansion.BlockStateSuggestions;
 import ca.fxco.pistonlib.network.PLNetwork;
 import ca.fxco.pistonlib.network.packets.ServerboundSetPulseStatePacket;
 import com.mojang.blaze3d.vertex.PoseStack;

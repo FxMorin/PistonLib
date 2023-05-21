@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.gametest.extension;
+package ca.fxco.pistonlib.gametest.expansion;
 
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;

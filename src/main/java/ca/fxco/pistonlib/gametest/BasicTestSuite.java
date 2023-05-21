@@ -1,16 +1,7 @@
 package ca.fxco.pistonlib.gametest;
 
-import ca.fxco.pistonlib.base.ModBlocks;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
 public class BasicTestSuite {
 

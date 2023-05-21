@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.gametest.extension;
+package ca.fxco.pistonlib.gametest.expansion;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;

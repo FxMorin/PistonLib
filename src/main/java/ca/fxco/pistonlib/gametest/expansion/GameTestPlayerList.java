@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.gametest.extension;
+package ca.fxco.pistonlib.gametest.expansion;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.LayeredRegistryAccess;

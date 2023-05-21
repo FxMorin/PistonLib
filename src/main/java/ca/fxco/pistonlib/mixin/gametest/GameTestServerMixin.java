@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.gametest;
 
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.gametest.extension.GameTestPlayerList;
+import ca.fxco.pistonlib.gametest.expansion.GameTestPlayerList;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;

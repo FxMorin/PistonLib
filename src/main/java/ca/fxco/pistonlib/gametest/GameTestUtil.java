@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.gametest;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;
 import ca.fxco.pistonlib.blocks.gametest.PulseStateBlockEntity;
-import ca.fxco.pistonlib.gametest.extension.GameTestGroupConditions;
+import ca.fxco.pistonlib.gametest.expansion.GameTestGroupConditions;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import net.minecraft.core.BlockPos;
