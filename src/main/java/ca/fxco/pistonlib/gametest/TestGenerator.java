@@ -4,7 +4,6 @@ import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
-import ca.fxco.pistonlib.gametest.expansion.RunState;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
 import ca.fxco.pistonlib.gametest.testSuites.MergingSuite;
 import com.google.common.collect.Sets;
@@ -86,10 +85,10 @@ public class TestGenerator {
     public static List<TestGenerator.GameTestCalcBatch> checkAllCombinations(List<TestFunctionGenerator> testFunctionGenerators) {
         List<GameTestCalcBatch> gameTestCalcBatches = new ArrayList<>();
         for (TestFunctionGenerator generator : testFunctionGenerators) {
-            RunState runState = generator.getGameTestConfig().runState();
+            GameTestConfig gameTestConfig = generator.getGameTestConfig();
             boolean gotBatch = false;
-            if (runState.ignored()) {
-                if (runState.combined()) {
+            if (gameTestConfig.ignored()) {
+                if (gameTestConfig.combined()) {
                     for (GameTestCalcBatch batch : new ArrayList<>(gameTestCalcBatches)) {
                         boolean failed = false;
                         for (String str : batch.getValues()) {
@@ -121,7 +120,7 @@ public class TestGenerator {
                     }
                 }
             } else {
-                if (runState.combined()) {
+                if (gameTestConfig.combined()) {
                     for (GameTestCalcBatch batch : new ArrayList<>(gameTestCalcBatches)) {
                         List<String> differences = new ArrayList<>(Sets.difference(Sets.newHashSet(batch.getValues()), Sets.newHashSet(generator.getValues())));
                         if (differences.size() == 0) {
@@ -270,9 +269,9 @@ public class TestGenerator {
         public boolean canAcceptGenerator(TestFunctionGenerator generator) {
             Set<String> difference = Sets.difference(Sets.newHashSet(generator.getValues()), Sets.newHashSet(this.getValues()));
             for (TestFunctionGenerator gen : testFunctionGenerators) {
-                RunState runState = gen.getGameTestConfig().runState();
-                if (runState.ignored()) {
-                    if (runState.combined()) {
+                GameTestConfig gameTestConfig = gen.getGameTestConfig();
+                if (gameTestConfig.ignored()) {
+                    if (gameTestConfig.combined()) {
                         for (String val : gen.getValues()) {
                             if (difference.contains(val)) {
                                 return false;

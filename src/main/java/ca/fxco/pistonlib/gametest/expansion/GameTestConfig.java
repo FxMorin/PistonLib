@@ -17,12 +17,18 @@ public @interface GameTestConfig {
     String[] value() default {};
 
     /**
-     * If this test should run when these config values are present, and with what settings
-     */
-    RunState runState() default @RunState();
-
-    /**
      * For more control over how config options pass & fail. You can use @Config to specify the new result
      */
     Config[] config() default {};
+
+    /**
+     * If config options should be ignored
+     */
+    boolean ignored() default false;
+
+    /**
+     * Only run if all the config options are present.
+     * If ignored, none of the config options must be present
+     */
+    boolean combined() default false;
 }
