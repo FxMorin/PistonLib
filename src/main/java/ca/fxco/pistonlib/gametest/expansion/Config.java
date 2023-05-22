@@ -6,9 +6,9 @@ import ca.fxco.pistonlib.config.ParsedValue;
 public @interface Config {
 
     /**
-     * String must be a valid config field name
+     * Strings must be a valid config field names
      */
-    String value();
+    String[] value();
 
     /**
      * Test Class that need to be met in order for the config option to be added/removed from the list of config options.

@@ -7,6 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 public @interface GameTestConfig {
 
     /**
+     * If the custom gametest blocks should be used for this test
+     */
+    boolean customBlocks() default true;
+
+    /**
      * All strings must be a valid config field name. These fields will be cycled through to make sure they also pass
      */
     String[] value() default {};

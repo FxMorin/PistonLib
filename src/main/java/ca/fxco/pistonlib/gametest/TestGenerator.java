@@ -28,10 +28,6 @@ public class TestGenerator {
     public Collection<TestFunction> generateBatches() {
         List<TestFunction> simpleTestFunctions = new ArrayList<>();
         List<TestFunctionGenerator> testFunctionGenerators = new ArrayList<>();
-        // TODO: Add all classes here, and make holders for all the ones with GameTestConfig annotation
-        //  than create batches for all possible tests for all config options based on the requirements set by the GameTestConfig annotations
-        //  After that, create the batches and required TestFunctions to use and submit them!
-        //  You need to make sure to somehow add logic so that before & after the batch, all the correct config options are switched back to there required state. DEFAULT
         //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite"));
         addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(MergingSuite.class, "mergingsuite"));
         //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite2"));
@@ -42,6 +38,7 @@ public class TestGenerator {
             String batchId = "" + countBatch;
             List<String> batchNames = new ArrayList<>();
             int x = 0;
+            // TODO: Add a way to try all combinations of options, instead of one at a time
             for (String configName : calcBatch.getValues()) {
                 ParsedValue<?> parsedValue = PistonLib.CONFIG_MANAGER.getParsedValues().get(configName);
                 Object[] objs = parsedValue.getAllTestingValues();
@@ -60,9 +57,16 @@ public class TestGenerator {
                         //System.out.println("Setting config value for: " + configName + " to default value");
                     });
                     for (TestFunctionGenerator generator : calcBatch.testFunctionGenerators) {
+                        GameTestConfig gameTestConfig = generator.getGameTestConfig();
                         simpleTestFunctions.add(
                                 generateTestFunctionWithCustomData(
                                         generator.getMethod(),
+                                        gameTestHelper -> {
+                                            if (gameTestConfig.customBlocks()) {
+                                                GameTestUtil.pistonLibGameTest(gameTestHelper);
+                                            }
+                                            turnMethodIntoConsumer(generator.getMethod()).accept(gameTestHelper);
+                                        },
                                         generator.getGameTestDataBuilder().batch(currentBatchId).build()
                                 )
                         );
@@ -81,7 +85,7 @@ public class TestGenerator {
     public static List<TestGenerator.GameTestCalcBatch> checkAllCombinations(List<TestFunctionGenerator> testFunctionGenerators) {
         List<GameTestCalcBatch> gameTestCalcBatches = new ArrayList<>();
         for (TestFunctionGenerator generator : testFunctionGenerators) {
-            RunState runState = generator.getRunState();
+            RunState runState = generator.getGameTestConfig().runState();
             boolean gotBatch = false;
             if (runState.ignored()) {
                 if (runState.combined()) {
@@ -182,6 +186,25 @@ public class TestGenerator {
         return Pair.of(simpleTestFunctions, testFunctionGenerators);
     }
 
+    private static TestFunction generateTestFunctionWithCustomData(Method method,
+                                                                   Consumer<GameTestHelper> consumer,
+                                                                   GameTestData gameTestData) {
+        String declaredClassName = method.getDeclaringClass().getSimpleName().toLowerCase();
+        String testId = declaredClassName + "." + method.getName().toLowerCase();
+        return new TestFunction(
+                gameTestData.batch,
+                testId,
+                gameTestData.template.isEmpty() ? testId : declaredClassName + "." + gameTestData.template,
+                StructureUtils.getRotationForRotationSteps(gameTestData.rotationSteps),
+                gameTestData.timeoutTicks,
+                gameTestData.setupTicks,
+                gameTestData.required,
+                gameTestData.requiredSuccesses,
+                gameTestData.attempts,
+                consumer
+        );
+    }
+
     private static TestFunction generateTestFunctionWithCustomData(Method method, GameTestData gameTestData) {
         String string = method.getDeclaringClass().getSimpleName();
         String string2 = string.toLowerCase();
@@ -246,7 +269,7 @@ public class TestGenerator {
         public boolean canAcceptGenerator(TestFunctionGenerator generator) {
             Set<String> difference = Sets.difference(Sets.newHashSet(generator.getValues()), Sets.newHashSet(this.getValues()));
             for (TestFunctionGenerator gen : testFunctionGenerators) {
-                RunState runState = gen.getRunState();
+                RunState runState = gen.getGameTestConfig().runState();
                 if (runState.ignored()) {
                     if (runState.combined()) {
                         for (String val : gen.getValues()) {

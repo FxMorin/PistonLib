@@ -40,23 +40,17 @@ public class BasicTestSuite {
     // Check if 2 game tick pulses still keep waterlogged state
     @GameTestConfig(value = "pistonsPushWaterloggedBlocks")
     @GameTest(timeoutTicks = 5)
-    public void waterPushDirectly(GameTestHelper helper) {
-        GameTestUtil.pistonLibGameTest(helper);
-    }
+    public void waterPushDirectly(GameTestHelper helper) {}
 
     // Make sure 2 game tick pulses only push water when directly in front of the piston
     @GameTestConfig(value = "pistonsPushWaterloggedBlocks")
     @GameTest(timeoutTicks = 5)
-    public void waterPushInDirectly(GameTestHelper helper) {
-        GameTestUtil.pistonLibGameTest(helper);
-    }
+    public void waterPushInDirectly(GameTestHelper helper) {}
 
     // Piston should break bedrock if headless
     @GameTestConfig(value = "illegalBreakingFix")
     @GameTest(timeoutTicks = 4)
-    public void headlessPistonIllegalBreak(GameTestHelper helper) {
-        GameTestUtil.pistonLibGameTest(helper);
-    }
+    public void headlessPistonIllegalBreak(GameTestHelper helper) {}
 
     // Check if the strong piston can still pull 24 blocks
     @GameTest(timeoutTicks = 90)
