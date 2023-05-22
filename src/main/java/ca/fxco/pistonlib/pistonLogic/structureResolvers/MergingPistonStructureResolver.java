@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
@@ -134,8 +135,6 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         lastBlockPos = pos;
         BlockPos currentPos = pos.relative(this.pushDirection, nextIndex);
         while(true) {
-            lastState = state;
-
             // Sticky Checks
             int lastIndex = this.toPush.indexOf(currentPos);
             if (lastIndex > -1) {
@@ -151,6 +150,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 return false;
             }
 
+            lastState = PistonLibConfig.indirectStickyApi ? this.level.getBlockState(lastBlockPos) : state;
             state = this.level.getBlockState(currentPos);
 
             // Merge checks
