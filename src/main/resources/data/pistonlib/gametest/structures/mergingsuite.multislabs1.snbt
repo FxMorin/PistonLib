@@ -81,7 +81,7 @@
         {pos: [0, 2, 4], state: "minecraft:air"},
         {pos: [0, 2, 5], state: "minecraft:air"},
         {pos: [1, 2, 0], state: "minecraft:air"},
-        {pos: [1, 2, 1], state: "pistonlib:configurable_piston{extended:false,facing:south}"},
+        {pos: [1, 2, 1], state: "pistonlib:basic_piston{extended:false,facing:south}"},
         {pos: [1, 2, 2], state: "minecraft:slime_block"},
         {pos: [1, 2, 3], state: "minecraft:red_nether_brick_slab{type:bottom,waterlogged:false}"},
         {pos: [1, 2, 4], state: "minecraft:red_nether_brick_slab{type:top,waterlogged:false}"},
@@ -222,7 +222,7 @@
     entities: [],
     palette: [
         "minecraft:polished_andesite",
-        "pistonlib:configurable_piston{extended:false,facing:south}",
+        "pistonlib:basic_piston{extended:false,facing:south}",
         "minecraft:slime_block",
         "minecraft:air",
         "minecraft:red_nether_brick_slab{type:bottom,waterlogged:false}",
