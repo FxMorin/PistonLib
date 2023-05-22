@@ -6,6 +6,7 @@ import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
 import ca.fxco.pistonlib.gametest.testSuites.MergingSuite;
+import ca.fxco.pistonlib.helpers.Utils;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.AllArgsConstructor;
@@ -92,14 +93,8 @@ public class TestGenerator {
             if (gameTestConfig.ignored()) {
                 if (gameTestConfig.combined()) {
                     for (GameTestCalcBatch batch : new ArrayList<>(gameTestCalcBatches)) {
-                        boolean failed = false;
-                        for (String str : batch.getValues()) {
-                            if (generator.getValues().contains(str)) {
-                                failed = true;
-                                break;
-                            }
-                        }
-                        if (!failed && batch.canAcceptGenerator(generator)) {
+                        if (Utils.containsAny(generator.getValues(), batch.getValues()) &&
+                                batch.canAcceptGenerator(generator)) {
                             batch.addGenerator(generator);
                             gotBatch = true;
                             break;
@@ -107,14 +102,8 @@ public class TestGenerator {
                     }
                 } else {
                     for (GameTestCalcBatch batch : new ArrayList<>(gameTestCalcBatches)) {
-                        int count = 0;
-                        for (String str : batch.getValues()) {
-                            if (generator.getValues().contains(str)) {
-                                count++;
-                                break;
-                            }
-                        }
-                        if (count == generator.getValues().size() && batch.canAcceptGenerator(generator)) {
+                        if (generator.getValues().containsAll(batch.getValues()) &&
+                                batch.canAcceptGenerator(generator)) {
                             batch.addGenerator(generator);
                             gotBatch = true;
                             break;
@@ -125,12 +114,10 @@ public class TestGenerator {
                 if (gameTestConfig.combined()) {
                     for (GameTestCalcBatch batch : new ArrayList<>(gameTestCalcBatches)) {
                         List<String> differences = new ArrayList<>(Sets.difference(Sets.newHashSet(batch.getValues()), Sets.newHashSet(generator.getValues())));
-                        if (differences.size() == 0) {
-                            if (batch.canAcceptGenerator(generator)) {
-                                batch.addGenerator(generator);
-                                gotBatch = true;
-                                break;
-                            }
+                        if (differences.size() == 0 && batch.canAcceptGenerator(generator)) {
+                            batch.addGenerator(generator);
+                            gotBatch = true;
+                            break;
                         }
                     }
                 } else {
@@ -145,12 +132,10 @@ public class TestGenerator {
                             }
                         }
                         List<String> differences = new ArrayList<>(Sets.difference(Sets.newHashSet(batch.getValues()), Sets.newHashSet(generator.getValues())));
-                        if (differences.size() == 0) {
-                            if (batch.canAcceptGenerator(generator)) {
-                                batch.addGenerator(generator);
-                                gotBatch = true;
-                                break;
-                            }
+                        if (differences.size() == 0 && batch.canAcceptGenerator(generator)) {
+                            batch.addGenerator(generator);
+                            gotBatch = true;
+                            break;
                         }
                     }
                 }
@@ -291,16 +276,8 @@ public class TestGenerator {
                                 return false;
                             }
                         }
-                    } else {
-                        int count = 0;
-                        for (String val : gen.getValues()) {
-                            if (difference.contains(val)) {
-                                count++;
-                            }
-                        }
-                        if (count == gen.getValues().size()) {
-                            return false;
-                        }
+                    } else if (difference.containsAll(gen.getValues())) {
+                        return false;
                     }
                 }
             }

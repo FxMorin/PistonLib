@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 
 import static net.minecraft.core.Direction.*;
 
@@ -103,6 +104,17 @@ public class Utils {
             case BLACK -> col2.equals(DyeColor.WHITE) ? DyeColor.GRAY : col1;
             default -> col1;
         };
+    }
+
+    public static <T> boolean containsAny(Collection<T> collection, Collection<T> anyOf) {
+        boolean failed = false;
+        for (T val : anyOf) {
+            if (collection.contains(val)) {
+                failed = true;
+                break;
+            }
+        }
+        return !failed;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
