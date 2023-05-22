@@ -11,8 +11,10 @@ import it.unimi.dsi.fastutil.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.level.block.Rotation;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,7 +35,7 @@ public class TestGenerator {
         List<TestGenerator.GameTestCalcBatch> gameTestCalcBatches = checkAllCombinations(testFunctionGenerators);
         int countBatch = 0;
         for (TestGenerator.GameTestCalcBatch calcBatch : gameTestCalcBatches) {
-            String batchId = "" + countBatch;
+            String batchId = calcBatch.hasName() ? calcBatch.getName() : "" + countBatch;
             List<String> batchNames = new ArrayList<>();
             int x = 0;
             // TODO: Add a way to try all combinations of options, instead of one at a time
@@ -254,16 +256,28 @@ public class TestGenerator {
     }
 
     @Getter
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class GameTestCalcBatch {
 
+        private @Nullable String name = "";
         private final List<String> values;
         private final List<TestFunctionGenerator> testFunctionGenerators = new ArrayList<>();
+
+        public boolean hasName() {
+            return name != null;
+        }
 
         public void addGenerator(TestFunctionGenerator generator) {
             Set<String> difference = Sets.difference(Sets.newHashSet(generator.getValues()), Sets.newHashSet(this.getValues()));
             this.values.addAll(difference);
             this.testFunctionGenerators.add(generator);
+            if (this.name != null) {
+                if (this.name.isEmpty()) {
+                    this.name = generator.getGameTestDataBuilder().batch$value;
+                } else if (!this.name.equals(generator.getGameTestDataBuilder().batch$value)) {
+                    this.name = null;
+                }
+            }
         }
 
         public boolean canAcceptGenerator(TestFunctionGenerator generator) {
