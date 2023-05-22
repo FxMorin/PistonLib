@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.gametest;
 
+import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
@@ -36,18 +37,21 @@ public class BasicTestSuite {
     }
 
     // Check if 2 game tick pulses still keep waterlogged state
+    @GameTestConfig(value = "pistonsPushWaterloggedBlocks")
     @GameTest(timeoutTicks = 5)
     public void waterPushDirectly(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Make sure 2 game tick pulses only push water when directly in front of the piston
+    @GameTestConfig(value = "pistonsPushWaterloggedBlocks")
     @GameTest(timeoutTicks = 5)
     public void waterPushInDirectly(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 
     // Piston should break bedrock if headless
+    @GameTestConfig(value = "illegalBreakingFix")
     @GameTest(timeoutTicks = 4)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);

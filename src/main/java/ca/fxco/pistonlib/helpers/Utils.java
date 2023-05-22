@@ -9,6 +9,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.lang.reflect.Constructor;
+
 import static net.minecraft.core.Direction.*;
 
 @UtilityClass
@@ -101,5 +103,16 @@ public class Utils {
             case BLACK -> col2.equals(DyeColor.WHITE) ? DyeColor.GRAY : col1;
             default -> col1;
         };
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> T createInstance(Class<T> clazz) {
+        try {
+            Constructor<T> c = clazz.getDeclaredConstructor();
+            c.setAccessible(true);
+            return c.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

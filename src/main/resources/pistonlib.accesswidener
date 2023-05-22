@@ -54,3 +54,5 @@ extendable method net/minecraft/client/gui/components/CommandSuggestions formatC
 accessible method net/minecraft/client/gui/components/CommandSuggestions sortSuggestions (Lcom/mojang/brigadier/suggestion/Suggestions;)Ljava/util/List;
 accessible field net/minecraft/client/gui/components/CommandSuggestions fillColor I
 accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (Lnet/minecraft/client/gui/components/CommandSuggestions;IIILjava/util/List;Z)V
+accessible field net/minecraft/gametest/framework/GameTestRegistry BEFORE_BATCH_FUNCTIONS Ljava/util/Map;
+accessible field net/minecraft/gametest/framework/GameTestRegistry AFTER_BATCH_FUNCTIONS Ljava/util/Map;

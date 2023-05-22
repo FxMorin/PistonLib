@@ -23,7 +23,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     public static final boolean GAMETEST_ACTIVE = System.getProperty("fabric-api.gametest") != null;
     public static final boolean KEEPALIVE_ACTIVE = Boolean.parseBoolean(System.getProperty("fabric-api.gametest.keepAlive", "false"));
-    private static final ConfigManager configManager = new ConfigManager(MOD_ID);
+    public static final ConfigManager CONFIG_MANAGER = new ConfigManager(MOD_ID);
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -31,6 +31,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     @Override
     public void onInitialize() {
+        // Config should always be loaded first
+        CONFIG_MANAGER.loadConfigClass(PistonLibConfig.class);
+
         ModRegistries.bootstrap();
 
         initialize(PistonLibInitializer::registerPistonFamilies);
@@ -41,8 +44,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModStickyGroups.validate();
 
         PLNetwork.initialize();
-
-        configManager.loadConfigClass(PistonLibConfig.class);
     }
 
     @Override

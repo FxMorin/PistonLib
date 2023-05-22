@@ -4,6 +4,7 @@ import ca.fxco.api.pistonlib.config.ConfigValue;
 import ca.fxco.pistonlib.PistonLibConfig;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.lang3.SerializationException;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,7 @@ public class ConfigManager {
     private final Path configPath;
     private final TomlWriter tomlWriter;
 
+    @Getter
     private final Map<String, ParsedValue<?>> parsedValues = new HashMap<>();
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
