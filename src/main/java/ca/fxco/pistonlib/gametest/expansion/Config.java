@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.gametest.expansion;
 
-import ca.fxco.pistonlib.config.ParsedValue;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 // Unused currently
 public @interface Config {
@@ -11,22 +12,36 @@ public @interface Config {
     String[] value();
 
     /**
-     * Test Class that need to be met in order for the config option to be added/removed from the list of config options.
-     * If the value is already within the list, when this test return false it will remove that option from the list.
-     * However, if the value is not already in that list, when the test returns true, it will add it to the list.
+     * Specify what should change about the test when these config values are used.
      */
-    Class<? extends ConfigOptionTest>[] testClass() default {};
+    GameTestChanges changes() default GameTestChanges.NONE;
 
-    /**
-     * The interface to test if the config option should be used or removed
-     */
-    interface ConfigOptionTest {
+
+    @Getter
+    @AllArgsConstructor
+    enum GameTestChanges {
+
         /**
-         * This test is run for all different combinations of config options used.
-         * @param configValues An array of all the parsed config values currently enabled
-         * @param value The field name of the config you are currently trying to add/remove
-         * @param state Returns `true` if the value is currently in the list (to be removed), and false if it's not (to be added)
+         * Nothing should change
          */
-        boolean shouldPass(ParsedValue<?>[] configValues, String value, boolean state);
+        NONE(false, false),
+
+        /**
+         * TestTrigger Blocks will give the opposite result
+         */
+        FLIP_TRIGGERS(true, false),
+
+        /**
+         * CheckState Blocks will flip their FailOnFound state
+         */
+        FLIP_CHECKS(false, true),
+
+        /**
+         * Both `FLIP_TRIGGERS` & `FLIP_CHECKS`
+         */
+        FLIP_TRIGGERS_CHECKS(true, true);
+
+        private final boolean flipTriggers;
+        private final boolean flipChecks;
     }
 }

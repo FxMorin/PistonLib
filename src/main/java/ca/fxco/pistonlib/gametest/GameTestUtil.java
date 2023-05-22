@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.gametest;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.gametest.CheckStateBlockEntity;
 import ca.fxco.pistonlib.blocks.gametest.PulseStateBlockEntity;
+import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestGroupConditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.*;
@@ -19,6 +20,13 @@ public class GameTestUtil {
      * By using this method as the first line in a gametest, you will be able to use gametest blocks within those tests
      */
     public static void pistonLibGameTest(GameTestHelper helper) {
+        pistonLibGameTest(helper, Config.GameTestChanges.NONE);
+    }
+
+    /**
+     * By using this method as the first line in a gametest, you will be able to use gametest blocks within those tests
+     */
+    public static void pistonLibGameTest(GameTestHelper helper, Config.GameTestChanges changes) {
         if (helper.getTick() != 0) { // Only run searching logic on the first tick
             return;
         }
@@ -48,10 +56,10 @@ public class GameTestUtil {
                 BlockEntity blockEntity = helper.getBlockEntity(blockPos);
                 if (blockEntity instanceof CheckStateBlockEntity checkStateBe) {
                     BlockPos checkPos = blockPos.relative(checkStateBe.getDirection());
-                    groupConditions.addCondition(checkStateBe, checkPos);
+                    groupConditions.addCondition(checkStateBe, checkPos, changes.isFlipChecks());
                 }
             } else if (block == ModBlocks.TEST_TRIGGER_BLOCK) {
-                groupConditions.addTestTrigger(blockPos);
+                groupConditions.addTestTrigger(blockPos, changes.isFlipTriggers());
             } else if (block == ModBlocks.GAMETEST_REDSTONE_BLOCK) {
                 helper.setBlock(blockPos, state.cycle(BlockStateProperties.POWERED));
             }

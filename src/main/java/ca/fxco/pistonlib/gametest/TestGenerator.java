@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.gametest;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.config.ParsedValue;
+import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.RunState;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
@@ -21,8 +22,6 @@ import java.util.function.Consumer;
 
 // Not currently being used!
 public class TestGenerator {
-
-    // TODO: Add a way to flip some gametest logic like: TestTrigger reversing its state if it needs to fail, or CheckStateBlock using FailOnFound instead (only if using onTick conditions)
 
     @GameTestGenerator
     public Collection<TestFunction> generateBatches() {
@@ -63,7 +62,9 @@ public class TestGenerator {
                                         generator.getMethod(),
                                         gameTestHelper -> {
                                             if (gameTestConfig.customBlocks()) {
-                                                GameTestUtil.pistonLibGameTest(gameTestHelper);
+                                                Config.GameTestChanges changes = generator.getSpecialValues()
+                                                        .getOrDefault(configName, Config.GameTestChanges.NONE);
+                                                GameTestUtil.pistonLibGameTest(gameTestHelper, changes);
                                             }
                                             turnMethodIntoConsumer(generator.getMethod()).accept(gameTestHelper);
                                         },

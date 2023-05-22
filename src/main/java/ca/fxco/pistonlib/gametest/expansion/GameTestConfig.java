@@ -24,5 +24,5 @@ public @interface GameTestConfig {
     /**
      * For more control over how config options pass & fail. You can use @Config to specify the new result
      */
-    //Config[] configs() default {}; // TODO
+    Config[] config() default {};
 }

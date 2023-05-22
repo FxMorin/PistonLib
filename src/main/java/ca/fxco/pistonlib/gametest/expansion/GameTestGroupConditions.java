@@ -47,12 +47,12 @@ public class GameTestGroupConditions {
         return true;
     }
 
-    public void addCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
-        testConditions.add(new CheckStateTestCondition(checkStateBe, checkPos));
+    public void addCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos, boolean flip) {
+        testConditions.add(new CheckStateTestCondition(checkStateBe, checkPos, flip));
     }
 
-    public void addTestTrigger(BlockPos blockPos) {
-        testConditions.add(new TriggerTestCondition(blockPos));
+    public void addTestTrigger(BlockPos blockPos, boolean flip) {
+        testConditions.add(new TriggerTestCondition(blockPos, flip));
     }
 
     public static abstract class TestCondition {
@@ -69,9 +69,11 @@ public class GameTestGroupConditions {
         @Setter
         private boolean success = false;
         private final BlockPos blockPos;
+        private final boolean flip;
 
-        public TriggerTestCondition(BlockPos blockPos) {
+        public TriggerTestCondition(BlockPos blockPos, boolean flip) {
             this.blockPos = blockPos.immutable();
+            this.flip = flip;
         }
 
         @Override
@@ -81,11 +83,11 @@ public class GameTestGroupConditions {
 
         @Override
         public Boolean runCheck(GameTestHelper helper) {
-            BlockState state = helper.getBlockState(blockPos);
+            BlockState state = helper.getBlockState(this.blockPos);
             if (state.getBlock() == ModBlocks.TEST_TRIGGER_BLOCK) {
                 if (state.getValue(BlockStateProperties.POWERED)) {
-                    if (state.getValue(BlockStateProperties.INVERTED)) {
-                        helper.fail("Test Trigger at " + blockPos.toShortString() + " was triggered");
+                    if (state.getValue(BlockStateProperties.INVERTED) == this.flip) {
+                        helper.fail("Test Trigger at " + this.blockPos.toShortString() + " was triggered");
                         return false;
                     }
                     return true;
@@ -105,9 +107,12 @@ public class GameTestGroupConditions {
         @Getter
         private final CheckStateBlockEntity checkStateBe;
 
-        public CheckStateTestCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos) {
+        public CheckStateTestCondition(CheckStateBlockEntity checkStateBe, BlockPos checkPos, boolean flip) {
             this.checkStateBe = checkStateBe;
             this.checkPos = checkPos.immutable();
+            if (flip) {
+                this.checkStateBe.setFailOnFound(!this.checkStateBe.isFailOnFound());
+            }
         }
 
         @Override
@@ -122,7 +127,7 @@ public class GameTestGroupConditions {
 
         @Override
         public Boolean runCheck(GameTestHelper helper) {
-            return checkStateBe.runGameTestChecks(helper, checkPos);
+            return this.checkStateBe.runGameTestChecks(helper, this.checkPos);
         }
     }
 }
