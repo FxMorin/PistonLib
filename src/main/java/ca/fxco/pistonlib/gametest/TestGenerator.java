@@ -39,24 +39,23 @@ public class TestGenerator {
         for (TestGenerator.GameTestCalcBatch calcBatch : gameTestCalcBatches) {
             String batchId = "" + countBatch;
             List<String> batchNames = new ArrayList<>();
+            int x = 0;
             for (String configName : calcBatch.getValues()) {
                 ParsedValue<?> parsedValue = PistonLib.CONFIG_MANAGER.getParsedValues().get(configName);
                 Object[] objs = parsedValue.getAllTestingValues();
                 System.out.println("testingValues: " + objs.length + " - " + objs);
                 for (int i = 0; i < objs.length; i++) {
-                    String currentBatchId = batchId + "-" + i;
+                    String currentBatchId = batchId + "-" + x + "-" + i;
                     batchNames.add(currentBatchId);
                     int finalI = i;
-                    if (i != 0) { // First is always default so we don't need to setup a before batch here for no reason
-                        GameTestRegistry.BEFORE_BATCH_FUNCTIONS.put(currentBatchId, serverLevel -> {
-                            Object obj = objs[finalI];
-                            System.out.println("Setting config value for: " + configName + " to: " + obj);
-                            parsedValue.setValueObj(obj);
-                        });
-                    }
+                    GameTestRegistry.BEFORE_BATCH_FUNCTIONS.put(currentBatchId, serverLevel -> {
+                        Object obj = objs[finalI];
+                        //System.out.println("Setting config value for: " + configName + " to: " + obj);
+                        parsedValue.setValueObj(obj);
+                    });
                     GameTestRegistry.AFTER_BATCH_FUNCTIONS.put(currentBatchId, serverLevel -> {
                         parsedValue.reset();
-                        System.out.println("Setting config value for: " + configName + " to default value");
+                        //System.out.println("Setting config value for: " + configName + " to default value");
                     });
                     for (TestFunctionGenerator generator : calcBatch.testFunctionGenerators) {
                         simpleTestFunctions.add(
@@ -67,10 +66,11 @@ public class TestGenerator {
                         );
                     }
                 }
+                x++;
             }
             countBatch++;
+            System.out.println(batchNames);
         }
-
         System.out.println("TestGenerator has generated: " + simpleTestFunctions.size() + " test functions as: " + countBatch + " batches");
 
         return simpleTestFunctions;
