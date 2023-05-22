@@ -1,5 +1,6 @@
-package ca.fxco.pistonlib.gametest;
+package ca.fxco.pistonlib.gametest.testSuites;
 
+import ca.fxco.pistonlib.gametest.GameTestUtil;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -72,12 +73,6 @@ public class BasicTestSuite {
     // Make sure 0-ticks still work with!
     @GameTest(timeoutTicks = 6)
     public void zerotick(GameTestHelper helper) {
-        GameTestUtil.pistonLibGameTest(helper);
-    }
-
-    // Make sure the Merging API still works
-    @GameTest(timeoutTicks = 6) // Change timeout to: 3
-    public void mergingslabs(GameTestHelper helper) {
         GameTestUtil.pistonLibGameTest(helper);
     }
 

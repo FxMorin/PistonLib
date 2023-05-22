@@ -5,6 +5,7 @@ import ca.fxco.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.RunState;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
+import ca.fxco.pistonlib.gametest.testSuites.MergingSuite;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,8 @@ public class TestGenerator {
         //  than create batches for all possible tests for all config options based on the requirements set by the GameTestConfig annotations
         //  After that, create the batches and required TestFunctions to use and submit them!
         //  You need to make sure to somehow add logic so that before & after the batch, all the correct config options are switched back to there required state. DEFAULT
-        addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite"));
+        //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite"));
+        addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(MergingSuite.class, "mergingsuite"));
         //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite2"));
 
         List<TestGenerator.GameTestCalcBatch> gameTestCalcBatches = checkAllCombinations(testFunctionGenerators);
@@ -43,7 +45,7 @@ public class TestGenerator {
             for (String configName : calcBatch.getValues()) {
                 ParsedValue<?> parsedValue = PistonLib.CONFIG_MANAGER.getParsedValues().get(configName);
                 Object[] objs = parsedValue.getAllTestingValues();
-                System.out.println("testingValues: " + objs.length + " - " + objs);
+                //System.out.println("testingValues: " + objs.length + " - " + objs);
                 for (int i = 0; i < objs.length; i++) {
                     String currentBatchId = batchId + "-" + x + "-" + i;
                     batchNames.add(currentBatchId);
