@@ -90,10 +90,6 @@ public class ModModelProvider extends FabricModelProvider {
 		generator.createTrivialCube(ModBlocks.QUASI_BLOCK);
 		generator.createTrivialCube(ModBlocks.ERASE_BLOCK);
 		generator.createTrivialCube(ModBlocks.HEAVY_BLOCK);
-		generator.createTrivialCube(ModBlocks.PULSE_STATE_BLOCK);
-		generator.createTrivialCube(ModBlocks.CHECK_STATE_BLOCK);
-
-		registerInvertedBlock(generator, ModBlocks.TEST_TRIGGER_BLOCK);
 
 		registerSlab(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_SLAB_BLOCK);
 		registerStair(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_STAIR_BLOCK);
@@ -104,7 +100,6 @@ public class ModModelProvider extends FabricModelProvider {
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
 
 		registerPoweredBlock(generator, ModBlocks.ALL_SIDED_OBSERVER);
-		registerPoweredBlock(generator, ModBlocks.GAMETEST_REDSTONE_BLOCK);
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.POWERED_STICKY_BLOCK).with(
 				PropertyDispatch.property(BlockStateProperties.POWERED)
@@ -273,17 +268,6 @@ public class ModModelProvider extends FabricModelProvider {
 						.select(true, Variant.variant().with(VariantProperties.MODEL, powerOn)));
 		registerCubeTextureMap(generator, block, powerOff, null);
 		registerCubeTextureMap(generator, block, powerOn, "_on");
-	}
-
-	public static void registerInvertedBlock(BlockModelGenerators generator, Block block) {
-		ResourceLocation defaultRes = ModelLocationUtils.getModelLocation(block);
-		ResourceLocation invertedRes = ModelLocationUtils.getModelLocation(block, "_inverted");
-		registerBlockWithCustomStates(generator, block,
-				PropertyDispatch.property(BlockStateProperties.INVERTED)
-						.select(false, Variant.variant().with(VariantProperties.MODEL, defaultRes))
-						.select(true, Variant.variant().with(VariantProperties.MODEL, invertedRes)));
-		registerCubeTextureMap(generator, block, defaultRes, null);
-		registerCubeTextureMap(generator, block, invertedRes, "_inverted");
 	}
 
 	public static PropertyDispatch createLitFacingBlockState(ResourceLocation offModelId, ResourceLocation onModelId) {

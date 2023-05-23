@@ -79,7 +79,8 @@ dependencies {
     // MixinExtras
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
 
-    modImplementation 'com.github.fxmorin:GameTestLib:-SNAPSHOT'
+    // GameTestLib
+    modImplementation("com.github.fxmorin:GameTestLib:a23575feb9")
 }
 
 processResources {

@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.gametest.testSuites;
 
-import ca.fxco.pistonlib.gametest.GameTestUtil;
-import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
+import ca.fxco.gametestlib.gametest.GameTestUtil;
+import ca.fxco.gametestlib.gametest.expansion.GameTestConfig;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 

@@ -3,8 +3,6 @@ package ca.fxco.pistonlib.network;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.network.packets.PLPacket;
-import ca.fxco.pistonlib.network.packets.ServerboundSetCheckStatePacket;
-import ca.fxco.pistonlib.network.packets.ServerboundSetPulseStatePacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -36,8 +34,6 @@ public class PLNetwork {
     public static void initialize() {
         EnvType envType = FabricLoader.getInstance().getEnvironmentType();
         registerClientReceiver(envType, "piston_event", ClientboundPistonEventPacket.class, ClientboundPistonEventPacket::new);
-        registerServerReceiver(envType, "pulse_state_block", ServerboundSetPulseStatePacket.class, ServerboundSetPulseStatePacket::new);
-        registerServerReceiver(envType, "check_state_block", ServerboundSetCheckStatePacket.class, ServerboundSetCheckStatePacket::new);
     }
 
     //
