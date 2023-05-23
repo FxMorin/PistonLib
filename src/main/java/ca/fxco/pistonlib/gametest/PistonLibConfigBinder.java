@@ -16,6 +16,7 @@ public class PistonLibConfigBinder extends ConfigBinder {
         Map<String, ParsedValue<?>> configValues = new HashMap<>();
         for (Map.Entry<String, ResolveValue<?>> entry : PistonLib.CONFIG_MANAGER.getResolvedValues().entrySet()) {
             configValues.put(entry.getKey(), convertToParsedValue(entry.getValue()));
+            System.out.println(entry.getKey());
         }
         return configValues;
     }
