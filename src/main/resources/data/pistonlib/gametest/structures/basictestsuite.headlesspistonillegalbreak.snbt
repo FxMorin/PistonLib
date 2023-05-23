@@ -15,7 +15,7 @@
         {pos: [0, 1, 1], state: "minecraft:air"},
         {pos: [0, 1, 2], state: "minecraft:air"},
         {pos: [1, 1, 0], state: "minecraft:air"},
-        {pos: [1, 1, 1], state: "pistonlib:gametest_redstone_block{powered:true}"},
+        {pos: [1, 1, 1], state: "gametestlib:gametest_redstone_block{powered:true}"},
         {pos: [1, 1, 2], state: "minecraft:air"},
         {pos: [2, 1, 0], state: "minecraft:air"},
         {pos: [2, 1, 1], state: "minecraft:air"},
@@ -42,7 +42,7 @@
         {pos: [0, 4, 1], state: "minecraft:air"},
         {pos: [0, 4, 2], state: "minecraft:air"},
         {pos: [1, 4, 0], state: "minecraft:air"},
-        {pos: [1, 4, 1], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:bedrock", state: 0b}, dir: 0b, fail: 1b, id: "pistonlib:check_state_block", tick: 3}},
+        {pos: [1, 4, 1], state: "gametestlib:check_state_block", nbt: {BS: {Name: "minecraft:bedrock", state: 0b}, dir: 0b, fail: 1b, id: "pistonlib:check_state_block", tick: 3}},
         {pos: [1, 4, 2], state: "minecraft:air"},
         {pos: [2, 4, 0], state: "minecraft:air"},
         {pos: [2, 4, 1], state: "minecraft:air"},
@@ -60,10 +60,10 @@
     entities: [],
     palette: [
         "minecraft:polished_andesite",
-        "pistonlib:gametest_redstone_block{powered:true}",
+        "gametestlib:gametest_redstone_block{powered:true}",
         "minecraft:bedrock",
         "minecraft:air",
         "pistonlib:basic_piston{extended:true,facing:up}",
-        "pistonlib:check_state_block"
+        "gametestlib:check_state_block"
     ]
 }

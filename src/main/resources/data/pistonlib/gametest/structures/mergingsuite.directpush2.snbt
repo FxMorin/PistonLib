@@ -45,10 +45,10 @@
         {pos: [0, 2, 4], state: "minecraft:air"},
         {pos: [0, 2, 5], state: "minecraft:air"},
         {pos: [1, 2, 0], state: "minecraft:air"},
-        {pos: [1, 2, 1], state: "pistonlib:gametest_redstone_block{powered:false}"},
+        {pos: [1, 2, 1], state: "gametestlib:gametest_redstone_block{powered:false}"},
         {pos: [1, 2, 2], state: "minecraft:air"},
         {pos: [1, 2, 3], state: "minecraft:air"},
-        {pos: [1, 2, 4], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:oak_slab", Properties: {type: "bottom", waterlogged: "false"}, state: 1b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 3}},
+        {pos: [1, 2, 4], state: "gametestlib:check_state_block", nbt: {BS: {Name: "minecraft:oak_slab", Properties: {type: "bottom", waterlogged: "false"}, state: 1b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 3}},
         {pos: [1, 2, 5], state: "minecraft:air"},
         {pos: [2, 2, 0], state: "minecraft:air"},
         {pos: [2, 2, 1], state: "minecraft:air"},
@@ -79,10 +79,10 @@
     palette: [
         "minecraft:polished_andesite",
         "pistonlib:basic_sticky_piston{extended:false,facing:south}",
-        "pistonlib:gametest_redstone_block{powered:false}",
+        "gametestlib:gametest_redstone_block{powered:false}",
         "minecraft:air",
         "minecraft:oak_slab{type:bottom,waterlogged:false}",
         "minecraft:oak_slab{type:top,waterlogged:false}",
-        "pistonlib:check_state_block"
+        "gametestlib:check_state_block"
     ]
 }

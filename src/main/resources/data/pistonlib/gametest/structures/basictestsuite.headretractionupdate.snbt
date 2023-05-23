@@ -83,7 +83,7 @@
         {pos: [0, 3, 3], state: "minecraft:air"},
         {pos: [0, 3, 4], state: "minecraft:air"},
         {pos: [1, 3, 0], state: "minecraft:air"},
-        {pos: [1, 3, 1], state: "pistonlib:pulse_state_block", nbt: {delay: 0, duration: 0, firstBS: {Name: "minecraft:redstone_block"}, id: "pistonlib:pulse_state_block", lastBS: {Name: "minecraft:air"}, pulseBS: {Name: "minecraft:redstone_block"}}},
+        {pos: [1, 3, 1], state: "gametestlib:pulse_state_block", nbt: {delay: 0, duration: 0, firstBS: {Name: "minecraft:redstone_block"}, id: "pistonlib:pulse_state_block", lastBS: {Name: "minecraft:air"}, pulseBS: {Name: "minecraft:redstone_block"}}},
         {pos: [1, 3, 2], state: "minecraft:air"},
         {pos: [1, 3, 3], state: "minecraft:air"},
         {pos: [1, 3, 4], state: "minecraft:air"},
@@ -119,7 +119,7 @@
         {pos: [2, 4, 4], state: "minecraft:air"},
         {pos: [3, 4, 0], state: "minecraft:air"},
         {pos: [3, 4, 1], state: "minecraft:air"},
-        {pos: [3, 4, 2], state: "pistonlib:check_state_block", nbt: {BS: {Name: "minecraft:sand", state: 0b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 6}},
+        {pos: [3, 4, 2], state: "gametestlib:check_state_block", nbt: {BS: {Name: "minecraft:sand", state: 0b}, dir: 0b, fail: 0b, id: "pistonlib:check_state_block", tick: 6}},
         {pos: [3, 4, 3], state: "minecraft:air"},
         {pos: [3, 4, 4], state: "minecraft:air"},
         {pos: [4, 4, 0], state: "minecraft:air"},
@@ -139,7 +139,7 @@
         "minecraft:air",
         "minecraft:sticky_piston{extended:true,facing:south}",
         "minecraft:piston_head{facing:south,short:false,type:sticky}",
-        "pistonlib:pulse_state_block",
-        "pistonlib:check_state_block"
+        "gametestlib:pulse_state_block",
+        "gametestlib:check_state_block"
     ]
 }
