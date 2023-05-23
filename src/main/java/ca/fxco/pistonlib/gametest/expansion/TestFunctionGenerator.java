@@ -12,10 +12,10 @@ public class TestFunctionGenerator {
     private final Method method;
     private final SortedSet<String> values;
     private final Map<String, Config.GameTestChanges> specialValues = new HashMap<>();
-    private final GameTestConfig gameTestConfig;
+    private final ParsedGameTestConfig gameTestConfig;
     private final TestGenerator.GameTestData.GameTestDataBuilder gameTestDataBuilder;
 
-    public TestFunctionGenerator(Method method, GameTestConfig gameTestConfig,
+    public TestFunctionGenerator(Method method, ParsedGameTestConfig gameTestConfig,
                                  TestGenerator.GameTestData.GameTestDataBuilder gameTestDataBuilder) {
         this.method = method;
         this.gameTestConfig = gameTestConfig;

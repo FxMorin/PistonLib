@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
+import ca.fxco.pistonlib.gametest.expansion.ParsedGameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
 import ca.fxco.pistonlib.gametest.testSuites.MergingSuite;
 import ca.fxco.pistonlib.helpers.Utils;
@@ -45,7 +46,7 @@ public class TestGenerator {
                 Object[] objs = parsedValue.getAllTestingValues();
                 //System.out.println("testingValues: " + objs.length + " - " + objs);
                 for (int i = 0; i < objs.length; i++) {
-                    String currentBatchId = batchId + "-" + x + "-" + i;
+                    String currentBatchId = batchId + "-" + configName + "-" + i;
                     batchNames.add(currentBatchId);
                     int finalI = i;
                     GameTestRegistry.BEFORE_BATCH_FUNCTIONS.put(currentBatchId, serverLevel -> {
@@ -58,7 +59,7 @@ public class TestGenerator {
                         //System.out.println("Setting config value for: " + configName + " to default value");
                     });
                     for (TestFunctionGenerator generator : calcBatch.testFunctionGenerators) {
-                        GameTestConfig gameTestConfig = generator.getGameTestConfig();
+                        ParsedGameTestConfig gameTestConfig = generator.getGameTestConfig();
                         simpleTestFunctions.add(
                                 generateTestFunctionWithCustomData(
                                         generator.getMethod(),
@@ -88,7 +89,7 @@ public class TestGenerator {
     public static List<TestGenerator.GameTestCalcBatch> checkAllCombinations(List<TestFunctionGenerator> testFunctionGenerators) {
         List<GameTestCalcBatch> gameTestCalcBatches = new ArrayList<>();
         for (TestFunctionGenerator generator : testFunctionGenerators) {
-            GameTestConfig gameTestConfig = generator.getGameTestConfig();
+            ParsedGameTestConfig gameTestConfig = generator.getGameTestConfig();
             boolean gotBatch = false;
             if (gameTestConfig.ignored()) {
                 if (gameTestConfig.combined()) {
@@ -157,16 +158,27 @@ public class TestGenerator {
     public static Pair<List<TestFunction>, List<TestFunctionGenerator>> generateTestFunctions(Class<?> clazz, String batch) {
         List<TestFunction> simpleTestFunctions = new ArrayList<>();
         List<TestFunctionGenerator> testFunctionGenerators = new ArrayList<>();
+        ParsedGameTestConfig classConfig = clazz.isAnnotationPresent(GameTestConfig.class) ?
+                ParsedGameTestConfig.of(clazz.getAnnotation(GameTestConfig.class)) : null;
         Arrays.stream(clazz.getDeclaredMethods()).forEach(m -> {
             if (m.isAnnotationPresent(GameTest.class)) {
                 GameTest gameTest = m.getAnnotation(GameTest.class);
                 GameTestData.GameTestDataBuilder gameTestDataBuilder = GameTestData.builderFrom(gameTest);
                 if (m.isAnnotationPresent(GameTestConfig.class)) {
-                    GameTestConfig gameTestConfig = m.getAnnotation(GameTestConfig.class);
+                    ParsedGameTestConfig gameTestConfig;
+                    if (classConfig != null) {
+                        gameTestConfig = classConfig.createMerged(m.getAnnotation(GameTestConfig.class), true);
+                    } else {
+                        gameTestConfig = ParsedGameTestConfig.of(m.getAnnotation(GameTestConfig.class));
+                    }
                     testFunctionGenerators.add(new TestFunctionGenerator(m, gameTestConfig, gameTestDataBuilder.batch(batch)));
                 } else {
-                    // If no GameTestConfig is available, only run it once with default config options. Part of the `simple` batch
-                    simpleTestFunctions.add(generateTestFunctionWithCustomData(m, gameTestDataBuilder.batch("simple").build()));
+                    if (classConfig != null) {
+                        testFunctionGenerators.add(new TestFunctionGenerator(m, classConfig, gameTestDataBuilder.batch(batch)));
+                    } else {
+                        // If no GameTestConfig is available, only run it once with default config options. Part of the `simple` batch
+                        simpleTestFunctions.add(generateTestFunctionWithCustomData(m, gameTestDataBuilder.batch("simple").build()));
+                    }
                 }
             }
         });
@@ -268,7 +280,7 @@ public class TestGenerator {
         public boolean canAcceptGenerator(TestFunctionGenerator generator) {
             Set<String> difference = Sets.difference(Sets.newHashSet(generator.getValues()), Sets.newHashSet(this.getValues()));
             for (TestFunctionGenerator gen : testFunctionGenerators) {
-                GameTestConfig gameTestConfig = gen.getGameTestConfig();
+                ParsedGameTestConfig gameTestConfig = gen.getGameTestConfig();
                 if (gameTestConfig.ignored()) {
                     if (gameTestConfig.combined()) {
                         for (String val : gen.getValues()) {
