@@ -6,7 +6,6 @@ import ca.fxco.pistonlib.gametest.expansion.Config;
 import ca.fxco.pistonlib.gametest.expansion.GameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.ParsedGameTestConfig;
 import ca.fxco.pistonlib.gametest.expansion.TestFunctionGenerator;
-import ca.fxco.pistonlib.gametest.testSuites.MergingSuite;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.Pair;
@@ -14,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.Nullable;
@@ -26,20 +27,25 @@ import java.util.function.Consumer;
 // Not currently being used!
 public class TestGenerator {
 
+    private static final String ENTRYPOINT_KEY = PistonLib.MOD_ID + "-gametest";
+    private static final Map<Class<?>, String> GAME_TEST_IDS = new HashMap<>();
+
     @GameTestGenerator
     public Collection<TestFunction> generateBatches() {
         List<TestFunction> simpleTestFunctions = new ArrayList<>();
         List<TestFunctionGenerator> testFunctionGenerators = new ArrayList<>();
-        //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite"));
-        addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(MergingSuite.class, "mergingsuite"));
-        //addTogether(simpleTestFunctions, testFunctionGenerators, generateTestFunctions(BasicTestSuite.class, "basictestsuite2"));
+
+        for (Class<?> clazz : getEntrypoints()) {
+            Pair<List<TestFunction>, List<TestFunctionGenerator>> pair = generateTestFunctions(clazz, clazz.getSimpleName().toLowerCase());
+            simpleTestFunctions.addAll(pair.first());
+            testFunctionGenerators.addAll(pair.second());
+        }
 
         List<TestGenerator.GameTestCalcBatch> gameTestCalcBatches = checkAllCombinations(testFunctionGenerators);
         int countBatch = 0;
         for (TestGenerator.GameTestCalcBatch calcBatch : gameTestCalcBatches) {
             String batchId = calcBatch.hasName() ? calcBatch.getName() : "" + countBatch;
             List<String> batchNames = new ArrayList<>();
-            int x = 0;
             // TODO: Add a way to try all combinations of options, instead of one at a time
             for (String configName : calcBatch.getValues()) {
                 ParsedValue<?> parsedValue = PistonLib.CONFIG_MANAGER.getParsedValues().get(configName);
@@ -76,7 +82,6 @@ public class TestGenerator {
                         );
                     }
                 }
-                x++;
             }
             countBatch++;
             System.out.println(batchNames);
@@ -84,6 +89,25 @@ public class TestGenerator {
         System.out.println("TestGenerator has generated: " + simpleTestFunctions.size() + " test functions as: " + countBatch + " batches");
 
         return simpleTestFunctions;
+    }
+
+    public static List<Class<?>> getEntrypoints() {
+        List<EntrypointContainer<Object>> entrypointContainers = FabricLoader.getInstance()
+                .getEntrypointContainers(ENTRYPOINT_KEY, Object.class);
+
+        List<Class<?>> entrypointClasses = new ArrayList<>();
+        for (EntrypointContainer<Object> container : entrypointContainers) {
+            Class<?> testClass = container.getEntrypoint().getClass();
+            String modid = container.getProvider().getMetadata().getId();
+
+            if (GAME_TEST_IDS.containsKey(testClass)) {
+                throw new UnsupportedOperationException("Test class (%s) has already been registered with mod (%s)".formatted(testClass.getCanonicalName(), modid));
+            }
+            GAME_TEST_IDS.put(testClass, modid);
+
+            entrypointClasses.add(testClass);
+        }
+        return entrypointClasses;
     }
 
     public static List<TestGenerator.GameTestCalcBatch> checkAllCombinations(List<TestFunctionGenerator> testFunctionGenerators) {
@@ -146,13 +170,6 @@ public class TestGenerator {
             }
         }
         return gameTestCalcBatches;
-    }
-
-    public static void addTogether(List<TestFunction> simpleTestFunctions,
-                                   List<TestFunctionGenerator> testFunctionGenerators,
-                                   Pair<List<TestFunction>, List<TestFunctionGenerator>> newTestFunctionPair) {
-        simpleTestFunctions.addAll(newTestFunctionPair.first());
-        testFunctionGenerators.addAll(newTestFunctionPair.second());
     }
 
     public static Pair<List<TestFunction>, List<TestFunctionGenerator>> generateTestFunctions(Class<?> clazz, String batch) {

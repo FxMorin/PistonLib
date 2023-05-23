@@ -34,6 +34,10 @@
     ],
     "fabric-gametest": [
       "ca.fxco.pistonlib.gametest.TestGenerator"
+    ],
+    "pistonlib-gametest": [
+      "ca.fxco.pistonlib.gametest.testSuites.BasicTestSuite",
+      "ca.fxco.pistonlib.gametest.testSuites.MergingSuite"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",
