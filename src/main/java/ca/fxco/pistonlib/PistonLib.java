@@ -20,9 +20,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
-
-    public static final boolean GAMETEST_ACTIVE = System.getProperty("fabric-api.gametest") != null;
-    public static final boolean KEEPALIVE_ACTIVE = Boolean.parseBoolean(System.getProperty("fabric-api.gametest.keepAlive", "false"));
     public static final ConfigManager CONFIG_MANAGER = new ConfigManager(MOD_ID);
 
     public static ResourceLocation id(String path) {

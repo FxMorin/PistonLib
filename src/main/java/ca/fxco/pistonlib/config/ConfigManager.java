@@ -24,7 +24,7 @@ public class ConfigManager {
     private final TomlWriter tomlWriter;
 
     @Getter
-    private final Map<String, ParsedValue<?>> parsedValues = new HashMap<>();
+    private final Map<String, ResolveValue<?>> resolvedValues = new HashMap<>();
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
 
@@ -37,8 +37,8 @@ public class ConfigManager {
         Map<String, Object> loadedValues = loadValuesFromConf();
         if (loadedValues != null) {
             for (Map.Entry<String, Object> entry : loadedValues.entrySet()) {
-                if (parsedValues.containsKey(entry.getKey())) {
-                    parsedValues.get(entry.getKey()).setValueFromConfig(entry.getValue());
+                if (resolvedValues.containsKey(entry.getKey())) {
+                    resolvedValues.get(entry.getKey()).setValueFromConfig(entry.getValue());
                 }
             }
         }
@@ -58,7 +58,7 @@ public class ConfigManager {
             // Check for ConfigValue annotation
             for (Annotation annotation : field.getAnnotations()) {
                 if (annotation instanceof ConfigValue configValue) {
-                    ParsedValue<?> parsedValue = new ParsedValue<>(
+                    ResolveValue<?> resolveValue = new ResolveValue<>(
                             field,
                             configValue.desc(),
                             configValue.more(),
@@ -66,7 +66,7 @@ public class ConfigManager {
                             configValue.category(),
                             configValue.fixes()
                     );
-                    parsedValues.put(parsedValue.getName(), parsedValue);
+                    resolvedValues.put(resolveValue.getName(), resolveValue);
                 }
             }
         }
@@ -87,7 +87,7 @@ public class ConfigManager {
         try {
             Files.createDirectories(configPath.getParent());
             Map<String, Object> savedValues = new HashMap<>();
-            for (Map.Entry<String, ParsedValue<?>> entry : parsedValues.entrySet()) {
+            for (Map.Entry<String, ResolveValue<?>> entry : resolvedValues.entrySet()) {
                 savedValues.put(entry.getKey(), entry.getValue().getValue());
             }
             tomlWriter.write(savedValues, configPath.toFile());

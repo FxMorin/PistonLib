@@ -28,7 +28,7 @@ loom {
             vmArg "-Dfabric-api.gametest"
             vmArg "-Dfabric-api.gametest.server=true"
             vmArg "-Dfabric-api.gametest.command=true"
-            vmArg "-Dfabric-api.gametest.keepAlive=true"
+            vmArg "-Dgametestlib.keepAlive=true"
             runDir "build/gametest"
         }
     }
@@ -78,6 +78,8 @@ dependencies {
 
     // MixinExtras
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
+
+    modImplementation 'com.github.fxmorin:GameTestLib:-SNAPSHOT'
 }
 
 processResources {

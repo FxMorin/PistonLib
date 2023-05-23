@@ -6,10 +6,6 @@ import java.util.function.Function;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
-import ca.fxco.pistonlib.blocks.gametest.CheckStateBlock;
-import ca.fxco.pistonlib.blocks.gametest.GameTestPoweredBlock;
-import ca.fxco.pistonlib.blocks.gametest.PulseStateBlock;
-import ca.fxco.pistonlib.blocks.gametest.TestTriggerBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfObsidianBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfPoweredBlock;
@@ -185,12 +181,6 @@ public class ModBlocks {
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
 
     public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", new AutoCraftingBlock(((ToggleableProperties<Block.Properties>)FabricBlockSettings.copyOf(Blocks.CRAFTING_TABLE)).setDisabled(() -> !PistonLibConfig.autoCraftingBlock)));
-
-    // GameTest Blocks
-    public static final PulseStateBlock PULSE_STATE_BLOCK = register("pulse_state_block", new PulseStateBlock(FabricBlockSettings.copyOf(Blocks.STONE)));
-    public static final CheckStateBlock CHECK_STATE_BLOCK = register("check_state_block", new CheckStateBlock(FabricBlockSettings.copyOf(Blocks.STONE)));
-    public static final TestTriggerBlock TEST_TRIGGER_BLOCK = register("test_trigger_block", new TestTriggerBlock(FabricBlockSettings.copyOf(Blocks.WHITE_CONCRETE)));
-    public static final GameTestPoweredBlock GAMETEST_REDSTONE_BLOCK = register("gametest_redstone_block", new GameTestPoweredBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK)));
 
     private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
         return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)));

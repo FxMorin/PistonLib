@@ -31,28 +31,4 @@ accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/wo
 extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeX ()I
 extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeY ()I
 
-# GameTest
-accessible method net/minecraft/gametest/framework/StructureUtils tryLoadStructure (Ljava/nio/file/Path;)Lnet/minecraft/nbt/CompoundTag;
-accessible method net/minecraft/client/gui/components/CommandSuggestions getLastWordIndex (Ljava/lang/String;)I
-extendable method net/minecraft/client/gui/components/CommandSuggestions updateUsageInfo ()V
-extendable method net/minecraft/client/gui/components/CommandSuggestions fillNodeUsage (Lnet/minecraft/ChatFormatting;)V
-accessible field net/minecraft/client/player/LocalPlayer minecraft Lnet/minecraft/client/Minecraft;
-accessible field net/minecraft/client/gui/components/CommandSuggestions minecraft Lnet/minecraft/client/Minecraft;
-accessible field net/minecraft/client/gui/components/CommandSuggestions input Lnet/minecraft/client/gui/components/EditBox;
-accessible field net/minecraft/client/gui/components/CommandSuggestions currentParse Lcom/mojang/brigadier/ParseResults;
-accessible field net/minecraft/client/gui/components/CommandSuggestions keepSuggestions Z
-accessible field net/minecraft/client/gui/components/CommandSuggestions suggestions Lnet/minecraft/client/gui/components/CommandSuggestions$SuggestionsList;
-accessible field net/minecraft/client/gui/components/CommandSuggestions commandUsage Ljava/util/List;
-accessible field net/minecraft/client/gui/components/CommandSuggestions pendingSuggestions Ljava/util/concurrent/CompletableFuture;
-accessible field net/minecraft/client/gui/components/CommandSuggestions commandUsagePosition I
-accessible field net/minecraft/client/gui/components/CommandSuggestions commandUsageWidth I
-accessible field net/minecraft/client/gui/components/CommandSuggestions allowSuggestions Z
-accessible field net/minecraft/client/gui/components/CommandSuggestions screen Lnet/minecraft/client/gui/screens/Screen;
-accessible field net/minecraft/client/gui/components/CommandSuggestions onlyShowIfCursorPastError Z
-accessible field net/minecraft/client/gui/components/CommandSuggestions font Lnet/minecraft/client/gui/Font;
-extendable method net/minecraft/client/gui/components/CommandSuggestions formatChat (Ljava/lang/String;I)Lnet/minecraft/util/FormattedCharSequence;
-accessible method net/minecraft/client/gui/components/CommandSuggestions sortSuggestions (Lcom/mojang/brigadier/suggestion/Suggestions;)Ljava/util/List;
-accessible field net/minecraft/client/gui/components/CommandSuggestions fillColor I
-accessible method net/minecraft/client/gui/components/CommandSuggestions$SuggestionsList <init> (Lnet/minecraft/client/gui/components/CommandSuggestions;IIILjava/util/List;Z)V
-accessible field net/minecraft/gametest/framework/GameTestRegistry BEFORE_BATCH_FUNCTIONS Ljava/util/Map;
-accessible field net/minecraft/gametest/framework/GameTestRegistry AFTER_BATCH_FUNCTIONS Ljava/util/Map;
+accessible class net/minecraft/world/inventory/MenuType

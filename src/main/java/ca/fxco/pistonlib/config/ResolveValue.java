@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.config;
 
+import ca.fxco.api.gametestlib.config.ParsedValue;
 import ca.fxco.api.pistonlib.config.Category;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -12,7 +13,7 @@ import java.util.Locale;
 import java.util.Set;
 
 @Getter
-public class ParsedValue<T> {
+public class ResolveValue<T> {
 
     protected final Field field;
     protected final String name;
@@ -25,7 +26,7 @@ public class ParsedValue<T> {
     //public boolean requiresClient;
     //public final boolean clientOnly;
 
-    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories, int[] fixes) {
+    public ResolveValue(Field field, String desc, String[] more, String[] keywords, Category[] categories, int[] fixes) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -39,7 +40,11 @@ public class ParsedValue<T> {
     }
 
     // Default value will always be the first value!
-    public Object[] getAllTestingValues() {
+    public T[] getAllTestingValues() {
+        return (T[]) getAllTestingValuesObj();
+    }
+
+    public Object[] getAllTestingValuesObj() {
         Class<T> clazz = (Class<T>) ClassUtils.primitiveToWrapper(field.getType());
         if (clazz == Boolean.class) {
             return new Boolean[]{(Boolean) this.defaultValue,!((Boolean) this.defaultValue)};

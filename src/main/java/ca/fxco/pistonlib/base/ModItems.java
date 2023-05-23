@@ -69,13 +69,6 @@ public class ModItems {
 
     public static final BlockItem AUTO_CRAFTING_BLOCK = registerBlock(ModBlocks.AUTO_CRAFTING_BLOCK, ((ToggleableProperties<Item.Properties>)new Item.Properties()).setDisabled(() -> !PistonLibConfig.autoCraftingBlock));
 
-    // GameTest
-
-    public static final BlockItem PULSE_STATE_BLOCK = registerBlock(ModBlocks.PULSE_STATE_BLOCK);
-    public static final BlockItem CHECK_STATE_BLOCK = registerBlock(ModBlocks.CHECK_STATE_BLOCK);
-    public static final BlockItem TEST_TRIGGER_BLOCK = registerBlock(ModBlocks.TEST_TRIGGER_BLOCK);
-    public static final BlockItem GAMETEST_REDSTONE_BLOCK = registerBlock(ModBlocks.GAMETEST_REDSTONE_BLOCK);
-
     private static BlockItem registerBlock(Block block) {
         return registerBlock(block, new Item.Properties());
     }

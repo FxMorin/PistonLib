@@ -32,12 +32,12 @@
     "preLaunch": [
       "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ],
-    "fabric-gametest": [
-      "ca.fxco.pistonlib.gametest.TestGenerator"
-    ],
-    "pistonlib-gametest": [
+    "gametestlib-gametest": [
       "ca.fxco.pistonlib.gametest.testSuites.BasicTestSuite",
       "ca.fxco.pistonlib.gametest.testSuites.MergingSuite"
+    ],
+    "gametestlib-binders": [
+      "ca.fxco.pistonlib.gametest.PistonLibConfigBinder"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",
