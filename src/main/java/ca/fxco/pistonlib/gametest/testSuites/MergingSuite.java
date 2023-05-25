@@ -1,10 +1,10 @@
 package ca.fxco.pistonlib.gametest.testSuites;
 
-import ca.fxco.gametestlib.gametest.expansion.GameTestConfig;
+import ca.fxco.api.gametestlib.gametest.GameTestLib;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
-@GameTestConfig(value = {"indirectStickyApi", "pistonStructureGrouping", "tntDupingFix", "pistonPushingCacheFix"})
+@GameTestLib(value = {"indirectStickyApi", "pistonStructureGrouping", "tntDupingFix", "pistonPushingCacheFix"})
 public class MergingSuite {
 
     // Can a piston merge 2 slabs directly in-front of it
@@ -20,7 +20,7 @@ public class MergingSuite {
     public void singleslab1(GameTestHelper helper) {}
 
     // Attempt to merge 2 slabs together from sticky blocks
-    @GameTestConfig("locationalUpdateOrderFix")
+    @GameTestLib("locationalUpdateOrderFix")
     @GameTest(timeoutTicks = 4)
     public void singleslab2(GameTestHelper helper) {}
 

@@ -5,14 +5,13 @@ import ca.fxco.api.gametestlib.config.ParsedValue;
 import ca.fxco.api.gametestlib.config.binder.ConfigBinder;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.config.ResolveValue;
-import net.minecraft.server.MinecraftServer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PistonLibConfigBinder extends ConfigBinder {
+public class PistonLibConfigBinder implements ConfigBinder {
     @Override
-    public Map<String, ParsedValue<?>> registerConfigValues(MinecraftServer server) {
+    public Map<String, ParsedValue<?>> registerConfigValues() {
         Map<String, ParsedValue<?>> configValues = new HashMap<>();
         for (Map.Entry<String, ResolveValue<?>> entry : PistonLib.CONFIG_MANAGER.getResolvedValues().entrySet()) {
             configValues.put(entry.getKey(), convertToParsedValue(entry.getValue()));
