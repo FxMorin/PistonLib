@@ -80,7 +80,7 @@ dependencies {
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
 
     // GameTestLib
-    modImplementation("com.github.fxmorin:GameTestLib:95e0147a4d")
+    modImplementation("com.github.fxmorin:GameTestLib:e1313350fe")
 }
 
 processResources {

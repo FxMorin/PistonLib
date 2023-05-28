@@ -38,6 +38,9 @@
     ],
     "gametestlib-binders": [
       "ca.fxco.pistonlib.gametest.PistonLibConfigBinder"
+    ],
+    "gametestlib-control": [
+      "ca.fxco.pistonlib.gametest.PistonLibTestControl"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",

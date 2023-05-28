@@ -28,9 +28,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     @Override
     public void onInitialize() {
-        // Config should always be loaded first
-        CONFIG_MANAGER.loadConfigClass(PistonLibConfig.class);
-
         ModRegistries.bootstrap();
 
         initialize(PistonLibInitializer::registerPistonFamilies);
