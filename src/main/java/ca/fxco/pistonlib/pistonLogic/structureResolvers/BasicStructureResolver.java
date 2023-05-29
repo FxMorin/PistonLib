@@ -94,10 +94,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
                     this.toDestroy.add(this.startPos);
                     return true;
                 }
-                return false;
             }
             return false;
-        } else { // Start block is not immovable, we can check if its possible to move. Also generates structure
+        } else { // Start block is movable, now check if it's possible to move the rest, while generating the structure
             if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
                 return false;
             }

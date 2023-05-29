@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import ca.fxco.pistonlib.items.PistonDebugWandItem;
 import ca.fxco.pistonlib.items.PistonWandItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,6 +17,7 @@ import static ca.fxco.pistonlib.PistonLib.id;
 public class ModItems {
 
     public static final PistonWandItem PISTON_WAND = register("piston_wand", new PistonWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final PistonDebugWandItem PISTON_DEBUG_WAND = register("piston_debug_wand", new PistonDebugWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final BlockItem HALF_SLIME_BLOCK = registerBlock(ModBlocks.HALF_SLIME_BLOCK);
     public static final BlockItem HALF_HONEY_BLOCK = registerBlock(ModBlocks.HALF_HONEY_BLOCK);
