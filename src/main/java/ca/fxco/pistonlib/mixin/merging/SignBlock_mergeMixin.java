@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;

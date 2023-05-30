@@ -4,7 +4,7 @@ import java.util.Map;
 
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
