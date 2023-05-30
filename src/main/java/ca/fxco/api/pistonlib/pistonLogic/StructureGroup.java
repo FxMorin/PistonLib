@@ -1,6 +1,8 @@
-package ca.fxco.pistonlib.pistonLogic.structureGroups;
+package ca.fxco.api.pistonlib.pistonLogic;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ClientStructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;

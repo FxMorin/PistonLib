@@ -5,7 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;

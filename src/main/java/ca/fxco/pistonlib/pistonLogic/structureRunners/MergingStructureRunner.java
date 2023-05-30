@@ -7,7 +7,7 @@ import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import com.mojang.datafixers.util.Pair;
