@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
