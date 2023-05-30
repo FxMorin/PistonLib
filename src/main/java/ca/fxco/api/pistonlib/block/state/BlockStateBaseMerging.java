@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic.internal;
+package ca.fxco.api.pistonlib.block.state;
 
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;

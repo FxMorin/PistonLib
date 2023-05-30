@@ -15,7 +15,7 @@ import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.api.pistonlib.block.state.BlockStateBaseExpandedSticky;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
+import ca.fxco.api.pistonlib.block.state.BlockStateBaseMerging;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
