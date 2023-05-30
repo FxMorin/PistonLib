@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
+import ca.fxco.api.pistonlib.block.state.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;

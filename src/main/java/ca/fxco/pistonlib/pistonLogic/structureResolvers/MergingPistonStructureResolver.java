@@ -10,7 +10,7 @@ import ca.fxco.api.pistonlib.blockEntity.BlockEntityMerging;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
+import ca.fxco.api.pistonlib.block.state.BlockStateBasePushReaction;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

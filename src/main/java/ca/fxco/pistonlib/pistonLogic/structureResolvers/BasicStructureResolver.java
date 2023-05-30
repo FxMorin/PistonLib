@@ -14,7 +14,7 @@ import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
+import ca.fxco.api.pistonlib.block.state.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
