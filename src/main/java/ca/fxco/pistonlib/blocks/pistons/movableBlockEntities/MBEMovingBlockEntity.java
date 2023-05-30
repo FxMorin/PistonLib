@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.movableBlockEntities;
 
 import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.impl.ILevel;
+import ca.fxco.api.pistonlib.level.ILevel;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;

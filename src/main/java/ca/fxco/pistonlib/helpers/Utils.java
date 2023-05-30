@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.pistonlib.impl.ILevel;
+import ca.fxco.api.pistonlib.level.ILevel;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
