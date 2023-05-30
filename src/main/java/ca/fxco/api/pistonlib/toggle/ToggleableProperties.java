@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.impl.toggle;
+package ca.fxco.api.pistonlib.toggle;
 
 import java.util.function.BooleanSupplier;
 

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.pistonlib.impl.toggle.Toggleable;
+import ca.fxco.api.pistonlib.toggle.Toggleable;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;

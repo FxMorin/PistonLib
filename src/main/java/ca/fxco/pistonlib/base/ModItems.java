@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import ca.fxco.api.pistonlib.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.items.PistonWandItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

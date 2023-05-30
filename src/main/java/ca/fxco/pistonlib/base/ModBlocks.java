@@ -34,7 +34,7 @@ import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.VeryStickyPistonBaseBlo
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperyRedstoneBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperySlimeBlock;
-import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import ca.fxco.api.pistonlib.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
