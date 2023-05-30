@@ -1,10 +1,6 @@
 package ca.fxco.pistonlib.config;
 
-import ca.fxco.api.pistonlib.config.ConfigValue;
-import ca.fxco.api.pistonlib.config.Observer;
-import ca.fxco.api.pistonlib.config.Parser;
-import ca.fxco.api.pistonlib.config.TypeConverter;
-import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
@@ -93,8 +89,8 @@ public class ConfigManager {
             // Check for ConfigValue annotation
             for (Annotation annotation : field.getAnnotations()) {
                 if (annotation instanceof ConfigValue configValue) {
-                    for (Class<? extends ConfigValue.Condition> conditionClazz : configValue.condition()) {
-                        ConfigValue.Condition condition = Utils.createInstance(conditionClazz);
+                    for (Class<? extends Condition> conditionClazz : configValue.condition()) {
+                        Condition condition = Utils.createInstance(conditionClazz);
                         if (!condition.shouldInclude()) {
                             continue nextField; // Skip this field entirely
                         }
