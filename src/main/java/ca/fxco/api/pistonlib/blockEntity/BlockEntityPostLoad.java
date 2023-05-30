@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.impl;
+package ca.fxco.api.pistonlib.blockEntity;
 
 /**
  * If a block entity implements this interface. They will be run once, before there first tick
