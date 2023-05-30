@@ -4,7 +4,7 @@ import ca.fxco.api.pistonlib.blockEntity.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
+import ca.fxco.api.pistonlib.blockEntity.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;

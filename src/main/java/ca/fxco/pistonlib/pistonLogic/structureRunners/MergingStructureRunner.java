@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
+import ca.fxco.api.pistonlib.blockEntity.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;

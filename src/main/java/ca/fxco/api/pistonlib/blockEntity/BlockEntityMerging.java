@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.impl;
+package ca.fxco.api.pistonlib.blockEntity;
 
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import com.mojang.datafixers.util.Pair;

@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
+import ca.fxco.api.pistonlib.blockEntity.BlockEntityMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
