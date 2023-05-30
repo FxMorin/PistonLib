@@ -1,5 +1,7 @@
 package ca.fxco.pistonlib.helpers;
 
+import ca.fxco.pistonlib.base.ModTags;
+import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,6 +9,7 @@ import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -94,5 +97,31 @@ public class BlockReplaceUtils {
                 level.neighborShapeChanged(direction.getOpposite(), state, mutableBlockPos, blockPos, i, j);
             }
         }
+    }
+
+    /**
+     * Same as {@link net.minecraft.world.level.block.Block#updateFromNeighbourShapes updateFromNeighbourShapes}
+     * however it allows BasicMovingBlockEntity's that are about to be placed to use their internal state.
+     * This allows you to move blocks that usually break from incorrect shape updates,
+     * as long as the blocks are moved together.
+     */
+    public static BlockState updateFromNeighbourShapesWithMovingPistons(BlockState blockState,
+                                                                        LevelAccessor levelAccessor,
+                                                                        BlockPos blockPos) {
+        BlockState finalState = blockState;
+        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+        for (Direction direction : UPDATE_SHAPE_ORDER) {
+            mutableBlockPos.setWithOffset(blockPos, direction);
+            BlockState neighborState = levelAccessor.getBlockState(mutableBlockPos);
+            if (neighborState.is(ModTags.MOVING_PISTONS)) {
+                BlockEntity blockEntity = levelAccessor.getBlockEntity(mutableBlockPos);
+                if (blockEntity instanceof BasicMovingBlockEntity bmbe && bmbe.progress >= 1.0F) {
+                    neighborState = bmbe.getMovedState();
+                }
+            }
+            finalState = finalState.updateShape(direction, neighborState, levelAccessor, blockPos, mutableBlockPos);
+        }
+
+        return finalState;
     }
 }
