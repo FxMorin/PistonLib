@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks.mergeBlock;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.api.pistonlib.blockEntity.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.ticking;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.api.pistonlib.blockEntity.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.FakeBlockPos;
 import net.minecraft.core.BlockPos;

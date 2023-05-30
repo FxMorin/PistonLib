@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.*;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.api.pistonlib.blockEntity.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
