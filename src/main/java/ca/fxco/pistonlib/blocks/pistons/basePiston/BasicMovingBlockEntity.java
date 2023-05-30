@@ -9,7 +9,7 @@ import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.api.pistonlib.blockEntity.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 

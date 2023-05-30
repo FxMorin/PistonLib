@@ -13,7 +13,7 @@ import ca.fxco.api.pistonlib.block.BlockQuasiPower;
 import ca.fxco.api.pistonlib.block.state.BlockStateQuasiPower;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseExpandedSticky;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;

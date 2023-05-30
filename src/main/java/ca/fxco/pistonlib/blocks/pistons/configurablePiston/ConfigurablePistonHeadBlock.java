@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 

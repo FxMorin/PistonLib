@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;

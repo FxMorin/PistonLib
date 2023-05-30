@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks.halfBlocks;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

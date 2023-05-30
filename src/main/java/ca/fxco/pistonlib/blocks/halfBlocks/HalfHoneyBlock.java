@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 import java.util.Map;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;

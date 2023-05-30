@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.blocks;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 
 import net.minecraft.world.level.block.PoweredBlock;

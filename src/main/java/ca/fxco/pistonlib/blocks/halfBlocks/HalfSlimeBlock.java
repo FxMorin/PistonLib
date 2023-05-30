@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;

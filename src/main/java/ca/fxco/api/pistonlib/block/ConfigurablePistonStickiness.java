@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic.accessible;
+package ca.fxco.api.pistonlib.block;
 
 import java.util.Map;
 
