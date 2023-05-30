@@ -35,6 +35,16 @@ public @interface ConfigValue {
     Category[] category() default {};
 
     /**
+     * Config options that are required in order to work
+     */
+    String[] requires() default {};
+
+    /**
+     * Config options that conflict with each other
+     */
+    String[] conflict() default {};
+
+    /**
      * If this config value fixes a vanilla bug, you can set the bug id's it fixes here
      * Just a default mojira id without the `MC-`
      */

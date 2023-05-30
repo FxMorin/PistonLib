@@ -62,6 +62,8 @@ public class ConfigManager {
                             configValue.more(),
                             configValue.keyword(),
                             configValue.category(),
+                            configValue.requires(),
+                            configValue.conflict(),
                             configValue.fixes()
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);
