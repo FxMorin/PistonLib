@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib;
+package ca.fxco.api.pistonlib;
 
 public interface PistonLibInitializer {
 
