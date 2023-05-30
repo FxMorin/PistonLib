@@ -22,12 +22,13 @@ public class ParsedValue<T> {
     protected final String[] requires;
     protected final String[] conflicts;
     protected final ImmutableIntArray fixes;
+    protected final boolean requiresRestart;
     protected final T defaultValue; // Set by the recommended option
     //public boolean requiresClient;
     //public final boolean clientOnly;
 
-    public ParsedValue(Field field, String desc, String[] more, String[] keywords,
-                       Category[] categories, String[] requires, String[] conflicts, int[] fixes) {
+    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
+                       String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -36,6 +37,7 @@ public class ParsedValue<T> {
         this.categories = ImmutableSet.copyOf(categories);
         this.requires = requires;
         this.conflicts = conflicts;
+        this.requiresRestart = requiresRestart;
         this.fixes = ImmutableIntArray.copyOf(fixes);
         this.defaultValue = getValue();
         //this.clientOnly = this.groups.contains(FixGroup.CLIENTONLY);

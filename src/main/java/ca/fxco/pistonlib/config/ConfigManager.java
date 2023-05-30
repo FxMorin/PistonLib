@@ -17,6 +17,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Config Options should never be changed async. They should be changed near the end of the tick, highly recommended
+ * that you do this during the MinecraftServer tickables using minecraftServer.addTickable() or during the network
+ * tick. Such as during a packet
+ */
 public class ConfigManager {
 
     private final Path configPath;
@@ -64,6 +69,7 @@ public class ConfigManager {
                             configValue.category(),
                             configValue.requires(),
                             configValue.conflict(),
+                            configValue.requiresRestart(),
                             configValue.fixes()
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);

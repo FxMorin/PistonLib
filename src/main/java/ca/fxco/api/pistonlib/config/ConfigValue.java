@@ -45,6 +45,11 @@ public @interface ConfigValue {
     String[] conflict() default {};
 
     /**
+     * If the config option requires a restart to work
+     */
+    boolean requiresRestart() default false;
+
+    /**
      * If this config value fixes a vanilla bug, you can set the bug id's it fixes here
      * Just a default mojira id without the `MC-`
      */

@@ -30,7 +30,7 @@ public class PistonLibConfig {
     )
     public static boolean doSlabMerging = true;
 
-    // TODO: Hide item from the creative inventory when disbled, since all crafting blocks placed when disabled won't have a block entity
+    // TODO: Hide item from the creative inventory when disabled, since all crafting blocks placed when disabled won't have a block entity
     @ConfigValue(
             desc = "Toggle the auto crafting block feature. The block will still exist it just wont work if disabled",
             keyword = {"auto", "crafting"},
