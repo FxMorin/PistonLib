@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.helpers;
 
 import ca.fxco.pistonlib.config.ParsedValue;
+import com.google.common.primitives.Primitives;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,34 +26,15 @@ public class ConfigUtils {
         if (clazz.isPrimitive()) {
             return (T) parsePrimitiveValue(clazz, inputValue);
         }
-        return (T) attemptParseValue(clazz, inputValue);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static @Nullable Object attemptParseValue(Class<?> clazz, String inputValue) {
-        if (clazz == Boolean.class) {
-            return Boolean.getBoolean(inputValue);
-        } else if (clazz == Integer.class) {
-            return Integer.getInteger(inputValue);
-        } else if (clazz == Long.class) {
-            return Long.getLong(inputValue);
-        } else if (clazz == Float.class) {
-            return Float.parseFloat(inputValue);
-        } else if (clazz == Double.class) {
-            return Double.parseDouble(inputValue);
-        } else if (clazz == Character.class) {
-            return inputValue.charAt(0);
-        } else if (clazz == Byte.class) {
-            return Byte.parseByte(inputValue);
-        } else if (clazz == Short.class) {
-            return Short.parseShort(inputValue);
-        } else if (clazz.isEnum()) {
+        if (Primitives.isWrapperType(clazz)) {
+            return (T) parsePrimitiveValue(Primitives.unwrap(clazz), inputValue);
+        }
+        if (clazz.isEnum()) {
             return clazz.cast(Enum.valueOf((Class<? extends Enum>)clazz, inputValue));
         }
         return null;
     }
 
-    // TODO: Merge primitive & Boxed checks
     public static Object parsePrimitiveValue(Class<?> clazz, String inputValue) {
         if (clazz == boolean.class) {
             return Boolean.parseBoolean(inputValue);
