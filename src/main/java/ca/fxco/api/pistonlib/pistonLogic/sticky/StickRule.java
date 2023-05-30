@@ -1,4 +1,6 @@
-package ca.fxco.pistonlib.pistonLogic.sticky;
+package ca.fxco.api.pistonlib.pistonLogic.sticky;
+
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 
 @FunctionalInterface
 public interface StickRule {

@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRule;
 import lombok.Getter;
-import lombok.experimental.Delegate;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
