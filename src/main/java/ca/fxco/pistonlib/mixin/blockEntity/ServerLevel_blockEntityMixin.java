@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
 import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
-import ca.fxco.pistonlib.impl.LevelAdditions;
+import ca.fxco.api.pistonlib.level.LevelAdditions;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

@@ -1,4 +1,6 @@
-package ca.fxco.pistonlib.impl;
+package ca.fxco.api.pistonlib.level;
+
+import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 
 public interface LevelAdditions {
 
