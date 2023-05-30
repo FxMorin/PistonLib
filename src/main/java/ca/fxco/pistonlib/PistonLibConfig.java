@@ -66,6 +66,13 @@ public class PistonLibConfig {
     )
     public static boolean strongStickyChains = true;
 
+    @ConfigValue(
+            desc = "Double blocks such as Chests, Doors, and Beds will now move as one",
+            keyword = {"sticky", "group", "double"},
+            category = Category.FEATURE
+    )
+    public static boolean stuckDoubleBlocks = true;
+
 
     // ===============
     //    Mechanics
