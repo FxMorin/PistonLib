@@ -31,6 +31,16 @@
     ],
     "preLaunch": [
       "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+    ],
+    "gametestlib-gametest": [
+      "ca.fxco.pistonlib.gametest.testSuites.BasicTestSuite",
+      "ca.fxco.pistonlib.gametest.testSuites.MergingSuite"
+    ],
+    "gametestlib-binders": [
+      "ca.fxco.pistonlib.gametest.PistonLibConfigBinder"
+    ],
+    "gametestlib-control": [
+      "ca.fxco.pistonlib.gametest.PistonLibTestControl"
     ]
   },
   "accessWidener" : "pistonlib.accesswidener",
@@ -40,7 +50,7 @@
   "depends": {
     "minecraft": "1.19.3",
     "fabricloader": ">=0.14.0",
-    "fabric": ">=0.71.0",
+    "fabric": ">=0.76.0",
     "java": ">=17"
   },
   "custom": {

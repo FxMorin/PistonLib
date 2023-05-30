@@ -11,7 +11,7 @@ public class ModMenus {
     public static final MenuType<AutoCraftingMenu> AUTO_CRAFTING = register("auto_crafting", AutoCraftingMenu::new);
 
     private static <T extends AbstractContainerMenu> MenuType<T> register(String string, MenuType.MenuSupplier<T> menuSupplier) {
-        return Registry.register(BuiltInRegistries.MENU, string, new MenuType<>(menuSupplier));
+        return null;//Registry.register(BuiltInRegistries.MENU, string, new MenuType<>(menuSupplier));
     }
 
     public static void boostrap() { }

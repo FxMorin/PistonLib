@@ -22,9 +22,19 @@ loom {
             runDir "build/datagen"
             source sourceSets.main
         }
+        gametest {
+            server()
+            name "Game Test"
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.server=true"
+            vmArg "-Dfabric-api.gametest.command=true"
+            vmArg "-Dgametestlib.keepAlive=true"
+            runDir "build/gametest"
+        }
     }
 }
 
+test.dependsOn runGametest
 if (!project.file("src/generated").exists()) {
     runClient.dependsOn runDatagenClient
 }
@@ -68,6 +78,9 @@ dependencies {
 
     // MixinExtras
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
+
+    // GameTestLib
+    modImplementation("com.github.fxmorin:GameTestLib:e80c7bae00")
 }
 
 processResources {

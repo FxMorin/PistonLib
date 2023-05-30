@@ -30,3 +30,5 @@ accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/wo
 
 extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeX ()I
 extendable method net/minecraft/client/gui/screens/inventory/tooltip/ClientBundleTooltip gridSizeY ()I
+
+accessible class net/minecraft/world/inventory/MenuType

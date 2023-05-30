@@ -1,17 +1,19 @@
 package ca.fxco.pistonlib.config;
 
+import ca.fxco.api.gametestlib.config.ParsedValue;
 import ca.fxco.api.pistonlib.config.Category;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
 import lombok.Getter;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Set;
 
 @Getter
-public class ParsedValue<T> {
+public class ResolveValue<T> {
 
     protected final Field field;
     protected final String name;
@@ -24,7 +26,7 @@ public class ParsedValue<T> {
     //public boolean requiresClient;
     //public final boolean clientOnly;
 
-    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories, int[] fixes) {
+    public ResolveValue(Field field, String desc, String[] more, String[] keywords, Category[] categories, int[] fixes) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -35,6 +37,43 @@ public class ParsedValue<T> {
         this.defaultValue = getValue();
         //this.clientOnly = this.groups.contains(FixGroup.CLIENTONLY);
         //this.requiresClient = this.clientOnly || this.groups.contains(FixGroup.CLIENT);
+    }
+
+    // Default value will always be the first value!
+    public T[] getAllTestingValues() {
+        return (T[]) getAllTestingValuesObj();
+    }
+
+    public Object[] getAllTestingValuesObj() {
+        Class<T> clazz = (Class<T>) ClassUtils.primitiveToWrapper(field.getType());
+        if (clazz == Boolean.class) {
+            return new Boolean[]{(Boolean) this.defaultValue,!((Boolean) this.defaultValue)};
+        } else if (clazz == Integer.class) { // TODO: Def do this better...
+            int def = (int) this.defaultValue;
+            if (def != 0 && def != 1) {
+                return new Integer[]{def, 0, 1};
+            }
+            return new Integer[]{def, def == 0 ? 1 : 0};
+        } else if (clazz == String.class) {
+            return new String[]{(String) this.defaultValue};
+        } else if (clazz.isEnum()) {
+            T[] enums = clazz.getEnumConstants();
+            if (enums[0] == this.defaultValue) {
+                return enums;
+            }
+            Object[] objs = new Object[enums.length];
+            objs[0] = this.defaultValue;
+            for (int i = 1; i < enums.length; i++) {
+                if (enums[i] == this.defaultValue) {
+                    objs[i] = enums[0];
+                } else {
+                    objs[i] = enums[i];
+                }
+            }
+            return objs;
+        }
+        System.out.println("This values does not have any testing values yet: " + clazz);
+        return new Object[]{defaultValue}; // TODO: Actually add testing values instead of just the default value
     }
 
     /**
@@ -49,6 +88,16 @@ public class ParsedValue<T> {
      */
     public boolean isDefaultValue() {
         return this.defaultValue.equals(getValue());
+    }
+
+    public void setValueObj(Object value) {
+        try {
+            if (!value.equals(getValue())) {
+                this.field.set(null, value);
+            }
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void setValue(T value) {
