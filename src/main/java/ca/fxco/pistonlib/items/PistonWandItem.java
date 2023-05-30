@@ -32,10 +32,12 @@ public class PistonWandItem extends Item {
         super(properties);
     }
 
+    @Override
     public boolean isFoil(ItemStack itemStack) {
-        return true;
+        return false;
     }
 
+    @Override
     public boolean canAttackBlock(BlockState blockState, Level level, BlockPos blockPos, Player player) {
         return player.canUseGameMasterBlocks(); //todo: change later
     }
@@ -134,7 +136,7 @@ public class PistonWandItem extends Item {
         return Optional.of(stack);
     }
 
-    private static ItemStack getWandItem(ItemStack itemStack) {
+    static ItemStack getWandItem(ItemStack itemStack) {
         CompoundTag compoundTag = itemStack.getTag();
         if (compoundTag == null) {
             return ItemStack.EMPTY;

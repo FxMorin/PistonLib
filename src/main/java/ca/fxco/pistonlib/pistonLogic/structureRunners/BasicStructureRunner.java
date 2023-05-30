@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.pistonlib.helpers.BlockReplaceUtils;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
@@ -12,6 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseCoralFanBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
@@ -155,9 +158,17 @@ public class BasicStructureRunner implements StructureRunner {
 
                 // Vanilla usually uses the update flags UPDATE_INVISIBLE & UPDATE_MOVE_BY_PISTON
                 // Here we also add UPDATE_KNOWN_SHAPE, this removes block updates and state updates,
-                // we than also add UPDATE_CLIENTS in order for shapes can be updated correctly about the block being AIR now.
-                int updateFlags = UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_MOVE_BY_PISTON;
-                level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), PistonLibConfig.tntDupingFix ? updateFlags | UPDATE_KNOWN_SHAPE : updateFlags);
+                // also add UPDATE_CLIENTS in order for clients to be updated correctly about the block being AIR now.
+                int updateFlags = UPDATE_CLIENTS | UPDATE_INVISIBLE | UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE;
+                if (PistonLibConfig.tntDupingFix) {
+                    level.setBlock(posToMove, Blocks.AIR.defaultBlockState(), updateFlags);
+                } else {
+                    // Only give shape updates to coral fan blocks
+                    BlockReplaceUtils.setBlockWithConditionalShapeUpdates(level, posToMove,
+                            Blocks.AIR.defaultBlockState(), updateFlags, state ->
+                                    state.getBlock() instanceof BaseCoralFanBlock
+                    );
+                }
 
                 // We replace the current state in the cached states with the latest version from the world
                 statesToMove.set(i, stateToMove);

@@ -94,10 +94,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
                     this.toDestroy.add(this.startPos);
                     return true;
                 }
-                return false;
             }
             return false;
-        } else { // Start block is not immovable, we can check if its possible to move. Also generates structure
+        } else { // Start block is movable, now check if it's possible to move the rest, while generating the structure
             if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
                 return false;
             }
@@ -147,7 +146,10 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (dir.getAxis() != this.pushDirection.getAxis()) {
                 BlockPos blockPos = pos.relative(dir);
                 BlockState adjState = this.level.getBlockState(blockPos);
-                if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(blockState, adjState, dir)) {
+                if (stickyType == StickyType.CONDITIONAL) {
+                    if (stickyType.canStick(blockState, adjState, dir) && this.cantMove(blockPos, dir)) {
+                        return true;
+                    }
                     continue;
                 }
                 if (canAdjacentBlockStick(dir, blockState, adjState) && this.cantMove(blockPos, dir)) {
@@ -171,8 +173,11 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
             }
             StickyType type = stick.sideStickiness(dir.getOpposite());
-            if (type == StickyType.CONDITIONAL && !type.canStick(state, adjState, dir)) {
-                return true;
+            if (type == StickyType.CONDITIONAL) {
+                if (type.canStick(state, adjState, dir)) {
+                    return true;
+                }
+                return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
             }
             return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky cannot stick to this side!
         }
@@ -219,15 +224,26 @@ public class BasicStructureResolver extends PistonStructureResolver {
             return !state.isAir();
         }
         if (stick.usesConfigurablePistonStickiness()) {
-            return stick.isSticky(state) && stick.sideStickiness(state, dir).ordinal() >= StickyType.STICKY.ordinal();
+            if (stick.isSticky(state)) {
+                StickyType type = stick.sideStickiness(state, dir);
+                if (type == StickyType.CONDITIONAL) {
+                    return true; // TODO: Conditional sticky check!
+                }
+                return type.ordinal() >= StickyType.STICKY.ordinal();
+            }
+            return false;
         }
         return stick.hasStickyGroup();
     }
 
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
-        if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) return false;
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
+        if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) {
+            return false;
+        }
+        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
+            return false;
+        }
         int weight = ((BlockStateBasePushReaction)state).getWeight();
         if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;

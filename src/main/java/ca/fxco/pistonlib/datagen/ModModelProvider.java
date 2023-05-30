@@ -121,6 +121,7 @@ public class ModModelProvider extends FabricModelProvider {
 	@Override
 	public void generateItemModels(ItemModelGenerators generator) {
 		generator.generateFlatItem(ModItems.PISTON_WAND, ModelTemplates.FLAT_ITEM);
+		generator.generateFlatItem(ModItems.PISTON_DEBUG_WAND, ModelTemplates.FLAT_ITEM);
 	}
 
 	public static void registerCubeTextureMap(BlockModelGenerators generator, Block block,
