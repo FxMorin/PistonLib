@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
-import ca.fxco.pistonlib.impl.QLevel;
+import ca.fxco.api.pistonlib.level.QLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;

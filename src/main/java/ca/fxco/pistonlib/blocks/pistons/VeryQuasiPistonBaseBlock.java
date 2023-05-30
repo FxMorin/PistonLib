@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.QLevel;
+import ca.fxco.api.pistonlib.level.QLevel;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;

@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
-import ca.fxco.pistonlib.impl.QLevel;
+import ca.fxco.api.pistonlib.level.QLevel;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 

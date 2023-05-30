@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.QLevel;
+import ca.fxco.api.pistonlib.level.QLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
