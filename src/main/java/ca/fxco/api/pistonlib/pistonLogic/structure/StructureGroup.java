@@ -1,4 +1,4 @@
-package ca.fxco.api.pistonlib.pistonLogic;
+package ca.fxco.api.pistonlib.pistonLogic.structure;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ClientStructureGroup;

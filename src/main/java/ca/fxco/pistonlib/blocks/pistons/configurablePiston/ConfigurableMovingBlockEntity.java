@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
-import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;

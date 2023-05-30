@@ -15,7 +15,7 @@ import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
-import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;

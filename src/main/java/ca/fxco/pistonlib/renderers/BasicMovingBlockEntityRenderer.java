@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.renderers;
 
 import ca.fxco.pistonlib.helpers.BlockAndTintWrapper;
-import ca.fxco.api.pistonlib.pistonLogic.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
