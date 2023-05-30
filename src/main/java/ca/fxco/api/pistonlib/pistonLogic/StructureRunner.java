@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic.structureRunners;
+package ca.fxco.api.pistonlib.pistonLogic;
 
 public interface StructureRunner {
 

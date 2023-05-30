@@ -6,7 +6,7 @@ import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.PLNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
-import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
+import ca.fxco.api.pistonlib.pistonLogic.StructureRunner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;

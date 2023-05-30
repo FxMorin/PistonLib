@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.api.pistonlib.pistonLogic.StructureRunner;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
