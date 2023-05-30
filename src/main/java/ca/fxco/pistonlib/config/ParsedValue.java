@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.config;
 import ca.fxco.api.pistonlib.config.Category;
 import ca.fxco.api.pistonlib.config.Observer;
 import ca.fxco.api.pistonlib.config.Parser;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.ConfigUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -113,7 +114,8 @@ public class ParsedValue<T> {
     protected void setValueFromConfig(Object value) {
         T newValue = ConfigUtils.loadValueFromConfig(value, this);
         if (newValue == null) {
-            // TODO: Add custom type loader support
+            // TODO: Allow for multiple custom config managers, not just the PistonLib one
+            newValue = PistonLib.getConfigManager().tryLoadingValue(value, this);
         }
         if (newValue != null) {
             for (Parser<T> parser : this.parsers) {
@@ -121,6 +123,14 @@ public class ParsedValue<T> {
             }
             setValue(newValue, true);
         }
+    }
+
+    /**
+     * Returns the value that should be used within the config file
+     */
+    protected Object getValueForConfig() {
+        // TODO: Allow for multiple custom config managers, not just the PistonLib one
+        return PistonLib.getConfigManager().trySavingValue(this.getValue(), this);
     }
 
     /**

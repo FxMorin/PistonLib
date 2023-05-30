@@ -3,6 +3,8 @@ package ca.fxco.pistonlib.config;
 import ca.fxco.api.pistonlib.config.ConfigValue;
 import ca.fxco.api.pistonlib.config.Observer;
 import ca.fxco.api.pistonlib.config.Parser;
+import ca.fxco.api.pistonlib.config.TypeConverter;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
@@ -17,7 +19,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +33,7 @@ public class ConfigManager {
 
     private final Path configPath;
     private final TomlWriter tomlWriter;
+    private final List<TypeConverter> typeConverters = new ArrayList<>();
 
     private final Map<String, ParsedValue<?>> parsedValues = new HashMap<>();
 
@@ -50,6 +55,30 @@ public class ConfigManager {
         }
 
         writeValuesToConf();
+    }
+
+    public void addConverter(TypeConverter converter) {
+        this.typeConverters.add(converter);
+    }
+
+    public <T> T tryLoadingValue(Object value, ParsedValue<T> parsedValue) {
+        for (TypeConverter converter : this.typeConverters) {
+            T newValue = converter.loadValue(value, parsedValue);
+            if (newValue != null) {
+                return newValue;
+            }
+        }
+        return null;
+    }
+
+    public <T> Object trySavingValue(T value, ParsedValue<T> parsedValue) {
+        for (TypeConverter converter : this.typeConverters) {
+            Object newValue = converter.saveValue(value, parsedValue);
+            if (newValue != null) {
+                return newValue;
+            }
+        }
+        return value;
     }
 
     /**
@@ -108,7 +137,9 @@ public class ConfigManager {
             Files.createDirectories(configPath.getParent());
             Map<String, Object> savedValues = new HashMap<>();
             for (Map.Entry<String, ParsedValue<?>> entry : parsedValues.entrySet()) {
-                savedValues.put(entry.getKey(), entry.getValue().getValue());
+                ParsedValue<?> parsedValue = entry.getValue();
+                Object value = parsedValue.getValue();
+                savedValues.put(entry.getKey(), parsedValue.getValueForConfig());
             }
             tomlWriter.write(savedValues, configPath.toFile());
         } catch (IOException e) {
