@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.pistonlib.impl.BlockQuasiPower;
+import ca.fxco.api.pistonlib.block.BlockQuasiPower;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
