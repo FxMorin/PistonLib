@@ -1,7 +1,10 @@
 package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.ConfigValue;
+import ca.fxco.api.pistonlib.config.Observer;
+import ca.fxco.api.pistonlib.config.Parser;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import net.fabricmc.loader.api.FabricLoader;
@@ -53,7 +56,7 @@ public class ConfigManager {
      * Generates all values from a config class and then loads the config file and sets all there values
      */
     public void loadConfigClass(Class<?> configClass) {
-        for (Field field : configClass.getDeclaredFields()) {
+        nextField: for (Field field : configClass.getDeclaredFields()) {
 
             // Only accept fields that are static & not final
             if (!Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) continue;
@@ -61,6 +64,14 @@ public class ConfigManager {
             // Check for ConfigValue annotation
             for (Annotation annotation : field.getAnnotations()) {
                 if (annotation instanceof ConfigValue configValue) {
+                    for (Class<? extends ConfigValue.Condition> conditionClazz : configValue.condition()) {
+                        ConfigValue.Condition condition = Utils.createInstance(conditionClazz);
+                        if (!condition.shouldInclude()) {
+                            continue nextField; // Skip this field entirely
+                        }
+                    }
+                    Parser<?>[] parsers = Utils.createInstances(configValue.parser());
+                    Observer<?>[] observers = Utils.createInstances(configValue.observer());
                     ParsedValue<?> parsedValue = new ParsedValue<>(
                             field,
                             configValue.desc(),
@@ -70,9 +81,12 @@ public class ConfigManager {
                             configValue.requires(),
                             configValue.conflict(),
                             configValue.requiresRestart(),
-                            configValue.fixes()
+                            configValue.fixes(),
+                            parsers,
+                            observers
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);
+                    break;
                 }
             }
         }

@@ -13,6 +13,7 @@ Most people with `pistonPushingCacheFix` set to `false` probably want the duping
 ### Config Options
 - Don't modify the config values directly! Use the Getters & Setters provided by the config manager. I will flame you hard if you don't follow this one
 - Don't change config options anywhere within `MinecraftServer.tick()`
+- If using a custom `Observer` in `@ConfigValue`, make sure `onChange()` does not infinitely recurse using `parsedValue.setValue(value)`, try using `Parser.modify()` when possible instead
 
 ### Common Issues
 Move this to a FAQ md later
