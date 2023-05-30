@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.impl;
+package ca.fxco.api.pistonlib.block.state;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
-import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
+import ca.fxco.api.pistonlib.block.state.BlockStateQuasiPower;
 import ca.fxco.pistonlib.impl.QLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

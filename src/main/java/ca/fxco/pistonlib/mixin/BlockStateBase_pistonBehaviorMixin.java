@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.api.pistonlib.block.BlockQuasiPower;
-import ca.fxco.pistonlib.impl.BlockStateQuasiPower;
+import ca.fxco.api.pistonlib.block.state.BlockStateQuasiPower;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
