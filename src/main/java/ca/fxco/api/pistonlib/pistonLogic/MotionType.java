@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic;
+package ca.fxco.api.pistonlib.pistonLogic;
 
 public class MotionType {
 

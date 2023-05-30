@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.api.pistonlib.level.QLevel;
-import ca.fxco.pistonlib.pistonLogic.MotionType;
+import ca.fxco.api.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 
