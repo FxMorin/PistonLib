@@ -3,9 +3,6 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 import java.util.Map;
 
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonBehavior;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonMerging;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import com.mojang.datafixers.util.Pair;
@@ -24,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
-public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavior, ConfigurablePistonStickiness, ConfigurablePistonMerging {
+public class HalfObsidianBlock extends Block {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -53,49 +50,49 @@ public class HalfObsidianBlock extends Block implements ConfigurablePistonBehavi
     }
 
     @Override
-    public boolean usesConfigurablePistonBehavior() {
+    public boolean pl$usesConfigurablePistonBehavior() {
         return true;
     }
 
     @Override
-    public boolean canPistonPush(Level level,  BlockPos pos, BlockState state, Direction dir) {
+    public boolean pl$canPistonPush(Level level,  BlockPos pos, BlockState state, Direction dir) {
         return dir.getOpposite() != state.getValue(FACING);
     }
 
     @Override
-    public boolean canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir) {
+    public boolean pl$canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir) {
         return dir != state.getValue(FACING);
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public  Map<Direction, StickyType> stickySides(BlockState state) {
+    public  Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return Map.of(state.getValue(FACING), StickyType.NO_STICK);
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir == state.getValue(FACING) ? StickyType.NO_STICK : StickyType.DEFAULT;
     }
 
     @Override
-    public boolean usesConfigurablePistonMerging() {
+    public boolean pl$usesConfigurablePistonMerging() {
         return true;
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState neighborState, Direction direction) {
         return true;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
-                                                  BlockPos blockPos, Direction direction) {
+    public Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
+                                                  BlockPos pos, Direction direction) {
         return new Pair<>(
                 Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

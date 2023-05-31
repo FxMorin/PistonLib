@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.items;
 
-import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.SingleItemTooltip;
 import net.minecraft.core.BlockPos;
@@ -52,7 +51,7 @@ public class PistonWandItem extends Item {
             if (wandItem != ItemStack.EMPTY) {
                 BlockPos blockPos = useOnContext.getClickedPos();
                 Direction face = useOnContext.getClickedFace();
-                ((ServerLevelInteraction) serverLevel).triggerPistonEvent(((BasicPistonBaseBlock) ((BlockItem) wandItem.getItem()).getBlock()), blockPos.relative(face), face.getOpposite(), true);
+                serverLevel.pl$addPistonEvent(((BasicPistonBaseBlock) ((BlockItem) wandItem.getItem()).getBlock()), blockPos.relative(face), face.getOpposite(), true);
             } else {
                 ((ServerPlayer) player).sendSystemMessage(Component.literal("Piston Wand does not currently have a piston!"), true); // todo: translations
             }

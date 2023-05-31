@@ -1,7 +1,5 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
-
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -46,6 +44,6 @@ public enum StickyType {
      * Should only be called if CONDITIONAL
      */
     public boolean canStick(BlockState state, BlockState adjState, Direction dir) {
-        return ((ConfigurablePistonStickiness)state.getBlock()).matchesStickyConditions(state, adjState, dir);
+        return state.pl$matchesStickyConditions(adjState, dir);
     }
 }

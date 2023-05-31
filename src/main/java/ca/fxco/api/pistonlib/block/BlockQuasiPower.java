@@ -7,13 +7,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockQuasiPower {
 
-    int getQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist);
+    int pl$getQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist);
 
-    default boolean hasQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
-        return getQuasiSignal(state, blockGetter, pos, dir, dist) > 0;
-    }
+    int pl$getDirectQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist);
 
-    int getDirectQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist);
+    boolean pl$isQuasiConductor(BlockState state, BlockGetter level, BlockPos pos);
 
-    boolean isQuasiConductor(BlockState state, BlockGetter blockGetter, BlockPos pos);
 }

@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.api.pistonlib.level.ILevel;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
@@ -59,10 +58,10 @@ public class Utils {
         return false;
     }
 
-    public static boolean setBlockWithEntity(Level level, BlockPos blockPos, BlockState state,
+    public static boolean setBlockWithEntity(Level level, BlockPos pos, BlockState state,
                                              BlockEntity blockEntity, int flags) {
-        ((ILevel)level).prepareBlockEntityPlacement(blockPos, state, blockEntity);
-        return level.setBlock(blockPos, state, flags);
+        level.pl$prepareBlockEntityPlacement(pos, state, blockEntity);
+        return level.setBlock(pos, state, flags);
     }
 
     // Ya pretend this is not here xD

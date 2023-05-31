@@ -15,13 +15,13 @@ public class Properties_itemMixin implements ToggleableProperties<Item.Propertie
     BooleanSupplier isDisabled = () -> false;
 
     @Override
-    public Item.Properties setDisabled(BooleanSupplier isDisabled) {
+    public Item.Properties pl$setDisabled(BooleanSupplier isDisabled) {
         this.isDisabled = isDisabled;
         return (Item.Properties)(Object)this;
     }
 
     @Override
-    public BooleanSupplier getIsDisabled() {
+    public BooleanSupplier pl$getIsDisabled() {
         return this.isDisabled;
     }
 }

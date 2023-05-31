@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 import java.util.Map;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.SIDES_LIST;
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.getSlabShape;
 
-public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStickiness {
+public class HalfHoneyBlock extends HoneyBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     protected static final VoxelShape[] COLLISION_SHAPES = Util.make(() -> {
@@ -75,17 +74,17 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return SIDES_LIST[state.getValue(FACING).ordinal()];
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         Direction facing = state.getValue(FACING);
         if (dir == facing) { // front
             return StickyType.STICKY;
@@ -97,13 +96,13 @@ public class HalfHoneyBlock extends HoneyBlock implements ConfigurablePistonStic
 
     // Only the sides call the conditional check
     @Override
-    public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+    public boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         if (neighborState.is(this)) { // Block attempting to stick another half honey block
             Direction facing = state.getValue(FACING);
             Direction neighborFacing = neighborState.getValue(FACING);
             return facing == neighborFacing || facing.getOpposite() != neighborFacing;
         }
-        StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
+        StickyGroup group = neighborState.pl$getStickyGroup();
         if (group != null) {
             return StickRules.test(ModStickyGroups.HONEY, group);
         }

@@ -1,8 +1,9 @@
 package ca.fxco.api.pistonlib.level;
 
-import ca.fxco.api.pistonlib.blockEntity.BlockEntityPostLoad;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public interface LevelAdditions {
 
-    void addBlockEntityPostLoad(BlockEntityPostLoad blockEntity);
+    void pl$addBlockEntityPostLoad(BlockEntity blockEntity);
+
 }

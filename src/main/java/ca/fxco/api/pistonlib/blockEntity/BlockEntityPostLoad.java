@@ -5,12 +5,12 @@ package ca.fxco.api.pistonlib.blockEntity;
  */
 public interface BlockEntityPostLoad {
 
-    boolean shouldPostLoad();
+    boolean pl$shouldPostLoad();
 
     /**
      * This only gets fired once, before your first tick!
      * Be very very careful with what you do in here!
      */
-    void onPostLoad();
+    void pl$onPostLoad();
 
 }

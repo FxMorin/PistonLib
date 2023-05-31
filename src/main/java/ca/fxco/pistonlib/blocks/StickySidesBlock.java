@@ -2,14 +2,13 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StickySidesBlock extends Block implements ConfigurablePistonStickiness {
+public class StickySidesBlock extends Block {
 
     private final Map<Direction, StickyType> stickList;
 
@@ -19,22 +18,22 @@ public class StickySidesBlock extends Block implements ConfigurablePistonStickin
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public boolean isSticky(BlockState state) {
+    public boolean pl$isSticky(BlockState state) {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return stickList;
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return stickList.getOrDefault(dir, StickyType.DEFAULT);
     }
 }

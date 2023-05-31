@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * This is for handling merging the block entities.
  */
-public interface BlockEntityMerging {
+public interface BlockEntityPistonMerging {
 
     //
     // These methods are to control if merging should happen
@@ -21,23 +21,17 @@ public interface BlockEntityMerging {
     /**
      * Returns if it will be able to merge both states together
      */
-    default boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
-        return true;
-    }
+    boolean pl$canMerge(BlockState state, BlockState mergingIntoState, Direction dir);
 
     /**
      * While merging with a block, is this block able to merge with other blocks from other directions?
      */
-    default boolean canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
-        return true;
-    }
+    boolean pl$canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging);
 
     /**
      * Returns if it will be able to unmerge into two different states
      */
-    default boolean canUnMerge(BlockState state, BlockState neighborState, Direction dir) {
-        return true;
-    }
+    boolean pl$canUnMerge(BlockState state, BlockState neighborState, Direction dir);
 
 
     //
@@ -50,9 +44,7 @@ public interface BlockEntityMerging {
      * If it's not saved, the `onAdvancedFinalMerge` will not run for this block entity and the data from this
      * block entity will not be stored.
      */
-    default boolean shouldStoreSelf(MergeBlockEntity mergeBlockEntity) {
-        return false;
-    }
+    boolean pl$shouldStoreSelf(MergeBlockEntity mergeBlockEntity);
 
 
     //
@@ -60,13 +52,13 @@ public interface BlockEntityMerging {
     // They are only called for blocks merging into another block. Not initial blocks
     //
 
-    default void onMerge(MergeBlockEntity mergeBlockEntity, Direction direction) {}
+    void pl$onMerge(MergeBlockEntity mergeBlockEntity, Direction dir);
 
     /**
      * When the merge is done, this method will be called for all saved block entities.
      * This is used to modify the block entity. If no block entity is present to modify, this method is not called!
      */
-    default void onAdvancedFinalMerge(BlockEntity blockEntity) {}
+    void pl$onAdvancedFinalMerge(BlockEntity blockEntity);
 
 
     //
@@ -78,17 +70,13 @@ public interface BlockEntityMerging {
      * Return null to call the blockstate `doUnMerge` method
      * The first block in the pair is the block that will be pulled out
      */
-    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, Direction direction) {
-        return null;
-    }
+    @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, Direction dir);
 
     /**
      * If the block entity should unmerge also or if it should stay where it is.
      * If it stays it won't replace the block entity
      */
-    default boolean shouldUnMergeBlockEntity(BlockState state, Direction direction) {
-        return true;
-    }
+    boolean pl$shouldUnMergeBlockEntity(BlockState state, Direction dir);
 
 
     //
@@ -99,17 +87,16 @@ public interface BlockEntityMerging {
      * This method only gets called if this is the block entity of the block getting converted to a merge block
      * If false, the block entity is removed and the merge will finish like normally.
      */
-    default boolean doInitialMerging() {
-        return true;
-    }
+    boolean pl$doInitialMerging();
 
     /**
      * When the merge is done, before all the other `onAdvancedFinalMerge` methods
      */
-    default void beforeInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {}
+    void pl$beforeInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData);
 
     /**
      * When the merge is done, after all the other `onAdvancedFinalMerge` methods
      */
-    default void afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {}
+    void pl$afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData);
+
 }

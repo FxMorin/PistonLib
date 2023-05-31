@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
@@ -50,9 +49,8 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                         Set<BlockPos> positions = new HashSet<>();
                         BlockPos frontPos = pos.relative(facing);
                         if (level.getBlockEntity(frontPos) instanceof ConfigurableMovingBlockEntity bmbe && !bmbe.extending && bmbe.progress == progress) {
-                            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)bmbe.movedState.getBlock();
-                            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(bmbe.movedState)) {
-                                stuckNeighbors(level, frontPos, stick.stickySides(bmbe.movedState), bmbe, positions);
+                            if (bmbe.movedState.pl$usesConfigurablePistonStickiness() && bmbe.movedState.pl$isSticky()) {
+                                stuckNeighbors(level, frontPos, bmbe.movedState.pl$stickySides(), bmbe, positions);
                             }
                             bmbe.finalTick();
                         }
@@ -91,9 +89,8 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                 if (blockEntity instanceof ConfigurableMovingBlockEntity mbe) {
                     if (!mbe.isExtending() && thisMbe.progress == mbe.progress) {
                         set.add(neighborPos);
-                        ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness)mbe.movedState.getBlock();
-                        if (stick.usesConfigurablePistonStickiness() && stick.isSticky(mbe.movedState)) {
-                            stuckNeighbors(level, neighborPos, stick.stickySides(mbe.movedState), mbe, set);
+                        if (mbe.movedState.pl$usesConfigurablePistonStickiness() && mbe.movedState.pl$isSticky()) {
+                            stuckNeighbors(level, neighborPos, mbe.movedState.pl$stickySides(), mbe, set);
                         }
                         mbe.finalTick(true, true);
                     }

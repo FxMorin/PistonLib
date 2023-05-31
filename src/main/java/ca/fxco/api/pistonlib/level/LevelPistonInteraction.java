@@ -4,7 +4,8 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
-public interface ServerLevelInteraction {
+public interface LevelPistonInteraction {
 
-    void triggerPistonEvent(BasicPistonBaseBlock pistonBlock, BlockPos pos, Direction dir, boolean extend);
+    void pl$addPistonEvent(BasicPistonBaseBlock pistonBase, BlockPos pos, Direction dir, boolean extend);
+
 }

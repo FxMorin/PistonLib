@@ -38,9 +38,7 @@ public class PistonBaseBlock_headlessMixin {
 
     @Shadow
     @Final
-    private boolean getNeighborSignal(Level level, BlockPos blockPos, Direction direction) {
-        return true;
-    }
+    private boolean getNeighborSignal(Level level, BlockPos pos, Direction facing) { return false; }
 
 
     @Inject(

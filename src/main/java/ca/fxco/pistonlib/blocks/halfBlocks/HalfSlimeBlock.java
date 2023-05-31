@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModStickyGroups;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
@@ -31,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.SIDES_LIST;
 
-public class HalfSlimeBlock extends Block implements ConfigurablePistonStickiness {
+public class HalfSlimeBlock extends Block {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -101,22 +100,22 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public @Nullable StickyGroup getStickyGroup() {
+    public @Nullable StickyGroup pl$getStickyGroup() {
         return ModStickyGroups.SLIME;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return SIDES_LIST[state.getValue(FACING).ordinal()];
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         Direction facing = state.getValue(FACING);
         if (dir == facing) { // front
             return StickyType.STICKY;
@@ -128,13 +127,13 @@ public class HalfSlimeBlock extends Block implements ConfigurablePistonStickines
 
     // Only the sides call the conditional check
     @Override
-    public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+    public boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         if (neighborState.getBlock() == this) { // Block attempting to stick another half slime block
             Direction facing = state.getValue(FACING);
             Direction neighborFacing = neighborState.getValue(FACING);
             return facing == neighborFacing || facing.getOpposite() != neighborFacing;
         }
-        StickyGroup group = ((ConfigurablePistonStickiness)neighborState.getBlock()).getStickyGroup();
+        StickyGroup group = neighborState.pl$getStickyGroup();
         if (group != null) {
             return StickRules.test(ModStickyGroups.SLIME, group);
         }

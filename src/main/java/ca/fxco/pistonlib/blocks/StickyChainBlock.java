@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.Util;
@@ -12,7 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StickyChainBlock extends ChainBlock implements ConfigurablePistonStickiness {
+public class StickyChainBlock extends ChainBlock {
 
     private static final StickyType CHAIN_STICKY_TYPE = PistonLibConfig.strongStickyChains ? StickyType.STRONG : StickyType.STICKY;
 
@@ -34,12 +33,12 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return switch(state.getValue(AXIS)) {
             case X -> CHAIN_SIDES_X;
             case Y -> CHAIN_SIDES_Y;
@@ -48,7 +47,7 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir.getAxis() == state.getValue(AXIS) ?
                 CHAIN_STICKY_TYPE :
                 StickyType.NO_STICK;

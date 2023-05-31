@@ -4,9 +4,7 @@ import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.api.pistonlib.blockEntity.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.api.pistonlib.block.state.BlockStateBaseMerging;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
@@ -54,7 +52,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
 
             if (blockEntityToMove != null) {
-                if (!(blockEntityToMove instanceof BlockEntityMerging bem) || bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                if (blockEntityToMove.pl$shouldUnMergeBlockEntity(stateToMove, moveDir)) {
                     level.removeBlockEntity(posToMove);
                     blockEntityToMove.setChanged();
                 }
@@ -86,17 +84,16 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     boolean move = true;
 
                     // UnMerge blocks
-                    if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
+                    if (toUnMerge.contains(posToMove)) {
                         Pair<BlockState, BlockState> unmergedStates = null;
-                        if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
-                                blockEntityToMove instanceof BlockEntityMerging bem) {
-                            unmergedStates = bem.doUnMerge(stateToMove, moveDir);
-                            if (!bem.shouldUnMergeBlockEntity(stateToMove, moveDir)) {
+                        if (stateToMove.pl$getBlockEntityMergeRules().checkUnMerge()) {
+                            unmergedStates = blockEntityToMove.pl$doUnMerge(stateToMove, moveDir);
+                            if (!blockEntityToMove.pl$shouldUnMergeBlockEntity(stateToMove, moveDir)) {
                                 blockEntityToMove = null;
                             }
                         }
                         if (unmergedStates == null) {
-                            unmergedStates = bsbm.doUnMerge(level, posToMove, moveDir);
+                            unmergedStates = stateToMove.pl$doUnMerge(level, posToMove, moveDir);
                         }
                         if (unmergedStates != null) {
                             unMergingStates[unMergingIndex++] = stateToMove;
@@ -145,12 +142,11 @@ public class MergingStructureRunner extends BasicStructureRunner {
 
             if (mergeIntoState.getBlock() instanceof MergeBlock) { // MultiMerge
                 if (level.getBlockEntity(mergeIntoPos) instanceof MergeBlockEntity mergeBlockEntity) {
-                    if (((BlockStateBaseMerging)stateToMerge).getBlockEntityMergeRules().checkMerge() &&
+                    if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge() &&
                             mergeBlockEntity.getInitialBlockEntity() != null) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                        if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
-                                bem2.shouldStoreSelf(mergeBlockEntity)) {
-                            bem2.onMerge(mergeBlockEntity, moveDir);
+                        if (blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
+                            blockEntityToMerge.pl$onMerge(mergeBlockEntity, moveDir);
                             mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {
                             mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);
@@ -163,15 +159,14 @@ public class MergingStructureRunner extends BasicStructureRunner {
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
                 MergeBlockEntity mergeBlockEntity;
                 BlockEntity mergeIntoBlockEntity = level.getBlockEntity(mergeIntoPos);
-                if (mergeIntoBlockEntity instanceof BlockEntityMerging bem && bem.doInitialMerging()) {
+                if (mergeIntoBlockEntity.pl$doInitialMerging()) {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity);
-                    bem.onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
+                    mergeIntoBlockEntity.pl$onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
 
-                    if (((BlockStateBaseMerging)stateToMerge).getBlockEntityMergeRules().checkMerge()) {
+                    if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge()) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                        if (blockEntityToMerge instanceof BlockEntityMerging bem2 &&
-                                bem2.shouldStoreSelf(mergeBlockEntity)) {
-                            bem2.onMerge(mergeBlockEntity, moveDir);
+                        if (blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
+                            blockEntityToMerge.pl$onMerge(mergeBlockEntity, moveDir);
                             mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {
                             mergeBlockEntity.doMerge(stateToMerge, moveDir, speed);

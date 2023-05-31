@@ -12,5 +12,6 @@ public interface Toggleable {
     FeatureFlag NEVER_ENABLED = new FeatureFlag(FAKE_UNIVERSE, 64);
     FeatureFlagSet NEVER_ENABLED_SET = FeatureFlagSet.of(NEVER_ENABLED);
 
-    BooleanSupplier getIsDisabled();
+    BooleanSupplier pl$getIsDisabled();
+
 }

@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.block.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.Util;
@@ -11,7 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class GlueBlock extends Block implements ConfigurablePistonStickiness {
+public class GlueBlock extends Block {
 
     private static final Map<Direction, StickyType> GLUE_SIDES_LIST = Util.make(new HashMap<>(), map -> {
         map.put(Direction.UP, StickyType.STRONG);
@@ -27,17 +26,17 @@ public class GlueBlock extends Block implements ConfigurablePistonStickiness {
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return GLUE_SIDES_LIST;
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction direction) {
+    public StickyType pl$sideStickiness(BlockState state, Direction direction) {
         return StickyType.STRONG;
     }
 }

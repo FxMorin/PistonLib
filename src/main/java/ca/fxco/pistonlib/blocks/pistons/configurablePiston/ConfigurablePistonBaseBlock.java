@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.api.pistonlib.level.QLevel;
 import ca.fxco.api.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
@@ -37,7 +36,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return (this.getFamily().isFrontPowered() ? level.hasNeighborSignal(pos) :
                 Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
-                (this.getFamily().isQuasi() && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
+                (this.getFamily().isQuasi() && level.pl$hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override

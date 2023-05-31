@@ -10,59 +10,41 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public interface ConfigurablePistonMerging {
+public interface BlockPistonMerging {
 
     // Both blocks that are attempting to merge should have the same checks!
 
 
     // This must return true in order for the configurable piston merging to be used!
-    default boolean usesConfigurablePistonMerging() {
-        return false;
-    }
+    boolean pl$usesConfigurablePistonMerging();
 
 
     // Returns if it will be able to merge both states together
-    default boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
-        return true;
-    }
+    boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState, Direction dir);
 
     // If the block can be merged from a given side or can be merged from that side. Usually opposite of pushDirection
-    default boolean canMergeFromSide(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction pushDirection) {
-        return true;
-    }
+    boolean pl$canMergeFromSide(BlockState state, BlockGetter level, BlockPos pos, Direction pushDir);
 
     // Returns the merged state
-    default BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir) {
-        return mergingIntoState;
-    }
+    BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState, Direction dir);
 
 
     // This must return true if you want to be able to merge more than one block at a time using `canMultiMerge` & `doMultiMerge`
-    default boolean canMultiMerge() {
-        return false;
-    }
+    boolean pl$canMultiMerge();
 
     // While merging with a block, is this block able to merge with other blocks from other directions?
-    default boolean canMultiMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
-        return false;
-    }
+    boolean pl$canMultiMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging);
 
     // Returns the merged state
-    default BlockState doMultiMerge(BlockGetter blockGetter, BlockPos blockPos, Map<Direction, BlockState> states, BlockState mergingIntoState) {
-        return mergingIntoState;
-    }
+    BlockState pl$doMultiMerge(BlockGetter level, BlockPos pos, Map<Direction, BlockState> states, BlockState mergingIntoState);
 
 
     // Returns if it will be able to unmerge into two different states
-    default boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, BlockState neighborState, Direction dir) {
-        return false;
-    }
+    boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir);
 
     // Returns the blockstates that it should unmerge into.
     // The first block in the pair is the block that will be pulled out
-    default @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos, Direction dir) {
-        return null;
-    }
+    @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level, BlockPos pos, Direction dir);
 
     /**
      * This method determines when the block entity should be used:
@@ -74,9 +56,7 @@ public interface ConfigurablePistonMerging {
      * Skipping won't get the block entity at all, this is done for performance reasons.
      * It allows us to quickly know if the block entity should be loaded and checked against
      */
-    default MergeRule getBlockEntityMergeRules() {
-        return MergeRule.NEVER;
-    }
+    MergeRule pl$getBlockEntityMergeRules();
 
     enum MergeRule {
         NEVER(false, false),
