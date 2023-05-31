@@ -1,7 +1,5 @@
 package ca.fxco.pistonlib.blocks.halfBlocks;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -15,7 +13,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.redstone.Redstone;
 
-public class HalfPoweredBlock extends Block implements ConfigurablePistonStickiness {
+public class HalfPoweredBlock extends Block {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 

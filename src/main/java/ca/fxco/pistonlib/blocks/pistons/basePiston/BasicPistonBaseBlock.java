@@ -3,15 +3,13 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.QLevel;
-import ca.fxco.pistonlib.pistonLogic.MotionType;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.api.pistonlib.pistonLogic.MotionType;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
-import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -200,7 +198,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
-                ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
+                level.pl$hasQuasiNeighborSignal(pos, 1);
     }
 
     @Override
@@ -373,21 +371,19 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
 
         // piston push reaction/ custom piston behavior
 
-        ConfigurablePistonBehavior customBehavior = (ConfigurablePistonBehavior)state.getBlock();
-
-        if (customBehavior.usesConfigurablePistonBehavior()) { // This is where stuff gets fun
-            if (!customBehavior.isMovable(level, pos, state)) {
+        if (state.pl$usesConfigurablePistonBehavior()) { // This is where stuff gets fun
+            if (!state.pl$isMovable(level, pos)) {
                 return false;
             } else if (moveDir == pistonFacing) {
-                if (!customBehavior.canPistonPush(level, pos, state, moveDir)) {
+                if (!state.pl$canPistonPush(level, pos, moveDir)) {
                     return false;
                 }
             } else {
-                if (!customBehavior.canPistonPull(level, pos, state, moveDir)) {
+                if (!state.pl$canPistonPull(level, pos, moveDir)) {
                     return false;
                 }
             }
-            if (customBehavior.canDestroy(level, pos, state) && !allowDestroy) {
+            if (state.pl$canDestroy(level, pos) && !allowDestroy) {
                 return false;
             }
         } else {

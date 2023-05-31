@@ -44,6 +44,29 @@
     "java": ">=17"
   },
   "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_4970": [
+        "ca/fxco/api/pistonlib/block/PLBlockBehaviour"
+      ],
+      "net/minecraft/class_4970\u0024class_4971": [
+        "ca/fxco/api/pistonlib/block/state/PLBlockStateBase"
+      ],
+      "net/minecraft/class_4970\u0024class_2251": [
+        "ca/fxco/api/pistonlib/block/PLBlockProperties"
+      ],
+      "net/minecraft/class_2586": [
+        "ca/fxco/api/pistonlib/blockEntity/PLBlockEntity"
+      ],
+      "net/minecraft/class_1792": [
+        "ca/fxco/api/pistonlib/item/PLItem"
+      ],
+      "net/minecraft/class_1792\u0024class_1793": [
+        "ca/fxco/api/pistonlib/item/PLItemProperties"
+      ],
+      "net/minecraft/class_1937": [
+        "ca/fxco/api/pistonlib/level/PLLevel"
+      ]
+    },
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/mezndgtD83"

@@ -1,10 +1,9 @@
 package ca.fxco.pistonlib.blocks;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WeightBlock extends Block implements ConfigurablePistonBehavior {
+public class WeightBlock extends Block {
 
     private final int weight;
 
@@ -14,7 +13,7 @@ public class WeightBlock extends Block implements ConfigurablePistonBehavior {
         this.weight = weight;
     }
 
-    public int getWeight(BlockState state) {
+    public int pl$getWeight(BlockState state) {
         return this.weight;
     }
 }

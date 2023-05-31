@@ -1,8 +1,14 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
-import ca.fxco.pistonlib.impl.LevelAdditions;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.storage.WritableLevelData;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,20 +18,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Post Load block entities once before they tick.
  * This allows the block entities to run code first while only running this logic once
  */
 @Mixin(ServerLevel.class)
-public abstract class ServerLevel_blockEntityMixin implements LevelAdditions {
+public abstract class ServerLevel_blockEntityMixin extends Level {
+
+    // constructor only needed to make the compiler happy
+    private ServerLevel_blockEntityMixin(WritableLevelData data, ResourceKey<Level> key, Holder<DimensionType> dimension,
+                                         Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long seed,
+                                         int maxChainedNeighborUpdates) {
+        super(data, key, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
+    }
 
     @Unique
-    private final Set<BlockEntityPostLoad> blockEntitiesToPostLoad = new HashSet<>();
+    private final Set<BlockEntity> blockEntitiesToPostLoad = new HashSet<>();
 
     @Override
-    public void addBlockEntityPostLoad(BlockEntityPostLoad blockEntity) {
-        blockEntitiesToPostLoad.add(blockEntity);
+    public void pl$addBlockEntityPostLoad(BlockEntity blockEntity) {
+        this.blockEntitiesToPostLoad.add(blockEntity);
     }
 
     @Inject(
@@ -36,11 +50,8 @@ public abstract class ServerLevel_blockEntityMixin implements LevelAdditions {
             )
     )
     private void beforeBlockEntityTicking(CallbackInfo ci) {
-        Iterator<BlockEntityPostLoad> iterator = blockEntitiesToPostLoad.iterator();
-        while (iterator.hasNext()) {
-            BlockEntityPostLoad blockEntityPostLoad = iterator.next();
-            blockEntityPostLoad.onPostLoad();
-            iterator.remove();
+        for (Iterator<BlockEntity> it = this.blockEntitiesToPostLoad.iterator(); it.hasNext(); it.remove()) {
+            it.next().pl$onPostLoad();
         }
     }
 }

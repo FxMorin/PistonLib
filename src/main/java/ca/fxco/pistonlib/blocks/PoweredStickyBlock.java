@@ -2,8 +2,6 @@ package ca.fxco.pistonlib.blocks;
 
 import java.util.Map;
 
-import ca.fxco.pistonlib.impl.QLevel;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
@@ -17,7 +15,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class PoweredStickyBlock extends DirectionalBlock implements ConfigurablePistonStickiness {
+public class PoweredStickyBlock extends DirectionalBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -27,7 +25,7 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
 
     public void updatePowered(BlockState state, Level level, BlockPos pos, boolean force) {
     	boolean isPowered = state.getValue(POWERED);
-        boolean shouldBePowered = level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
+        boolean shouldBePowered = level.hasNeighborSignal(pos) || level.pl$hasQuasiNeighborSignal(pos, 1);
 
         if (isPowered != shouldBePowered) {
             level.setBlock(pos, state.setValue(POWERED, shouldBePowered), UPDATE_ALL);
@@ -59,22 +57,22 @@ public class PoweredStickyBlock extends DirectionalBlock implements Configurable
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public boolean isSticky(BlockState state) {
+    public boolean pl$isSticky(BlockState state) {
         return state.getValue(POWERED);
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return Map.of(state.getValue(FACING), StickyType.STICKY); // Sticky Front
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir == state.getValue(FACING) ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }

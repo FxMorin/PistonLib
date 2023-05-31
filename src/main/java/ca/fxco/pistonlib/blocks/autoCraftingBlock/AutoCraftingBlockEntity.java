@@ -4,7 +4,6 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, BlockEntityMerging {
+public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider {
 
     // Players will not be able to modify this crafting inventory/container
     // The only world interactions will be unmerging & pulling items from below,
@@ -59,18 +58,18 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
+    public boolean pl$canMerge(BlockState state, BlockState mergingIntoState, Direction dir) {
         return areAnySlotsLeft();
     }
 
     @Override
-    public boolean canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir,
+    public boolean pl$canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir,
                                  Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return getRemainingSlotCount() - currentlyMerging.size() > 0; // are any spaces left?
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockState neighborState, Direction dir) {
+    public boolean pl$canUnMerge(BlockState state, BlockState neighborState, Direction dir) {
         if (PistonLibConfig.extractBlocksFromAutoCrafting) {
             for (int i = 0; i < this.items.getContainerSize(); i++) {
                 ItemStack stack = this.items.getItem(i);
@@ -83,7 +82,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, Direction direction) {
+    public @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, Direction dir) {
         if (PistonLibConfig.extractBlocksFromAutoCrafting) {
             for (int slot : EXTRACTION_SLOTS) {
                 ItemStack stack = getItem(slot);
@@ -107,12 +106,12 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    public boolean shouldUnMergeBlockEntity(BlockState state, Direction direction) {
+    public boolean pl$shouldUnMergeBlockEntity(BlockState state, Direction dir) {
         return false;
     }
 
     @Override
-    public void afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {
+    public void pl$afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {
         for (MergeBlockEntity.MergeData data : mergedData.values()) {
             setItem(getNextSlot(), data.getState().getBlock().asItem().getDefaultInstance());
         }

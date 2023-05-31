@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
-import ca.fxco.pistonlib.impl.QLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -20,6 +19,6 @@ public class DispenserBlock_quasiMixin {
             )
     )
     private boolean useQuasiSignalCheck(Level level, BlockPos pos) {
-        return ((QLevel)level).hasQuasiNeighborSignal(pos.below(), 1);
+        return level.pl$hasQuasiNeighborSignal(pos.below(), 1);
     }
 }

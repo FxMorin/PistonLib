@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.blocks.pistons;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 
-import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,6 @@ public class FrontPoweredPistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         // Implementation that allows power received through the piston face.
-        return level.hasNeighborSignal(pos) || ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
+        return level.hasNeighborSignal(pos) || level.pl$hasQuasiNeighborSignal(pos, 1);
     }
 }

@@ -1,11 +1,10 @@
 package ca.fxco.pistonlib.blocks.pistons.movableBlockEntities;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.impl.ILevel;
+import ca.fxco.api.pistonlib.block.MovingTickable;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,15 +34,15 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
 
     @Override
     protected boolean placeMovedBlock() {
-        ((ILevel)this.level).prepareBlockEntityPlacement(this.worldPosition, this.movedState, this.movedBlockEntity);
+        this.level.pl$prepareBlockEntityPlacement(this.worldPosition, this.movedState, this.movedBlockEntity);
         return super.placeMovedBlock();
     }
 
     @Override
     protected void onMovingTick(Direction movingDirection, float speed) {
         super.onMovingTick(movingDirection, speed);
-        if (this.movedBlockEntity instanceof PistonTicking pistonTicking) {
-            pistonTicking.onMovingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
+        if (this.movedBlockEntity instanceof MovingTickable tickable) {
+            tickable.pl$movingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
         }
     }
 

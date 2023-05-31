@@ -1,14 +1,7 @@
 package ca.fxco.pistonlib.mixin;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModTags;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -16,12 +9,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PistonBaseBlock.class)
 public class PistonBaseBlock_tagsMixin {
 
     /*
-     * In this mixin we basically change all the !state.isOf(PISTON) and regular piston to instead check against the
+     * In this mixin we basically change all the !state.is(PISTON) and regular piston to instead check against the
      * PISTONS TagKey, so that all pistons work the same with each other (Including vanilla)
      * 
      * We also replace any instances of PistonStructureResolver with the custom ConfigurablePistonStructureResolver.

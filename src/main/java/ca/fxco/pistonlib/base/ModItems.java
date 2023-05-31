@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.items.PistonWandItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -67,7 +66,7 @@ public class ModItems {
     public static final BlockItem MBE_PISTON = registerBlock(ModBlocks.MBE_PISTON);
     public static final BlockItem MBE_STICKY_PISTON = registerBlock(ModBlocks.MBE_STICKY_PISTON);
 
-    public static final BlockItem AUTO_CRAFTING_BLOCK = registerBlock(ModBlocks.AUTO_CRAFTING_BLOCK, ((ToggleableProperties<Item.Properties>)new Item.Properties()).setDisabled(() -> !PistonLibConfig.autoCraftingBlock));
+    public static final BlockItem AUTO_CRAFTING_BLOCK = registerBlock(ModBlocks.AUTO_CRAFTING_BLOCK, new Item.Properties().pl$setDisabled(() -> !PistonLibConfig.autoCraftingBlock));
 
     private static BlockItem registerBlock(Block block) {
         return registerBlock(block, new Item.Properties());

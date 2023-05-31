@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,38 +14,38 @@ import org.spongepowered.asm.mixin.Mixin;
 import java.util.Map;
 
 @Mixin(IceBlock.class)
-public class IceBlock_compressMixin implements ConfigurablePistonMerging {
+public class IceBlock_compressMixin implements PLBlockBehaviour {
 
     @Override
-    public boolean usesConfigurablePistonMerging() {
+    public boolean pl$usesConfigurablePistonMerging() {
         return PistonLibConfig.doIceMerging;
     }
 
     @Override
-    public boolean canMultiMerge() {
+    public boolean pl$canMultiMerge() {
         return true;
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
                             BlockState mergingIntoState, Direction direction) {
         return state.getBlock() == mergingIntoState.getBlock();
     }
 
     @Override
-    public boolean canMultiMerge(BlockState state, BlockGetter getter, BlockPos blockPos, BlockState mergingIntoState,
+    public boolean pl$canMultiMerge(BlockState state, BlockGetter getter, BlockPos pos, BlockState mergingIntoState,
                                  Direction direction, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return currentlyMerging.size() <= 2; // max 3
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState mergingIntoState, Direction direction) {
         return Blocks.ICE.defaultBlockState();
     }
 
     @Override
-    public BlockState doMultiMerge(BlockGetter blockGetter, BlockPos blockPos,
+    public BlockState pl$doMultiMerge(BlockGetter level, BlockPos pos,
                                    Map<Direction, BlockState> states, BlockState mergingIntoState) {
         if (states.size() != 3) {
             return Blocks.ICE.defaultBlockState();

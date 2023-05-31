@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.blocks.pistons.longPiston;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.QLevel;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -27,7 +26,7 @@ public class LongPistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
-                (this.getFamily().isQuasi() && ((QLevel)level).hasQuasiNeighborSignal(pos, 1));
+                (this.getFamily().isQuasi() && level.pl$hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override

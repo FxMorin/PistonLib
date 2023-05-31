@@ -2,20 +2,18 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.*;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.helpers.IonicReference;
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
+import ca.fxco.api.pistonlib.block.MovingTickable;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,7 +43,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements BlockEntityPostLoad {
+public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected final PistonType type;
 
@@ -384,10 +382,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
             this.finishMovement(removeSource);
 
             if (!skipStickiness && PistonLibConfig.strongBlockDropping) {
-                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
-
-                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
-                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                if (this.movedState.pl$usesConfigurablePistonStickiness() && this.movedState.pl$isSticky()) {
+                    this.finalTickStuckNeighbors(this.movedState.pl$stickySides());
                 }
             }
 
@@ -445,8 +441,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     }
 
     protected void onMovingTick(Direction movingDirection, float speed) {
-        if (this.movedState.getBlock() instanceof PistonTicking pistonTicking) {
-            pistonTicking.onMovingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
+        if (this.movedState.getBlock() instanceof MovingTickable tickable) {
+            tickable.pl$movingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
         }
     }
 
@@ -492,12 +488,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     }
 
     @Override
-    public boolean shouldPostLoad() {
+    public boolean pl$shouldPostLoad() {
         return this.isGroupController && this.structureGroup != null && !this.structureGroup.hasInitialized();
     }
 
     @Override
-    public void onPostLoad() {
+    public void pl$onPostLoad() {
         if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
             ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
             controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());

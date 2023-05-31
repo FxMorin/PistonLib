@@ -1,5 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRule;
+
 public class StickRules {
 
     // TODO: some documentation

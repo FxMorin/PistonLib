@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.QLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -19,6 +18,6 @@ public class PistonBaseBlock_quasiMixin {
     @Overwrite
     private boolean getNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
-                ((QLevel)level).hasQuasiNeighborSignal(pos, 1);
+                level.pl$hasQuasiNeighborSignal(pos, 1);
     }
 }

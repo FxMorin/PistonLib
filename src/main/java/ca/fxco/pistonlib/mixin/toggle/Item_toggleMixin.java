@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.pistonlib.impl.toggle.Toggleable;
+import ca.fxco.api.pistonlib.item.PLItem;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.BooleanSupplier;
 
 @Mixin(Item.class)
-public class Item_toggleMixin implements Toggleable {
+public class Item_toggleMixin implements PLItem {
     
     @Unique
     private BooleanSupplier isDisabled;
@@ -28,11 +28,11 @@ public class Item_toggleMixin implements Toggleable {
             )
     )
     private void onInit(Item.Properties properties, CallbackInfo ci) {
-        this.isDisabled = ((Toggleable)properties).getIsDisabled();
+        this.isDisabled = properties.pl$getIsDisabled();
     }
 
     @Override
-    public BooleanSupplier getIsDisabled() {
+    public BooleanSupplier pl$getIsDisabled() {
         return this.isDisabled;
     }
 
@@ -43,7 +43,7 @@ public class Item_toggleMixin implements Toggleable {
     )
     private void disableItem(CallbackInfoReturnable<FeatureFlagSet> cir) {
         if (this.isDisabled.getAsBoolean()) {
-            cir.setReturnValue(Toggleable.NEVER_ENABLED_SET);
+            cir.setReturnValue(NEVER_ENABLED_SET);
         }
     }
 }

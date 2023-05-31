@@ -1,26 +1,22 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.PLNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
-import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,22 +28,20 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevel_interactionMixin extends Level implements ServerLevelInteraction {
+public abstract class ServerLevel_interactionMixin extends Level {
 
-    protected ServerLevel_interactionMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey,
-                                           Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier,
-                                           boolean bl, boolean bl2, long l, int i) {
-        super(writableLevelData, resourceKey, holder, supplier, bl, bl2, l, i);
+    private ServerLevel_interactionMixin(WritableLevelData data, ResourceKey<Level> key, Holder<DimensionType> dimension,
+                                         Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long seed,
+                                         int maxChainedNeighborUpdates) {
+        super(data, key, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
     }
 
-    @Shadow public abstract @NotNull MinecraftServer getServer();
-
     @Unique
-    private final Set<PistonEventData> pistonEvents = new HashSet<>();
+    private final Set<PistonEventData> pl$pistonEvents = new HashSet<>();
 
     @Override
-    public void triggerPistonEvent(BasicPistonBaseBlock pistonBlock, BlockPos pos, Direction dir, boolean extend) {
-        this.pistonEvents.add(new PistonEventData(pistonBlock, pos, dir, extend));
+    public void pl$addPistonEvent(BasicPistonBaseBlock pistonBase, BlockPos pos, Direction dir, boolean extend) {
+        this.pl$pistonEvents.add(new PistonEventData(pistonBase, pos, dir, extend));
     }
 
     @Inject(
@@ -57,28 +51,28 @@ public abstract class ServerLevel_interactionMixin extends Level implements Serv
                     target = "Lnet/minecraft/server/level/ServerLevel;runBlockEvents()V"
             )
     )
-    private void afterBlockEvents(BooleanSupplier booleanSupplier, CallbackInfo ci) {
-        runPistonEvents();
+    private void afterBlockEvents(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
+        pl$runPistonEvents();
     }
 
-    private void runPistonEvents() {
-        Set<PistonEventData> runningPistonEvents = new HashSet<>(pistonEvents);
-        pistonEvents.clear();
-        for (PistonEventData pistonEventData : runningPistonEvents) {
-            BasicPistonBaseBlock pistonBlock = pistonEventData.pistonBlock();
-            StructureRunner structureRunner = new DecoupledStructureRunner(pistonBlock.newStructureRunner(
+    private void pl$runPistonEvents() {
+        Set<PistonEventData> runningPistonEvents = new HashSet<>(this.pl$pistonEvents);
+        this.pl$pistonEvents.clear();
+        for (PistonEventData pistonEvent : runningPistonEvents) {
+            BasicPistonBaseBlock pistonBase = pistonEvent.pistonBlock();
+            StructureRunner structureRunner = new DecoupledStructureRunner(pistonBase.newStructureRunner(
                     this,
-                    pistonEventData.pos(),
-                    pistonEventData.dir(),
+                    pistonEvent.pos(),
+                    pistonEvent.dir(),
                     1, // Can't use length in decoupled piston logic
-                    pistonEventData.extend(),
-                    pistonBlock::newStructureResolver
+                    pistonEvent.extend(),
+                    pistonBase::newStructureResolver
             ));
             if (structureRunner.run()) {
                 PLNetwork.sendToClientsInRange(
                         this.getServer(),
-                        GlobalPos.of(this.dimension(), pistonEventData.pos()),
-                        new ClientboundPistonEventPacket(pistonEventData),
+                        GlobalPos.of(this.dimension(), pistonEvent.pos()),
+                        new ClientboundPistonEventPacket(pistonEvent),
                         64
                 );
             }

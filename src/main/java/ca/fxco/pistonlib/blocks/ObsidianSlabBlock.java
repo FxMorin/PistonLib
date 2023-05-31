@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.blocks;
 
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -11,19 +10,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
-public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMerging {
+public class ObsidianSlabBlock extends SlabBlock {
 
     public ObsidianSlabBlock(Properties properties) {
         super(properties);
     }
 
     @Override
-    public boolean usesConfigurablePistonMerging() {
+    public boolean pl$usesConfigurablePistonMerging() {
         return true;
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
                             BlockState mergingIntoState, Direction direction) {
         if (state.getBlock() != mergingIntoState.getBlock() && state.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
             return false;
@@ -42,7 +41,7 @@ public class ObsidianSlabBlock extends SlabBlock implements ConfigurablePistonMe
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState mergingIntoState, Direction direction) {
         if (state.getBlock() == Blocks.SMOOTH_STONE_SLAB) {
             if (state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.BOTTOM) {

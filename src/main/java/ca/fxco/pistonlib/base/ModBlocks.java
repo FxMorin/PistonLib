@@ -34,7 +34,6 @@ import ca.fxco.pistonlib.blocks.pistons.veryStickyPiston.VeryStickyPistonBaseBlo
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperyRedstoneBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.SlipperySlimeBlock;
-import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -180,7 +179,7 @@ public class ModBlocks {
 
     public static final MergeBlock MERGE_BLOCK = register("merge_block", MergeBlock::new, Blocks.MOVING_PISTON);
 
-    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", new AutoCraftingBlock(((ToggleableProperties<Block.Properties>)FabricBlockSettings.copyOf(Blocks.CRAFTING_TABLE)).setDisabled(() -> !PistonLibConfig.autoCraftingBlock)));
+    public static final AutoCraftingBlock AUTO_CRAFTING_BLOCK = register("auto_crafting_block", new AutoCraftingBlock(FabricBlockSettings.copyOf(Blocks.CRAFTING_TABLE).pl$setDisabled(() -> !PistonLibConfig.autoCraftingBlock)));
 
     private static <T extends Block> T register(String name, Function<FabricBlockSettings, T> block, Block propertySource) {
         return register(name, block.apply(FabricBlockSettings.copyOf(propertySource)));

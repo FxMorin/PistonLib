@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.Util;
@@ -11,7 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StickylessBlock extends Block implements ConfigurablePistonStickiness {
+public class StickylessBlock extends Block {
 
     private static final Map<Direction, StickyType> STICKYLESS_LIST = Util.make(new HashMap<>(), map -> {
         map.put(Direction.UP, StickyType.NO_STICK);
@@ -27,22 +26,22 @@ public class StickylessBlock extends Block implements ConfigurablePistonStickine
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override // Might try setting this to false, and not using the list. Should work the same
-    public boolean isSticky(BlockState state) {
+    public boolean pl$isSticky(BlockState state) {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return STICKYLESS_LIST;
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return StickyType.NO_STICK;
     }
 }

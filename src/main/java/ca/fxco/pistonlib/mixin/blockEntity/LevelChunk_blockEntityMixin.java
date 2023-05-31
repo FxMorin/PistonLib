@@ -1,8 +1,6 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
-import ca.fxco.pistonlib.impl.LevelAdditions;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -12,9 +10,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LevelChunk.class)
-public abstract class LevelChunk_blockEntityMixin {
+public class LevelChunk_blockEntityMixin {
 
-    @Shadow public abstract Level getLevel();
+    @Shadow
+    private Level getLevel() { return null; }
 
     @WrapWithCondition(
             method = "addAndRegisterBlockEntity",
@@ -25,8 +24,8 @@ public abstract class LevelChunk_blockEntityMixin {
             )
     )
     private boolean conditionallyAddTickers$1(LevelChunk level, BlockEntity blockEntity) {
-        if (blockEntity instanceof BlockEntityPostLoad bepl && bepl.shouldPostLoad()) {
-            ((LevelAdditions)this.getLevel()).addBlockEntityPostLoad(bepl);
+        if (blockEntity.pl$shouldPostLoad()) {
+            this.getLevel().pl$addBlockEntityPostLoad(blockEntity);
         }
         if (blockEntity instanceof BasicMovingBlockEntity bmbe) {
             return bmbe.hasControl();
@@ -43,8 +42,8 @@ public abstract class LevelChunk_blockEntityMixin {
             )
     )
     private boolean conditionallyAddTickers$2(LevelChunk level, BlockEntity blockEntity) {
-        if (blockEntity instanceof BlockEntityPostLoad bepl && bepl.shouldPostLoad()) {
-            ((LevelAdditions)this.getLevel()).addBlockEntityPostLoad(bepl);
+        if (blockEntity.pl$shouldPostLoad()) {
+            this.getLevel().pl$addBlockEntityPostLoad(blockEntity);
         }
         if (blockEntity instanceof BasicMovingBlockEntity bmbe) {
             return bmbe.hasControl();
@@ -61,8 +60,8 @@ public abstract class LevelChunk_blockEntityMixin {
             )
     )
     private boolean conditionallyAddTickers$3(LevelChunk level, BlockEntity blockEntity) {
-        if (blockEntity instanceof BlockEntityPostLoad bepl && bepl.shouldPostLoad()) {
-            ((LevelAdditions)this.getLevel()).addBlockEntityPostLoad(bepl);
+        if (blockEntity.pl$shouldPostLoad()) {
+            this.getLevel().pl$addBlockEntityPostLoad(blockEntity);
         }
         if (blockEntity instanceof BasicMovingBlockEntity bmbe) {
             return bmbe.hasControl();

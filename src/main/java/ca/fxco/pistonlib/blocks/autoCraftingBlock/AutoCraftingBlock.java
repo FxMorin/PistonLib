@@ -2,9 +2,6 @@ package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePistonBehavior, ConfigurablePistonMerging {
+public class AutoCraftingBlock extends BaseEntityBlock {
 
     public AutoCraftingBlock(Properties properties) {
         super(properties);
@@ -81,7 +78,7 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     }
 
     @Override
-    public void onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {
+    public void pl$onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (entity instanceof ItemEntity itemEntity) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof AutoCraftingBlockEntity autoCraftingBlockEntity) {
@@ -91,52 +88,52 @@ public class AutoCraftingBlock extends BaseEntityBlock implements ConfigurablePi
     }
 
     @Override
-    public boolean usesConfigurablePistonMerging() {
+    public boolean pl$usesConfigurablePistonMerging() {
         return PistonLibConfig.autoCraftingBlock;
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
                             BlockState mergingIntoState, Direction direction) {
         return state.getBlock().asItem() instanceof BlockItem; // Only accept block items
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState mergingIntoState, Direction direction) {
         return mergingIntoState; // Your still an auto crafting block, I know... what a disappointment
     }
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState neighborState, Direction direction) {
         return true; // Handled by the block entity
     }
 
     @Override
-    public @Nullable Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
-                                                            BlockPos blockPos, Direction direction) {
+    public @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
+                                                            BlockPos pos, Direction direction) {
         return null; // Handled by the block entity
     }
 
-    public MergeRule getBlockEntityMergeRules() {
+    public MergeRule pl$getBlockEntityMergeRules() {
         return MergeRule.ALWAYS;
     }
 
 
     @Override
-    public boolean usesConfigurablePistonBehavior() {
+    public boolean pl$usesConfigurablePistonBehavior() {
         return PistonLibConfig.autoCraftingBlock;
     }
 
     @Override
-    public boolean canPistonPush(Level level, BlockPos pos, BlockState state, Direction direction) {
+    public boolean pl$canPistonPush(Level level, BlockPos pos, BlockState state, Direction dir) {
         return PistonLibConfig.movableAutoCraftingBlock;
     }
 
     @Override
-    public boolean canPistonPull(Level level, BlockPos pos, BlockState state, Direction direction) {
+    public boolean pl$canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        return blockEntity instanceof BlockEntityMerging bem && bem.canUnMerge(state, null, direction);
+        return blockEntity.pl$canUnMerge(state, null, dir);
     }
 }

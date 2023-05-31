@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.network.packets;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
-import ca.fxco.pistonlib.pistonLogic.structureRunners.StructureRunner;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

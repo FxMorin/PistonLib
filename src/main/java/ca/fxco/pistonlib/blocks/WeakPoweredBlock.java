@@ -1,36 +1,30 @@
 package ca.fxco.pistonlib.blocks;
 
-import ca.fxco.pistonlib.impl.BlockQuasiPower;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.PoweredBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Redstone;
 
-public class WeakPoweredBlock extends PoweredBlock implements BlockQuasiPower {
+public class WeakPoweredBlock extends PoweredBlock {
 
     public WeakPoweredBlock(Properties properties) {
         super(properties);
     }
 
-
     @Override
-    public int getQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
-        return 0;
+    public int pl$getQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist) {
+        return Redstone.SIGNAL_MIN;
     }
 
     @Override
-    public boolean hasQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
-        return false;
+    public int pl$getDirectQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist) {
+        return Redstone.SIGNAL_MIN;
     }
 
     @Override
-    public int getDirectQuasiSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction dir, int dist) {
-        return 0;
-    }
-
-    @Override
-    public boolean isQuasiConductor(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+    public boolean pl$isQuasiConductor(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 }

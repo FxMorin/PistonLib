@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,15 +13,15 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(SlabBlock.class)
-public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
+public class SlabBlock_mergeMixin implements PLBlockBehaviour {
 
     @Override
-    public boolean usesConfigurablePistonMerging() {
+    public boolean pl$usesConfigurablePistonMerging() {
         return PistonLibConfig.doSlabMerging;
     }
 
     @Override
-    public boolean canMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
                             BlockState mergingIntoState, Direction direction) {
         if (state.getBlock() != mergingIntoState.getBlock()) {
             return false;
@@ -40,7 +40,7 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     }
 
     @Override
-    public BlockState doMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState mergingIntoState, Direction direction) {
         return mergingIntoState.setValue(BlockStateProperties.SLAB_TYPE, SlabType.DOUBLE);
     }
@@ -49,14 +49,14 @@ public class SlabBlock_mergeMixin implements ConfigurablePistonMerging {
     // Slab blocks will need either half sticky blocks or half piston blocks to unmerge like this
 
     @Override
-    public boolean canUnMerge(BlockState state, BlockGetter blockGetter, BlockPos blockPos,
+    public boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos,
                               BlockState neighborState, Direction direction) {
         return state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.DOUBLE;
     }
 
     @Override
-    public Pair<BlockState, BlockState> doUnMerge(BlockState state, BlockGetter blockGetter,
-                                                  BlockPos blockPos, Direction direction) {
+    public Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
+                                                  BlockPos pos, Direction direction) {
         return new Pair<>(
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
                 state.setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)

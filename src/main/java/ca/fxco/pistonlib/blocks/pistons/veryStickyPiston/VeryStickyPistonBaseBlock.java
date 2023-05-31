@@ -3,8 +3,6 @@ package ca.fxco.pistonlib.blocks.pistons.veryStickyPiston;
 import java.util.Map;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
@@ -15,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
-public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
+public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock {
 
     public VeryStickyPistonBaseBlock(PistonFamily family) {
         super(family, PistonType.STICKY);
@@ -36,22 +34,22 @@ public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock implements C
 
     // Automatically makes it movable even when extended
     @Override
-    public boolean usesConfigurablePistonBehavior() {
+    public boolean pl$usesConfigurablePistonBehavior() {
         return true;
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return Map.of(state.getValue(FACING),StickyType.STICKY); // Sticky Front
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir == state.getValue(FACING) ? StickyType.STICKY : StickyType.DEFAULT;
     }
 }

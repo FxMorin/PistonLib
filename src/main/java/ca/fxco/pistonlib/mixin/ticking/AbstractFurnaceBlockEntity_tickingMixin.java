@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.ticking;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.api.pistonlib.block.MovingTickable;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.FakeBlockPos;
 import net.minecraft.core.BlockPos;
@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.serverTick;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class AbstractFurnaceBlockEntity_tickingMixin implements PistonTicking {
+public class AbstractFurnaceBlockEntity_tickingMixin implements MovingTickable {
 
     @Override
-    public void onMovingTick(Level level, BlockState state, BlockPos toPos, Direction direction, float progress, float speed, boolean merging) {
+    public void pl$movingTick(Level level, BlockState state, BlockPos toPos, Direction dir, float progress, float speed, boolean merging) {
         if (PistonLibConfig.cookWhileMoving) {
             serverTick(level, FakeBlockPos.of(toPos), state, (AbstractFurnaceBlockEntity)(Object)this);
         }

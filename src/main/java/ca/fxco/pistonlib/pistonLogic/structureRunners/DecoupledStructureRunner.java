@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import lombok.RequiredArgsConstructor;
 
 /**

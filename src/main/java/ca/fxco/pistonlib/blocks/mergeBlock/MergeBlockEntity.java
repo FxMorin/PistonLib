@@ -1,11 +1,9 @@
 package ca.fxco.pistonlib.blocks.mergeBlock;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.impl.BlockEntityMerging;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonMerging;
+import ca.fxco.api.pistonlib.block.MovingTickable;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -65,12 +63,11 @@ public class MergeBlockEntity extends BlockEntity {
     }
 
     public boolean canMerge(BlockState state, Direction dir) {
-        ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
-        if (merge.canMultiMerge() &&
-                merge.canMultiMerge(state, level, worldPosition, initialState, dir, mergingBlocks)) {
-            return initialBlockEntity == null || (!merge.getBlockEntityMergeRules().checkMerge() ||
-                    initialBlockEntity instanceof BlockEntityMerging bem &&
-                    bem.canMultiMerge(state, initialState, dir, mergingBlocks));
+        Block merge = initialState.getBlock();
+        if (merge.pl$canMultiMerge() &&
+                merge.pl$canMultiMerge(state, level, worldPosition, initialState, dir, mergingBlocks)) {
+            return initialBlockEntity == null || (!merge.pl$getBlockEntityMergeRules().checkMerge() ||
+                    initialBlockEntity.pl$canMultiMerge(state, initialState, dir, mergingBlocks));
         }
         return false;
     }
@@ -115,17 +112,17 @@ public class MergeBlockEntity extends BlockEntity {
 
             BlockState initialState = mergeBlockEntity.initialState;
             if (initialState == null) return;
-            ConfigurablePistonMerging merge = (ConfigurablePistonMerging) initialState.getBlock();
+            Block merge = initialState.getBlock();
             BlockState newState = null;
             if (count > 1) {
                 Map<Direction, BlockState> states = new HashMap<>();
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
                     states.put(entry.getKey(), entry.getValue().getState());
                 }
-                newState = merge.doMultiMerge(level, blockPos, states, initialState);
+                newState = merge.pl$doMultiMerge(level, blockPos, states, initialState);
             } else {
                 for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
-                    newState = merge.doMerge(entry.getValue().getState(), level, blockPos, initialState, entry.getKey());
+                    newState = merge.pl$doMerge(entry.getValue().getState(), level, blockPos, initialState, entry.getKey());
                     break;
                 }
             }
@@ -138,16 +135,15 @@ public class MergeBlockEntity extends BlockEntity {
                 Block.updateOrDestroy(newState, blockState2, level, blockPos, Block.UPDATE_ALL);
             } else {
                 if (mergeBlockEntity.initialBlockEntity != null) {
-                    BlockEntityMerging initialBem = (BlockEntityMerging)mergeBlockEntity.initialBlockEntity;
                     mergeBlockEntity.initialBlockEntity.setLevel(level);
                     mergeBlockEntity.initialBlockEntity.setBlockState(blockState2);
-                    initialBem.beforeInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
+                    mergeBlockEntity.initialBlockEntity.pl$beforeInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
                     for (MergeData data : mergeBlockEntity.mergingBlocks.values()) {
                         if (data.hasBlockEntity()) {
-                            ((BlockEntityMerging)data.getBlockEntity()).onAdvancedFinalMerge(mergeBlockEntity.initialBlockEntity);
+                            data.getBlockEntity().pl$onAdvancedFinalMerge(mergeBlockEntity.initialBlockEntity);
                         }
                     }
-                    initialBem.afterInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
+                    mergeBlockEntity.initialBlockEntity.pl$afterInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
                     Utils.setBlockWithEntity(level, blockPos, blockState2, mergeBlockEntity.initialBlockEntity, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
@@ -369,12 +365,12 @@ public class MergeBlockEntity extends BlockEntity {
             this.speed = speed;
         }
 
-        public void onMovingTick(Level level, BlockPos toPos, Direction direction) {
-            if (this.state.getBlock() instanceof PistonTicking pistonTicking) {
-                pistonTicking.onMovingTick(level, this.state, toPos, direction, this.lastProgress, this.speed, true);
+        public void onMovingTick(Level level, BlockPos toPos, Direction dir) {
+            if (this.state.getBlock() instanceof MovingTickable tickable) {
+                tickable.pl$movingTick(level, this.state, toPos, dir, this.lastProgress, this.speed, true);
             }
-            if (this.be instanceof PistonTicking pistonTicking) {
-                pistonTicking.onMovingTick(level, this.state, toPos, direction, this.lastProgress, this.speed, true);
+            if (this.be instanceof MovingTickable tickable) {
+                tickable.pl$movingTick(level, this.state, toPos, dir, this.lastProgress, this.speed, true);
             }
         }
 

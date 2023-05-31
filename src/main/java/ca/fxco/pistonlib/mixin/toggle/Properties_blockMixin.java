@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.pistonlib.impl.toggle.Toggleable;
-import ca.fxco.pistonlib.impl.toggle.ToggleableProperties;
+import ca.fxco.api.pistonlib.block.PLBlockProperties;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -9,19 +8,19 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.function.BooleanSupplier;
 
 @Mixin(BlockBehaviour.Properties.class)
-public class Properties_blockMixin implements ToggleableProperties<BlockBehaviour.Properties>, Toggleable {
+public class Properties_blockMixin implements PLBlockProperties {
 
     @Unique
     BooleanSupplier isDisabled = () -> false;
 
     @Override
-    public BlockBehaviour.Properties setDisabled(BooleanSupplier isDisabled) {
+    public BlockBehaviour.Properties pl$setDisabled(BooleanSupplier isDisabled) {
         this.isDisabled = isDisabled;
         return (BlockBehaviour.Properties)(Object)this;
     }
 
     @Override
-    public BooleanSupplier getIsDisabled() {
+    public BooleanSupplier pl$getIsDisabled() {
         return this.isDisabled;
     }
 }

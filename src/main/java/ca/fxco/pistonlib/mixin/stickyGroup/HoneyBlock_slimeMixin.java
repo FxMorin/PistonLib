@@ -1,18 +1,16 @@
 package ca.fxco.pistonlib.mixin.stickyGroup;
 
+import ca.fxco.pistonlib.base.ModStickyGroups;
+import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
+import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
+import net.minecraft.world.level.block.HoneyBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
-import ca.fxco.pistonlib.base.ModStickyGroups;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-
-import net.minecraft.world.level.block.HoneyBlock;
-
 @Mixin(HoneyBlock.class)
-public class HoneyBlock_slimeMixin implements ConfigurablePistonStickiness {
+public class HoneyBlock_slimeMixin implements PLBlockBehaviour {
 
     @Override
-    public StickyGroup getStickyGroup() {
+    public StickyGroup pl$getStickyGroup() {
         return ModStickyGroups.HONEY;
     }
 }

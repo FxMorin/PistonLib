@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
 import lombok.NoArgsConstructor;
