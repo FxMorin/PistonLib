@@ -49,7 +49,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public BasicMovingBlock(PistonFamily family, Properties properties) {
-        super(PistonLibConfig.mobsSpawnOnMovingPistonsFix ? properties.isValidSpawn((a,b,c,d) -> false) : properties);
+        super(properties.isValidSpawn((a,b,c,d) -> !PistonLibConfig.mobsSpawnOnMovingPistonsFix));
 
         this.family = family;
         this.family.setMoving(this);

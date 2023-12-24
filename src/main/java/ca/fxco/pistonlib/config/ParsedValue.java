@@ -1,10 +1,15 @@
 package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.Category;
+import ca.fxco.api.pistonlib.config.Observer;
+import ca.fxco.api.pistonlib.config.Parser;
+import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.helpers.ConfigUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
 import lombok.Getter;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
@@ -19,19 +24,31 @@ public class ParsedValue<T> {
     protected final String[] moreInfo;
     protected final Set<String> keywords;
     protected final Set<Category> categories;
+    protected final String[] requires;
+    protected final String[] conflicts;
     protected final ImmutableIntArray fixes;
+    protected final boolean requiresRestart;
     protected final T defaultValue; // Set by the recommended option
+    protected final Parser<T>[] parsers;
+    protected final Observer<T>[] observers;
     //public boolean requiresClient;
     //public final boolean clientOnly;
 
-    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories, int[] fixes) {
+    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
+                       String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
+                       Parser<?>[] parsers, Observer<?>[] observers) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
         this.moreInfo = more;
         this.keywords = ImmutableSet.copyOf(keywords);
         this.categories = ImmutableSet.copyOf(categories);
+        this.requires = requires;
+        this.conflicts = conflicts;
+        this.requiresRestart = requiresRestart;
         this.fixes = ImmutableIntArray.copyOf(fixes);
+        this.parsers = (Parser<T>[]) parsers;
+        this.observers = (Observer<T>[]) observers;
         this.defaultValue = getValue();
         //this.clientOnly = this.groups.contains(FixGroup.CLIENTONLY);
         //this.requiresClient = this.clientOnly || this.groups.contains(FixGroup.CLIENT);
@@ -52,9 +69,30 @@ public class ParsedValue<T> {
     }
 
     public void setValue(T value) {
+        setValue(value, false);
+    }
+
+    public void setValue(T value, boolean load) {
         try {
-            if (!value.equals(getValue())) {
+            T currentValue = getValue();
+            if (!value.equals(currentValue)) {
+                if (!load) {
+                    for (Parser<T> parser : this.parsers) {
+                        value = parser.modify(this, value, false);
+                    }
+                }
                 this.field.set(null, value);
+                for (Observer<T> observer : this.observers) {
+                    if (load) {
+                        observer.onLoad(this, isDefaultValue());
+                    } else {
+                        observer.onChange(this, currentValue, value);
+                    }
+                }
+            } else if (load) {
+                for (Observer<T> observer : this.observers) {
+                    observer.onLoad(this, isDefaultValue());
+                }
             }
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
@@ -73,13 +111,45 @@ public class ParsedValue<T> {
     /**
      * Should not be used unless loading from the config
      */
-    @SuppressWarnings("unchecked")
     protected void setValueFromConfig(Object value) {
-        if (this.defaultValue.getClass() == value.getClass()) {
-            setValue((T) this.defaultValue.getClass().cast(value));
-        } else if (this.defaultValue.getClass().isEnum() && value instanceof String str) {
-            Object e = Enum.valueOf((Class<? extends Enum>)this.defaultValue.getClass(), str);
-            setValue((T) this.defaultValue.getClass().cast(e));
+        T newValue = ConfigUtils.loadValueFromConfig(value, this);
+        if (newValue == null) {
+            // TODO: Allow for multiple custom config managers, not just the PistonLib one
+            newValue = PistonLib.getConfigManager().tryLoadingValue(value, this);
+        }
+        if (newValue != null) {
+            for (Parser<T> parser : this.parsers) {
+                newValue = parser.modify(this, newValue, true);
+            }
+            setValue(newValue, true);
+        }
+    }
+
+    /**
+     * Returns the value that should be used within the config file
+     */
+    protected Object getValueForConfig() {
+        // TODO: Allow for multiple custom config managers, not just the PistonLib one
+        return PistonLib.getConfigManager().trySavingValue(this.getValue(), this);
+    }
+
+    /**
+     * Used when attempting to parse the value from a command as a string
+     */
+    protected void parseValue(CommandSourceStack source, String inputValue) {
+        boolean useDefault = true;
+        for (Parser<T> parser : this.parsers) {
+            T newValue = parser.parse(source, inputValue, this);
+            if (newValue != null) {
+                setValue(newValue);
+                useDefault = false;
+            }
+        }
+        if (useDefault) {
+            T newValue = ConfigUtils.parseValueFromString(this, inputValue);
+            if (newValue != null) {
+                setValue(newValue);
+            }
         }
     }
 

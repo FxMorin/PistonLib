@@ -7,6 +7,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
+import lombok.Getter;
 import net.minecraft.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.ChainBlock;
@@ -14,19 +15,35 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StickyChainBlock extends ChainBlock implements ConfigurablePistonStickiness {
 
-    private static final StickyType CHAIN_STICKY_TYPE = PistonLibConfig.strongStickyChains ? StickyType.STRONG : StickyType.STICKY;
-
-    private static final Map<Direction, StickyType> CHAIN_SIDES_X = Util.make(new HashMap<>(), map -> {
-        map.put(Direction.EAST, CHAIN_STICKY_TYPE);
-        map.put(Direction.WEST, CHAIN_STICKY_TYPE);
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesX_strong = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.EAST, StickyType.STRONG);
+        map.put(Direction.WEST, StickyType.STRONG);
     });
-    private static final Map<Direction, StickyType> CHAIN_SIDES_Y = Util.make(new HashMap<>(), map -> {
-        map.put(Direction.UP, CHAIN_STICKY_TYPE);
-        map.put(Direction.DOWN, CHAIN_STICKY_TYPE);
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesX_sticky = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.EAST, StickyType.STICKY);
+        map.put(Direction.WEST, StickyType.STICKY);
     });
-    private static final Map<Direction, StickyType> CHAIN_SIDES_Z = Util.make(new HashMap<>(), map -> {
-        map.put(Direction.NORTH, CHAIN_STICKY_TYPE);
-        map.put(Direction.SOUTH, CHAIN_STICKY_TYPE);
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesY_strong = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.UP, StickyType.STRONG);
+        map.put(Direction.DOWN, StickyType.STRONG);
+    });
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesY_sticky = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.UP, StickyType.STICKY);
+        map.put(Direction.DOWN, StickyType.STICKY);
+    });
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesZ_strong = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.NORTH, StickyType.STRONG);
+        map.put(Direction.SOUTH, StickyType.STRONG);
+    });
+    @Getter(lazy = true)
+    private static final Map<Direction, StickyType> chainSidesZ_sticky = Util.make(new HashMap<>(), map -> {
+        map.put(Direction.NORTH, StickyType.STICKY);
+        map.put(Direction.SOUTH, StickyType.STICKY);
     });
 
     public StickyChainBlock(Properties properties) {
@@ -40,17 +57,24 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
 
     @Override
     public Map<Direction, StickyType> stickySides(BlockState state) {
-        return switch(state.getValue(AXIS)) {
-            case X -> CHAIN_SIDES_X;
-            case Y -> CHAIN_SIDES_Y;
-            case Z -> CHAIN_SIDES_Z;
+        if (PistonLibConfig.strongStickyChains) {
+            return switch (state.getValue(AXIS)) {
+                case X -> StickyChainBlock.getChainSidesX_strong();
+                case Y -> StickyChainBlock.getChainSidesY_strong();
+                case Z -> StickyChainBlock.getChainSidesZ_strong();
+            };
+        }
+        return switch (state.getValue(AXIS)) {
+            case X -> StickyChainBlock.getChainSidesX_sticky();
+            case Y -> StickyChainBlock.getChainSidesY_sticky();
+            case Z -> StickyChainBlock.getChainSidesZ_sticky();
         };
     }
 
     @Override
     public StickyType sideStickiness(BlockState state, Direction dir) {
         return dir.getAxis() == state.getValue(AXIS) ?
-                CHAIN_STICKY_TYPE :
+                (PistonLibConfig.strongStickyChains ? StickyType.STRONG : StickyType.STICKY) :
                 StickyType.NO_STICK;
     }
 }

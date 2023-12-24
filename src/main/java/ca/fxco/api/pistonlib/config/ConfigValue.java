@@ -35,8 +35,42 @@ public @interface ConfigValue {
     Category[] category() default {};
 
     /**
+     * Config options that are required in order to work
+     */
+    String[] requires() default {};
+
+    /**
+     * Config options that conflict with each other
+     */
+    String[] conflict() default {};
+
+    /**
+     * If the config option requires a restart to work
+     */
+    boolean requiresRestart() default false;
+
+    /**
      * If this config value fixes a vanilla bug, you can set the bug id's it fixes here
      * Just a default mojira id without the `MC-`
      */
     int[] fixes() default {};
+
+    /**
+     * Checks multiple conditions before loading the config option into the config manager
+     * @see Condition
+     */
+    Class<? extends Condition>[] condition() default {};
+
+    /**
+     * This class will make sure that the config value is valid, and will convert string inputs to a valid type.
+     * @see Parser
+     */
+    Class<? extends Parser>[] parser() default {};
+
+    /**
+     * The class of the condition checked when the rule is parsed, before being added
+     * to the Settings Manager.
+     * @see Observer
+     */
+    Class<? extends Observer>[] observer() default {};
 }
