@@ -107,10 +107,12 @@ public class MergeBlockEntity extends BlockEntity implements PLMergeBlockEntity 
                 count++;
             }
             float speed = data.getSpeed();
-            float f = lastProgress + 0.5F * speed;
-            mergeBlockEntity.moveCollidedEntities(f);
-            //moveStuckEntities(level, blockPos, f, mergeBlockEntity);
-            data.setProgress(Math.min(f, 1.0F));
+            if (speed != 0) {
+                float f = lastProgress + 0.5F * speed;
+                mergeBlockEntity.moveCollidedEntities(f);
+                //moveStuckEntities(level, blockPos, f, mergeBlockEntity);
+                data.setProgress(Math.min(f, 1.0F));
+            }
             if (PistonLibConfig.tickingApi && lastProgress < 1.0F) {
                 data.onMovingTick(level, blockPos, entry.getKey());
             }

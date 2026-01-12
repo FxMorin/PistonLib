@@ -44,7 +44,7 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
         for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : mbe.getMergingBlocks().entrySet()) {
             PLMergeBlockEntity.MergeData data = entry.getValue();
             BlockState state = data.getState();
-            if (state == null) {
+            if (state != null) {
                 float progress = data.getProgress();
                 float lastProgress = data.getLastProgress();
 
@@ -74,8 +74,6 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
         this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state,
                 pos, stack, consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
-
-    
 
     @Override
     public int getViewDistance() {

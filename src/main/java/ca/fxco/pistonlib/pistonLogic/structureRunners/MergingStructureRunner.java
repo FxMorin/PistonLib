@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.api.PistonLibApi;
-import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.base.ModBlocks;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,10 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private int unMergingIndex = 0;
 
     public <S extends PistonStructureResolver & StructureResolver> MergingStructureRunner(
-            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            Level level, BlockPos pos, Direction facing, int length, PistonController controller,
             boolean extend, StructureResolver.Factory<S> structureProvider
     ) {
-        super(level, pos, facing, length, family, type, extend, structureProvider);
+        super(level, pos, facing, length, controller, extend, structureProvider);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
         int moveSize = toMove.size();
         if (moveSize > 0) {
             if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-                List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
+                Map<BlockPos, BlockState> toUnMerge = mergingStructure.getToUnMerge();
                 unMergingStates = new BlockState[toUnMerge.size()];
                 StructureGroup structureGroup = null;
                 if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
@@ -87,7 +86,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     boolean move = true;
 
                     // UnMerge blocks
-                    if (toUnMerge.contains(posToMove)) {
+                    if (toUnMerge.containsKey(posToMove)) {
                         Pair<BlockState, BlockState> unmergedStates = null;
                         if (stateToMove.pl$getBlockEntityMergeRules().checkUnMerge()) {
                             unmergedStates = blockEntityToMove.pl$doUnMerge(stateToMove, moveDir);
@@ -96,7 +95,8 @@ public class MergingStructureRunner extends BasicStructureRunner {
                             }
                         }
                         if (unmergedStates == null) {
-                            unmergedStates = stateToMove.pl$doUnMerge(level, posToMove, moveDir);
+                            unmergedStates = stateToMove.pl$doUnMerge(level,
+                                    posToMove, moveDir, toUnMerge.get(posToMove));
                         }
                         if (unmergedStates != null) {
                             unMergingStates[unMergingIndex++] = stateToMove;
@@ -111,10 +111,11 @@ public class MergingStructureRunner extends BasicStructureRunner {
 
                     toRemove.remove(dstPos);
 
-                    BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                    BlockState movingBlock = this.controller.getFamily().getMoving().defaultBlockState()
                             .setValue(BasicMovingBlock.FACING, facing);
-                    BlockEntity movingBlockEntity = this.family
-                            .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                    BlockEntity movingBlockEntity = this.controller.getFamily().newMovingBlockEntity(
+                            structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove,
+                            facing, extend, false);
 
                     level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON |
                             (blockEntityToMove != null ? UPDATE_CLIENTS : UPDATE_INVISIBLE));
@@ -134,7 +135,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
             return;
         }
         List<BlockPos> toMerge = mergingStructure.getToMerge();
-        float speed = extend ? family.getExtendingSpeed() : family.getRetractingSpeed();
+        float speed = extend ? controller.getFamily().getExtendingSpeed() : controller.getFamily().getRetractingSpeed();
 
         // Merge Blocks
         for (int i = toMerge.size() - 1; i >= 0; i--) {
@@ -164,7 +165,9 @@ public class MergingStructureRunner extends BasicStructureRunner {
                 MergeBlockEntity mergeBlockEntity;
                 BlockEntity mergeIntoBlockEntity = level.getBlockEntity(mergeIntoPos);
                 if (mergeIntoBlockEntity != null && mergeIntoBlockEntity.pl$doInitialMerging()) {
-                    mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity);
+                    mergeBlockEntity = new MergeBlockEntity(
+                            mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity
+                    );
                     mergeIntoBlockEntity.pl$onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
 
                     if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge()) {
@@ -197,7 +200,11 @@ public class MergingStructureRunner extends BasicStructureRunner {
 
         // Keep these blocks as they unmerged, just change there state to the new one
         for (Map.Entry<BlockPos, BlockState> entry : toKeep.entrySet()) {
-            level.setBlock(entry.getKey(), entry.getValue(), UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS);
+            level.setBlock(
+                    entry.getKey(),
+                    entry.getValue(),
+                    UPDATE_MOVE_BY_PISTON | UPDATE_KNOWN_SHAPE | UPDATE_CLIENTS
+            );
         }
 
         // Do neighbor updates at the unmerged positions once all the blocks have been changed

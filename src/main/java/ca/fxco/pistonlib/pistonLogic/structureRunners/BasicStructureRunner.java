@@ -2,14 +2,14 @@ package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.PistonLibApi;
-import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.helpers.BlockReplaceUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.*;
 
@@ -29,25 +28,17 @@ import static net.minecraft.world.level.block.Block.*;
 /**
  * Abstract the entire piston move code into a structure runner
  */
+@Getter
 public class BasicStructureRunner implements StructureRunner {
 
     protected static final BlockState AIR_STATE = Blocks.AIR.defaultBlockState();
 
-    @Getter
     protected final Level level;
-    @Getter
-    protected final PistonFamily family;
-    @Getter
-    protected final PistonType type;
-    @Getter
+    protected final PistonController controller;
     protected final BlockPos blockPos;
-    @Getter
     protected final Direction facing;
-    @Getter
     protected final int length;
-    @Getter
     protected final boolean extend;
-
     protected final Direction moveDir;
     protected final PistonStructureResolver structure;
 
@@ -58,15 +49,15 @@ public class BasicStructureRunner implements StructureRunner {
     protected List<BlockEntity> blockEntitiesToMove;
 
     protected BlockState[] affectedStates;
+    @Setter
     protected int affectedIndex = 0;
 
     public <S extends PistonStructureResolver & StructureResolver> BasicStructureRunner(
-            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            Level level, BlockPos pos, Direction facing, int length, PistonController controller,
             boolean extend, StructureResolver.Factory<S> structureProvider
     ) {
         this.level = level;
-        this.family = family;
-        this.type = type;
+        this.controller = controller;
         this.blockPos = pos;
         this.facing = facing;
         this.length = length;
@@ -81,7 +72,7 @@ public class BasicStructureRunner implements StructureRunner {
             BlockPos headPos = blockPos.relative(facing, length);
             BlockState headState = level.getBlockState(headPos);
 
-            if (headState.is(family.getHead())) {
+            if (headState.is(controller.getFamily().getHead())) {
                 level.setBlock(headPos, Blocks.AIR.defaultBlockState(), UPDATE_KNOWN_SHAPE | UPDATE_INVISIBLE);
             }
         }
@@ -197,9 +188,9 @@ public class BasicStructureRunner implements StructureRunner {
 
                 toRemove.remove(dstPos);
 
-                BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                BlockState movingBlock = this.controller.getFamily().getMoving().defaultBlockState()
                         .setValue(BasicMovingBlock.FACING, facing);
-                PistonMovingBlockEntity movingBlockEntity = this.family.newMovingBlockEntity(
+                PistonMovingBlockEntity movingBlockEntity = this.controller.getFamily().newMovingBlockEntity(
                         structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove,
                         facing, extend, false
                 );
@@ -217,15 +208,13 @@ public class BasicStructureRunner implements StructureRunner {
     public void taskPlaceExtendingHead() {
         if (extend) {
             BlockPos headPos = blockPos.relative(facing, length + 1);
-            BlockState headState = this.family.getHead().defaultBlockState()
-                    .setValue(BasicPistonHeadBlock.TYPE, this.type)
-                    .setValue(BasicPistonHeadBlock.FACING, facing);
+            BlockState headState = this.controller.getHeadState(blockPos, level, facing, true);
 
             toRemove.remove(headPos);
 
-            BlockState movingBlock = this.family.getMoving().defaultBlockState()
+            BlockState movingBlock = this.controller.getFamily().getMoving().defaultBlockState()
                     .setValue(BasicMovingBlock.FACING, facing);
-            BlockEntity movingBlockEntity = this.family
+            BlockEntity movingBlockEntity = this.controller.getFamily()
                     .newMovingBlockEntity(headPos, movingBlock, headState, null, facing, extend, true);
 
             level.setBlock(headPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
@@ -286,7 +275,7 @@ public class BasicStructureRunner implements StructureRunner {
     @Override
     public void taskDoPistonHeadExtendingUpdate() {
         if (extend) {
-            level.updateNeighborsAt(blockPos.relative(facing, length + 1), family.getHead());
+            level.updateNeighborsAt(blockPos.relative(facing, length + 1), controller.getFamily().getHead());
         }
     }
 }
